@@ -5,7 +5,10 @@
     <bookmark url="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_212.jdk/Contents/Home/jre/lib/rt.jar!/jdk/internal/org/objectweb/asm/MethodVisitor.class" description="public abstract class MethodVisitor {" line="0" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="82c4933f-4ad6-4a98-8103-2970f01892d4" name="Default Changelist" comment="" />
+    <list default="true" id="82c4933f-4ad6-4a98-8103-2970f01892d4" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -35,8 +38,8 @@
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider editor-type-id="MavenHelperPluginDependencyAnalyzer" />
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="20" column="19" selection-start-line="20" selection-start-column="19" selection-end-line="20" selection-end-column="19" />
+            <state relative-caret-position="116">
+              <caret line="30" column="17" selection-start-line="30" selection-start-column="17" selection-end-line="30" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -89,6 +92,9 @@
       <replace />
     </replaceStrings>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -101,7 +107,6 @@
         <option value="$PROJECT_DIR$/src/main/java/jdk/ReflectTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/cglib/DelegateClass.java" />
         <option value="$PROJECT_DIR$/src/main/java/cglib/Test.java" />
-        <option value="$PROJECT_DIR$/src/main/java/cglib/SampleClass.java" />
         <option value="$PROJECT_DIR$/src/main/java/cglib/KeySample.java" />
         <option value="$PROJECT_DIR$/src/main/resources/book.xml" />
         <option value="$PROJECT_DIR$/src/main/java/dom/TestDOMParse.java" />
@@ -130,8 +135,9 @@
         <option value="$PROJECT_DIR$/src/main/java/generics/Generics.java" />
         <option value="$PROJECT_DIR$/src/main/java/suger/DeSuger.java" />
         <option value="$PROJECT_DIR$/src/main/java/javac/com/sun/tools/javac/com/sun/tools/javac/jvm/ClassWriter.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/bytebuddy/Hello.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/cglib/SampleClass.java" />
       </list>
     </option>
   </component>
@@ -155,6 +161,7 @@
     <option name="width" value="1252" />
     <option name="height" value="805" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -167,32 +174,6 @@
               <item name="byteclass" type="b2602c69:ProjectViewProjectNode" />
               <item name="byteclass" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="byteclass" type="b2602c69:ProjectViewProjectNode" />
-              <item name="byteclass" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="byteclass" type="b2602c69:ProjectViewProjectNode" />
-              <item name="byteclass" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="byteclass" type="b2602c69:ProjectViewProjectNode" />
-              <item name="byteclass" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="byteclass" type="b2602c69:ProjectViewProjectNode" />
-              <item name="byteclass" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="sax" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -203,6 +184,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="android.sdk.path" value="$PROJECT_DIR$/../Downloads/sdk" />
     <property name="aspect.path.notification.shown" value="true" />
@@ -336,15 +318,15 @@
       <workItem from="1576673828897" duration="16279000" />
       <workItem from="1576896223799" duration="12761000" />
       <workItem from="1576999134234" duration="2051000" />
-      <workItem from="1577008645445" duration="7805000" />
+      <workItem from="1577008645445" duration="8648000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="157326000" />
+    <option name="totallyTimeSpent" value="158169000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="351" y="23" width="1252" height="805" extended-state="0" />
+    <frame x="489" y="46" width="1252" height="805" extended-state="0" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.46844319" visible="true" weight="0.17466888" />
       <window_info id="Structure" order="1" sideWeight="0.5315568" side_tool="true" weight="0.17466888" />
@@ -371,7 +353,7 @@
       <window_info anchor="bottom" id="Run with VisualVM" order="14" />
       <window_info anchor="bottom" id="Database Changes" order="15" />
       <window_info anchor="bottom" id="Version Control" order="16" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="17" visible="true" weight="0.371669" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="17" visible="true" weight="0.5259467" />
       <window_info anchor="bottom" id="Messages" order="18" weight="0.17251052" />
       <window_info anchor="bottom" id="Debug with VisualVM" order="19" />
       <window_info anchor="bottom" id="Azure Activity Log" order="20" />
@@ -469,12 +451,6 @@
           <line>293</line>
           <properties />
           <option name="timeStamp" value="109" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/cglib/CGlibAgent.java</url>
-          <line>20</line>
-          <properties />
-          <option name="timeStamp" value="111" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/cglib/DelegateClass$$FastClassByCGLIB$$69af0f46.class</url>
@@ -752,13 +728,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://$MAVEN_REPOSITORY$/cglib/cglib/3.3.0/cglib-3.3.0-sources.jar!/net/sf/cglib/proxy/BridgeMethodResolver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="41" column="12" lean-forward="true" selection-start-line="41" selection-start-column="12" selection-end-line="41" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/cglib/cglib/3.3.0/cglib-3.3.0-sources.jar!/net/sf/cglib/reflect/FastClass.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -1063,13 +1032,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/cglib/KeySample.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/jdk/Apple$$EnhancerByCGLIB$$c6ffa2e3.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
@@ -1081,20 +1043,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/cglib/Test.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/cglib/CGlibAgent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="18" column="23" lean-forward="true" selection-start-line="18" selection-start-column="23" selection-end-line="18" selection-end-column="23" />
         </state>
       </provider>
     </entry>
@@ -1141,11 +1089,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cglib/KeySample.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cglib/CGlibAgent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="18" column="23" selection-start-line="18" selection-start-column="23" selection-end-line="18" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cglib/SampleClass.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="15" column="51" selection-start-line="15" selection-start-column="51" selection-end-line="15" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/cglib/Test.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider editor-type-id="MavenHelperPluginDependencyAnalyzer" />
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="19" selection-start-line="20" selection-start-column="19" selection-end-line="20" selection-end-column="19" />
+        <state relative-caret-position="116">
+          <caret line="30" column="17" selection-start-line="30" selection-start-column="17" selection-end-line="30" selection-end-column="17" />
         </state>
       </provider>
     </entry>
