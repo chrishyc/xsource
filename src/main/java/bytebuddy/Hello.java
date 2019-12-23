@@ -8,7 +8,7 @@ public class Hello {
     public void hello() throws IllegalAccessException, InstantiationException {
         Class<?> dynamicType = new ByteBuddy()
                 .subclass(Object.class)
-                .method(ElementMatchers.named("toString"))
+                .method(ElementMatchers.returns(String.class))
                 .intercept(FixedValue.value("Hello World!"))
                 .make()
                 .load(getClass().getClassLoader())
@@ -20,9 +20,7 @@ public class Hello {
     public static void main(String[] args) {
         try {
             new Hello().hello();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
     }
