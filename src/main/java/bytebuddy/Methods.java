@@ -4,8 +4,10 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.*;
+import net.bytebuddy.matcher.ElementMatchers;
 
-import java.util.Arrays;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -135,14 +137,49 @@ public class Methods {
         }
     }
 
-    public void superCall() throws IllegalAccessException, InstantiationException {
-        MemoryDatabase loggingDatabase = new ByteBuddy()
+    public void superCall() throws IOException {
+        new ByteBuddy()
                 .subclass(MemoryDatabase.class)
-                .method(named("load")).intercept(MethodDelegation.to(LoggerInterceptor.class))
+                .method(named("load").or(ElementMatchers.named("unload")))
+                .intercept(MethodDelegation.to(LoggerInterceptor.class))
                 .make()
-                .load(getClass().getClassLoader())
-                .getLoaded()
-                .newInstance();
+                .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
+
+//                .load(getClass().getClassLoader())
+//                .getLoaded()
+//                .newInstance()
+//                .load("hello");
+    }
+
+    public void superS() throws IOException {
+        new ByteBuddy()
+                .subclass(MemoryDatabase.class)
+                .method(named("load").or(ElementMatchers.named("unload")))
+                .intercept(MethodDelegation.to(ChangingLoggerInterceptor.class))
+                .make()
+                .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
+
+//                .load(getClass().getClassLoader())
+//                .getLoaded()
+//                .newInstance()
+//                .load("hello");
+    }
+
+    public void morph() throws IOException {
+        new ByteBuddy()
+                .subclass(MemoryDatabase.class)
+                .method(named("load").or(ElementMatchers.named("unload")))
+                .intercept(MethodDelegation
+                        .withDefaultConfiguration()
+                        .withBinders(Morph.Binder.install(Morphing.class))
+                        .to(MorphInterceptor.class))
+                .make()
+                .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
+
+//                .load(getClass().getClassLoader())
+//                .getLoaded()
+//                .newInstance()
+//                .load("hello");
     }
 
 
@@ -156,24 +193,6 @@ public class Methods {
                 .newInstance()
                 .hello("World");
         System.out.println(helloWorld);
-    }
-
-    public class MemoryDatabase {
-        public List load(String info) {
-            return Arrays.asList(info + ": foo", info + ": bar");
-        }
-    }
-
-    public static class LoggerInterceptor {
-        public static List<String> log(@SuperCall Callable<List<String>> zuper)
-                throws Exception {
-            System.out.println("Calling database");
-            try {
-                return zuper.call();
-            } finally {
-                System.out.println("Returned from database");
-            }
-        }
     }
 
 
@@ -197,7 +216,7 @@ public class Methods {
 
     public static void main(String[] args) {
         try {
-            new Methods().methodDelegation();
+            new Methods().superS();
         } catch (Exception e) {
             e.printStackTrace();
         }
