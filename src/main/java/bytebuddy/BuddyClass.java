@@ -14,7 +14,15 @@ import net.bytebuddy.pool.TypePool;
 import java.io.File;
 import java.io.IOException;
 
-public class Hello {
+public class BuddyClass {
+
+    public void unloaded() throws IOException {
+        new ByteBuddy()
+                .subclass(Foo.class)
+                .make()
+                .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
+    }
+
     public void subClass() throws Exception {
         new ByteBuddy()
                 .subclass(Foo.class)
@@ -59,12 +67,7 @@ public class Hello {
                 .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
     }
 
-    public void unloaded() throws IOException {
-        new ByteBuddy()
-                .subclass(Foo.class)
-                .make()
-                .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
-    }
+
 
     public void loading() {
         Class<?> type = new ByteBuddy()
@@ -98,7 +101,7 @@ public class Hello {
 
     public static void main(String[] args) {
         try {
-            new Hello().unload();
+            new BuddyClass().unloaded();
             System.out.println(Bar.class.getDeclaredField("qux"));
         } catch (Exception e) {
             e.printStackTrace();
