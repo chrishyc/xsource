@@ -1,5 +1,9 @@
 package bytebuddy;
 
 public class Foo {
-    String method() { return "foo"; }
+    public int a;
+
+    String method() {
+        return "foo";
+    }
 }
