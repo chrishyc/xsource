@@ -19,6 +19,7 @@ public class BuddyClass {
     public void unloaded() throws IOException {
         new ByteBuddy()
                 .subclass(Foo.class)
+                .name("MyFoo")
                 .make()
                 .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
     }
@@ -101,8 +102,7 @@ public class BuddyClass {
 
     public static void main(String[] args) {
         try {
-            new BuddyClass().unloaded();
-            System.out.println(Bar.class.getDeclaredField("qux"));
+            new BuddyClass().subClass();
         } catch (Exception e) {
             e.printStackTrace();
         }
