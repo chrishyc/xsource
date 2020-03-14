@@ -4,6 +4,7 @@ import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.List;
 
 public class QuartzJdbcTest {
@@ -22,6 +23,7 @@ public class QuartzJdbcTest {
             JobDetail jobDetail = JobBuilder.newJob(HelloJob.class)
                     // 任务执行类
                     .withIdentity("job1_1", "jGroup1")
+                    .usingJobData("hellokey","hellovalue")
                     .storeDurably()
                     // 任务名，任务组
                     .build();
@@ -45,7 +47,7 @@ public class QuartzJdbcTest {
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
             // 4、调度执行
-            scheduler.scheduleJob(jobDetail, trigger);
+            scheduler.scheduleJob(jobDetail, Collections.singleton(trigger),true);
             try {
                 Thread.sleep(60000);
             } catch (InterruptedException e) {
