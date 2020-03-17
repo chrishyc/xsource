@@ -16,6 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
  * 没有出现异常，那么会先commit4，再commit:6，那么事务将分离开，不能保持一致，假如执行6报错，2和6将回滚，
  * 而4却没有被回滚，不能达到预期效果。
  *
+ * 1.Propagation.REQUIRED 扁平事务。在这种事务中，所有操作都处于同一层次。主要缺点是不能提交或回滚事务的某一部
+ *
+ * 2.带有保存点的扁平事务。允许在事务执行过程中回滚到同一事务中较早的一个状态
+ *
+ * 3.PROPAGATION_NESTED，嵌套事务由savepoint实现
  */
 public class Sample {
     class ServiceA {
