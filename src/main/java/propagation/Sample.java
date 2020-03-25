@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 2.带有保存点的扁平事务。允许在事务执行过程中回滚到同一事务中较早的一个状态
  *
  * 3.PROPAGATION_NESTED，嵌套事务由savepoint实现
+ *
+ * 4.分布式事务
  */
 public class Sample {
     class ServiceA {
