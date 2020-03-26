@@ -11,6 +11,7 @@
     <modules>
         <module>agent</module>
         <module>client</module>
+        <module>mybatis</module>
     </modules>
     <dependencies>
         <dependency>
@@ -83,6 +84,7 @@
             <artifactId>spring-tx</artifactId>
             <version>5.2.0.RELEASE</version>
         </dependency>
+
     </dependencies>
     <build>
         <plugins>
