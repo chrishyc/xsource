@@ -4,6 +4,6 @@ import java.io.InputStream;
 
 public class Resources {
     public static InputStream getInputStream(String path) {
-        return getClass().getClassLoader().getResourceAsStream(path);
+        return Resources.class.getClassLoader().getResourceAsStream(path);
     }
 }
