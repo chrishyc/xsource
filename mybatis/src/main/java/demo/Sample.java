@@ -1,6 +1,8 @@
 package demo;
 
-import java.lang.reflect.Proxy;
+import demo.dao.IUserDao;
+import demo.sqlSession.SqlSessionFactoryBuilder;
+
 import java.sql.*;
 import java.util.Properties;
 
@@ -9,8 +11,23 @@ public class Sample {
 //        SQLDao proxy = (SQLDao) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
 //                new Class[]{SQLDao.class}, new MyInvokeHandler());
 //        System.out.println(proxy.getCount());
-        testStatement();
+//        testStatement();
+
 //        queryProperty();
+        try {
+            test();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void test() throws Exception {
+        IUserDao userDao = new SqlSessionFactoryBuilder()
+                .build()
+                .openSession()
+                .getMapper(IUserDao.class);
+        userDao.findAll();
+        userDao.findByCondition(new demo.pojo.User());
     }
 
     public static void queryProperty() {

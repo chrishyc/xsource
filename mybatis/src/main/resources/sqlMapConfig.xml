@@ -3,9 +3,9 @@
     <!--数据库配置信息-->
     <dataSource>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-        <property name="jdbcUrl" value="jdbc:mysql:///zdy_mybatis"/>
+        <property name="jdbcUrl" value="jdbc:mysql:///mysql"/>
         <property name="username" value="root"/>
-        <property name="password" value="root"/>
+        <property name="password" value="00000000"/>
     </dataSource>
 
     <!--存放mapper.xml的全路径-->
