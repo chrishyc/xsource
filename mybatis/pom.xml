@@ -16,7 +16,16 @@
             <artifactId>lombok</artifactId>
             <version>1.18.10</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.1.1</version>
+        </dependency>
     </dependencies>
 
 </project>
