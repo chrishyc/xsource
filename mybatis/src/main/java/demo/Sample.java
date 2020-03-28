@@ -2,15 +2,26 @@ package demo;
 
 import java.lang.reflect.Proxy;
 import java.sql.*;
+import java.util.Properties;
 
 public class Sample {
     public static void main(String[] args) throws SQLException {
-        SQLDao proxy = (SQLDao) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class[]{SQLDao.class}, new MyInvokeHandler());
-        System.out.println(proxy.getCount());
+//        SQLDao proxy = (SQLDao) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
+//                new Class[]{SQLDao.class}, new MyInvokeHandler());
+//        System.out.println(proxy.getCount());
         testStatement();
+//        queryProperty();
     }
 
+    public static void queryProperty() {
+        Properties properties = System.getProperties();
+        String jdbc = properties.getProperty("jdbc.properties");
+        System.out.println(jdbc);
+    }
+
+    /**
+     * 通过查看jdbc.properties自动加载驱动
+     */
     public static void testStatement() throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;

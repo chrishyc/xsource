@@ -1,6 +1,5 @@
 package annotation;
 
-import mybatis.demo.SQL;
 
 /**
  * 1.注解在哪用
