@@ -9,6 +9,8 @@ CREATE table user_test
 ) engine = innodb;
 insert into user_test (id, username, password)
 values (1, 'User1', '123456');
+insert into user_test (id, username, password)
+values (2, 'User2', '654321');
 
 drop table order_test;
 CREATE table order_test
