@@ -179,4 +179,21 @@ public class Demo {
             sqlSession.close();
         }
     }
+
+    @Test
+    public void test9() throws IOException {
+        String resource = "sqlMapConfig.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+        try {
+            IUserDao userDao = sqlSession.getMapper(IUserDao.class);
+            List<User> list = userDao.findAllWithOrders();
+            System.out.println(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+    }
 }

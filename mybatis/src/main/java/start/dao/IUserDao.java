@@ -15,6 +15,8 @@ public interface IUserDao {
     //多条件组合查询：演示if
     public List<User> findByCondition(User user);
 
+    public List<User> findAllWithOrders() throws IOException;
+
 
     //多值查询：演示foreach
     public List<User> findByIds(int[] ids);

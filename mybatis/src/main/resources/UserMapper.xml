@@ -70,8 +70,26 @@
 
     <sql id="selectUser"> select *
                           from user_test</sql>
-<!--    <select id="findAll" resultType="start.pojo.User">-->
-<!--        <include refid="selectUser"/>-->
-<!--    </select>-->
+    <!--    <select id="findAll" resultType="start.pojo.User">-->
+    <!--        <include refid="selectUser"/>-->
+    <!--    </select>-->
 
+    <resultMap id="userMap" type="start.pojo.User">
+        <result column="id" property="id"></result>
+        <result column="username" property="username"></result>
+        <result column="password" property="password"></result>
+        <result column="birthday" property="birthday"></result>
+        <collection property="orderList" ofType="start.pojo.Order">
+            <result column="cid" property="uid"/>
+            <result column="timestamp" property="ordertime"/>
+            <result column="totalcount" property="total"/>
+        </collection>
+    </resultMap>
+    <select id="findAllWithOrders" resultMap="userMap">
+        select *, o.uid cid, o.ordertime timestamp, o.total totalcount
+        from user_test u
+                 left join
+             order_test o
+             on u.id = o.uid;
+    </select>
 </mapper>
