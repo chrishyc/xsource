@@ -219,7 +219,9 @@ public class Demo {
     }
 
     /**
-     * 二级缓存
+     * 二级缓存,
+     * sqlsession一级
+     * mapper一级
      * @throws IOException
      */
     @Test
