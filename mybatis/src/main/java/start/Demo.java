@@ -196,4 +196,61 @@ public class Demo {
             sqlSession.close();
         }
     }
+
+    @Test
+    public void testCache1() throws IOException {
+        String resource = "sqlMapConfig.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+        try {
+            IUserDao userDao = sqlSession.getMapper(IUserDao.class);
+            User user = new User();
+            user.setId(1);
+            List<User> list = userDao.findByCondition(user);
+            System.out.println(list);
+            List<User> list1 = userDao.findByCondition(user);
+            System.out.println(list1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    /**
+     * 二级缓存
+     * @throws IOException
+     */
+    @Test
+    public void testCache2() throws IOException {
+        String resource = "sqlMapConfig.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession1 = sqlSessionFactory.openSession(true);
+        SqlSession sqlSession2 = sqlSessionFactory.openSession(true);
+        SqlSession sqlSession3 = sqlSessionFactory.openSession(true);
+        try {
+            IUserDao userDao = sqlSession1.getMapper(IUserDao.class);
+            User user = new User();
+            user.setId(1);
+            List<User> list = userDao.findByCondition(user);
+            System.out.println(list);
+            sqlSession1.close();
+
+            IUserDao userDao3 = sqlSession3.getMapper(IUserDao.class);
+            user.setUsername("ccc");
+            userDao3.update(user);
+            System.out.println();
+
+            IUserDao userDao2 = sqlSession2.getMapper(IUserDao.class);
+            List<User> list1 = userDao2.findByCondition(user);
+            System.out.println(list1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession2.close();
+        }
+    }
+
 }
