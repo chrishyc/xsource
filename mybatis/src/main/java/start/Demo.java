@@ -6,7 +6,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
+import start.dao.IOrderDao;
 import start.dao.IUserDao;
+import start.pojo.Order;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -154,6 +156,23 @@ public class Demo {
             List<User> list = userDao.findByIdsAndName(map);
             System.out.println(list);
             sqlSession.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    @Test
+    public void test8() throws IOException {
+        String resource = "sqlMapConfig.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession(true);
+        try {
+            IOrderDao orderDao = sqlSession.getMapper(IOrderDao.class);
+            List<Order> list = orderDao.findAll();
+            System.out.println(list);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

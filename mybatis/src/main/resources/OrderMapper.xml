@@ -1,0 +1,17 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="start.dao.IOrderDao">
+    <resultMap id="orderMap" type="start.pojo.Order">
+        <result column="uid" property="user.id"/>
+        <result column="username" property="user.username"/>
+        <result column="password" property="user.password"/>
+        <result column="birthday" property="user.birthday"/>
+    </resultMap>
+    <select id="findAll" resultMap="orderMap">
+        select *
+        from order_test o,
+             user_test u
+        where o.uid = u.id</select>
+</mapper>

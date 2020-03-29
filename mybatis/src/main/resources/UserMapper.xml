@@ -70,8 +70,8 @@
 
     <sql id="selectUser"> select *
                           from user_test</sql>
-    <select id="findAll" resultType="start.pojo.User">
-        <include refid="selectUser"/>
-    </select>
+<!--    <select id="findAll" resultType="start.pojo.User">-->
+<!--        <include refid="selectUser"/>-->
+<!--    </select>-->
 
 </mapper>
