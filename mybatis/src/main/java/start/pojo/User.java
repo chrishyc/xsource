@@ -1,14 +1,12 @@
-package demo.pojo;
+package start.pojo;
 
 import lombok.Data;
 
-/**
- * @author chris
- */
 @Data
 public class User {
 
     private Integer id;
     private String username;
     private String password;
+
 }
