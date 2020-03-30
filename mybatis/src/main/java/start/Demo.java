@@ -223,7 +223,10 @@ public class Demo {
     /**
      * 二级缓存,
      * sqlsession一级
+     *
+     * 一级缓存的脏读
      * mapper一级
+     *
      * @throws IOException
      */
     @Test
@@ -233,32 +236,45 @@ public class Demo {
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         SqlSession sqlSession1 = sqlSessionFactory.openSession(true);
         SqlSession sqlSession2 = sqlSessionFactory.openSession(true);
-        SqlSession sqlSession3 = sqlSessionFactory.openSession(true);
+//        SqlSession sqlSession3 = sqlSessionFactory.openSession(true);
         try {
+            User test = new User();
+            test.setId(1);
+
             IUserDao userDao = sqlSession1.getMapper(IUserDao.class);
             User user = new User();
             user.setId(1);
-            List<User> list = userDao.findByCondition(user);
-            System.out.println(list);
-            sqlSession1.close();
+            List<User> list = userDao.findByCondition(test);
+            System.out.println("before update:" + list);
+//            sqlSession1.close();
 
-            IUserDao userDao3 = sqlSession3.getMapper(IUserDao.class);
-            user.setUsername("ccc");
-            userDao3.update(user);
-            System.out.println();
+//            IUserDao userDao3 = sqlSession3.getMapper(IUserDao.class);
+//            user.setUsername("ccc");
+//            userDao3.update(user);
+//            System.out.println();
 
             IUserDao userDao2 = sqlSession2.getMapper(IUserDao.class);
             List<User> list1 = userDao2.findByCondition(user);
-            System.out.println(list1);
+            user.setUsername("*****");
+            userDao2.update(user);
+
+
+            System.out.println("user1 after update:" + userDao.findByCondition(test));
+
+            System.out.println("user2 after update:" + userDao2.findByCondition(test));
+
+
+//            System.out.println("after update:" + list1);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            sqlSession2.close();
+//            sqlSession2.close();
         }
     }
 
     /**
      * mybatis-redis缓存
+     *
      * @throws IOException
      */
     @Test
@@ -320,7 +336,7 @@ public class Demo {
         SqlSession sqlSession1 = sqlSessionFactory.openSession(true);
         try {
 
-            PageHelper.startPage(1,1);
+            PageHelper.startPage(1, 1);
 
             IUserDao userDao = sqlSession1.getMapper(IUserDao.class);
 
@@ -330,10 +346,10 @@ public class Demo {
 
 
             PageInfo<User> pageInfo = new PageInfo<>(list);
-            System.out.println("总条数："+pageInfo.getTotal());
-            System.out.println("总页数："+pageInfo.getPages());
-            System.out.println("当前页："+pageInfo.getPageNum());
-            System.out.println("每页显示的条数："+pageInfo.getPageSize());
+            System.out.println("总条数：" + pageInfo.getTotal());
+            System.out.println("总页数：" + pageInfo.getPages());
+            System.out.println("当前页：" + pageInfo.getPageNum());
+            System.out.println("每页显示的条数：" + pageInfo.getPageSize());
 
         } catch (Exception e) {
             e.printStackTrace();
