@@ -1,5 +1,7 @@
 package start;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import demo.pojo.User;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -252,6 +254,91 @@ public class Demo {
             e.printStackTrace();
         } finally {
             sqlSession2.close();
+        }
+    }
+
+    /**
+     * mybatis-redis缓存
+     * @throws IOException
+     */
+    @Test
+    public void testCache3() throws IOException {
+        String resource = "sqlMapConfig.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession1 = sqlSessionFactory.openSession(true);
+        SqlSession sqlSession2 = sqlSessionFactory.openSession(true);
+        SqlSession sqlSession3 = sqlSessionFactory.openSession(true);
+        try {
+            IUserDao userDao = sqlSession1.getMapper(IUserDao.class);
+            User user = new User();
+            user.setId(1);
+            List<User> list = userDao.findByCondition(user);
+            System.out.println(list);
+            sqlSession1.close();
+
+            IUserDao userDao3 = sqlSession3.getMapper(IUserDao.class);
+            user.setUsername("ccc");
+            userDao3.update(user);
+            System.out.println();
+
+            IUserDao userDao2 = sqlSession2.getMapper(IUserDao.class);
+            List<User> list1 = userDao2.findByCondition(user);
+            System.out.println(list1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession2.close();
+        }
+    }
+
+    @Test
+    public void testInterceptor() throws IOException {
+        String resource = "sqlMapConfig.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession1 = sqlSessionFactory.openSession(true);
+        try {
+            IUserDao userDao = sqlSession1.getMapper(IUserDao.class);
+            User user = new User();
+            user.setId(1);
+            List<User> list = userDao.findByCondition(user);
+            System.out.println(list);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession1.close();
+        }
+    }
+
+    @Test
+    public void pageHelperTest() throws IOException {
+
+        String resource = "sqlMapConfig.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession1 = sqlSessionFactory.openSession(true);
+        try {
+
+            PageHelper.startPage(1,1);
+
+            IUserDao userDao = sqlSession1.getMapper(IUserDao.class);
+
+
+            List<User> list = userDao.findAll();
+            System.out.println(list);
+
+
+            PageInfo<User> pageInfo = new PageInfo<>(list);
+            System.out.println("总条数："+pageInfo.getTotal());
+            System.out.println("总页数："+pageInfo.getPages());
+            System.out.println("当前页："+pageInfo.getPageNum());
+            System.out.println("每页显示的条数："+pageInfo.getPageSize());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession1.close();
         }
     }
 
