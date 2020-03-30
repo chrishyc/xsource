@@ -221,9 +221,8 @@ public class Demo {
     }
 
     /**
-     * 二级缓存,
      * sqlsession一级
-     *
+     * <p>
      * 一级缓存的脏读
      * mapper一级
      *
@@ -273,12 +272,95 @@ public class Demo {
     }
 
     /**
-     * mybatis-redis缓存
+     * mybatis二级缓存
+     * commit
      *
      * @throws IOException
      */
     @Test
     public void testCache3() throws IOException {
+        String resource = "sqlMapConfig.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession1 = sqlSessionFactory.openSession(true);
+        SqlSession sqlSession2 = sqlSessionFactory.openSession(true);
+        try {
+            IUserDao userDao = sqlSession1.getMapper(IUserDao.class);
+            User user = new User();
+            user.setId(1);
+            List<User> list = userDao.findByCondition(user);
+            System.out.println(list);
+            // 二级缓存只有commit后才会生效
+            sqlSession1.commit();
+
+            IUserDao userDao2 = sqlSession2.getMapper(IUserDao.class);
+            List<User> list1 = userDao2.findByCondition(user);
+            System.out.println(list1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession1.close();
+            sqlSession2.close();
+        }
+    }
+
+    /**
+     * mybatis二级缓存
+     * update
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCache4() throws IOException {
+        String resource = "sqlMapConfig.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        // 这里autoCommit和二级缓存sqlsession二级缓存commit是两码事
+        SqlSession sqlSession1 = sqlSessionFactory.openSession(true);
+        SqlSession sqlSession2 = sqlSessionFactory.openSession(true);
+        SqlSession sqlSession3 = sqlSessionFactory.openSession(true);
+        try {
+            IUserDao userDao = sqlSession1.getMapper(IUserDao.class);
+            User user = new User();
+            user.setId(1);
+            List<User> list = userDao.findByCondition(user);
+            System.out.println(list);
+            // 二级缓存只有commit后才会生效
+            sqlSession1.commit();
+
+            IUserDao userDao2 = sqlSession2.getMapper(IUserDao.class);
+            List<User> list1 = userDao2.findByCondition(user);
+            System.out.println("after commit:" + list1);
+
+            IUserDao userDao3 = sqlSession3.getMapper(IUserDao.class);
+            User test = new User();
+            test.setId(1);
+            test.setPassword("$%^$^U&U((*^%$");
+            // 会设置二级缓存无效
+            userDao3.update(test);
+
+            // 清除对应的二级缓存
+            sqlSession3.commit();
+
+
+            List<User> list3 = userDao2.findByCondition(user);
+            System.out.println("after update:" + list3);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqlSession1.close();
+            sqlSession2.close();
+        }
+    }
+
+    /**
+     * mybatis-redis缓存
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCache5() throws IOException {
         String resource = "sqlMapConfig.xml";
         InputStream inputStream = Resources.getResourceAsStream(resource);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
