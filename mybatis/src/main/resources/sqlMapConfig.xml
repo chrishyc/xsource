@@ -5,7 +5,8 @@
 <configuration>
     <properties resource="jdbc.properties"/>
     <settings>
-        <setting name="cacheEnabled" value="true"/>
+        <setting name="cacheEnabled" value="false"/>
+        <setting name="localCacheScope" value="STATEMENT"/>
     </settings>
     <plugins>
         <!--        <plugin interceptor="start.intercept.MyPlugin"/>-->
