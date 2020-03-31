@@ -21,6 +21,9 @@ public interface IUserDao {
     //多值查询：演示foreach
     public List<User> findByIds(int[] ids);
 
+    public User select(int id);
+
+
     public List<User> findByIdsAndName(Map<String, Object> param);
 
     public long insert(User user);
