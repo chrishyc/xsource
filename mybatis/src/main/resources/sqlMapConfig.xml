@@ -7,6 +7,9 @@
     <settings>
         <setting name="cacheEnabled" value="true"/>
         <setting name="localCacheScope" value="STATEMENT"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+        <setting name="lazyLoadTriggerMethods" value=""/>
     </settings>
     <plugins>
         <!--        <plugin interceptor="start.intercept.MyPlugin"/>-->
@@ -30,6 +33,7 @@
             </dataSource>
         </environment>
     </environments>
+    <databaseIdProvider type="VENDOR"/>
     <mappers>
         <mapper resource="UserMapper.xml"/>
         <mapper resource="OrderMapper.xml"/>

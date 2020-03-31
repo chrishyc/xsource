@@ -1,12 +1,13 @@
 package start.pojo;
 
-import demo.pojo.User;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
+@Data
 public class Order implements Serializable {
-    private long uid;
+    private int uid;
     private Date ordertime;
     private double total;
     private User user;

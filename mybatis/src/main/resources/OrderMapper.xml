@@ -5,14 +5,20 @@
 <mapper namespace="start.dao.IOrderDao">
     <cache/>
     <resultMap id="orderMap" type="start.pojo.Order">
-        <result column="uid" property="user.id"/>
-        <result column="username" property="user.username"/>
-        <result column="password" property="user.password"/>
-        <result column="birthday" property="user.birthday"/>
+        <result column="uid" property="uid"/>
+        <result column="ordertime" property="ordertime"/>
+        <result column="total" property="total"/>
+
+        <association property="user" javaType="demo.pojo.User" column="uid" select="start.dao.IUserDao.select">
+            <result column="id" property="id"/>
+            <result column="username" property="username"/>
+            <result column="password" property="password"/>
+            <result column="birthday" property="birthday"/>
+        </association>
     </resultMap>
+
     <select id="findAll" resultMap="orderMap">
         select *
-        from order_test o,
-             user_test u
-        where o.uid = u.id</select>
+        from order_test
+        </select>
 </mapper>

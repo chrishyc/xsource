@@ -112,7 +112,7 @@ public class Demo {
             IUserDao userDao = sqlSession.getMapper(IUserDao.class);
             User user = new User();
             user.setId(1);
-            user.setUsername("User1");
+//            user.setUsername("User1");
 //            user.setPassword("222222");
             List<User> list = userDao.findByCondition(user);
             System.out.println(list);
@@ -165,6 +165,12 @@ public class Demo {
         }
     }
 
+    /**
+     * 关联查询
+     * 懒加载
+     *
+     * @throws IOException
+     */
     @Test
     public void test8() throws IOException {
         String resource = "sqlMapConfig.xml";
@@ -174,6 +180,8 @@ public class Demo {
         try {
             IOrderDao orderDao = sqlSession.getMapper(IOrderDao.class);
             List<Order> list = orderDao.findAll();
+            list.forEach(use -> System.out.println("use:" + use.getUser()));
+            // 这里会触发延时加载 lazyLoadTriggerMethods.默认触发方法：equals,clone,hashCode,toString
             System.out.println(list);
         } catch (Exception e) {
             e.printStackTrace();
