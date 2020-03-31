@@ -180,9 +180,10 @@ public class Demo {
         try {
             IOrderDao orderDao = sqlSession.getMapper(IOrderDao.class);
             List<Order> list = orderDao.findAll();
-            list.forEach(use -> System.out.println("use:" + use.getUser()));
+            list.get(0).getUser();
+//            list.forEach(use -> System.out.println("use:" + use.getUser()));
             // 这里会触发延时加载 lazyLoadTriggerMethods.默认触发方法：equals,clone,hashCode,toString
-            System.out.println(list);
+//            System.out.println(list);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
