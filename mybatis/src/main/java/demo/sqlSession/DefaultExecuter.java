@@ -85,6 +85,44 @@ public class DefaultExecuter implements Executor {
 
     }
 
+    @Override
+    public int update(Configuration configuration, MappedStatement mappedStatement, Object... params) throws Exception {
+        Connection connection = configuration.getDataSource().getConnection();
+
+        // 2. 获取sql语句 : select * from user where id = #{id} and username = #{username}
+        //转换sql语句： select * from user where id = ? and username = ? ，转换的过程中，还需要对#{}里面的值进行解析存储
+        String sql = mappedStatement.getSql();
+        BoundSql boundSql = getBoundSql(sql);
+
+        // 3.获取预处理对象：preparedStatement
+        PreparedStatement preparedStatement = connection.prepareStatement(boundSql.getSqlText());
+
+        // 4. 设置参数
+        //获取到了参数的全路径
+        String paramterType = mappedStatement.getParamterType();
+        Class<?> paramtertypeClass = getClassType(paramterType);
+
+        List<ParameterMapping> parameterMappingList = boundSql.getParameterMappingList();
+        for (int i = 0; i < parameterMappingList.size(); i++) {
+            ParameterMapping parameterMapping = parameterMappingList.get(i);
+            String content = parameterMapping.getContent();
+
+            //反射
+            Field declaredField = paramtertypeClass.getDeclaredField(content);
+            //暴力访问
+            declaredField.setAccessible(true);
+            Object o = declaredField.get(params[0]);
+
+            preparedStatement.setObject(i + 1, o);
+
+        }
+
+
+        // 5. 执行sql
+        int ret = preparedStatement.executeUpdate();
+        return ret;
+    }
+
     private Class<?> getClassType(String paramterType) throws ClassNotFoundException {
         if (paramterType != null) {
             Class<?> aClass = Class.forName(paramterType);

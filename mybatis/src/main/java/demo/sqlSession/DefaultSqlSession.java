@@ -25,6 +25,37 @@ public class DefaultSqlSession implements SqlSession {
     }
 
     @Override
+    public int insert(String statementid, Object... params) throws Exception {
+
+        //将要去完成对simpleExecutor里的query方法的调用
+        DefaultExecuter simpleExecutor = new DefaultExecuter();
+        MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementid);
+        int ret = simpleExecutor.update(configuration, mappedStatement, params);
+
+        return ret;
+    }
+
+    @Override
+    public int update(String statementid, Object... params) throws Exception {
+        //将要去完成对simpleExecutor里的query方法的调用
+        DefaultExecuter simpleExecutor = new DefaultExecuter();
+        MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementid);
+        int ret = simpleExecutor.update(configuration, mappedStatement, params);
+
+        return ret;
+    }
+
+    @Override
+    public int delete(String statementid, Object... params) throws Exception {
+        //将要去完成对simpleExecutor里的query方法的调用
+        DefaultExecuter simpleExecutor = new DefaultExecuter();
+        MappedStatement mappedStatement = configuration.getMappedStatementMap().get(statementid);
+        int ret = simpleExecutor.update(configuration, mappedStatement, params);
+
+        return ret;
+    }
+
+    @Override
     public <T> T selectOne(String statementid, Object... params) throws Exception {
         List<Object> objects = selectList(statementid, params);
         if (objects.size() == 1) {
@@ -58,7 +89,15 @@ public class DefaultSqlSession implements SqlSession {
                     List<Object> objects = selectList(statementId, args);
                     return objects;
                 }
-
+                if ("add".equals(methodName)) {
+                    return insert(statementId, args);
+                }
+                if ("update".equals(methodName)) {
+                    return update(statementId, args);
+                }
+                if ("delete".equals(methodName)) {
+                    return delete(statementId, args);
+                }
                 return selectOne(statementId, args);
 
             }

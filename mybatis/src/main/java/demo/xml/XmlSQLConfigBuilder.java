@@ -24,7 +24,9 @@ public class XmlSQLConfigBuilder {
     public Configuration build(InputStream inputStream) throws DocumentException, PropertyVetoException {
         Document document = new SAXReader().read(inputStream);
         Element rootElement = document.getRootElement();
-        List<Element> list = rootElement.elements("property");
+        Element dataSource = rootElement.element("dataSource");
+        List<Element> list = dataSource.elements("property");
+
         Properties properties = new Properties();
         for (Element element : list) {
             String name = element.attributeValue("name");
