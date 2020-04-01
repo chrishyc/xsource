@@ -8,6 +8,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class XmlMapperConfigBuidler {
@@ -22,7 +23,16 @@ public class XmlMapperConfigBuidler {
         Document document = new SAXReader().read(inputStream);
         Element root = document.getRootElement();
         String namespace = root.attributeValue("namespace");
-        List<Element> list = root.elements("select");
+        List<Element> list = new ArrayList<>();
+        List<Element> selects = root.elements("select");
+        List<Element> inserts = root.elements("insert");
+        List<Element> updates = root.elements("update");
+        List<Element> deletes = root.elements("delete");
+
+        list.addAll(selects);
+        list.addAll(inserts);
+        list.addAll(updates);
+        list.addAll(deletes);
         for (Element element : list) {
             String id = element.attributeValue("id");
             String resultType = element.attributeValue("resultType");

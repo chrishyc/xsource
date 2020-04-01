@@ -1,90 +1,92 @@
 package demo;
 
 import demo.dao.IUserDao;
+import demo.pojo.User;
+import demo.sqlSession.SqlSession;
+import demo.sqlSession.SqlSessionFactory;
 import demo.sqlSession.SqlSessionFactoryBuilder;
+import org.dom4j.DocumentException;
+import org.junit.Test;
 
-import java.sql.*;
-import java.util.Properties;
+import java.beans.PropertyVetoException;
+import java.util.Date;
+import java.util.List;
 
 public class Sample {
-    public static void main(String[] args) throws SQLException {
-//        SQLDao proxy = (SQLDao) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-//                new Class[]{SQLDao.class}, new MyInvokeHandler());
-//        System.out.println(proxy.getCount());
-//        testStatement();
+    @Test
+    public void testQuery() throws Exception {
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
 
-//        queryProperty();
-        try {
-            test();
-        } catch (Exception e) {
-            e.printStackTrace();
+        //调用
+        User user = new User();
+        user.setId(1);
+        user.setUsername("张三");
+
+
+        IUserDao userDao = sqlSession.getMapper(IUserDao.class);
+
+        List<User> all = userDao.findAll();
+        for (User user1 : all) {
+            System.out.println(user1);
         }
     }
 
-    public static void test() throws Exception {
-        IUserDao userDao = new SqlSessionFactoryBuilder()
-                .build()
-                .openSession()
-                .getMapper(IUserDao.class);
-        userDao.findAll();
-        userDao.findByCondition(new demo.pojo.User());
+    @Test
+    public void testInsert() throws PropertyVetoException, DocumentException {
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        //调用
+        User user = new User();
+        user.setId(3);
+        user.setUsername("张三");
+        user.setPassword("333");
+        user.setBirthday(new Date());
+
+
+        IUserDao userDao = sqlSession.getMapper(IUserDao.class);
+
+        int ret = userDao.add(user);
+        System.out.println(ret);
     }
 
-    public static void queryProperty() {
-        Properties properties = System.getProperties();
-        String jdbc = properties.getProperty("jdbc.properties");
-        System.out.println(jdbc);
+    @Test
+    public void testUpdate() throws PropertyVetoException, DocumentException {
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        //调用
+        User user = new User();
+        user.setId(3);
+        user.setUsername("张四");
+        user.setPassword("333");
+        user.setBirthday(new Date());
+
+
+        IUserDao userDao = sqlSession.getMapper(IUserDao.class);
+
+        int ret = userDao.update(user);
+        System.out.println(ret);
     }
 
-    /**
-     * 通过查看jdbc.properties自动加载驱动
-     */
-    public static void testStatement() throws SQLException {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        try {
-            connection =
-                    DriverManager.getConnection("jdbc:mysql://localhost:3306/mysql?characterEncoding=utf-8", "root", "00000000");
-            String sql = "select * from chris";
-            preparedStatement = connection.prepareStatement(sql);
-            resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                int id = resultSet.getInt("age");
-                String username = resultSet.getString("name");
-                User user = new User();
-                user.setId(id);
-                user.setUsername(username);
-                System.out.println(user);
-            }
-        } catch (
-                Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (resultSet != null) {
-                try {
+    @Test
+    public void testDelete() throws PropertyVetoException, DocumentException {
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build();
+        SqlSession sqlSession = sqlSessionFactory.openSession();
 
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (preparedStatement != null) {
-                try {
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        //调用
+        User user = new User();
+        user.setId(3);
+        user.setUsername("张四");
+        user.setPassword("333");
+        user.setBirthday(new Date());
 
+
+        IUserDao userDao = sqlSession.getMapper(IUserDao.class);
+
+        int ret = userDao.delete(user);
+        System.out.println(ret);
     }
 
 }
