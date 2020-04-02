@@ -22,6 +22,7 @@ public class Demo {
     @Test
     public void test1() throws IOException {
         String resource = "sqlMapConfig.xml";
+        System.getProperties().put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");
         InputStream inputStream = Resources.getResourceAsStream(resource);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         SqlSession sqlSession = sqlSessionFactory.openSession();
