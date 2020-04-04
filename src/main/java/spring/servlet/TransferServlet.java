@@ -2,6 +2,7 @@ package spring.servlet;
 
 
 import spring.factory.BeanFactory;
+import spring.factory.ProxyFactory;
 import spring.pojo.Result;
 import spring.service.TransferService;
 import spring.utils.JsonUtils;
@@ -27,13 +28,17 @@ public class TransferServlet extends HttpServlet {
     /**
      * 控制反转方案
      */
-    private TransferService transferService = (TransferService) BeanFactory.getBean("transferService");
+//    private TransferService transferService = (TransferService) BeanFactory.getBean("transferService");
 
-    // 从工厂获取委托对象（委托对象是增强了事务控制的功能）
 
-    // 首先从BeanFactory获取到proxyFactory代理工厂的实例化对象
-//    private ProxyFactory proxyFactory = (ProxyFactory) BeanFactory.getBean("proxyFactory");
-//    private TransferService transferService = (TransferService) proxyFactory.getJdkProxy(BeanFactory.getBean("transferService")) ;
+
+    /**
+     * 从工厂获取委托对象（委托对象是增强了事务控制的功能）
+     * 首先从BeanFactory获取到proxyFactory代理工厂的实例化对象
+     */
+    //
+    private ProxyFactory proxyFactory = (ProxyFactory) BeanFactory.getBean("proxyFactory");
+    private TransferService transferService = (TransferService) proxyFactory.getJdkProxy(BeanFactory.getBean("transferService")) ;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
