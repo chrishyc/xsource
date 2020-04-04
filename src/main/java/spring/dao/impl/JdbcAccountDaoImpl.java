@@ -4,6 +4,7 @@ package spring.dao.impl;
 import spring.dao.AccountDao;
 import spring.pojo.Account;
 import spring.utils.ConnectionUtils;
+import spring.utils.DruidUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +15,7 @@ import java.sql.ResultSet;
  */
 public class JdbcAccountDaoImpl implements AccountDao {
 
-    private ConnectionUtils connectionUtils;
+    private ConnectionUtils connectionUtils = new ConnectionUtils();
 
     public void setConnectionUtils(ConnectionUtils connectionUtils) {
         this.connectionUtils = connectionUtils;

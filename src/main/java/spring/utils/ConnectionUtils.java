@@ -6,7 +6,7 @@ import java.sql.SQLException;
 /**
  * @author 应癫
  */
-public class ConnectionUtils {
+public class /**/ConnectionUtils {
 
     /*private ConnectionUtils() {
 
