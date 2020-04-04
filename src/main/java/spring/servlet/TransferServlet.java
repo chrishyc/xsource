@@ -25,7 +25,7 @@ public class TransferServlet extends HttpServlet {
 //    private TransferService transferService = new TransferServiceImpl();
 
     /**
-     * 控制反转
+     * 控制反转方案
      */
     private TransferService transferService = (TransferService) BeanFactory.getBean("transferService");
 

@@ -4,7 +4,6 @@ package spring.dao.impl;
 import spring.dao.AccountDao;
 import spring.pojo.Account;
 import spring.utils.ConnectionUtils;
-import spring.utils.DruidUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,7 +14,18 @@ import java.sql.ResultSet;
  */
 public class JdbcAccountDaoImpl implements AccountDao {
 
-    private ConnectionUtils connectionUtils = new ConnectionUtils();
+    /**
+     * 原始方案
+     */
+//    private ConnectionUtils connectionUtils = new ConnectionUtils();
+
+    private ConnectionUtils connectionUtils;
+
+    /**
+     * 控制反转，自动注入方法
+     *
+     * @param connectionUtils
+     */
 
     public void setConnectionUtils(ConnectionUtils connectionUtils) {
         this.connectionUtils = connectionUtils;
@@ -37,11 +47,11 @@ public class JdbcAccountDaoImpl implements AccountDao {
         Connection con = connectionUtils.getCurrentThreadConn();
         String sql = "select * from account_test where cardNo=?";
         PreparedStatement preparedStatement = con.prepareStatement(sql);
-        preparedStatement.setString(1,cardNo);
+        preparedStatement.setString(1, cardNo);
         ResultSet resultSet = preparedStatement.executeQuery();
 
         Account account = new Account();
-        while(resultSet.next()) {
+        while (resultSet.next()) {
             account.setCardNo(resultSet.getString("cardNo"));
             account.setName(resultSet.getString("name"));
             account.setMoney(resultSet.getInt("money"));
@@ -63,8 +73,8 @@ public class JdbcAccountDaoImpl implements AccountDao {
         Connection con = connectionUtils.getCurrentThreadConn();
         String sql = "update account_test set money=? where cardNo=?";
         PreparedStatement preparedStatement = con.prepareStatement(sql);
-        preparedStatement.setInt(1,account.getMoney());
-        preparedStatement.setString(2,account.getCardNo());
+        preparedStatement.setInt(1, account.getMoney());
+        preparedStatement.setString(2, account.getCardNo());
         int i = preparedStatement.executeUpdate();
 
         preparedStatement.close();
