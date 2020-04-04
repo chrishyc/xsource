@@ -15,7 +15,7 @@ import java.util.Map;
 
 /**
  * @author 应癫
- *
+ * <p>
  * 工厂类，生产对象（使用反射技术）
  */
 public class BeanFactory {
@@ -25,7 +25,7 @@ public class BeanFactory {
      * 任务二：对外提供获取实例对象的接口（根据id获取）
      */
 
-    private static Map<String,Object> map = new HashMap<>();  // 存储对象
+    private static Map<String, Object> map = new HashMap<>();  // 存储对象
 
 
     static {
@@ -48,7 +48,7 @@ public class BeanFactory {
                 Object o = aClass.newInstance();  // 实例化之后的对象
 
                 // 存储到map中待用
-                map.put(id,o);
+                map.put(id, o);
 
             }
 
@@ -71,13 +71,13 @@ public class BeanFactory {
                 Method[] methods = parentObject.getClass().getMethods();
                 for (int j = 0; j < methods.length; j++) {
                     Method method = methods[j];
-                    if(method.getName().equalsIgnoreCase("set" + name)) {  // 该方法就是 setAccountDao(AccountDao accountDao)
-                        method.invoke(parentObject,map.get(ref));
+                    if (method.getName().equalsIgnoreCase("set" + name)) {  // 该方法就是 setAccountDao(AccountDao accountDao)
+                        method.invoke(parentObject, map.get(ref));
                     }
                 }
 
                 // 把处理之后的parentObject重新放到map中
-                map.put(parentId,parentObject);
+                map.put(parentId, parentObject);
 
             }
 
@@ -98,7 +98,7 @@ public class BeanFactory {
 
 
     // 任务二：对外提供获取实例对象的接口（根据id获取）
-    public static  Object getBean(String id) {
+    public static Object getBean(String id) {
         return map.get(id);
     }
 

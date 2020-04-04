@@ -1,9 +1,9 @@
 package spring.servlet;
 
 
+import spring.factory.BeanFactory;
 import spring.pojo.Result;
 import spring.service.TransferService;
-import spring.service.impl.TransferServiceImpl;
 import spring.utils.JsonUtils;
 
 import javax.servlet.ServletException;
@@ -19,9 +19,15 @@ import java.io.IOException;
 @WebServlet(name="transferServlet",urlPatterns = "/transferServlet",loadOnStartup = 1)
 public class TransferServlet extends HttpServlet {
 
-    // 1. 实例化service层对象
-    private TransferService transferService = new TransferServiceImpl();
-    //private TransferService transferService = (TransferService) BeanFactory.getBean("transferService");
+    /**
+     * 原始方案：实例化service层对象，耦合度较高
+     */
+//    private TransferService transferService = new TransferServiceImpl();
+
+    /**
+     * 控制反转
+     */
+    private TransferService transferService = (TransferService) BeanFactory.getBean("transferService");
 
     // 从工厂获取委托对象（委托对象是增强了事务控制的功能）
 

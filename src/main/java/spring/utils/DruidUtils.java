@@ -14,10 +14,11 @@ public class DruidUtils {
 
 
     static {
-        druidDataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        druidDataSource.setUrl("jdbc:mysql://localhost:3306/mysql");
+        druidDataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        druidDataSource.setUrl("jdbc:mysql:///mysql");
         druidDataSource.setUsername("root");
-        druidDataSource.setPassword("000000");
+        druidDataSource.setPassword("00000000");
+        druidDataSource.setMaxWait(5000);
 
     }
 
