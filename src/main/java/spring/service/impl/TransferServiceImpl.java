@@ -2,6 +2,7 @@ package spring.service.impl;
 
 import spring.dao.AccountDao;
 import spring.dao.impl.JdbcAccountDaoImpl;
+import spring.factory.BeanFactory;
 import spring.pojo.Account;
 import spring.service.TransferService;
 
@@ -10,15 +11,25 @@ import spring.service.TransferService;
  */
 public class TransferServiceImpl implements TransferService {
 
-    private AccountDao accountDao = new JdbcAccountDaoImpl();
+    /**
+     * 原始方案
+     */
+//    private AccountDao accountDao = new JdbcAccountDaoImpl();
 
-    // private AccountDao accountDao = (AccountDao) BeanFactory.getBean("accountDao");
+    /**
+     * 控制反转方案
+     * @param accountDao
+     */
+//     private AccountDao accountDao = (AccountDao) BeanFactory.getBean("accountDao");
 
-    // 最佳状态
-//    private AccountDao accountDao;
+    /**
+     * 控制反转，且自动注入，
+     */
+    private AccountDao accountDao;
 
-    // 构造函数传值/set方法传值
-
+    /**
+     * 有set**方法，默认会自动注入
+      */
     public void setAccountDao(AccountDao accountDao) {
         this.accountDao = accountDao;
     }
