@@ -1,5 +1,7 @@
 package demo.spring.factory;
 
+import demo.spring.service.TransferService;
+import demo.spring.service.impl.TransferServiceImpl;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -100,6 +102,14 @@ public class BeanFactory {
     // 任务二：对外提供获取实例对象的接口（根据id获取）
     public static Object getBean(String id) {
         return map.get(id);
+    }
+
+    public static TransferService createTransferService$static() {
+        return new TransferServiceImpl();
+    }
+
+    public TransferService createTransferService$1() {
+        return new TransferServiceImpl();
     }
 
 }

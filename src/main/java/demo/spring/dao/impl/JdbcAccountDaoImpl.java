@@ -8,6 +8,7 @@ import demo.spring.utils.ConnectionUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
 
 /**
  * @author 应癫
@@ -20,6 +21,24 @@ public class JdbcAccountDaoImpl implements AccountDao {
 //    private ConnectionUtils connectionUtils = new ConnectionUtils();
 
     private ConnectionUtils connectionUtils;
+
+    private List<Integer> list;
+
+    public JdbcAccountDaoImpl() {
+
+    }
+
+    public JdbcAccountDaoImpl(ConnectionUtils connectionUtils) {
+        this.connectionUtils = connectionUtils;
+    }
+
+    public JdbcAccountDaoImpl(List<Integer> list) {
+        this.list = list;
+    }
+
+    public void setList(List<Integer> list) {
+        this.list = list;
+    }
 
     /**
      * 控制反转，自动注入方法
