@@ -4,24 +4,27 @@
 
 <web-app>
     <display-name>Archetype Created Web Application</display-name>
-    <!--    <context-param>-->
-    <!--        <param-name>contextConfigLocation</param-name>-->
-    <!--        <param-value>classpath:applicationContext.xml</param-value>-->
-    <!--    </context-param>-->
+        <context-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:applicationContext.xml</param-value>
+        </context-param>
 
 
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>ioc.AppConfig</param-value>
-    </context-param>
+<!--    <context-param>-->
+<!--        <param-name>contextConfigLocation</param-name>-->
+<!--        <param-value>ioc.AppConfig</param-value>-->
+<!--    </context-param>-->
 
     <!--
     Config param for the root WebApplicationContext implementation class to use: {@value}.
     @see #determineContextClass(ServletContext)-->
-    <context-param>
-        <param-name>contextClass</param-name>
-        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
-    </context-param>
+<!--    <context-param>-->
+<!--        <param-name>contextClass</param-name>-->
+<!--        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>-->
+<!--    </context-param>-->
+
+
+
 
     <!--Bootstrap listener to start up and shut down Spring's root {@link WebApplicationContext}.
         Simply delegates to {@link ContextLoader} as well as to {@link ContextCleanupListener}.-->

@@ -1,12 +1,19 @@
 package demo.spring.service.impl;
 
 import demo.spring.dao.AccountDao;
+import demo.spring.dao.impl.JdbcAccountDaoImpl;
 import demo.spring.pojo.Account;
 import demo.spring.service.TransferService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * @author 应癫
  */
+@Service("transferService")
 public class TransferServiceImpl implements TransferService {
 
     /**
@@ -23,15 +30,17 @@ public class TransferServiceImpl implements TransferService {
     /**
      * 控制反转，且自动注入，
      */
+    @Autowired
+    @Qualifier(value = "accountDao")
+    @Resource(type = JdbcAccountDaoImpl.class)
     private AccountDao accountDao;
 
     /**
      * 有set**方法，默认会自动注入
-      */
+     */
     public void setAccountDao(AccountDao accountDao) {
         this.accountDao = accountDao;
     }
-
 
 
     @Override
@@ -41,15 +50,15 @@ public class TransferServiceImpl implements TransferService {
             // 开启事务(关闭事务的自动提交)
             TransactionManager.getInstance().beginTransaction();*/
 
-            Account from = accountDao.queryAccountByCardNo(fromCardNo);
-            Account to = accountDao.queryAccountByCardNo(toCardNo);
+        Account from = accountDao.queryAccountByCardNo(fromCardNo);
+        Account to = accountDao.queryAccountByCardNo(toCardNo);
 
-            from.setMoney(from.getMoney()-money);
-            to.setMoney(to.getMoney()+money);
+        from.setMoney(from.getMoney() - money);
+        to.setMoney(to.getMoney() + money);
 
-            accountDao.updateAccountByCardNo(to);
+        accountDao.updateAccountByCardNo(to);
 //            int c = 1/0;
-            accountDao.updateAccountByCardNo(from);
+        accountDao.updateAccountByCardNo(from);
 
         /*    // 提交事务
 
@@ -63,8 +72,6 @@ public class TransferServiceImpl implements TransferService {
             throw e;
 
         }*/
-
-
 
 
     }
