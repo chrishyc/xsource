@@ -1,4 +1,4 @@
-package spring.pojo;
+package demo.spring.pojo;
 
 /**
  * @author 应癫

@@ -1,9 +1,9 @@
-package spring.dao.impl;
+package demo.spring.dao.impl;
 
 
-import spring.dao.AccountDao;
-import spring.pojo.Account;
-import spring.utils.ConnectionUtils;
+import demo.spring.dao.AccountDao;
+import demo.spring.pojo.Account;
+import demo.spring.utils.ConnectionUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

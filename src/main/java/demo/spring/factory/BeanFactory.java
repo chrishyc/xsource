@@ -1,4 +1,4 @@
-package spring.factory;
+package demo.spring.factory;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;

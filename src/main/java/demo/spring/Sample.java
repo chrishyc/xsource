@@ -1,10 +1,10 @@
-package spring;
+package demo.spring;
 
 import org.junit.Test;
-import spring.dao.impl.JdbcAccountDaoImpl;
-import spring.factory.BeanFactory;
-import spring.utils.ConnectionUtils;
-import spring.utils.DruidUtils;
+import demo.spring.dao.impl.JdbcAccountDaoImpl;
+import demo.spring.factory.BeanFactory;
+import demo.spring.utils.ConnectionUtils;
+import demo.spring.utils.DruidUtils;
 
 public class Sample {
     @Test

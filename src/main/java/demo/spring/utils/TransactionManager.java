@@ -1,10 +1,10 @@
-package spring.utils;
+package demo.spring.utils;
 
 import java.sql.SQLException;
 
 /**
  * @author 应癫
- *
+ * <p>
  * 事务管理器类：负责手动事务的开启、提交、回滚
  */
 public class TransactionManager {
@@ -19,12 +19,19 @@ public class TransactionManager {
 
     }
 
+
     private static TransactionManager transactionManager = new TransactionManager();
 
     public static TransactionManager getInstance() {
         return  transactionManager;
     }*/
+    public TransactionManager() {
 
+    }
+
+    public TransactionManager(ConnectionUtils connectionUtils) {
+
+    }
 
 
     // 开启手动事务控制

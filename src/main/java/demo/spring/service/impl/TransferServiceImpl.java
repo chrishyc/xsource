@@ -1,10 +1,8 @@
-package spring.service.impl;
+package demo.spring.service.impl;
 
-import spring.dao.AccountDao;
-import spring.dao.impl.JdbcAccountDaoImpl;
-import spring.factory.BeanFactory;
-import spring.pojo.Account;
-import spring.service.TransferService;
+import demo.spring.dao.AccountDao;
+import demo.spring.pojo.Account;
+import demo.spring.service.TransferService;
 
 /**
  * @author 应癫
