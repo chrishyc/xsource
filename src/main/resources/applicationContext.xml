@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans default-lazy-init="true" xmlns="http://www.springframework.org/schema/beans"
+<beans default-lazy-init="false" xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
     <!--开启注解扫描，base-package指定扫描的包路径-->
-    <context:component-scan base-package="demo.spring"/>
+    <context:component-scan base-package="processor"/>
 
     <!--开启自定义属性导入-->
     <context:property-placeholder location="classpath:jdbc.properties"/>
@@ -57,4 +57,7 @@
     <bean id="companyBean" class="factorybean.CompanyFactoryBean">
         <property name="companyInfo" value="克里斯,多态,100"/>
     </bean>
+
+    <bean id="myBeanPostProcessor" class="processor.DefaultBeanPostProcessor"/>
+
 </beans>
