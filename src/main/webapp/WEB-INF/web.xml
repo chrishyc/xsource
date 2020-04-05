@@ -1,7 +1,33 @@
 <!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>Archetype Created Web Application</display-name>
+    <display-name>Archetype Created Web Application</display-name>
+    <!--    <context-param>-->
+    <!--        <param-name>contextConfigLocation</param-name>-->
+    <!--        <param-value>classpath:applicationContext.xml</param-value>-->
+    <!--    </context-param>-->
+
+
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>ioc.AppConfig</param-value>
+    </context-param>
+
+    <!--
+    Config param for the root WebApplicationContext implementation class to use: {@value}.
+    @see #determineContextClass(ServletContext)-->
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
+    </context-param>
+
+    <!--Bootstrap listener to start up and shut down Spring's root {@link WebApplicationContext}.
+        Simply delegates to {@link ContextLoader} as well as to {@link ContextCleanupListener}.-->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+
 </web-app>

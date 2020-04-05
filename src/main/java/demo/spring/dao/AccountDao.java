@@ -1,6 +1,6 @@
-package spring.dao;
+package demo.spring.dao;
 
-import spring.pojo.Account;
+import demo.spring.pojo.Account;
 
 /**
  * @author 应癫

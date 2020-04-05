@@ -1,4 +1,4 @@
-package spring.utils;
+package demo.spring.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;

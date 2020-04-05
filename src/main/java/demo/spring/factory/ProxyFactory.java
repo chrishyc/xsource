@@ -1,9 +1,9 @@
-package spring.factory;
+package demo.spring.factory;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import spring.utils.TransactionManager;
+import demo.spring.utils.TransactionManager;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

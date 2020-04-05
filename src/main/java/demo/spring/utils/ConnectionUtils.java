@@ -1,4 +1,4 @@
-package spring.utils;
+package demo.spring.utils;
 
 import java.sql.Connection;
 import java.sql.SQLException;

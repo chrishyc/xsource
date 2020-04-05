@@ -6,6 +6,9 @@
         <fileset id="fileset" name="Spring_quartz" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/spring_quartz.xml</file>
         </fileset>
+        <fileset id="fileset2" name="ApplicationContext" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/applicationContext.xml</file>
+        </fileset>
       </configuration>
     </facet>
   </component>
