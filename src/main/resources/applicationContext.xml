@@ -2,8 +2,36 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-    <bean id="connectionUtils" class="demo.spring.utils.ConnectionUtils"/>
-    <bean id="transactionManager" class="demo.spring.utils.TransactionManager">
+    <!--默认情况下，它会通过反射调用无参构造函数来创建对象。如果类中没有无参构造函数，将创建失败-->
+    <bean id="connectionUtils" class="demo.spring.utils.ConnectionUtils" scope="prototype"/>
+    <bean id="transactionManager" class="demo.spring.utils.TransactionManager" scope="singleton">
         <property name="ConnectionUtils" ref="connectionUtils"/>
     </bean>
+
+    <!--使用静态方法创建对象的配置方式-->
+    <bean id="userService" class="demo.spring.factory.BeanFactory" factory-method="createTransferService$static"/>
+
+
+    <!--使用实例方法创建对象的配置方式-->
+    <bean id="beanFactory" class="demo.spring.factory.BeanFactory"/>
+    <bean id="transferService" factory-bean="beanFactory" factory-method="createTransferService$1"/>
+
+    <!--使用构造函数注入-->
+    <bean id="accountDao" class="demo.spring.dao.impl.JdbcAccountDaoImpl" init-method="init" destroy-method="destory">
+        <constructor-arg name="connectionUtils" ref="connectionUtils"/>
+    </bean>
+
+    <!--使用set函数注入-->
+    <bean id="accountDao$set" class="demo.spring.dao.impl.JdbcAccountDaoImpl" init-method="init"
+          destroy-method="destory">
+        <property name="connectionUtils" ref="connectionUtils"/>
+        <property name="list">
+            <array>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
+            </array>
+        </property>
+    </bean>
+
 </beans>
