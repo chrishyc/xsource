@@ -4,6 +4,7 @@ package demo.spring.dao.impl;
 import demo.spring.dao.AccountDao;
 import demo.spring.pojo.Account;
 import demo.spring.utils.ConnectionUtils;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +14,7 @@ import java.util.List;
 /**
  * @author 应癫
  */
+@Component("accountDao")
 public class JdbcAccountDaoImpl implements AccountDao {
 
     /**
