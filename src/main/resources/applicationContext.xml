@@ -53,4 +53,8 @@
 
     <bean id="transferServiceImpl" class="demo.spring.service.impl.TransferServiceImpl"/>
 
+
+    <bean id="companyBean" class="factorybean.CompanyFactoryBean">
+        <property name="companyInfo" value="克里斯,多态,100"/>
+    </bean>
 </beans>
