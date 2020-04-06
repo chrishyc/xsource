@@ -2,10 +2,10 @@
 <beans default-lazy-init="false" xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd"
-       xmlns:aop="http://www.springframework.org/schema/aop">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx">
     <!--开启注解扫描，base-package指定扫描的包路径-->
-    <context:component-scan base-package="ioc"/>
+    <context:component-scan base-package="ioc,tx.spring"/>
 
     <!--开启自定义属性导入-->
     <context:property-placeholder location="classpath:jdbc.properties"/>
@@ -96,5 +96,30 @@
 
     <!--aop 注解开关-->
     <aop:aspectj-autoproxy/>
+
+    <!--事务配置 xml方式-->
+    <bean id="transactionManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <!--定制事务细节，传播行为、隔离级别等-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager1">
+        <tx:attributes>
+            <!--一般性配置-->
+            <tx:method name="*" read-only="false"
+                       propagation="REQUIRED" isolation="DEFAULT" timeout="-1"/>
+            <!--针对查询的覆盖性配置-->
+            <tx:method name="query*" read-only="true"
+                       propagation="SUPPORTS"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <!--advice-ref指向增强=横切逻辑+方位-->
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* tx.spring.XmlService.*(..))"/>
+    </aop:config>
+
+    <tx:annotation-driven transaction-manager="transactionManager1"/>
 
 </beans>
