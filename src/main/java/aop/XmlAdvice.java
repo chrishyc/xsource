@@ -1,6 +1,6 @@
 package aop;
 
-public class Advice {
+public class XmlAdvice {
     public void before() {
         System.out.println("before:当前时间:" + System.currentTimeMillis());
     }

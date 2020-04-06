@@ -80,7 +80,7 @@
 
 
     <!-- aop xml方式-->
-    <bean id="advice" class="aop.Advice"/>
+    <bean id="advice" class="aop.XmlAdvice"/>
     <bean id="target" class="aop.Target"/>
     <aop:aspectj-autoproxy proxy-target-class="true"/>
     <aop:config proxy-target-class="true">
@@ -93,5 +93,8 @@
             <aop:around method="round" pointcut-ref="pointcut"/>
         </aop:aspect>
     </aop:config>
+
+    <!--aop 注解开关-->
+    <aop:aspectj-autoproxy/>
 
 </beans>
