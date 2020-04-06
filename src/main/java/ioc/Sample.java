@@ -10,6 +10,8 @@ public class Sample {
     @Test
     public void testClassPathXml() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TestBean testBean = ac.getBean(TestBean.class);
+        System.out.println(testBean);
     }
 
     @Test
@@ -18,7 +20,14 @@ public class Sample {
     }
 
     @Test
-    public void testAnnotationConfig(){
+    public void testAnnotationConfig() {
         ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+    }
+
+    @Test
+    public void testCycle(){
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TestBean testBean = ac.getBean(TestBean.class);
+        System.out.println(testBean);
     }
 }
