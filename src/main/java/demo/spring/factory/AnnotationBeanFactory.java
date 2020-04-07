@@ -21,7 +21,6 @@ import java.util.Map;
 public class AnnotationBeanFactory {
     private static Map<String, Class<?>> classMap = new HashMap<>();
     private static Map<String, Object> beanMap = new HashMap<>();
-    private static Map<String, Object> proxyMap = new HashMap<>();
 
     static {
         try {

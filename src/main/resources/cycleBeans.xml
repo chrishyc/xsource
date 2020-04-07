@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="false" xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+>
+
+
+    <!--循环依赖-->
+    <!--prototype 原型 bean循环依赖(无法解决)-->
+    <!--    <bean id="testBean" class="beanfactory.TestBean" scope="prototype" lazy-init="false">-->
+    <!--        <property name="cycleBean" ref="cycleBean"/>-->
+    <!--    </bean>-->
+    <!--    <bean id="cycleBean" class="beanfactory.CycleBean" scope="prototype" lazy-init="false">-->
+    <!--        <property name="testBean" ref="testBean"/>-->
+    <!--    </bean>-->
+
+    <!--prototype 单利 bean循环依赖(构造方法无法解决) set可以解决-->
+    <bean id="testBean" class="ioc.TestBean" scope="singleton" lazy-init="false">
+        <property name="cycleBean" ref="cycleBean"/>
+    </bean>
+    <bean id="cycleBean" class="ioc.CycleBean" scope="singleton" lazy-init="false">
+        <property name="testBean" ref="testBean"/>
+    </bean>
+
+</beans>
