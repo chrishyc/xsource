@@ -1,11 +1,14 @@
 package demo.spring.utils;
 
+import demo.spring.annotation.Component;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
  * @author 应癫
  */
+@Component
 public class /**/ConnectionUtils {
 
     /*private ConnectionUtils() {

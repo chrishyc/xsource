@@ -1,5 +1,8 @@
 package demo.spring.utils;
 
+import demo.spring.annotation.Autowired;
+import demo.spring.annotation.Component;
+
 import java.sql.SQLException;
 
 /**
@@ -7,8 +10,10 @@ import java.sql.SQLException;
  * <p>
  * 事务管理器类：负责手动事务的开启、提交、回滚
  */
+@Component
 public class TransactionManager {
 
+    @Autowired
     private ConnectionUtils connectionUtils;
 
     public void setConnectionUtils(ConnectionUtils connectionUtils) {
