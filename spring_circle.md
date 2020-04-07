@@ -41,7 +41,7 @@ d.返回实例A
 ```
 
 #### 实现(时序图)
-![](https://github.com/chrishyc/xsource/blob/master/images/spring_circle_2.png)
+![](https://github.com/chrishyc/xsource/blob/master/images/spring_circle_2.jpg)
 
 #### 为什么用三级缓存而不是二级缓存?
 主要考虑到有的对象需要AOP增加，形成代理类，所以使用ObjectFactory缓存来处理生成代理类的逻辑
