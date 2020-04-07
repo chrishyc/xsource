@@ -1,6 +1,7 @@
 package demo.spring.dao.impl;
 
 
+import demo.spring.annotation.Autowired;
 import demo.spring.annotation.Service;
 import demo.spring.dao.AccountDao;
 import demo.spring.pojo.Account;
@@ -23,7 +24,7 @@ public class JdbcAccountDaoImpl implements AccountDao {
      * 原始方案
      */
 //    private ConnectionUtils connectionUtils = new ConnectionUtils();
-
+    @Autowired
     private ConnectionUtils connectionUtils;
 
     private List<Integer> list;

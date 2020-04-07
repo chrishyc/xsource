@@ -2,12 +2,15 @@ package demo.spring.factory;
 
 import com.alibaba.druid.util.StringUtils;
 import demo.spring.annotation.Autowired;
+import demo.spring.annotation.Component;
 import demo.spring.annotation.Service;
+import demo.spring.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
@@ -18,11 +21,13 @@ import java.util.Map;
 public class AnnotationBeanFactory {
     private static Map<String, Class<?>> classMap = new HashMap<>();
     private static Map<String, Object> beanMap = new HashMap<>();
+    private static Map<String, Object> proxyMap = new HashMap<>();
 
     static {
         try {
             loadBean();
             DIInject();
+            generateProxy();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -66,10 +71,18 @@ public class AnnotationBeanFactory {
             Map.Entry<String, Class<?>> entry = iterator.next();
             String key = entry.getKey();
             Class<?> clazz = entry.getValue();
-            Service service = clazz.getAnnotation(Service.class);
-            if (!StringUtils.isEmpty(service.value())) {
-                key = service.value();
+            if (clazz.isAnnotationPresent(Service.class)) {
+                Service service = clazz.getAnnotation(Service.class);
+                if (!StringUtils.isEmpty(service.value())) {
+                    key = service.value();
+                }
+            } else if (clazz.isAnnotationPresent(Component.class)) {
+                Component component = clazz.getAnnotation(Component.class);
+                if (!StringUtils.isEmpty(component.value())) {
+                    key = component.value();
+                }
             }
+
             Field[] fields = clazz.getDeclaredFields();
             Object object = beanMap.get(key);
             for (Field field : fields) {
@@ -80,14 +93,25 @@ public class AnnotationBeanFactory {
                         Object value = iteratorBean.next().getValue();
                         if (target.isAssignableFrom(value.getClass())) {
                             field.setAccessible(true);
-                            Service service1 = value.getClass().getAnnotation(Service.class);
-                            Object target1;
-                            if (!StringUtils.isEmpty(service1.value())) {
-                                target1 = beanMap.get(service1.value());
-                            } else {
-                                target1 = beanMap.get(value.getClass().getName());
+                            if (value.getClass().isAnnotationPresent(Service.class)) {
+                                Service service1 = value.getClass().getAnnotation(Service.class);
+                                Object target1;
+                                if (!StringUtils.isEmpty(service1.value())) {
+                                    target1 = beanMap.get(service1.value());
+                                } else {
+                                    target1 = beanMap.get(value.getClass().getName());
+                                }
+                                field.set(object, target1);
+                            } else if (value.getClass().isAnnotationPresent(Component.class)) {
+                                Component component = value.getClass().getAnnotation(Component.class);
+                                Object target1;
+                                if (!StringUtils.isEmpty(component.value())) {
+                                    target1 = beanMap.get(component.value());
+                                } else {
+                                    target1 = beanMap.get(value.getClass().getName());
+                                }
+                                field.set(object, target1);
                             }
-                            field.set(object, target1);
                             System.out.println();
                         }
                     }
@@ -96,7 +120,26 @@ public class AnnotationBeanFactory {
         }
     }
 
-    private static void findClassesInPackageByFile(String packageName, String packagePath, final boolean recursive, Map<String, Class<?>> classMap) {
+    private static void generateProxy() {
+        Iterator<Map.Entry<String, Object>> iterator = beanMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Object> entry = iterator.next();
+            String key = entry.getKey();
+            Object object = entry.getValue();
+            Method[] methods = object.getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(Transactional.class)) {
+                    ProxyFactory proxyFactory = (ProxyFactory) beanMap.get(ProxyFactory.class.getName());
+                    Object proxy = proxyFactory.getJdkProxy(beanMap.get(key));
+                    beanMap.put(key, proxy);
+                    System.out.println();
+                }
+            }
+        }
+    }
+
+    private static void findClassesInPackageByFile(String packageName, String packagePath,
+                                                   final boolean recursive, Map<String, Class<?>> classMap) {
         // 获取此包的目录 建立一个File
         File dir = new File(packagePath);
         // 如果不存在或者 也不是目录就直接返回
@@ -136,8 +179,18 @@ public class AnnotationBeanFactory {
                         } else {
                             beanMap.put(packageName + '.' + className, object);
                         }
-
+                    } else if (current.isAnnotationPresent(Component.class)) {
+                        classMap.put(packageName + '.' + className, current);
+                        Object object = current.newInstance();
+                        Component annotation = object.getClass().getAnnotation(Component.class);
+                        if (!StringUtils.isEmpty(annotation.value())) {
+                            beanMap.put(annotation.value(), object);
+                        } else {
+                            beanMap.put(packageName + '.' + className, object);
+                        }
                     }
+
+
                 } catch (Exception e) {
                     // log.error("添加用户自定义视图类错误 找不到此类的.class文件");
                     e.printStackTrace();

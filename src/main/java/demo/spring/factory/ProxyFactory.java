@@ -1,10 +1,11 @@
 package demo.spring.factory;
 
+import demo.spring.annotation.Autowired;
+import demo.spring.annotation.Component;
+import demo.spring.utils.TransactionManager;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
-import demo.spring.utils.TransactionManager;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -16,10 +17,11 @@ import java.lang.reflect.Proxy;
  *
  * 代理对象工厂：生成代理对象的
  */
-@Component("proxyFactory")
+@Component
 public class ProxyFactory {
 
 
+    @Autowired
     private TransactionManager transactionManager;
 
     public void setTransactionManager(TransactionManager transactionManager) {
