@@ -41,4 +41,24 @@ d.返回实例A
 ```
 
 #### 实现(时序图)
+![](/Users/chris/xsource/images/spring_circle_2.jpg)
+
+#### 为什么用三级缓存而不是二级缓存?
+主要考虑到有的对象需要AOP增加，形成代理类，所以使用ObjectFactory缓存来处理生成代理类的逻辑
+```
+protected Object getEarlyBeanReference(String beanName, RootBeanDefinition mbd, Object bean) {
+    Object exposedObject = bean;
+    if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
+        for (BeanPostProcessor bp : getBeanPostProcessors()) {
+            // SmartInstantiationAwareBeanPostProcessor 这个后置处理器会在返回早期对象时被调用，如果返回的对象需要加强，那这里就会生成代理对象
+            if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
+                SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
+                exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);
+            }
+        }
+    }
+    return exposedObject;
+}
+
+```
 
