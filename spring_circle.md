@@ -3,7 +3,7 @@
 
 #### 问题
 循环依赖是指A依赖B，B依赖A。或者多个对象的依赖关系形成闭环  
-![](/Users/chris/xsource/images/spring_circle_1.png)
+![](https://github.com/chrishyc/xsource/blob/master/images/spring_circle_1.png)
 这种情况下容器会无限执行，一直创建Bean，最终导致OOM.
 
 为了解决此类问题，spring引入了缓存机制。spring循环引用问题分为:
@@ -41,7 +41,7 @@ d.返回实例A
 ```
 
 #### 实现(时序图)
-![](/Users/chris/xsource/images/spring_circle_2.jpg)
+![](https://github.com/chrishyc/xsource/blob/master/images/spring_circle_2.png)
 
 #### 为什么用三级缓存而不是二级缓存?
 主要考虑到有的对象需要AOP增加，形成代理类，所以使用ObjectFactory缓存来处理生成代理类的逻辑
