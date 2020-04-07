@@ -1,10 +1,11 @@
 package demo.spring;
 
-import org.junit.Test;
 import demo.spring.dao.impl.JdbcAccountDaoImpl;
+import demo.spring.factory.AnnotationBeanFactory;
 import demo.spring.factory.BeanFactory;
 import demo.spring.utils.ConnectionUtils;
 import demo.spring.utils.DruidUtils;
+import org.junit.Test;
 
 public class Sample {
     @Test
@@ -22,6 +23,12 @@ public class Sample {
     @Test
     public void testBeanFactory() {
         BeanFactory.getBean("accountDao");
+    }
+
+    @Test
+    public void testResource() {
+        AnnotationBeanFactory factory = new AnnotationBeanFactory();
+        System.out.println(factory);
     }
 
 }

@@ -1,19 +1,16 @@
 package demo.spring.service.impl;
 
+import demo.spring.annotation.Autowired;
+import demo.spring.annotation.Service;
+import demo.spring.annotation.Transactional;
 import demo.spring.dao.AccountDao;
-import demo.spring.dao.impl.JdbcAccountDaoImpl;
 import demo.spring.pojo.Account;
 import demo.spring.service.TransferService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 /**
  * @author 应癫
  */
-@Service("transferService")
+@Service("transferServiceBean")
 public class TransferServiceImpl implements TransferService {
 
     /**
@@ -31,8 +28,8 @@ public class TransferServiceImpl implements TransferService {
      * 控制反转，且自动注入，
      */
     @Autowired
-    @Qualifier(value = "accountDao")
-    @Resource(type = JdbcAccountDaoImpl.class)
+//    @Qualifier(value = "accountDao")
+//    @Resource(type = JdbcAccountDaoImpl.class)
     private AccountDao accountDao;
 
     /**
@@ -43,6 +40,7 @@ public class TransferServiceImpl implements TransferService {
     }
 
 
+    @Transactional
     @Override
     public void transfer(String fromCardNo, String toCardNo, int money) throws Exception {
 

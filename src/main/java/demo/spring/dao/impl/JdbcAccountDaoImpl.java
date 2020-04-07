@@ -1,6 +1,7 @@
 package demo.spring.dao.impl;
 
 
+import demo.spring.annotation.Service;
 import demo.spring.dao.AccountDao;
 import demo.spring.pojo.Account;
 import demo.spring.utils.ConnectionUtils;
@@ -14,7 +15,8 @@ import java.util.List;
 /**
  * @author 应癫
  */
-@Component("accountDao")
+//@Component("accountDao")
+@Service("JdbcAccountDaoBean")
 public class JdbcAccountDaoImpl implements AccountDao {
 
     /**
