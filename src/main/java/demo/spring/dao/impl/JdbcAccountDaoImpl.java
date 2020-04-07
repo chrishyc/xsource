@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author 应癫
  */
-//@Component("accountDao")
+@Component("accountDao")
 @Service("JdbcAccountDaoBean")
 public class JdbcAccountDaoImpl implements AccountDao {
 

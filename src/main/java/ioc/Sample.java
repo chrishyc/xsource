@@ -26,8 +26,8 @@ public class Sample {
 
     @Test
     public void testCycle(){
-        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-        TestBean testBean = ac.getBean(TestBean.class);
-        System.out.println(testBean);
+        ApplicationContext ac = new ClassPathXmlApplicationContext("cycleBeans.xml");
+//        TestBean testBean = ac.getBean(TestBean.class);
+//        System.out.println(testBean);
     }
 }

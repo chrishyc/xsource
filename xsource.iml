@@ -9,6 +9,9 @@
         <fileset id="fileset2" name="ApplicationContext" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/applicationContext.xml</file>
         </fileset>
+        <fileset id="fileset3" name="CycleBeans" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/cycleBeans.xml</file>
+        </fileset>
       </configuration>
     </facet>
   </component>
