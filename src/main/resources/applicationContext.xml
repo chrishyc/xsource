@@ -122,4 +122,8 @@
 
     <tx:annotation-driven transaction-manager="transactionManager1"/>
 
+    <!--parent child bean definition-->
+    <bean id="parent" class="ioc.beanDefinition.Parent"/>
+    <bean id="child" class="ioc.beanDefinition.Child" parent="parent"/>
+
 </beans>
