@@ -12,6 +12,9 @@
         <fileset id="fileset3" name="CycleBeans" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/cycleBeans.xml</file>
         </fileset>
+        <fileset id="fileset4" name="LazyInit" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/lazyInit.xml</file>
+        </fileset>
       </configuration>
     </facet>
   </component>

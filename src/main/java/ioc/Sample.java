@@ -1,5 +1,7 @@
 package ioc;
 
+import ioc.cycle.TestBean;
+import ioc.lazyinit.LazyInitBean;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -25,9 +27,16 @@ public class Sample {
     }
 
     @Test
-    public void testCycle(){
+    public void testCycle() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("cycleBeans.xml");
 //        TestBean testBean = ac.getBean(TestBean.class);
 //        System.out.println(testBean);
+    }
+
+    @Test
+    public void testLazyInit() {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("lazyInit.xml");
+        LazyInitBean lazyInitBean = ac.getBean(LazyInitBean.class);
+        System.out.println();
     }
 }

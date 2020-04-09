@@ -61,23 +61,6 @@
 
     <bean id="myBeanPostProcessor" class="processor.DefaultBeanPostProcessor"/>
 
-    <!--循环依赖-->
-    <!--prototype 原型 bean循环依赖(无法解决)-->
-    <!--    <bean id="testBean" class="beanfactory.TestBean" scope="prototype" lazy-init="false">-->
-    <!--        <property name="cycleBean" ref="cycleBean"/>-->
-    <!--    </bean>-->
-    <!--    <bean id="cycleBean" class="beanfactory.CycleBean" scope="prototype" lazy-init="false">-->
-    <!--        <property name="testBean" ref="testBean"/>-->
-    <!--    </bean>-->
-
-    <!--prototype 单利 bean循环依赖(构造方法无法解决) set可以解决-->
-    <bean id="testBean" class="ioc.TestBean" scope="singleton" lazy-init="false">
-        <property name="cycleBean" ref="cycleBean"/>
-    </bean>
-    <bean id="cycleBean" class="ioc.CycleBean" scope="singleton" lazy-init="false">
-        <property name="testBean" ref="testBean"/>
-    </bean>
-
 
     <!-- aop xml方式-->
     <bean id="advice" class="aop.XmlAdvice"/>
@@ -123,7 +106,7 @@
     <tx:annotation-driven transaction-manager="transactionManager1"/>
 
     <!--parent child bean definition-->
-    <bean id="parent" class="ioc.beanDefinition.Parent"/>
-    <bean id="child" class="ioc.beanDefinition.Child" parent="parent"/>
+    <bean id="parent" class="ioc.parent.Parent"/>
+    <bean id="child" class="ioc.parent.Child" parent="parent"/>
 
 </beans>
