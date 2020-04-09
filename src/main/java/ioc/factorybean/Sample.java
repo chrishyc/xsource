@@ -1,4 +1,4 @@
-package factorybean;
+package ioc.factorybean;
 
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

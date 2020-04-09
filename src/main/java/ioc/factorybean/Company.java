@@ -1,4 +1,4 @@
-package factorybean;
+package ioc.factorybean;
 
 import lombok.Data;
 
