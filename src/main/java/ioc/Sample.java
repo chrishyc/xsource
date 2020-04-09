@@ -2,6 +2,7 @@ package ioc;
 
 import ioc.cycle.TestBean;
 import ioc.lazyinit.LazyInitBean;
+import ioc.life.LifeBean;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -38,5 +39,19 @@ public class Sample {
         ApplicationContext ac = new ClassPathXmlApplicationContext("lazyInit.xml");
         LazyInitBean lazyInitBean = ac.getBean(LazyInitBean.class);
         System.out.println();
+    }
+
+    @Test
+    public void testProcessor() {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("processor.xml");
+        TestBean testBean = ac.getBean(TestBean.class);
+        System.out.println(testBean);
+    }
+
+    @Test
+    public void testLife(){
+        ApplicationContext ac = new ClassPathXmlApplicationContext("life.xml");
+        LifeBean lifeBean = ac.getBean(LifeBean.class);
+        System.out.println(lifeBean);
     }
 }

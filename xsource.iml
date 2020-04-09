@@ -15,6 +15,12 @@
         <fileset id="fileset4" name="LazyInit" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/lazyInit.xml</file>
         </fileset>
+        <fileset id="fileset5" name="Processor" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/processor.xml</file>
+        </fileset>
+        <fileset id="fileset6" name="Life" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/life.xml</file>
+        </fileset>
       </configuration>
     </facet>
   </component>

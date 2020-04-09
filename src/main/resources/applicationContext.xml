@@ -55,12 +55,11 @@
     <bean id="transferServiceImpl" class="demo.spring.service.impl.TransferServiceImpl"/>
 
 
-    <bean id="companyBean" class="factorybean.CompanyFactoryBean">
+
+
+    <bean id="companyBean" class="ioc.factorybean.CompanyFactoryBean">
         <property name="companyInfo" value="克里斯,多态,100"/>
     </bean>
-
-    <bean id="myBeanPostProcessor" class="processor.DefaultBeanPostProcessor"/>
-
 
     <!-- aop xml方式-->
     <bean id="advice" class="aop.XmlAdvice"/>
