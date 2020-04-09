@@ -41,6 +41,25 @@ public class Sample {
         System.out.println();
     }
 
+    /**
+     * 1.生成invokeBeanFactoryPostProcessors
+     * 2.生成registerBeanPostProcessors
+     * 3.生成普通bean,finishBeanFactoryInitialization
+     *
+     * 生成BeanFactoryPostProcessors时会调用已有BeanPostProcessors
+     * 生成BeanPostProcessors时会调用已有BeanPostProcessors
+     * 生成普通bean时会调用已有BeanPostProcessors
+     *
+     * 普通bean:
+     * 构造函数初始化
+     * set注入
+     * setApplicationContext
+     *
+     *
+     * postProcessBeforeInitialization
+     * afterPropertiesSet
+     * postProcessAfterInitialization
+     */
     @Test
     public void testProcessor() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("processor.xml");
