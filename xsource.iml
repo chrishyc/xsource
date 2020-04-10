@@ -21,6 +21,15 @@
         <fileset id="fileset6" name="Life" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/life.xml</file>
         </fileset>
+        <fileset id="fileset7" name="Aop" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/aop.xml</file>
+        </fileset>
+        <fileset id="fileset8" name="Myns" removed="false">
+          <file>file://$MODULE_DIR$/src/main/java/xmlns/demo/myns.xml</file>
+        </fileset>
+        <fileset id="fileset9" name="Myns (2)" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/myns.xml</file>
+        </fileset>
       </configuration>
     </facet>
   </component>

@@ -8,7 +8,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Sample {
     @Test
     public void testXmlAop() {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        ApplicationContext ac = new ClassPathXmlApplicationContext("aop.xml");
         Target target = ac.getBean(Target.class);
         target.transfer();
     }

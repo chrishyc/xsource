@@ -45,17 +45,17 @@ public class Sample {
      * 1.生成invokeBeanFactoryPostProcessors
      * 2.生成registerBeanPostProcessors
      * 3.生成普通bean,finishBeanFactoryInitialization
-     *
+     * <p>
      * 生成BeanFactoryPostProcessors时会调用已有BeanPostProcessors
      * 生成BeanPostProcessors时会调用已有BeanPostProcessors
      * 生成普通bean时会调用已有BeanPostProcessors
-     *
+     * <p>
      * 普通bean:
      * 构造函数初始化
      * set注入
      * setApplicationContext
-     *
-     *
+     * <p>
+     * <p>
      * postProcessBeforeInitialization
      * afterPropertiesSet
      * postProcessAfterInitialization
@@ -68,9 +68,14 @@ public class Sample {
     }
 
     @Test
-    public void testLife(){
+    public void testLife() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("life.xml");
         LifeBean lifeBean = ac.getBean(LifeBean.class);
         System.out.println(lifeBean);
+    }
+
+    @Test
+    public void testComponentScan() {
+
     }
 }
