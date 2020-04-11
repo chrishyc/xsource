@@ -1,11 +1,13 @@
 package ioc.life;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -17,43 +19,79 @@ import org.springframework.context.ApplicationContextAware;
  * 2.对于普通非BeanFactoryPostProcessor类，先执行ApplicationContextAware然后afterPropertiesSet
  *
  */
-public class LifeBean implements InitializingBean, ApplicationContextAware, DisposableBean, BeanPostProcessor, BeanFactoryPostProcessor {
+public class LifeBean implements InitializingBean, ApplicationContextAware, DisposableBean, BeanPostProcessor,
+        BeanFactoryPostProcessor , InstantiationAwareBeanPostProcessor {
 
     public LifeBean(){
         System.out.println("LifeBean.LifeBean");
     }
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        System.out.println("LifeBean.setApplicationContext");
+        System.out.println("LifeBean.ApplicationContextAware.setApplicationContext");
 
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        System.out.println("LifeBean.afterPropertiesSet");
+        System.out.println("LifeBean.InitializingBean.afterPropertiesSet");
     }
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        System.out.println("LifeBean.postProcessBeanFactory");
+        System.out.println("LifeBean.BeanFactoryPostProcessor.postProcessBeanFactory");
 
     }
 
     @Override
     public void destroy() throws Exception {
-        System.out.println("LifeBean.destroy");
+        System.out.println("LifeBean.DisposableBean.destroy");
 
     }
 
+    /**
+     * 初始化
+     * @param bean
+     * @param beanName
+     * @return
+     * @throws BeansException
+     */
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        System.out.println("LifeBean.postProcessBeforeInitialization");
+        System.out.println("LifeBean.BeanPostProcessor.postProcessBeforeInitialization");
         return bean;
     }
+
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        System.out.println("LifeBean.postProcessAfterInitialization");
+        System.out.println("LifeBean.BeanPostProcessor.postProcessAfterInitialization");
         return bean;
+    }
+
+    /**
+     * 实例化
+     * @param beanName
+     * @return
+     * @throws BeansException
+     */
+    @Override
+    public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        System.out.println("LifeBean.InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation");
+        return null;
+    }
+
+
+    @Override
+    public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
+        System.out.println("LifeBean.InstantiationAwareBeanPostProcessor.postProcessAfterInstantiation");
+        return true;
+    }
+
+
+    @Override
+    public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)
+            throws BeansException {
+        System.out.println("LifeBean.InstantiationAwareBeanPostProcessor.postProcessProperties");
+        return null;
     }
 }
