@@ -20,7 +20,8 @@ public class Sample {
         Target2 target = ac.getBean(Target2.class);
         target.transfer();
     }
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
         System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, "/Users/chris/xsource/src/main/java/aop/");
         ApplicationContext ac = new ClassPathXmlApplicationContext("aop.xml");
         Target target = ac.getBean(Target.class);
