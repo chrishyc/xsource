@@ -74,8 +74,11 @@ public class Sample {
         System.out.println(lifeBean);
     }
 
+    /**
+     * {@link org.springframework.context.config.ContextNamespaceHandler}
+     */
     @Test
     public void testComponentScan() {
-
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
     }
 }

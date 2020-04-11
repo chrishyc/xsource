@@ -20,6 +20,6 @@
     </aop:config>
 
     <!--aop 注解开关-->
-    <aop:aspectj-autoproxy/>
+<!--    <aop:aspectj-autoproxy/>-->
 
 </beans>
