@@ -2,8 +2,10 @@ package tx;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import tx.spring.AnnotationService;
+import tx.annotation.AnnotationService;
+import tx.annotation.Config;
 import tx.xml.XmlService;
 
 public class Sample {
@@ -25,7 +27,7 @@ public class Sample {
 
     @Test
     public void testAnnotation() {
-        ApplicationContext beanFactory = new ClassPathXmlApplicationContext("applicationContext.xml");
+        ApplicationContext beanFactory = new AnnotationConfigApplicationContext(Config.class);
         Object annotationService = beanFactory.getBean(AnnotationService.class);
         System.out.println(annotationService);
     }

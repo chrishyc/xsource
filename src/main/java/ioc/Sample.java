@@ -8,6 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.core.type.filter.TypeFilter;
 
 public class Sample {
     @Test
@@ -78,8 +79,19 @@ public class Sample {
      * {@link org.springframework.context.config.ContextNamespaceHandler}
      */
     @Test
-    public void testComponentScan() {
+    public void testXmlComponentScan() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+    }
+
+    /**
+     * {@link org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider#registerDefaultFilters()}
+     * 注册@Component.class
+     *
+     * {@link org.springframework.context.annotation.ClassPathBeanDefinitionScanner#doScan}
+     */
+    @Test
+    public void testAnnotationComponentScan() {
+        ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
     }
 
     /**
