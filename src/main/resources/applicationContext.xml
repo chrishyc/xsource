@@ -5,7 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx">
     <!--开启注解扫描，base-package指定扫描的包路径-->
-    <context:component-scan base-package="ioc,tx.spring"/>
+    <context:component-scan base-package="ioc,tx.annotation"/>
 
     <!--开启自定义属性导入-->
     <context:property-placeholder location="classpath:jdbc.properties"/>
