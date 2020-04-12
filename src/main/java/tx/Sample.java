@@ -9,6 +9,12 @@ import tx.xml.XmlService;
 public class Sample {
     /**
      * {@link org.springframework.transaction.config.TxNamespaceHandler}
+     * 1.主逻辑在{@link org.springframework.transaction.interceptor.TransactionInterceptor#invoke}
+     *
+     * 2.TransactionInterceptor创建时机：在解析的标签为advice时，会使用TxAdviceBeanDefinitionParser解析器，
+     *   此解析器生成的BeanDefinition包含了TransactionInterceptor.class
+     *
+     * 3.
      */
     @Test
     public void testXml() {
