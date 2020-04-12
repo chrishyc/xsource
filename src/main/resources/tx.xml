@@ -35,7 +35,8 @@
     </tx:advice>
 
     <aop:config>
-<!--        advice-ref指向增强=横切逻辑+方位-->
+        <!-- advice-ref指向增强=横切逻辑+方位-->
+        <!--advisor会生成对应的eanDefinition-->
         <aop:advisor advice-ref="txAdvice" pointcut="execution(* tx.xml.XmlService.*(..))"/>
     </aop:config>
     <bean id="service" class="tx.xml.XmlService"/>
