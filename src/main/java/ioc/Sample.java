@@ -81,4 +81,20 @@ public class Sample {
     public void testComponentScan() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
     }
+
+    /**
+     * {@link org.springframework.beans.factory.support.BeanDefinitionReaderUtils}
+     *
+     * if (isInnerBean) {
+     * // Inner bean: generate identity hashcode suffix.
+     * id = generatedBeanName + GENERATED_BEAN_NAME_SEPARATOR + ObjectUtils.getIdentityHexString(definition);
+     * }
+     *
+     * spring内部bean都会带#
+     * 例如DefaultBeanFactoryPointcutAdvisor#0
+     */
+    @Test
+    public void testInnerBean() {
+
+    }
 }
