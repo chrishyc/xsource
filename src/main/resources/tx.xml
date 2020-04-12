@@ -6,36 +6,36 @@
        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx">
 
 
-    <context:property-placeholder location="jdbc.properties"/>
+<!--    <context:property-placeholder location="jdbc.properties"/>-->
 
-    <!--外部配置bean使用xml方式-->
-    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
-        <property name="driverClassName" value="${jdbc.driver}"/>
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>
-    </bean>
+<!--    &lt;!&ndash;外部配置bean使用xml方式&ndash;&gt;-->
+<!--    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">-->
+<!--        <property name="driverClassName" value="${jdbc.driver}"/>-->
+<!--        <property name="url" value="${jdbc.url}"/>-->
+<!--        <property name="username" value="${jdbc.username}"/>-->
+<!--        <property name="password" value="${jdbc.password}"/>-->
+<!--    </bean>-->
 
-    <!--事务配置 xml方式-->
-    <bean id="transactionManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource"/>
-    </bean>
+<!--    &lt;!&ndash;事务配置 xml方式&ndash;&gt;-->
+<!--    <bean id="transactionManager1" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+<!--        <property name="dataSource" ref="dataSource"/>-->
+<!--    </bean>-->
 
-    <!--定制事务细节，传播行为、隔离级别等-->
-    <tx:advice id="txAdvice" transaction-manager="transactionManager1">
-        <tx:attributes>
-            <!--一般性配置-->
-            <tx:method name="*" read-only="false"
-                       propagation="REQUIRED" isolation="DEFAULT" timeout="-1"/>
-            <!--针对查询的覆盖性配置-->
-            <tx:method name="query*" read-only="true"
-                       propagation="SUPPORTS"/>
-        </tx:attributes>
-    </tx:advice>
+<!--    &lt;!&ndash;定制事务细节，传播行为、隔离级别等&ndash;&gt;-->
+<!--    <tx:advice id="txAdvice" transaction-manager="transactionManager1">-->
+<!--        <tx:attributes>-->
+<!--            &lt;!&ndash;一般性配置&ndash;&gt;-->
+<!--            <tx:method name="*" read-only="false"-->
+<!--                       propagation="REQUIRED" isolation="DEFAULT" timeout="-1"/>-->
+<!--            &lt;!&ndash;针对查询的覆盖性配置&ndash;&gt;-->
+<!--            <tx:method name="query*" read-only="true"-->
+<!--                       propagation="SUPPORTS"/>-->
+<!--        </tx:attributes>-->
+<!--    </tx:advice>-->
 
     <aop:config>
         <!--advice-ref指向增强=横切逻辑+方位-->
-        <aop:advisor advice-ref="txAdvice" pointcut="execution(* tx.xml.XmlService.*(..))"/>
+<!--        <aop:advisor advice-ref="txAdvice" pointcut="execution(* tx.xml.XmlService.*(..))"/>-->
     </aop:config>
     <bean id="service" class="tx.xml.XmlService"/>
 
