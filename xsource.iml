@@ -30,6 +30,9 @@
         <fileset id="fileset9" name="Myns (2)" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/myns.xml</file>
         </fileset>
+        <fileset id="fileset10" name="Tx" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/tx.xml</file>
+        </fileset>
       </configuration>
     </facet>
   </component>

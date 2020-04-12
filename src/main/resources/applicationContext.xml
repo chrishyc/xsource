@@ -99,7 +99,7 @@
 
     <aop:config>
         <!--advice-ref指向增强=横切逻辑+方位-->
-        <aop:advisor advice-ref="txAdvice" pointcut="execution(* tx.spring.XmlService.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* tx.xml.XmlService.*(..))"/>
     </aop:config>
 
     <tx:annotation-driven transaction-manager="transactionManager1"/>
