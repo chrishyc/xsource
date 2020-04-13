@@ -35,7 +35,7 @@ public class Sample {
      *
      */
     @Test
-    public void testAnnotation() {
+    public void testEnableTransactionManagement() {
         ApplicationContext beanFactory = new AnnotationConfigApplicationContext(Config.class);
         Object annotationService = beanFactory.getBean(AnnotationService.class);
         System.out.println(annotationService);
