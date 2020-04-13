@@ -109,4 +109,18 @@ public class Sample {
     public void testInnerBean() {
 
     }
+
+    /**debug bean实例关键点
+     * postProcessBeforeInitialization，
+     * postProcessAfterInitialization，
+     * postProcessBeforeInstantiation，
+     * postProcessAfterInstantiation，
+     * addSingletonFactory，
+     * addSingleton
+     *
+     */
+    @Test
+    public void testDebugPoint(){
+
+    }
 }
