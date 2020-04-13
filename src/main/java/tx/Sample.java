@@ -5,7 +5,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import tx.annotation.AnnotationService;
-import tx.annotation.Config;
 import tx.xml.XmlService;
 
 public class Sample {
@@ -32,12 +31,16 @@ public class Sample {
      * 其中@EnableTransactionManagement，@Enable**注解的解析是递归查看注解内部是否有@Import注解，
      * 有@Import则进行解析{@link org.springframework.context.annotation.ConfigurationClassParser.collectImports}
      *
+     * {@link org.springframework.transaction.annotation.EnableTransactionManagement}
+     * 中使用{@link org.springframework.context.annotation.Import},@Import 支持
+     * importing {@code @Configuration} classes, {@link ImportSelector} and
+     *  * {@link ImportBeanDefinitionRegistrar} implementations
      *
      */
     @Test
     public void testEnableTransactionManagement() {
         ApplicationContext beanFactory = new AnnotationConfigApplicationContext(Config.class);
-        Object annotationService = beanFactory.getBean(AnnotationService.class);
-        System.out.println(annotationService);
+        AnnotationService annotationService = beanFactory.getBean(AnnotationService.class);
+        annotationService.query();
     }
 }
