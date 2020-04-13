@@ -118,6 +118,7 @@ public class Sample {
      * addSingletonFactory，
      * addSingleton
      *
+     * AbstractApplicationContext.refresh
      */
     @Test
     public void testDebugPoint(){

@@ -29,16 +29,47 @@ public class Sample {
      * 会处理@ComponentScans，@Import,@Component等注解
      *
      * 其中@EnableTransactionManagement，@Enable**注解的解析是递归查看注解内部是否有@Import注解，
-     * 有@Import则进行解析{@link org.springframework.context.annotation.ConfigurationClassParser.collectImports}
+     * 有@Import则进行解析{@link org.springframework.context.annotation.ConfigurationClassParser#collectImports}
      *
      * {@link org.springframework.transaction.annotation.EnableTransactionManagement}
      * 中使用{@link org.springframework.context.annotation.Import},@Import 支持
      * importing {@code @Configuration} classes, {@link ImportSelector} and
      *  * {@link ImportBeanDefinitionRegistrar} implementations
      *
+     * {@link org.springframework.context.annotation.ConfigurationClassParser#processImports}
+     *
+     * if (candidate.isAssignable(ImportSelector.class)) {
+     * }
+     * else if (candidate.isAssignable(ImportBeanDefinitionRegistrar.class)) {
+     * }
+     * else {
+     * }
      */
     @Test
     public void testEnableTransactionManagement() {
+        ApplicationContext beanFactory = new AnnotationConfigApplicationContext(Config.class);
+        AnnotationService annotationService = beanFactory.getBean(AnnotationService.class);
+        annotationService.query();
+    }
+
+    /**
+     * {@link org.springframework.transaction.annotation.TransactionManagementConfigurationSelector}
+     * tx注解形式的总配置类,以ImportSelector形式导入
+     *
+     * {@link org.springframework.context.annotation.AutoProxyRegistrar}
+     * tx注解形式的代理工厂 配置类，以ImportBeanDefinitionRegistrar形式导入
+     *
+     * {@link org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration}
+     * tx注解形式的事务管理 配置类，以@Configuration形式导入
+     *
+     * 事务管理 需要spring统一的PlatformTransactionManager
+     * 而PlatformTransactionManager需要datasource注入，因此还需要注入这两个bean
+     *
+     * 在{@link org.springframework.transaction.interceptor.TransactionInterceptor#invokeWithinTransaction}中，
+     * 会通过determineTransactionManager查找PlatformTransactionManager的实现类
+     */
+    @Test
+    public void testAnnotationAdvisor(){
         ApplicationContext beanFactory = new AnnotationConfigApplicationContext(Config.class);
         AnnotationService annotationService = beanFactory.getBean(AnnotationService.class);
         annotationService.query();
