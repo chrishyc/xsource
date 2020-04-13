@@ -25,6 +25,15 @@ public class Sample {
         xmlService.query();
     }
 
+    /**
+     * {@link org.springframework.context.annotation.ConfigurationClassParser#doProcessConfigurationClass}
+     * 会处理@ComponentScans，@Import,@Component等注解
+     *
+     * 其中@EnableTransactionManagement，@Enable**注解的解析是递归查看注解内部是否有@Import注解，
+     * 有@Import则进行解析{@link org.springframework.context.annotation.ConfigurationClassParser.collectImports}
+     *
+     *
+     */
     @Test
     public void testAnnotation() {
         ApplicationContext beanFactory = new AnnotationConfigApplicationContext(Config.class);
