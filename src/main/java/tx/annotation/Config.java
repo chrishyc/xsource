@@ -1,9 +1,11 @@
 package tx.annotation;
 
-import demo.spring.annotation.Component;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@Component
+@Configuration
+@ComponentScan(basePackages = "tx.annotation")
 @EnableTransactionManagement
 public class Config {
 }
