@@ -2,6 +2,9 @@ package mvc.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Date;
 
 /**
  * @author chris
@@ -9,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class HelloController {
     @RequestMapping("/hello")
-    public String sayHello() {
-        System.out.println("HelloController.sayHello");
-        return "error";
+    public ModelAndView sayHello() {
+        Date date = new Date();
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("date", date);
+        modelAndView.setViewName("success");
+        return modelAndView;
     }
 }
