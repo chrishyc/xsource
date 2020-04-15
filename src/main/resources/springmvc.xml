@@ -43,5 +43,9 @@
 
     </mvc:interceptors>
 
-
+    <!--多元素解析器id固定为multipartResolver-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--设置上传文件大小上限，单位是字节，-1代表没有限制也是默认的-->
+        <property name="maxUploadSize" value="-1"/>
+    </bean>
 </beans>

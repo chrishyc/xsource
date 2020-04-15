@@ -112,7 +112,7 @@
                 2 enctype="multipart/form-data"
                 3 type="file"
             --%>
-            <form method="post" enctype="multipart/form-data" action="/demo/upload">
+            <form method="post" enctype="multipart/form-data" action="/upload">
                 <input type="file" name="uploadFile"/>
                 <input type="submit" value="上传"/>
             </form>
