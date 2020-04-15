@@ -16,12 +16,17 @@ public class Sample {
     /**
      * 给tomcat服务器增加一个web工程
      * @throws LifecycleException
+     *
+     * // TODO
+     * 参考:https://www.ibm.com/developerworks/cn/java/j-lo-servlet/index.html
+     *
      */
     @Test
     public void textTomcat() throws LifecycleException {
         RestTemplate template = new RestTemplate();
         Tomcat tomcat = new Tomcat();
         File appDir = new File("/Users/chris/xsource/target/xsource-1.0-SNAPSHOT.war");
+        // url 和 path 分别代表这个应用在 Tomcat 中的访问路径和这个应用实际的物理路径
         tomcat.addWebapp(null, "/", appDir.getAbsolutePath());
         tomcat.start();
         String res = template.getForObject("http://localhost:8080/transferServlet", String.class);
