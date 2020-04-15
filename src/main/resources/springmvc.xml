@@ -24,4 +24,24 @@
 
     <mvc:annotation-driven conversion-service="conversionService"/>
 
+    <mvc:interceptors>
+        <!--拦截所有handler-->
+
+        <mvc:interceptor>
+            <!--配置当前拦截器的url拦截规则，**代表当前目录下及其子目录下的所有url-->
+            <mvc:mapping path="/**"/>
+            <!--exclude-mapping可以在mapping的基础上排除一些url拦截-->
+            <!--<mvc:exclude-mapping path="/demo/**"/>-->
+            <bean class="mvc.interceptor.MyIntercepter01"/>
+        </mvc:interceptor>
+
+
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="mvc.interceptor.MyIntercepter02"/>
+        </mvc:interceptor>
+
+    </mvc:interceptors>
+
+
 </beans>
