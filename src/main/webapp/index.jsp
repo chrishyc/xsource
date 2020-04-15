@@ -12,7 +12,7 @@
             $("#ajaxBtn").bind("click",function () {
                 // 发送ajax请求
                 $.ajax({
-                    url: '/demo/handle07',
+                    url: '/json',
                     type: 'POST',
                     data: '{"id":"1","name":"李四"}',
                     contentType: 'application/json;charset=utf-8',
