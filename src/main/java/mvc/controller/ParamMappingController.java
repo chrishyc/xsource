@@ -3,6 +3,8 @@ package mvc.controller;
 import mvc.pojo.Order;
 import mvc.pojo.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author chris
@@ -27,6 +30,23 @@ public class ParamMappingController {
         return modelAndView;
     }
     
+    /**
+     * {@link org.springframework.validation.support.BindingAwareModelMap}
+     * @param map
+     * @param model
+     * @param modelMap
+     * @return
+     */
+    @RequestMapping("/hello")
+    public ModelAndView map(Map<String, Object> map, Model model, ModelMap modelMap) {
+        Date date = new Date();
+        model.addAttribute("name","chris");
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("date", date);
+        modelAndView.setViewName("success");
+        return modelAndView;
+    }
+    
     @RequestMapping("/servletApi")
     public ModelAndView servletApi(HttpServletRequest request,
                                    HttpServletResponse response, HttpSession session) {
@@ -35,7 +55,7 @@ public class ParamMappingController {
         Date date = new Date();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("date", date);
-        modelAndView.addObject("request",request.getRequestURL());
+        modelAndView.addObject("request", request.getRequestURL());
         modelAndView.setViewName("success");
         return modelAndView;
     }
@@ -45,8 +65,8 @@ public class ParamMappingController {
         Date date = new Date();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("date", date);
-        modelAndView.addObject("id",id);
-        modelAndView.addObject("flag",flag);
+        modelAndView.addObject("id", id);
+        modelAndView.addObject("flag", flag);
         modelAndView.setViewName("success");
         return modelAndView;
     }
@@ -56,7 +76,7 @@ public class ParamMappingController {
         Date date = new Date();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("date", date);
-        modelAndView.addObject("ids",id);
+        modelAndView.addObject("ids", id);
         modelAndView.setViewName("success");
         return modelAndView;
     }
@@ -66,7 +86,7 @@ public class ParamMappingController {
         Date date = new Date();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("date", date);
-        modelAndView.addObject("user",user);
+        modelAndView.addObject("user", user);
         modelAndView.setViewName("success");
         return modelAndView;
     }
@@ -76,7 +96,7 @@ public class ParamMappingController {
         Date date = new Date();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("date", date);
-        modelAndView.addObject("order",order);
+        modelAndView.addObject("order", order);
         modelAndView.setViewName("success");
         return modelAndView;
     }
@@ -86,7 +106,7 @@ public class ParamMappingController {
         Date date = new Date();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("date", date);
-        modelAndView.addObject("birthday",birthday);
+        modelAndView.addObject("birthday", birthday);
         modelAndView.setViewName("success");
         return modelAndView;
     }
