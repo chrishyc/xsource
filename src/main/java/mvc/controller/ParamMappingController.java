@@ -37,7 +37,7 @@ public class ParamMappingController {
      * @param modelMap
      * @return
      */
-    @RequestMapping("/hello")
+    @RequestMapping("/map")
     public ModelAndView map(Map<String, Object> map, Model model, ModelMap modelMap) {
         Date date = new Date();
         model.addAttribute("name","chris");
