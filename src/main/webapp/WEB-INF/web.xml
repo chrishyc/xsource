@@ -51,7 +51,7 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-    <!-- -->
+    <!-- 过滤器 -->
     <filter>
         <filter-name>hiddenHttpMethodFilter</filter-name>
         <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
