@@ -41,7 +41,41 @@ public class Sample {
      * {@link org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider#registerDefaultFilters}
      * 会注册@Component，只要注解上有@Component,都会被解析生成对应的Bean实例
      */
+    @Test
     public void testComponentScan(){
+    
+    }
+    
+    /**初始化过程:
+     * 1.spring mvc默认HandlerMapping为RequestMappingHandlerMapping
+     * 2.注册RequestMappingHandlerMapping时机为
+     * {@link org.springframework.web.servlet.config.AnnotationDrivenBeanDefinitionParser#parse(Element, ParserContext)}
+     * 3.生成mapping时机:当RequestMappingHandlerMapping初始化生成实例且注入后，会调用RequestMappingHandlerMapping的afterPropertiesSet
+     * 去生成对应的mapping
+     * 4.获取bean容器所有bean去判断bean是否是handler,{@link org.springframework.web.servlet.handler.AbstractHandlerMethodMapping#processCandidateBean(String)}
+     * ```
+     * protected boolean isHandler(Class<?> beanType) {
+     * 		return (AnnotatedElementUtils.hasAnnotation(beanType, Controller.class) ||
+     * 				AnnotatedElementUtils.hasAnnotation(beanType, RequestMapping.class));
+     *        }
+     * ```
+     *
+     * 5.RequestMappingHandlerMapping.createRequestMappingInfo扫描含有RequestMapping的方法
+     * 6.RequestMappingHandlerMapping.registerHandlerMethod完成mapping生成过程.
+     * 7.AbstractApplicationContext.finishRefresh时发起publishEvent,导致DispatcherServlet刷新初始化initStrategies,此时会初始化
+     * DispatcherServlet的handlerMapping,DispatcherServlet.initHandlerMappings
+     *
+     *
+     * 请求过程:
+     * 8.请求到来时，会进入DispatcherServlet.doDispatch，决定对应的handler,会进入DispatcherServlet.getHandler
+     * 9.进入AbstractHandlerMethodMapping.lookupHandlerMethod获取对应的handler
+     * 10.AbstractHandlerMapping.getHandler组装对应的执行链HandlerExecutionChain
+     * 11.会进入DispatcherServlet.doDispatch中组装对应的HandlerAdapter，DispatcherServlet.getHandlerAdapter
+     * 对应的是RequestMappingHandlerAdapter
+     * 12.RequestMappingHandlerAdapter.invokeHandlerMethod执行最后的方法逻辑
+     */
+    @Test
+    public void testHandlerMapping(){
     
     }
 }
