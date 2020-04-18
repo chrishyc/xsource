@@ -94,4 +94,9 @@ public class Sample {
     public void testMethodDataBind(){
     
     }
+    
+    @Test
+    public void testReturnView(){
+    
+    }
 }
