@@ -2,6 +2,7 @@ package mvc;
 
 import org.junit.Test;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.w3c.dom.Element;
 
 public class Sample {
@@ -76,6 +77,21 @@ public class Sample {
      */
     @Test
     public void testHandlerMapping(){
+    
+    }
+    
+    /**
+     * HandlerMethodArgumentResolver
+     * HandlerMethodReturnValueHandler
+     * WebDataBinderFactory
+     * ParameterNameDiscoverer
+     * {@link RequestMappingHandlerAdapter#afterPropertiesSet()}
+     * 获取默认method参数解析器.getDefaultArgumentResolvers
+     * 获取默认method参数绑定器.getDefaultInitBinderArgumentResolvers
+     * 获取默认method返回值处理器.getDefaultReturnValueHandlers
+     */
+    @Test
+    public void testMethodDataBind(){
     
     }
 }

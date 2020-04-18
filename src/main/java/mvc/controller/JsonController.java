@@ -17,7 +17,7 @@ public class JsonController {
      */
     @RequestMapping("/json")
     @ResponseBody
-    public User handle07(@RequestBody User user) {
+    public User handle07(User user) {
         // 添加@ResponseBody之后，不再走视图解析器那个流程，而是等同于response直接输出数据
         // 业务逻辑处理，修改name为张三丰
         user.setName("张三丰");
