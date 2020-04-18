@@ -1,10 +1,11 @@
-package demo.spring.pojo;
+package mvc.pojo;
 
 public class Account {
 
-    private String cardNo;
     private String name;
     private int money;
+    private String cardNo;
+
 
     public String getName() {
         return name;
@@ -22,16 +23,20 @@ public class Account {
         this.money = money;
     }
 
-    public String getCardNo() { return cardNo; }
+    public String getCardNo() {
+        return cardNo;
+    }
 
-    public void setCardNo(String cardNo) { this.cardNo = cardNo;}
+    public void setCardNo(String cardNo) {
+        this.cardNo = cardNo;
+    }
 
     @Override
     public String toString() {
         return "Account{" +
-                "cardNo='" + cardNo + '\'' +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", money=" + money +
+                ", cardNo='" + cardNo + '\'' +
                 '}';
     }
 }

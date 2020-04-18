@@ -33,6 +33,12 @@
         <fileset id="fileset10" name="Tx" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/tx.xml</file>
         </fileset>
+        <fileset id="fileset11" name="ApplicationContext Dao" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/applicationContext-dao.xml</file>
+        </fileset>
+        <fileset id="fileset12" name="ApplicationContext Service" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/applicationContext-service.xml</file>
+        </fileset>
       </configuration>
     </facet>
   </component>
