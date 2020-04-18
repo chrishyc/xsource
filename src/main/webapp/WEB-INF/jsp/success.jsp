@@ -6,6 +6,7 @@
     <title>Insert title here</title>
 </head>
 <body>
+<%System.out.println();%>
 跳转成功！服务器时间：${date}
 </body>
 </html>
