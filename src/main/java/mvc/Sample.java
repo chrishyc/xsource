@@ -105,6 +105,7 @@ public class Sample {
      * {@link HandlerMethodArgumentResolverComposite#getArgumentResolver}
      * 1.参数为pojo,{@link ParamMappingController#pojo}
      * 2.参数为基本类型,{@link ParamMappingController#primitiveType}
+     * 3.参数为基本类型+@RequestParam，{@link ParamMappingController#primitiveTypeAnnotation}
      */
     @Test
     public void testMethodParam() {

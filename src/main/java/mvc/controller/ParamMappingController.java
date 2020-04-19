@@ -119,6 +119,11 @@ public class ParamMappingController {
         return modelAndView;
     }
     
+    /**1.请求开始触发方法invoke后，进入开始解析method每个参数支持的解析器
+     * {@link InvocableHandlerMethod#getMethodArgumentValues}
+     * 2.对于基本类型，解析器为{@link RequestParamMethodArgumentResolver#supportsParameter}
+     * 此解析器位于参数解析器倒数第二个
+     */
     @RequestMapping("/primitiveTypeAnnotation")
     public ModelAndView primitiveTypeAnnotation(@RequestParam("ids") Integer id, @RequestParam("flag") Boolean flag) {
         Date date = new Date();
