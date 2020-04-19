@@ -26,7 +26,8 @@ import java.util.Map;
 public class ParamMappingController {
     /**
      * 1.是否有返回值{@link ServletInvocableHandlerMethod#invokeAndHandle}
-     * 2.有返回值获取返回值处理器{@link HandlerMethodReturnValueHandlerComposite#selectHandler}
+     * 2.获取返回值处理器{@link HandlerMethodReturnValueHandlerComposite#selectHandler}
+     * 无论是否有返回值都会获取返回值处理器
      * 3.如果返回类型为ModelAndView，对应返回值处理器为{@link ModelAndViewMethodReturnValueHandler#handleReturnValue}
      * 主要将返回的结果存入ModelAndViewContainer中
      * 4.重新生成一个ModelAndView作为返回结果，{@link RequestMappingHandlerAdapter#getModelAndView}
@@ -39,6 +40,19 @@ public class ParamMappingController {
         modelAndView.addObject("date", date);
         modelAndView.setViewName("success");
         return modelAndView;
+    }
+    
+    /**
+     * 3.返回值为void类型，对应返回值处理器为{@link ViewNameMethodReturnValueHandler#supportsReturnType}
+     * 没有任何东西被放入ModelAndViewContainer中
+     * 4.重新生成一个ModelAndView作为返回结果，但这个ModelAndView中biew,model,status都为null;
+     */
+    @RequestMapping("/returnVoid")
+    public void returnVoid() {
+        Date date = new Date();
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("date", date);
+        modelAndView.setViewName("success");
     }
     
     /**
