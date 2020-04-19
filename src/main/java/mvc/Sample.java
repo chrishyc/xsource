@@ -114,6 +114,7 @@ public class Sample {
      * 2.返回void怎么处理?
      *
      * 1.有返回值且返回类型为ModelAndView，{@link ParamMappingController#sayHello()}
+     * 2.返回void时{@link ParamMappingController#returnVoid()}
      */
     @Test
     public void testReturnModelAndView(){
