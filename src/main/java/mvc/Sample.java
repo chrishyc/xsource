@@ -4,15 +4,21 @@ import mvc.controller.ParamMappingController;
 import mvc.controller.ReturnTypeController;
 import org.junit.Test;
 import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.web.method.support.HandlerMethodArgumentResolverComposite;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.*;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import org.springframework.web.servlet.view.InternalResourceView;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.JstlView;
 import org.w3c.dom.Element;
+import org.mybatis.spring.mapper.*;
+import org.apache.ibatis.session.*;
+import org.apache.ibatis.binding.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.web.method.support.*;
-import org.springframework.web.servlet.*;
-import org.springframework.web.servlet.view.*;
-import org.springframework.web.servlet.config.*;
 
 public class Sample {
     /**
@@ -104,7 +110,7 @@ public class Sample {
      * <p>
      * 2.这些参数如何绑定的?
      * <p>
-     *
+     * <p>
      * {@link HandlerMethodArgumentResolverComposite#getArgumentResolver}
      * 1.参数为pojo,{@link ParamMappingController#pojo}
      * 2.参数为基本类型,{@link ParamMappingController#primitiveType}
@@ -147,7 +153,34 @@ public class Sample {
      * 3.将请求参数渲染到视图中{@link InternalResourceView#renderMergedOutputModel}
      */
     @Test
-    public void testResolverView(){
+    public void testResolverView() {
+    
+    }
+    
+    /**
+     * 1.mybatis加入spring容器管理
+     *
+     * 2.mybatis核心类:
+     * a.SqlSessionFactoryBuilder(解析xml)
+     * b.SqlSessionFactory(生成sqlSession)
+     * c.SqlSession(获取代理sql接口)
+     *
+     * 3.spring接入mybatis,并让容器管理mybatis的bean
+     * a.使用spring beanfactory生成SqlSessionFactoryBean，管理SqlSessionFactory的创建
+     * b.使用MapperFactoryBean管理代理的创建
+     * c.可以使用SqlSessionFactoryBean.setMapperLocations解析xml，也可以或将xml放在resources中，保持和接口目录同级，
+     * {@link MapperFactoryBean#checkDaoConfig}解析xml
+     *
+     * d.MapperScannerConfigurer扫描需要生成代理的mapper接口，并生成对应的beanDefinition,此beanDefinition的实际
+     * beanClass为MapperFactoryBean.{@link MapperScannerConfigurer#postProcessBeanDefinitionRegistry}
+     * {@link ClassPathMapperScanner#processBeanDefinitions}注入的实际class为MapperFactoryBean.class
+     *
+     * 4.生成代理类{@link MapperRegistry#getMapper}
+     *
+     * debug关键:{@link Configuration#addMappedStatement}
+     */
+    @Test
+    public void testSpringMybatis() {
     
     }
 }
