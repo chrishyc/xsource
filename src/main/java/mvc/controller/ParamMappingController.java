@@ -8,7 +8,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
+import org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
+import org.springframework.web.servlet.mvc.method.annotation.ModelAndViewMethodReturnValueHandler;
+import org.springframework.web.servlet.mvc.method.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -21,6 +24,14 @@ import java.util.Map;
 @RequestMapping("/param/mapping")
 @Controller
 public class ParamMappingController {
+    /**
+     * 1.是否有返回值{@link ServletInvocableHandlerMethod#invokeAndHandle}
+     * 2.有返回值获取返回值处理器{@link HandlerMethodReturnValueHandlerComposite#selectHandler}
+     * 3.如果返回类型为ModelAndView，对应返回值处理器为{@link ModelAndViewMethodReturnValueHandler#handleReturnValue}
+     * 主要将返回的结果存入ModelAndViewContainer中
+     * 4.重新生成一个ModelAndView作为返回结果，{@link RequestMappingHandlerAdapter#getModelAndView}
+     * @return
+     */
     @RequestMapping("/hello")
     public ModelAndView sayHello() {
         Date date = new Date();

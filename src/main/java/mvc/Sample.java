@@ -4,6 +4,10 @@ import org.junit.Test;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.w3c.dom.Element;
+import mvc.controller.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class Sample {
     /**父子webApplicationContext
@@ -89,14 +93,30 @@ public class Sample {
      * 获取默认method参数解析器.getDefaultArgumentResolvers
      * 获取默认method参数绑定器.getDefaultInitBinderArgumentResolvers
      * 获取默认method返回值处理器.getDefaultReturnValueHandlers
+     *
+     * 1.如何确定需要绑定哪些参数?
+     *
+     * 2.这些参数如何绑定的?
      */
     @Test
     public void testMethodDataBind(){
     
     }
     
+    /**Represents a model and view returned by a handler
+     * {@link org.springframework.web.servlet.HandlerAdapter#handle(HttpServletRequest, HttpServletResponse, Object)}
+     *
+     * DispatcherServlet.doDispatch
+     * // Actually invoke the handler. handlerAdapter处理完handler逻辑会返回一个ModelAndView
+     * mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+     *
+     * 1.什么时候返回ModelAndView？什么时候返回其他结果?
+     * 2.返回void怎么处理?
+     *
+     * 1.有返回值且返回类型为ModelAndView，{@link ParamMappingController#sayHello()}
+     */
     @Test
-    public void testReturnView(){
+    public void testReturnModelAndView(){
     
     }
 }
