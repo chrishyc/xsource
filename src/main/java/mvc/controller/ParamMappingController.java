@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.Map;
+import org.springframework.web.method.support.*;
+import org.springframework.web.servlet.mvc.method.annotation.*;
+import org.springframework.web.method.annotation.*;
 
 /**
  * @author chris
@@ -100,6 +103,11 @@ public class ParamMappingController {
         return modelAndView;
     }
     
+    /**1.请求开始触发方法invoke后，进入开始解析method每个参数支持的解析器
+     * {@link InvocableHandlerMethod#getMethodArgumentValues}
+     * 2.对于基本类型，解析器为{@link RequestParamMethodArgumentResolver#supportsParameter}
+     * 此解析器位于参数解析器倒数第二个
+     */
     @RequestMapping("/primitiveType")
     public ModelAndView primitiveType(Integer id, Boolean flag) {
         Date date = new Date();
@@ -121,6 +129,13 @@ public class ParamMappingController {
         return modelAndView;
     }
     
+    /**1.请求开始触发方法invoke后，进入开始解析method每个参数支持的解析器
+     * {@link InvocableHandlerMethod#getMethodArgumentValues}
+     * 2.对于pojo类型，解析器为{@link ServletModelAttributeMethodProcessor#supportsParameter}
+     * 此解析器位于参数解析器末尾,毕竟所有类都是pojo，所以只有没有被前面参数解析器识别时，才使用这个解析
+     * @param user
+     * @return
+     */
     @RequestMapping("/pojo")
     public ModelAndView pojo(User user) {
         Date date = new Date();

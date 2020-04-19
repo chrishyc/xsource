@@ -1,5 +1,6 @@
 package mvc;
 
+import mvc.controller.ParamMappingController;
 import mvc.controller.ReturnTypeController;
 import org.junit.Test;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -8,6 +9,7 @@ import org.w3c.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.method.support.*;
 
 public class Sample {
     /**
@@ -98,6 +100,11 @@ public class Sample {
      * 1.如何确定需要绑定哪些参数?
      * <p>
      * 2.这些参数如何绑定的?
+     * <p>
+     *
+     * {@link HandlerMethodArgumentResolverComposite#getArgumentResolver}
+     * 1.参数为pojo,{@link ParamMappingController#pojo}
+     * 2.参数为基本类型,{@link ParamMappingController#primitiveType}
      */
     @Test
     public void testMethodParam() {
