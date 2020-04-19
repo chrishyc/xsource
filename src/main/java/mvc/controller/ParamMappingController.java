@@ -56,6 +56,21 @@ public class ParamMappingController {
     }
     
     /**
+     * 3.返回值为String类型(CharSequence),对应返回值处理器为{@link ViewNameMethodReturnValueHandler#supportsReturnType}
+     * 将返回值放入ModelAndViewContainer.setViewName中，此过程还会判断字符串是否有重定向字符
+     * {@link ViewNameMethodReturnValueHandler#isRedirectViewName}
+     * 4.重新生成一个ModelAndView作为返回结果，这个ModelAndView中viewName=返回值，其他为null.
+     */
+    @RequestMapping("/returnString")
+    public String returnString() {
+        Date date = new Date();
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("date", date);
+        modelAndView.setViewName("success");
+        return "success";
+    }
+    
+    /**
      * {@link org.springframework.validation.support.BindingAwareModelMap}
      * @param map
      * @param model

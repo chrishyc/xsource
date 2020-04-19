@@ -99,7 +99,7 @@ public class Sample {
      * 2.这些参数如何绑定的?
      */
     @Test
-    public void testMethodDataBind(){
+    public void testMethodParam(){
     
     }
     
@@ -115,9 +115,10 @@ public class Sample {
      *
      * 1.有返回值且返回类型为ModelAndView，{@link ParamMappingController#sayHello()}
      * 2.返回void时{@link ParamMappingController#returnVoid()}
+     * 3.返回string时{@link ParamMappingController#returnString()}
      */
     @Test
-    public void testReturnModelAndView(){
+    public void testReturn(){
     
     }
 }
