@@ -10,6 +10,9 @@ import org.w3c.dom.Element;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.method.support.*;
+import org.springframework.web.servlet.*;
+import org.springframework.web.servlet.view.*;
+import org.springframework.web.servlet.config.*;
 
 public class Sample {
     /**
@@ -57,7 +60,7 @@ public class Sample {
      * 初始化过程:
      * 1.spring mvc默认HandlerMapping为RequestMappingHandlerMapping
      * 2.注册RequestMappingHandlerMapping时机为
-     * {@link org.springframework.web.servlet.config.AnnotationDrivenBeanDefinitionParser#parse(Element, ParserContext)}
+     * {@link AnnotationDrivenBeanDefinitionParser#parse(Element, ParserContext)}
      * 3.生成mapping时机:当RequestMappingHandlerMapping初始化生成实例且注入后，会调用RequestMappingHandlerMapping的afterPropertiesSet
      * 去生成对应的mapping
      * 4.获取bean容器所有bean去判断bean是否是handler,{@link org.springframework.web.servlet.handler.AbstractHandlerMethodMapping#processCandidateBean(String)}
@@ -133,5 +136,18 @@ public class Sample {
     
     }
     
+    /**
+     * {@link DispatcherServlet#initViewResolvers}
+     * DispatcherServlet初始化时会初始化视图解析器，会从bean容器中查找
+     * {@link ViewResolver}的子类，我们一般使用{@link InternalResourceViewResolver}
+     * 此解析器使用默认的虚拟视图{@link JstlView}
+     * 1.请求到来,invoke方法后开始处理结果,此方法会解析视图{@link DispatcherServlet#processDispatchResult}
+     * {@link DispatcherServlet#render}
+     * 2.获取视图解析器{@link DispatcherServlet#resolveViewName}和对应视图，渲染视图
+     * 3.将请求参数渲染到视图中{@link InternalResourceView#renderMergedOutputModel}
+     */
+    @Test
+    public void testResolverView(){
     
+    }
 }
