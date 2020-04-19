@@ -39,6 +39,9 @@
         <fileset id="fileset12" name="ApplicationContext Service" removed="false">
           <file>file://$MODULE_DIR$/src/main/resources/applicationContext-service.xml</file>
         </fileset>
+        <fileset id="fileset13" name="Spring Data Jpa" removed="false">
+          <file>file://$MODULE_DIR$/src/main/resources/spring-data-jpa.xml</file>
+        </fileset>
       </configuration>
     </facet>
   </component>
