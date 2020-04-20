@@ -3,8 +3,8 @@ package demo.springmvc.controller;
 import demo.springmvc.annotation.MVCAutowired;
 import demo.springmvc.annotation.MVCController;
 import demo.springmvc.annotation.MVCRequestMapping;
+import demo.springmvc.annotation.MVCSecurity;
 import demo.springmvc.service.DemoService;
-import mvc.pojo.User;
 
 @MVCController
 public class DemoController {
@@ -12,8 +12,9 @@ public class DemoController {
     @MVCAutowired
     private DemoService demoService;
     
-    @MVCRequestMapping("/chris/hello")
-    public User sayHello(String name) {
+    @MVCSecurity(value = "chris,device,ishu")
+    @MVCRequestMapping("/hello")
+    public String sayHello(String name) {
         return demoService.getUserByName(name);
     }
 }
