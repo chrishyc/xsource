@@ -44,7 +44,7 @@ public class SpringDataJpaTest {
         
         Optional<Resume> optional = resumeDao.findById(4L);
         Resume resume = optional.get();
-        System.out.println(resume);
+        System.out.println("testFindById:" + resume);
     }
     
     
@@ -56,7 +56,7 @@ public class SpringDataJpaTest {
         Example<Resume> example = Example.of(resume);
         Optional<Resume> one = resumeDao.findOne(example);
         Resume resume1 = one.get();
-        System.out.println(resume1);
+        System.out.println("testFindOne:" + resume1);
     }
     
     
@@ -69,14 +69,14 @@ public class SpringDataJpaTest {
         resume.setAddress("成都");
         resume.setPhone("132000000");
         Resume save = resumeDao.save(resume);
-        System.out.println(save);
+        System.out.println("testSave:" + save);
         
     }
     
     
     @Test
     public void testDelete() {
-        resumeDao.deleteById(5L);
+        resumeDao.deleteById(10L);
     }
     
     
@@ -85,7 +85,7 @@ public class SpringDataJpaTest {
         List<Resume> list = resumeDao.findAll();
         for (int i = 0; i < list.size(); i++) {
             Resume resume = list.get(i);
-            System.out.println(resume);
+            System.out.println("testFindAll:" + resume);
         }
     }
     
@@ -96,7 +96,7 @@ public class SpringDataJpaTest {
         List<Resume> list = resumeDao.findAll(sort);
         for (int i = 0; i < list.size(); i++) {
             Resume resume = list.get(i);
-            System.out.println(resume);
+            System.out.println("testSort:" + resume);
         }
     }
     
@@ -110,7 +110,7 @@ public class SpringDataJpaTest {
         Pageable pageable = PageRequest.of(0, 2);
         //Pageable pageable = new PageRequest(0,2);
         Page<Resume> all = resumeDao.findAll(pageable);
-        System.out.println(all);
+        System.out.println("testPage:" + all);
         /*for (int i = 0; i < list.size(); i++) {
             Resume resume =  list.get(i);
             System.out.println(resume);
@@ -152,7 +152,7 @@ public class SpringDataJpaTest {
         List<Resume> list = resumeDao.findByJpql(4L, "chris");
         for (int i = 0; i < list.size(); i++) {
             Resume resume = list.get(i);
-            System.out.println(resume);
+            System.out.println("testJpql:" + resume);
         }
     }
     
@@ -162,7 +162,7 @@ public class SpringDataJpaTest {
         List<Resume> list = resumeDao.findBySql("李%", "上海%");
         for (int i = 0; i < list.size(); i++) {
             Resume resume = list.get(i);
-            System.out.println(resume);
+            System.out.println("testSql:" + resume);
         }
     }
     
@@ -172,7 +172,7 @@ public class SpringDataJpaTest {
         List<Resume> list = resumeDao.findByNameLikeAndAddress("李%", "上海");
         for (int i = 0; i < list.size(); i++) {
             Resume resume = list.get(i);
-            System.out.println(resume);
+            System.out.println("testMethodName:" + resume);
         }
         
     }
@@ -195,16 +195,13 @@ public class SpringDataJpaTest {
          *      需求：根据name（指定为"张三"）查询简历
          */
         
-        Specification<Resume> specification = new Specification<Resume>() {
-            @Override
-            public Predicate toPredicate(Root<Resume> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                // 获取到name属性
-                Path<Object> name = root.get("name");
-                
-                // 使用CriteriaBuilder针对name属性构建条件（精准查询）
-                Predicate predicate = criteriaBuilder.equal(name, "张三");
-                return predicate;
-            }
+        Specification<Resume> specification = (Specification<Resume>) (root, criteriaQuery, criteriaBuilder) -> {
+            // 获取到name属性
+            Path<Object> name = root.get("name");
+            
+            // 使用CriteriaBuilder针对name属性构建条件（精准查询）
+            Predicate predicate = criteriaBuilder.equal(name, "张三");
+            return predicate;
         };
         
         
