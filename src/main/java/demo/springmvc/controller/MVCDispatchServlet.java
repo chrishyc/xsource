@@ -1,10 +1,6 @@
 package demo.springmvc.controller;
 
-import demo.springmvc.annotation.MVCAutowired;
-import demo.springmvc.annotation.MVCController;
-import demo.springmvc.annotation.MVCRequestMapping;
-import demo.springmvc.annotation.MVCService;
-import org.junit.Test;
+import demo.springmvc.annotation.*;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -28,6 +24,7 @@ public class MVCDispatchServlet extends HttpServlet {
     private List<String> classesName = new ArrayList<>();
     private Map<String, Object> objectMap = new HashMap<>();
     private Map<String, Method> handlerMapping = new HashMap<>();
+    private Map<String, String> securityMapping = new HashMap<>();
     
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -104,6 +101,9 @@ public class MVCDispatchServlet extends HttpServlet {
                                 if (annotation1 instanceof MVCRequestMapping) {
                                     handlerMapping.put(((MVCRequestMapping) annotation1).value(), method);
                                 }
+                                if (annotation1 instanceof MVCSecurity) {
+                                    securityMapping.put(method.getName(), ((MVCSecurity) annotation1).value());
+                                }
                             }
                         }
                         
@@ -136,6 +136,20 @@ public class MVCDispatchServlet extends HttpServlet {
         for (String key : handlerMapping.keySet()) {
             if (url.contains(key)) {
                 Map<String, String[]> parameterMap = req.getParameterMap();
+                String[] users = parameterMap.get("name");
+                String iauthUsers = securityMapping.get(handlerMapping.get(key).getName());
+                String[] userarr = iauthUsers.split(",");
+                boolean iauth = false;
+                for (int i = 0; i < userarr.length; i++) {
+                    if (userarr[i].equals(users[0])) {
+                        iauth = true;
+                        break;
+                    }
+                }
+                if (!iauth) {
+                    System.out.println("the use of " + users[0] + " can not access the path:" + key);
+                    return null;
+                }
                 
                 Method method = handlerMapping.get(key);
                 Parameter[] parameters = method.getParameters();
