@@ -17,7 +17,7 @@ import java.util.Optional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-data-jpa.xml"})
-public class Sample {
+public class SpringDataJpaTest {
     
     
     // 要测试IOC哪个对象注入即可
