@@ -13,6 +13,7 @@
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
+    <mvc:resources location="/WEB-INF/script/" mapping="/script/**"/>
 
     <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="converters">
@@ -27,21 +28,27 @@
     <mvc:interceptors>
         <!--拦截所有handler-->
 
-        <mvc:interceptor>
-            <!--配置当前拦截器的url拦截规则，**代表当前目录下及其子目录下的所有url-->
-            <mvc:mapping path="/**"/>
-            <!--exclude-mapping可以在mapping的基础上排除一些url拦截-->
-            <!--<mvc:exclude-mapping path="/demo/**"/>-->
-            <bean class="mvc.interceptor.MyIntercepter01"/>
-        </mvc:interceptor>
+<!--        <mvc:interceptor>-->
+<!--            &lt;!&ndash;配置当前拦截器的url拦截规则，**代表当前目录下及其子目录下的所有url&ndash;&gt;-->
+<!--            <mvc:mapping path="/**"/>-->
+<!--            &lt;!&ndash;exclude-mapping可以在mapping的基础上排除一些url拦截&ndash;&gt;-->
+<!--            &lt;!&ndash;<mvc:exclude-mapping path="/demo/**"/>&ndash;&gt;-->
+<!--            <bean class="mvc.interceptor.MyIntercepter01"/>-->
+<!--        </mvc:interceptor>-->
 
 
+<!--        <mvc:interceptor>-->
+<!--            <mvc:mapping path="/**"/>-->
+<!--            <bean class="mvc.interceptor.MyIntercepter02"/>-->
+<!--        </mvc:interceptor>-->
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
-            <bean class="mvc.interceptor.MyIntercepter02"/>
+            <mvc:exclude-mapping path="/account/login"/>
+            <bean class="mvc.interceptor.LoginIauthIntercepter"/>
         </mvc:interceptor>
 
     </mvc:interceptors>
+    <mvc:default-servlet-handler/>
 
     <!--多元素解析器id固定为multipartResolver-->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
