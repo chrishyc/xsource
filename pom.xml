@@ -281,22 +281,22 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>javax.el</groupId>
-            <artifactId>javax.el-api</artifactId>
-            <version>3.0.1-b04</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>2.2.6</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.el</groupId>
-                    <artifactId>javax.el-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>javax.el</groupId>-->
+<!--            <artifactId>javax.el-api</artifactId>-->
+<!--            <version>3.0.1-b04</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.glassfish.web</groupId>-->
+<!--            <artifactId>javax.el</artifactId>-->
+<!--            <version>2.2.6</version>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>javax.el</groupId>-->
+<!--                    <artifactId>javax.el-api</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
         <!--hibernate对jpa的实现jar-->
         <dependency>
             <groupId>org.hibernate</groupId>
