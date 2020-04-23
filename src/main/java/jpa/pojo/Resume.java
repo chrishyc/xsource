@@ -8,6 +8,7 @@ import javax.persistence.*;
  * 简历实体类（在类中要使用注解建立实体类和数据表之间的映射关系以及属性和字段的映射关系）
  * 1、实体类和数据表映射关系
  *
+ * @author chris
  * @Entity
  * @Table 2、实体类属性和表字段的映射关系
  * @Id 标识主键

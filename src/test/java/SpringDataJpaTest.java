@@ -3,10 +3,14 @@ import jpa.pojo.Resume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.data.jpa.repository.config.*;
+import org.springframework.data.repository.config.*;
+import org.springframework.data.jpa.repository.support.*;
 
 import javax.persistence.criteria.*;
 import java.util.List;
@@ -31,7 +35,19 @@ public class SpringDataJpaTest {
      * 2、专门针对查询的详细分析使用
      */
     
-    
+    /**
+     *  <jpa:repositories/>注解对应自定义解析器
+     *  {@link JpaRepositoryNameSpaceHandler}
+     *  {@link RepositoryBeanDefinitionParser}
+     *
+     *  {@link JpaRepositoryConfigExtension}Repository配置扩展类，
+     *  包括配置{@link JpaRepositoryFactoryBean},对每个BeanDefinition配置
+     *  transactionManagerRef，和entityManagerFactoryRef
+     *
+     *  对于每个Repository，主要build为{@link RepositoryBeanDefinitionBuilder#build(RepositoryConfiguration)}
+     *  给每个Repository注入transactionManagerRef,entityManagerFactoryRef
+     *  {@link JpaRepositoryConfigExtension#postProcess(BeanDefinitionBuilder, RepositoryConfigurationSource)}
+     */
     @Test
     public void testFindById() {
         // 早期的版本 dao.findOne(id);
