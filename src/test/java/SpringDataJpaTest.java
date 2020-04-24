@@ -47,6 +47,8 @@ public class SpringDataJpaTest {
      *  对于每个Repository，主要build为{@link RepositoryBeanDefinitionBuilder#build(RepositoryConfiguration)}
      *  给每个Repository注入transactionManagerRef,entityManagerFactoryRef
      *  {@link JpaRepositoryConfigExtension#postProcess(BeanDefinitionBuilder, RepositoryConfigurationSource)}
+     *
+     *
      */
     @Test
     public void testFindById() {
