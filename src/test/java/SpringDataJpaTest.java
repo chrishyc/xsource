@@ -6,11 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.config.JpaRepositoryConfigExtension;
+import org.springframework.data.jpa.repository.config.JpaRepositoryNameSpaceHandler;
+import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
+import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
+import org.springframework.data.repository.config.*;
+import org.springframework.data.repository.config.RepositoryBeanDefinitionParser;
+import org.springframework.data.repository.config.RepositoryConfiguration;
+import org.springframework.data.repository.config.RepositoryConfigurationSource;
+import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.data.jpa.repository.config.*;
-import org.springframework.data.repository.config.*;
-import org.springframework.data.jpa.repository.support.*;
 
 import javax.persistence.criteria.*;
 import java.util.List;
@@ -36,19 +42,23 @@ public class SpringDataJpaTest {
      */
     
     /**
-     *  <jpa:repositories/>注解对应自定义解析器
-     *  {@link JpaRepositoryNameSpaceHandler}
-     *  {@link RepositoryBeanDefinitionParser}
-     *
-     *  {@link JpaRepositoryConfigExtension}Repository配置扩展类，
-     *  包括配置{@link JpaRepositoryFactoryBean},对每个BeanDefinition配置
-     *  transactionManagerRef，和entityManagerFactoryRef
-     *
-     *  对于每个Repository，主要build为{@link RepositoryBeanDefinitionBuilder#build(RepositoryConfiguration)}
-     *  给每个Repository注入transactionManagerRef,entityManagerFactoryRef
-     *  {@link JpaRepositoryConfigExtension#postProcess(BeanDefinitionBuilder, RepositoryConfigurationSource)}
-     *
-     *
+     * <jpa:repositories/>注解对应自定义解析器
+     * {@link JpaRepositoryNameSpaceHandler}
+     * {@link RepositoryBeanDefinitionParser}
+     * <p>
+     * {@link JpaRepositoryConfigExtension}Repository配置扩展类，
+     * 包括配置{@link JpaRepositoryFactoryBean},对每个BeanDefinition配置
+     * transactionManagerRef，和entityManagerFactoryRef
+     * <p>
+     * 对于每个Repository，主要build为{@link RepositoryBeanDefinitionBuilder#build(RepositoryConfiguration)}
+     * 给每个Repository注入transactionManagerRef,entityManagerFactoryRef
+     * {@link JpaRepositoryConfigExtension#postProcess(BeanDefinitionBuilder, RepositoryConfigurationSource)}
+     * <p>
+     * <p>
+     * {@link RepositoryFactorySupport#getRepository}
+     * {@link JpaRepositoryFactory#getTargetRepository}
+     * {@link JpaRepositoryFactory#getRepositoryBaseClass}
+     * 生成Repository逻辑
      */
     @Test
     public void testFindById() {
