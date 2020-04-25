@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class DemoController {
-    @RequestMapping("/springboot")
+    @RequestMapping(value = "/springboot",produces = "application/json; charset=utf-8")
     public String sayHello() {
-        return "hello spring Boot";
+        return "hello spring Boot,---111222221--qqq==jjj-11111-";
     }
 }

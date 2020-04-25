@@ -13,13 +13,9 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  */
 @SpringBootApplication
 public class SpringbootDemoApplication extends SpringBootServletInitializer {
-
-	public static void main(String[] args) {
-		try {
-			SpringApplication.run(SpringbootDemoApplication.class, args);
-		}catch (Exception e){
-			System.out.println(e);
-		}
-	}
-
+    
+    public static void main(String[] args) {
+        SpringApplication.run(SpringbootDemoApplication.class, args);
+    }
+    
 }
