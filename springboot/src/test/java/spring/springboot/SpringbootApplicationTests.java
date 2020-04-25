@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import spring.springboot.controller.DemoController;
+import spring.springboot.pojo.Custom;
 import spring.springboot.pojo.Dog;
 import spring.springboot.pojo.Person;
 
@@ -21,6 +22,9 @@ class SpringbootApplicationTests {
 	
 	@Autowired
 	private Dog dog;
+	
+	@Autowired
+	private Custom custom;
 
 	@Test
 	void contextLoads() {
@@ -37,5 +41,11 @@ class SpringbootApplicationTests {
 	public void testValue(){
 		System.out.println(dog);
 		System.out.println(dog);
+	}
+	
+	@Test
+	public void testCustom(){
+		System.out.println(custom);
+		System.out.println(custom);
 	}
 }
