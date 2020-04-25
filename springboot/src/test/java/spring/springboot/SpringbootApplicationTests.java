@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import spring.springboot.controller.DemoController;
+import spring.springboot.pojo.Dog;
 import spring.springboot.pojo.Person;
 
 @RunWith(SpringRunner.class)
@@ -17,6 +18,9 @@ class SpringbootApplicationTests {
 	
 	@Autowired
 	private Person person;
+	
+	@Autowired
+	private Dog dog;
 
 	@Test
 	void contextLoads() {
@@ -29,5 +33,9 @@ class SpringbootApplicationTests {
 		System.out.println(person);
 	}
 	
-
+	@Test
+	public void testValue(){
+		System.out.println(dog);
+		System.out.println(dog);
+	}
 }

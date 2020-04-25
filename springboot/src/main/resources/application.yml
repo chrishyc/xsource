@@ -3,3 +3,5 @@ person:
   name: chris
   age: 26
   cat: {name: device,age: 2}
+
+dog: {name: push , age: 2}
