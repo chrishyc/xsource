@@ -1,0 +1,5 @@
+# key: value形式,:后面必须有空格
+person:
+  name: chris
+  age: 26
+  cat:{name: device,age: 2}
