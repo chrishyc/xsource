@@ -1,6 +1,7 @@
 package spring.springboot.pojo;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,6 @@ public class Custom {
     private String age;
     private String sex;
     private String hobby;
-    @Bean
-    public Dog dog(){
-        return new Dog();
-    }
+    @Value("${custom.description}")
+    private String test;
 }
