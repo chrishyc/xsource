@@ -2,4 +2,4 @@
 person:
   name: chris
   age: 26
-  cat:{name: device,age: 2}
+  cat: {name: device,age: 2}
