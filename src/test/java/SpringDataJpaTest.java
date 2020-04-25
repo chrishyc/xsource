@@ -1,5 +1,6 @@
 import jpa.dao.ResumeDao;
 import jpa.pojo.Resume;
+import org.hibernate.boot.spi.MetadataImplementor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.data.jpa.repository.support.*;
 import org.springframework.data.jpa.repository.query.*;
+import org.hibernate.metamodel.internal.*;
+import org.hibernate.mapping.*;
 
 import javax.persistence.criteria.*;
 import java.util.List;
@@ -62,14 +65,23 @@ public class SpringDataJpaTest {
      * {@link JpaRepositoryFactory#getRepositoryBaseClass}
      * 生成Repository逻辑
      *
-     *
+     * 这些创建过程在容器bean实例化时创建
      * 接口方法代理实现类{@link SimpleJpaRepository}
      * 接口方法{@link JpaQueryMethod}
+     *
+     * 此过程在执行方法invoke时执行
      * sql{@link SimpleJpaQuery#doCreateQuery}
      * sql{@link NativeJpaQuery#doCreateQuery}
      *
      * sql执行{@link JpaQueryExecution}
      * {@link JpaQueryExecution.CollectionExecution#doExecute(AbstractJpaQuery, JpaParametersParameterAccessor)}
+     *
+     * 实体类解析{@link PersistentClass}
+     *
+     * 实体类在LocalContainerEntityManagerFactoryBean.afterPropertiesSet中
+     * SessionFactoryImpl实例化时实例化
+     * 实体类创建{@link MetamodelImpl#initialize(MetadataImplementor, JpaMetaModelPopulationSetting)}
+     * {@link MetamodelImpl.entityPersisterMap}
      */
     @Test
     public void testFindById() {
