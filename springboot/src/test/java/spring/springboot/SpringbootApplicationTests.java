@@ -3,6 +3,7 @@ package spring.springboot;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import spring.springboot.controller.DemoController;
@@ -25,6 +26,9 @@ class SpringbootApplicationTests {
 	
 	@Autowired
 	private Custom custom;
+	
+	@Value("${custom.number.inrange}")
+	private int range;
 
 	@Test
 	void contextLoads() {
@@ -46,6 +50,12 @@ class SpringbootApplicationTests {
 	@Test
 	public void testCustom(){
 		System.out.println(custom);
+		System.out.println(custom);
+	}
+	
+	@Test
+	public void testRef(){
+		System.out.println(range);
 		System.out.println(custom);
 	}
 }
