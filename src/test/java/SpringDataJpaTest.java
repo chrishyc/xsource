@@ -17,6 +17,8 @@ import org.springframework.data.repository.config.RepositoryConfigurationSource;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.data.jpa.repository.support.*;
+import org.springframework.data.jpa.repository.query.*;
 
 import javax.persistence.criteria.*;
 import java.util.List;
@@ -59,6 +61,15 @@ public class SpringDataJpaTest {
      * {@link JpaRepositoryFactory#getTargetRepository}
      * {@link JpaRepositoryFactory#getRepositoryBaseClass}
      * 生成Repository逻辑
+     *
+     *
+     * 接口方法代理实现类{@link SimpleJpaRepository}
+     * 接口方法{@link JpaQueryMethod}
+     * sql{@link SimpleJpaQuery#doCreateQuery}
+     * sql{@link NativeJpaQuery#doCreateQuery}
+     *
+     * sql执行{@link JpaQueryExecution}
+     * {@link JpaQueryExecution.CollectionExecution#doExecute(AbstractJpaQuery, JpaParametersParameterAccessor)}
      */
     @Test
     public void testFindById() {
