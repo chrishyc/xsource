@@ -1,5 +1,6 @@
 package spring.springboot;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.*;
@@ -42,6 +43,7 @@ import java.util.Set;
  *
  * 4.run方法开始运行bean工厂{@link AbstractApplicationContext#refresh()}
  */
+//@MapperScan
 @SpringBootApplication
 public class SpringbootDemoApplication extends SpringBootServletInitializer {
     
