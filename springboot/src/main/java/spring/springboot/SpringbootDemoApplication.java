@@ -6,8 +6,11 @@ import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.core.io.support.*;
+import org.springframework.context.support.*;
+import org.springframework.context.annotation.*;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * @author chris
@@ -19,6 +22,7 @@ import java.util.Properties;
  * 1.{@link SpringBootConfiguration}={@link Configuration}
  *
  * 2.{@link ComponentScan}
+ * {@link ConfigurationClassParser#doProcessConfigurationClass)}
  *
  * 3.{@link EnableAutoConfiguration}
  *
@@ -32,6 +36,11 @@ import java.util.Properties;
  * {@link AutoConfigurationImportSelector}
  * {@link AutoConfigurationMetadataLoader#loadMetadata(ClassLoader, String)}
  * 加载META-INF/spring-autoconfigure-metadata.properties中变量
+ *
+ * {@link SpringFactoriesLoader#loadSpringFactories},SPI机制
+ * 加载所有META-INF/spring.factories
+ *
+ * 4.run方法开始运行bean工厂{@link AbstractApplicationContext#refresh()}
  */
 @SpringBootApplication
 public class SpringbootDemoApplication extends SpringBootServletInitializer {
