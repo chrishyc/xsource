@@ -19,7 +19,9 @@ import org.apache.ibatis.annotations.*;
 import org.mybatis.spring.annotation.*;
 import org.springframework.context.annotation.*;
 import org.springframework.boot.context.properties.*;
-
+import org.springframework.boot.env.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.boot.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class SpringbootApplicationTests {
@@ -56,6 +58,7 @@ class SpringbootApplicationTests {
      * 会注入{@link ConfigurationPropertiesBindingPostProcessor#postProcessBeforeInitialization},在此方法中进行
      * 查询{@link ConfigurationProperties}注解bean和并对此bean绑定参数.对于没有注入到bean工厂中的bean，不会进行此过程
      *
+     * {@link PropertiesPropertySourceLoader#loadProperties}加载配置文件
      */
     @Test
     public void testConfigurationProperties() {
@@ -63,6 +66,14 @@ class SpringbootApplicationTests {
         System.out.println(person);
     }
     
+    /**
+     * {@link AutowiredAnnotationBeanPostProcessor#postProcessProperties}完成{@link Value}的注入
+     * {@link SpringApplication#load}实例化bean加载器{@link BeanDefinitionLoader},
+     * 他的构造函数中会实例化{@link AnnotatedBeanDefinitionReader}{@link ClassPathBeanDefinitionScanner}
+     *
+     * {@link AnnotatedBeanDefinitionReader}实例化时会注入一些配置处理器{@link AnnotationConfigUtils#registerAnnotationConfigProcessors}
+     * 包括{@link AutowiredAnnotationBeanPostProcessor#postProcessProperties}
+     */
     @Test
     public void testValue() {
         System.out.println(dog);

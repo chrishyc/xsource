@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
-
+import org.springframework.boot.env.*;
 /**
  * @author chris
  * springboot以module形式run无反应,发现原因:
@@ -38,6 +38,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  * <p>
  * {@link SpringFactoriesLoader#loadSpringFactories},SPI机制
  * 加载所有META-INF/spring.factories
+ * {@link PropertiesPropertySourceLoader#loadProperties}加载配置文件
  * <p>
  * 4.run方法开始运行bean工厂{@link AbstractApplicationContext#refresh()}
  */
