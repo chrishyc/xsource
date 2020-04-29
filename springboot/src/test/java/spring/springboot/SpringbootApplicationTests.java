@@ -54,6 +54,8 @@ class SpringbootApplicationTests {
     
     /**
      * {@link EnableConfigurationProperties}
+     * {@link ConfigurationProperties}
+     *
      * 会import{@link EnableConfigurationPropertiesRegistrar#registerInfrastructureBeans}
      * 会注入{@link ConfigurationPropertiesBindingPostProcessor#postProcessBeforeInitialization},在此方法中进行
      * 查询{@link ConfigurationProperties}注解bean和并对此bean绑定参数.对于没有注入到bean工厂中的bean，不会进行此过程
@@ -66,7 +68,8 @@ class SpringbootApplicationTests {
         System.out.println(person);
     }
     
-    /**
+    /**{@link Value}
+     *
      * {@link AutowiredAnnotationBeanPostProcessor#postProcessProperties}完成{@link Value}的注入
      * {@link SpringApplication#load}实例化bean加载器{@link BeanDefinitionLoader},
      * 他的构造函数中会实例化{@link AnnotatedBeanDefinitionReader}{@link ClassPathBeanDefinitionScanner}
@@ -82,6 +85,7 @@ class SpringbootApplicationTests {
     
     /**
      * {@link PropertySource}
+     *
      * {@link ConfigurationClassParser#doProcessConfigurationClass}注入指定的配置文件
      *
      * {@link ConfigurationClassPostProcessor#processConfigBeanDefinitions}处理 配置bean
