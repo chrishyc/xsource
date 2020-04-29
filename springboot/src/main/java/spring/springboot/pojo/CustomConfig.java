@@ -7,11 +7,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+/**
+ * @author chris
+ */
 @Data
 @Configuration(proxyBeanMethods = false)
 @ConfigurationProperties(prefix = "custom")
 @PropertySource("classpath:custom.properties")
-public class Custom {
+public class CustomConfig {
     private String name;
     private String age;
     private String sex;
