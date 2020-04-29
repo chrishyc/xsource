@@ -80,6 +80,16 @@ class SpringbootApplicationTests {
         System.out.println(dog);
     }
     
+    /**
+     * {@link PropertySource}
+     * {@link ConfigurationClassParser#doProcessConfigurationClass}注入指定的配置文件
+     *
+     * {@link ConfigurationClassPostProcessor#processConfigBeanDefinitions}处理 配置bean
+     * {@link ConfigurationClassParser#doProcessConfigurationClass}
+     *
+     * {@link AnnotatedBeanDefinitionReader}实例化时会注入一些配置处理器{@link AnnotationConfigUtils#registerAnnotationConfigProcessors}
+     * 包括{@link ConfigurationClassPostProcessor#doProcessConfigurationClass}
+     */
     @Test
     public void testCustom() {
         System.out.println(customConfig);
