@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import spring.springboot.controller.DemoController;
 import spring.springboot.mapper.CommentMapper;
-import spring.springboot.pojo.Custom;
+import spring.springboot.pojo.CustomConfig;
 import spring.springboot.pojo.Dog;
 import spring.springboot.pojo.MybatisComment;
 import spring.springboot.pojo.Person;
@@ -18,7 +18,7 @@ import org.mybatis.spring.mapper.*;
 import org.apache.ibatis.annotations.*;
 import org.mybatis.spring.annotation.*;
 import org.springframework.context.annotation.*;
-import org.mybatis.spring.boot.autoconfigure.*;
+import org.springframework.boot.context.properties.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -34,7 +34,7 @@ class SpringbootApplicationTests {
     private Dog dog;
     
     @Autowired
-    private Custom custom;
+    private CustomConfig customConfig;
     
     @Value("${custom.number.inrange}")
     private int range;
@@ -50,6 +50,13 @@ class SpringbootApplicationTests {
         demoController.sayHello();
     }
     
+    /**
+     * {@link EnableConfigurationProperties}
+     * 会import{@link EnableConfigurationPropertiesRegistrar#registerInfrastructureBeans}
+     * 会注入{@link ConfigurationPropertiesBindingPostProcessor#postProcessBeforeInitialization},在此方法中进行
+     * 查询{@link ConfigurationProperties}注解bean和并对此bean绑定参数.对于没有注入到bean工厂中的bean，不会进行此过程
+     *
+     */
     @Test
     public void testConfigurationProperties() {
         System.out.println(person);
@@ -64,14 +71,14 @@ class SpringbootApplicationTests {
     
     @Test
     public void testCustom() {
-        System.out.println(custom);
-        System.out.println(custom);
+        System.out.println(customConfig);
+        System.out.println(customConfig);
     }
     
     @Test
     public void testRef() {
         System.out.println(range);
-        System.out.println(custom);
+        System.out.println(customConfig);
     }
     
     @Test
@@ -108,5 +115,10 @@ class SpringbootApplicationTests {
     public void testMybatis() {
         MybatisComment comment = commentMapper.findById(1);
         System.out.println(comment);
+    }
+    
+    @Test
+    public void testPropertiesAndYML(){
+    
     }
 }
