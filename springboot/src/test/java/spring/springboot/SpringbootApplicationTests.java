@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.*;
 import org.springframework.boot.env.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.boot.*;
+import org.springframework.boot.context.config.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class SpringbootApplicationTests {
@@ -47,9 +48,22 @@ class SpringbootApplicationTests {
     @Autowired
     private CommentMapper commentMapper;
     
+    
+    
     @Test
     void contextLoads() {
         demoController.sayHello();
+    }
+    
+    
+    /**
+     * spring.factories加载{@link ConfigFileApplicationListener}
+     * 而{@link ConfigFileApplicationListener}会加载application.properties
+     * 以及application.yml
+     */
+    @Test
+    public void testPropertiesAndYML(){
+    
     }
     
     /**
@@ -92,7 +106,7 @@ class SpringbootApplicationTests {
      * {@link ConfigurationClassParser#doProcessConfigurationClass}
      *
      * {@link AnnotatedBeanDefinitionReader}实例化时会注入一些配置处理器{@link AnnotationConfigUtils#registerAnnotationConfigProcessors}
-     * 包括{@link ConfigurationClassPostProcessor#doProcessConfigurationClass}
+     * 包括{@link ConfigurationClassPostProcessor}
      */
     @Test
     public void testCustom() {
@@ -142,8 +156,5 @@ class SpringbootApplicationTests {
         System.out.println(comment);
     }
     
-    @Test
-    public void testPropertiesAndYML(){
     
-    }
 }
