@@ -39,6 +39,9 @@ class SpringbootApplicationTests {
     @Autowired
     private CustomConfig customConfig;
     
+    /**
+     * {@link RandomValuePropertySource}
+     */
     @Value("${custom.number.inrange}")
     private int range;
     
