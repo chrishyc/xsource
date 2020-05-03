@@ -1,28 +1,39 @@
 package spring.springboot;
 
 import chris.mystarter.TestBean;
+import org.apache.ibatis.annotations.Mapper;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.annotation.MapperScannerRegistrar;
+import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
+import org.mybatis.spring.mapper.ClassPathMapperScanner;
+import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.context.config.ConfigFileApplicationListener;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.*;
+import org.springframework.boot.env.PropertiesPropertySourceLoader;
+import org.springframework.boot.env.RandomValuePropertySource;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import spring.springboot.controller.DemoController;
 import spring.springboot.mapper.CommentMapper;
-import spring.springboot.pojo.CustomConfig;
-import spring.springboot.pojo.Dog;
-import spring.springboot.pojo.MybatisComment;
-import spring.springboot.pojo.Person;
-import org.mybatis.spring.boot.autoconfigure.*;
-import org.mybatis.spring.mapper.*;
-import org.apache.ibatis.annotations.*;
-import org.mybatis.spring.annotation.*;
-import org.springframework.context.annotation.*;
-import org.springframework.boot.context.properties.*;
-import org.springframework.boot.env.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.*;
-import org.springframework.boot.context.config.*;
+import spring.springboot.pojo.*;
+import spring.springboot.repository.CommentRepository;
+import org.springframework.boot.autoconfigure.data.jpa.*;
+import java.util.Optional;
+import java.util.Set;
+import org.springframework.boot.autoconfigure.*;
+import org.springframework.boot.autoconfigure.condition.*;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class SpringbootApplicationTests {
@@ -51,7 +62,8 @@ class SpringbootApplicationTests {
     @Autowired
     private CommentMapper commentMapper;
     
-    
+    @Autowired
+    private CommentRepository repository;
     
     @Test
     void contextLoads() {
@@ -65,18 +77,18 @@ class SpringbootApplicationTests {
      * 以及application.yml
      */
     @Test
-    public void testPropertiesAndYML(){
+    public void testPropertiesAndYML() {
     
     }
     
     /**
      * {@link EnableConfigurationProperties}
      * {@link ConfigurationProperties}
-     *
+     * <p>
      * 会import{@link EnableConfigurationPropertiesRegistrar#registerInfrastructureBeans}
      * 会注入{@link ConfigurationPropertiesBindingPostProcessor#postProcessBeforeInitialization},在此方法中进行
      * 查询{@link ConfigurationProperties}注解bean和并对此bean绑定参数.对于没有注入到bean工厂中的bean，不会进行此过程
-     *
+     * <p>
      * {@link PropertiesPropertySourceLoader#loadProperties}加载配置文件
      */
     @Test
@@ -85,12 +97,13 @@ class SpringbootApplicationTests {
         System.out.println(person);
     }
     
-    /**{@link Value}
-     *
+    /**
+     * {@link Value}
+     * <p>
      * {@link AutowiredAnnotationBeanPostProcessor#postProcessProperties}完成{@link Value}的注入
      * {@link SpringApplication#load}实例化bean加载器{@link BeanDefinitionLoader},
      * 他的构造函数中会实例化{@link AnnotatedBeanDefinitionReader}{@link ClassPathBeanDefinitionScanner}
-     *
+     * <p>
      * {@link AnnotatedBeanDefinitionReader}实例化时会注入一些配置处理器{@link AnnotationConfigUtils#registerAnnotationConfigProcessors}
      * 包括{@link AutowiredAnnotationBeanPostProcessor#postProcessProperties}
      */
@@ -102,12 +115,12 @@ class SpringbootApplicationTests {
     
     /**
      * {@link PropertySource}
-     *
+     * <p>
      * {@link ConfigurationClassParser#doProcessConfigurationClass}注入指定的配置文件
-     *
+     * <p>
      * {@link ConfigurationClassPostProcessor#processConfigBeanDefinitions}处理 配置bean
      * {@link ConfigurationClassParser#doProcessConfigurationClass}
-     *
+     * <p>
      * {@link AnnotatedBeanDefinitionReader}实例化时会注入一些配置处理器{@link AnnotationConfigUtils#registerAnnotationConfigProcessors}
      * 包括{@link ConfigurationClassPostProcessor}
      */
@@ -132,21 +145,22 @@ class SpringbootApplicationTests {
     /**
      * springboot通过SPI完成对各jar包的自动注入
      * 具体是通过扫描每个jar包中META-INF/spring.factories申明的类
-     *
+     * <p>
      * mybatis-spring-boot-starter包含mybatis-spring-boot-autoconfigure
      * mybatis-spring-boot-autoconfigure中定义了自定义注解类{@link MybatisAutoConfiguration}
-     *
+     * <p>
      * 1.{@link MybatisAutoConfiguration.MapperScannerRegistrarNotFoundConfiguration},如果没有
+     *
      * @ConditionalOnMissingBean({ MapperFactoryBean.class, MapperScannerConfigurer.class })
      * 则会以springboot的相同包名作为扫描包，
      * @Import({@link MybatisAutoConfiguration.AutoConfiguredMapperScannerRegistrar#registerBeanDefinitions}),其中会注入bean{@link MapperScannerConfigurer}
      * 而{@link MapperScannerConfigurer#postProcessBeanDefinitionRegistry}会扫描所有{@link Mapper}
-     *
+     * <p>
      * 2.{@link MapperScan}会Import{@link MapperScannerRegistrar},{@link MapperScannerRegistrar#registerBeanDefinitions}剩余操作同流程1
-     *
+     * <p>
      * 3.{@link ClassPathMapperScanner#registerFilters}确定候补candidate bean
-     *  {@link ClassPathScanningCandidateComponentProvider#scanCandidateComponents}
-     *
+     * {@link ClassPathScanningCandidateComponentProvider#scanCandidateComponents}
+     * <p>
      * 总结:两种自动注入mapper接口方式
      * a.{@link Mapper}会过滤所有实现了此注解的接口
      * b.{@link MapperScan}会过滤指定包名下的所有接口
@@ -159,5 +173,25 @@ class SpringbootApplicationTests {
         System.out.println(comment);
     }
     
-    
+    /**
+     * 代码解析流程
+     * 1.{@link ConfigurationClassPostProcessor#processConfigBeanDefinitions}处理所有{@link Configuration}配置类
+     * 2.{@link ConfigurationClassParser#parse(Set)}解析配置类,这里会处理{@link Import}类，
+     * {@link ConfigurationClassParser#processImports},这里处理springboot的import类{@link ConfigurationClassParser.DeferredImportSelectorHandler#handle}
+     * {@link ConfigurationClassParser.DeferredImportSelectorHandler#process()}
+     * 3.{@link AutoConfigurationImportSelector#filter}过滤，其中{@link OnBeanCondition#getOutcome(Set, Class)}过滤{@link ConditionalOnBean}
+     * {@link OnClassCondition}过滤{@link ConditionalOnClass}
+     *
+     * 配置属性加载流程
+     * 1.将spring-autoconfigure-metadata.properties配置加载到properties中
+     * 2.当spring.factories加载到JpaRepositoriesAutoConfiguration时，去properties查看他是否有{@link ConditionalOnBean}且容器中是否有此bean
+     * {@link ConditionalOnClass}以及classpath是否有此class文件.
+     * 3.处理完成后在{@link AutoConfigurationImportSelector#filter}中过滤候选bean
+     */
+    @Test
+    public void selectComment() {
+        Optional<Comment> optional = repository.findById(1);
+        optional.ifPresent(System.out::println);
+    }
+
 }
