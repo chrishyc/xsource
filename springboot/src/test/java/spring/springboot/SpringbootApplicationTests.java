@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.autoconfigure.condition.*;
+import spring.springboot.repository.RedisRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -64,6 +65,9 @@ class SpringbootApplicationTests {
     
     @Autowired
     private CommentRepository repository;
+    
+    @Autowired
+    private RedisRepository redisRepository;
     
     @Test
     void contextLoads() {
@@ -192,6 +196,21 @@ class SpringbootApplicationTests {
     public void selectComment() {
         Optional<Comment> optional = repository.findById(1);
         optional.ifPresent(System.out::println);
+    }
+    
+    @Test
+    public void redisTest(){
+        RedisPojo pojo = new RedisPojo();
+        pojo.setFirstName("张");
+        pojo.setLastName("三");
+    
+        RedisAddress address = new RedisAddress();
+        address.setCity("北京");
+        address.setCountry("中国");
+        pojo.setAddress(address);
+    
+        // 向redis数据库中添加了数据
+        redisRepository.save(pojo);
     }
 
 }
