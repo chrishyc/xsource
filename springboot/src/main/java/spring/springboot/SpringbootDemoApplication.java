@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.*;
@@ -44,6 +45,7 @@ import org.springframework.boot.env.*;
  */
 @MapperScan(basePackages = {"spring.springboot.mapper"})
 @SpringBootApplication
+@EnableCaching
 public class SpringbootDemoApplication extends SpringBootServletInitializer {
     
     public static void main(String[] args) {
