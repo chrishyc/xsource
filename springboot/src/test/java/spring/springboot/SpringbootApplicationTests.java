@@ -79,6 +79,9 @@ class SpringbootApplicationTests {
      * spring.factories加载{@link ConfigFileApplicationListener}
      * 而{@link ConfigFileApplicationListener}会加载application.properties
      * 以及application.yml
+     *
+     * application.properties中申明的属性都有默认值，在META-INF/spring-configuration-metadata.json中
+     *
      */
     @Test
     public void testPropertiesAndYML() {
@@ -198,6 +201,23 @@ class SpringbootApplicationTests {
         optional.ifPresent(System.out::println);
     }
     
+    /**
+     * redis autoConfiguration
+     *
+     * 1.查看spring-autoconfigure-metadata.properties中有关redis的自动配置
+     * {@link org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration}
+     * 以及对应的激活条件{@link org.springframework.data.redis.core.RedisOperations}
+     *
+     * 2.RedisOperations属于spring-data-redis,所有只要导入spring-data-redis就会激活RedisAutoConfiguration
+     *   而RedisAutoConfiguration会注入bean{@link org.springframework.data.redis.core.RedisTemplate}
+     *   {@link org.springframework.boot.autoconfigure.data.redis.LettuceConnectionConfiguration}
+     * 3.此时，{@link org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration}
+     * 也会被激活，其中spring.data.redis.repositories默认配置为true,在META-INF/spring-configuration-metadata.json中
+     *
+     * 激活会导入{@link org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesRegistrar}配置，此时redis就可以使用
+     * repository api了
+     *
+     */
     @Test
     public void redisTest(){
         RedisPojo pojo = new RedisPojo();
