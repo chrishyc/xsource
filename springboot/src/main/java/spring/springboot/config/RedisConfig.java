@@ -22,8 +22,7 @@ import java.time.Duration;
 @Configuration
 public class RedisConfig {
 
-    //
-    @Bean
+//    @Bean
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory);
@@ -47,7 +46,7 @@ public class RedisConfig {
     }
 
 
-    @Bean
+//    @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
         // 分别创建String和JSON格式序列化对象，对缓存数据key和value进行转换
         RedisSerializer<String> strSerializer = new StringRedisSerializer();
