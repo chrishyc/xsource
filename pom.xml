@@ -6,7 +6,7 @@
 
     <groupId>com.xsource</groupId>
     <artifactId>xsource</artifactId>
-    <packaging>war</packaging>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <!--    <modules>-->
     <!--        <module>agent</module>-->

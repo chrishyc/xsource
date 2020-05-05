@@ -1,6 +1,7 @@
 import jpa.dao.ResumeDao;
 import jpa.pojo.Resume;
 import org.hibernate.boot.spi.MetadataImplementor;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import java.util.Optional;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-data-jpa.xml"})
+@Ignore
 public class SpringDataJpaTest {
     
     
