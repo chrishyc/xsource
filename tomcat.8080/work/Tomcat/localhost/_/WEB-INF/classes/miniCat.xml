@@ -1,0 +1,13 @@
+<!DOCTYPE web-app>
+<web-app>
+    <servlet>
+        <servlet-name>minicat</servlet-name>
+        <servlet-class>tomcat.servlet.ServletImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>minicat</servlet-name>
+        <url-pattern>/chris/*</url-pattern>
+    </servlet-mapping>
+
+
+</web-app>

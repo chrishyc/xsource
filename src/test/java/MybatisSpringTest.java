@@ -1,5 +1,6 @@
 import mvc.pojo.Account;
 import mvc.service.AccountService;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:applicationContext-*.xml"})
+@Ignore
 public class MybatisSpringTest {
 
     // 希望测试ioc容器中的哪个对象你注入即可。
