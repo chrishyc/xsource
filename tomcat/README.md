@@ -80,7 +80,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for more info.
 
 
 ## vm options  
--Dcatalina.home=/Users/chris/xsource/tomcat/apache-tomcat-7.0.103-src/source
--Dcatalina.base=/Users/chris/xsource/tomcat/apache-tomcat-7.0.103-src/source
+-Dcatalina.home=/Users/chris/xsource/tomcat/source
+-Dcatalina.base=/Users/chris/xsource/tomcat/source 
 -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
--Djava.util.logging.config.file=/Users/chris/xsource/tomcat/apache-tomcat-7.0.103-src/source/conf/logging.properties
+-Djava.util.logging.config.file=/Users/chris/xsource/tomcat/source/conf/logging.properties
