@@ -10,16 +10,13 @@ import tomcat.servlet.RequestProcessor;
 import tomcat.servlet.Response;
 import tomcat.utils.HttpProtocolUtil;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.*;
 
 /**

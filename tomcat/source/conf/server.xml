@@ -72,23 +72,21 @@
         <!--                   connectionTimeout="20000"-->
         <!--                   redirectPort="8443"/>-->
         <!-- A "Connector" using the shared thread pool-->
-        <!--
         <Connector executor="tomcatThreadPool"
-                   port="8080" protocol="HTTP/1.1"
+                   port="8087" protocol="HTTP/1.1"
                    connectionTimeout="20000"
-                   redirectPort="8443" />
-        -->
+                   redirectPort="8443" >
         <!-- Define an SSL HTTP/1.1 Connector on port 8443
              This connector uses the BIO implementation that requires the JSSE
              style configuration. When using the APR/native implementation, the
              OpenSSL style configuration is required as described in the APR/native
              documentation -->
 
-        <Connector port="8443" protocol="org.apache.coyote.http11.Http11Protocol"
-                   maxThreads="150" SSLEnabled="true" scheme="https" secure="true"
-                   clientAuth="false" sslProtocol="TLS"
-                   keystoreFile="/Users/chris/xsource/tomcat/source/conf/chrishu.keystore"
-                   keystorePass="00000000">
+<!--        <Connector port="8443" protocol="org.apache.coyote.http11.Http11Protocol"-->
+<!--                   maxThreads="150" SSLEnabled="true" scheme="https" secure="true"-->
+<!--                   clientAuth="false" sslProtocol="TLS"-->
+<!--                   keystoreFile="/Users/chris/xsource/tomcat/source/conf/chrishu.keystore"-->
+<!--                   keystorePass="00000000">-->
 <!--            <SSLHostConfig>-->
 <!--                <Certificate-->
 <!--                        keystoreFile="/Users/chris/xsource/tomcat/source/conf/chrishu.keystore"-->
