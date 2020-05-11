@@ -73,7 +73,7 @@
         <!--                   redirectPort="8443"/>-->
         <!-- A "Connector" using the shared thread pool-->
         <Connector executor="tomcatThreadPool"
-                   port="8087" protocol="HTTP/1.1"
+                   port="8080" protocol="HTTP/1.1"
                    connectionTimeout="20000"
                    redirectPort="8443" >
         <!-- Define an SSL HTTP/1.1 Connector on port 8443
