@@ -15,3 +15,15 @@ CREATE TABLE `tb_resume`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8;
+DROP TABLE IF EXISTS `DISTRIBUTE_ID`;
+CREATE TABLE `DISTRIBUTE_ID`
+(
+    `id`         bigint(32) NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `createtime` datetime DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+insert into DISTRIBUTE_ID(createtime)
+values (NOW());
+select LAST_INSERT_ID();

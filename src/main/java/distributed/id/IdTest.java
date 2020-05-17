@@ -4,6 +4,16 @@ import org.junit.Test;
 
 import java.util.UUID;
 
+/**
+ * 分布式id的几个性能指标:
+ * 1.保证生成的 ID 全局唯一
+ * 2.整个服务没有单点(单服务器实例崩溃导致分布式崩溃)
+ *
+ * 3.生成的 ID 最好不大于 64 bits
+ * 4.生成 ID 的速度有要求,(例如,在一个高吞吐量的场景中, 需要每秒生成几万个 ID)
+ * 5.最好包含时间维度信息,uuid是随机信息，信息利用率不好
+ * 6.
+ */
 public class IdTest {
     /**
      * 可使用周期:16^32=2^128≈3.4 x 10^38≈100亿年/每纳秒产生1兆个UUID
@@ -33,6 +43,18 @@ public class IdTest {
     
         UUID uuid4 = UUID.randomUUID();
         System.out.println(uuid4.toString());
+    
+    }
+    
+    /**
+     * 我们可 以单独的创建一个Mysql数据库，在这个数据库中创建一张表，这张表的ID设置为自增，
+     * 其他地方 需要全局唯一ID的时候，就模拟向这个Mysql数据库的这张表中模拟插入一条记录，
+     * 此时ID会自 增，然后我们可以通过Mysql的select last_insert_id() 获取到刚刚这张表中自增生成的ID.
+     *
+     * 局限:性能不好,每秒生产数量少，有单点问题
+     */
+    @Test
+    public void testMysqlAutoId(){
     
     }
 }
