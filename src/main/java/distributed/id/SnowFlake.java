@@ -78,7 +78,9 @@ public class SnowFlake {
          * 明确要求 "You should use NTP to keep your system clock accurate".
          * 而且最好把 NTP 配置成不会向后调整的模式. 也就是说, NTP 纠正时间时, 不会向后回拨机器时钟.
          *
-         * 1.
+         * 方案:
+         * 1.使用未使用的SEQUENCE,需要确定QPS
+         * 2.使用备份workId,使用部分workId，当发生时钟回拨时,使用备份workId
          */
         if (currStmp < lastStmp) {
             // 此方案假设该服务QPS不会超过1000*(2^9)
