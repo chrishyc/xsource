@@ -81,6 +81,6 @@ public class IdTest {
     
     @Test
     public void testRedisIncr() {
-    
+        RedisIncr.nextId();
     }
 }
