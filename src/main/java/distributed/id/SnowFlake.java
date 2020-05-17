@@ -32,6 +32,13 @@ public class SnowFlake {
     private final static long MAX_SEQUENCE = -1L ^ (-1L << SEQUENCE_BIT);
     
     /**
+     * 步长，用于处理时钟回拨
+     */
+    private static long stepSize = 2 << 9;
+    /** 基础序列号, 每发生一次时钟回拨, basicSequence += stepSize */
+    private long basicSequence = 0L;
+    
+    /**
      * 每一部分向左的位移
      */
     private final static long MACHINE_LEFT = SEQUENCE_BIT;
@@ -61,8 +68,22 @@ public class SnowFlake {
      */
     public synchronized long nextId() {
         long currStmp = getNewstmp();
+        /**
+         * 发生时钟huibo
+         *
+         *在获取当前 Timestamp 时, 如果获取到的时间戳比前一个已生成 ID 的 Timestamp 还要小怎么办?
+         * Snowflake 的做法是继续获取当前机器的时间, 直到获取到更大的 Timestamp 才能继续工作
+         * (在这个等待过程中, 不能分配出新的 ID)
+         *
+         * 明确要求 "You should use NTP to keep your system clock accurate".
+         * 而且最好把 NTP 配置成不会向后调整的模式. 也就是说, NTP 纠正时间时, 不会向后回拨机器时钟.
+         *
+         * 1.
+         */
         if (currStmp < lastStmp) {
-            throw new RuntimeException("Clock moved backwards.  Refusing to generate id");
+            // 此方案假设该服务QPS不会超过1000*(2^9)
+            handleMovedBackwards(currStmp);
+//            throw new RuntimeException("Clock moved backwards.  Refusing to generate id");
         }
         
         if (currStmp == lastStmp) {
@@ -74,7 +95,7 @@ public class SnowFlake {
             }
         } else {
             //不同毫秒内，序列号置为0
-            sequence = 0L;
+            sequence = basicSequence;
         }
         
         lastStmp = currStmp;
@@ -83,6 +104,21 @@ public class SnowFlake {
                 | datacenterId << DATACENTER_LEFT       //数据中心部分
                 | machineId << MACHINE_LEFT             //机器标识部分
                 | sequence;                             //序列号部分
+    }
+    
+    private long handleMovedBackwards(long currStmp) {
+        basicSequence += stepSize;
+        if (basicSequence == MAX_SEQUENCE + 1) {
+            basicSequence = 0;
+            currStmp = getNextMill();
+        }
+        sequence = basicSequence;
+        
+        lastStmp = currStmp;
+        
+        return (currStmp - START_STMP) << TIMESTMP_LEFT
+                | machineId << DATACENTER_LEFT
+                | sequence;
     }
     
     private long getNextMill() {
