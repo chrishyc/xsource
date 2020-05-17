@@ -4,7 +4,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class ConsistentHashNoVirtual {
-    
     public static void main(String[] args) {
         //step1 初始化：把服务器节点IP的哈希值对应到哈希环上
         // 定义服务器ip
