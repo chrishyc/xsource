@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 @RequestMapping("demo")
-public class DemoController {
+public class SessionController {
     @RequestMapping("/result")
     public String result(){
-        return "result";
+        return "result_session";
     }
 }

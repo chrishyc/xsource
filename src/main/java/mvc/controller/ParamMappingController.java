@@ -7,19 +7,19 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod;
+import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandlerComposite;
-import org.springframework.web.servlet.mvc.method.annotation.ModelAndViewMethodReturnValueHandler;
+import org.springframework.web.method.support.InvocableHandlerMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.method.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintValidatorContext;
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.Map;
-import org.springframework.web.method.support.*;
-import org.springframework.web.servlet.mvc.method.annotation.*;
-import org.springframework.web.method.annotation.*;
 
 /**
  * @author chris
@@ -34,6 +34,7 @@ public class ParamMappingController {
      * 3.如果返回类型为ModelAndView，对应返回值处理器为{@link ModelAndViewMethodReturnValueHandler#handleReturnValue}
      * 主要将返回的结果存入ModelAndViewContainer中
      * 4.重新生成一个ModelAndView作为返回结果，{@link RequestMappingHandlerAdapter#getModelAndView}
+     *
      * @return
      */
     @RequestMapping("/hello")
@@ -75,6 +76,7 @@ public class ParamMappingController {
     
     /**
      * {@link org.springframework.validation.support.BindingAwareModelMap}
+     *
      * @param map
      * @param model
      * @param modelMap
@@ -83,7 +85,7 @@ public class ParamMappingController {
     @RequestMapping("/map")
     public ModelAndView map(Map<String, Object> map, Model model, ModelMap modelMap) {
         Date date = new Date();
-        model.addAttribute("name","chris");
+        model.addAttribute("name", "chris");
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("date", date);
         modelAndView.setViewName("success");
@@ -103,7 +105,8 @@ public class ParamMappingController {
         return modelAndView;
     }
     
-    /**1.请求开始触发方法invoke后，进入开始解析method每个参数支持的解析器
+    /**
+     * 1.请求开始触发方法invoke后，进入开始解析method每个参数支持的解析器
      * {@link InvocableHandlerMethod#getMethodArgumentValues}
      * 2.对于基本类型，解析器为{@link RequestParamMethodArgumentResolver#supportsParameter}
      * 此解析器位于参数解析器倒数第二个
@@ -119,7 +122,8 @@ public class ParamMappingController {
         return modelAndView;
     }
     
-    /**1.请求开始触发方法invoke后，进入开始解析method每个参数支持的解析器
+    /**
+     * 1.请求开始触发方法invoke后，进入开始解析method每个参数支持的解析器
      * {@link InvocableHandlerMethod#getMethodArgumentValues}
      * 2.对于基本类型，解析器为{@link RequestParamMethodArgumentResolver#supportsParameter}
      * 此解析器位于参数解析器倒数第二个
@@ -134,15 +138,25 @@ public class ParamMappingController {
         return modelAndView;
     }
     
-    /**1.请求开始触发方法invoke后，进入开始解析method每个参数支持的解析器
+    /**
+     * 1.请求开始触发方法invoke后，进入开始解析method每个参数支持的解析器
      * {@link InvocableHandlerMethod#getMethodArgumentValues}
      * 2.对于pojo类型，解析器为{@link ServletModelAttributeMethodProcessor#supportsParameter}
      * 此解析器位于参数解析器末尾,毕竟所有类都是pojo，所以只有没有被前面参数解析器识别时，才使用这个解析
+     * <p>
+     * 对于pojo类，属性必须有set方法才能赋值成功,核心逻辑{@link java.beans.Introspector#getTargetPropertyInfo}
+     * 参数绑定逻辑{@link org.springframework.validation.DataBinder#doBind}
+     * {@link Valid}核心逻辑{@link org.springframework.validation.DataBinder#validate}
+     * <p>
+     * {@link javax.validation.ConstraintValidator#isValid(Object, ConstraintValidatorContext)}
+     * {@link org.hibernate.validator.internal.engine.ValidatorImpl#validate(Object, Class[])}
+     * 初始化所有{@link Valid}注解类型，{@link org.hibernate.validator.internal.metadata.core.ConstraintHelper#ConstraintHelper()}
+     *
      * @param user
      * @return
      */
     @RequestMapping("/pojo")
-    public ModelAndView pojo(User user) {
+    public ModelAndView pojo(@Valid User user) {
         Date date = new Date();
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("date", date);
