@@ -11,6 +11,11 @@ import javax.validation.Valid;
 @RequestMapping("login")
 public class LoginController {
     
+    /**
+     * {@link org.hibernate.validator.internal.metadata.core.ConstraintHelper#ConstraintHelper()}
+     * @param user
+     * @return
+     */
     @RequestMapping("toLogin")
     public String toLogin(@Valid ValidPojo user) {
         System.out.println("================++++++++++++++跳转登录页面");
