@@ -10,9 +10,9 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 /**
  * @author chris
  */
-@SpringBootApplication
-@EnableCaching
-@EnableRedisHttpSession
+//@SpringBootApplication
+//@EnableCaching
+//@EnableRedisHttpSession
 public class LoginApplication  extends SpringBootServletInitializer {
 
     @Override
