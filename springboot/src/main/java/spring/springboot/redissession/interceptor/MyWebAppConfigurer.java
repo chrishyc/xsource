@@ -5,7 +5,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class MyWebAppConfigurer extends WebMvcConfigurerAdapter{
     
     @Override

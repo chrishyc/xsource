@@ -1,19 +1,19 @@
 package spring.springboot.redissession.controller;
 
+import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.AbstractMaxValidator;
+import org.hibernate.validator.internal.engine.ValidationContext;
+import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl;
 import org.springframework.core.MethodParameter;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.annotation.ModelAttributeMethodProcessor;
 import spring.springboot.pojo.ValidPojo;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Constraint;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Valid;
-import javax.validation.Constraint;
-import org.springframework.web.method.annotation.*;
-import org.hibernate.validator.internal.metadata.descriptor.*;
-import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.*;
-import org.hibernate.validator.internal.engine.*;
-@Controller
+@RestController
 @RequestMapping("login")
 public class LoginController {
     
@@ -40,7 +40,7 @@ public class LoginController {
     @RequestMapping("toLogin")
     public String toLogin(@Valid ValidPojo user) {
         System.out.println("================++++++++++++++跳转登录页面");
-        return "login";
+        return "login successfully";
     }
     
     @RequestMapping("loginSystem")
@@ -49,11 +49,12 @@ public class LoginController {
         if ("admin".equals(username) && "admin".equals(password)) {
             System.out.println("合法用户");
             session.setAttribute("username", username + System.currentTimeMillis());
-            return "redirect:/demo/result";
+            session.setMaxInactiveInterval(60);
+            return "valid login";
         } else {
             // 非法用户返回登录页面
             System.out.println("非法，跳转");
-            return "redirect:/login/toLogin";
+            return "invalid login";
         }
     }
 }

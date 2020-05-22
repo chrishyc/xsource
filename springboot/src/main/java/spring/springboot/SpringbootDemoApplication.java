@@ -4,6 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,6 +14,8 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.boot.env.*;
 import org.springframework.boot.autoconfigure.condition.*;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+
 /**
  * @author chris
  * springboot以module形式run无反应,发现原因:
@@ -71,10 +74,16 @@ import org.springframework.boot.autoconfigure.condition.*;
 @MapperScan(basePackages = {"spring.springboot.mapper"})
 @SpringBootApplication
 @EnableCaching
+@EnableRedisHttpSession
 public class SpringbootDemoApplication extends SpringBootServletInitializer {
     
     public static void main(String[] args) {
         SpringApplication.run(SpringbootDemoApplication.class, args);
+    }
+    
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(SpringbootDemoApplication.class);
     }
     
 }
