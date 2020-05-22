@@ -7,7 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
-
+import org.springframework.session.data.redis.config.annotation.web.http.*;
+import org.springframework.session.data.redis.*;
+import org.springframework.data.redis.core.*;
+import org.springframework.session.config.annotation.web.http.*;
+import org.springframework.session.web.http.*;
 /**
  * 请求权限验证
  */
@@ -17,6 +21,18 @@ public class RequestInterceptor implements HandlerInterceptor {
      * 之前执行（进入Handler处理之前）
      * 可以进行权限验证
      *
+     * {@link EnableRedisHttpSession}redis缓存session
+     * 自动配置{@link RedisHttpSessionConfiguration}中
+     * 注入{@link RedisIndexedSessionRepository}
+     * {@link RedisTemplate}
+     *
+     * 他的父类{@link SpringHttpSessionConfiguration}注入{@link SessionRepositoryFilter}
+     * 核心逻辑就在{@link SessionRepositoryFilter#doFilterInternal}
+     * 会生成两个装饰类{@link SessionRepositoryFilter.SessionRepositoryRequestWrapper}
+     * {@link SessionRepositoryFilter.SessionRepositoryResponseWrapper}
+     *
+     * {@link SessionRepositoryFilter.SessionRepositoryRequestWrapper#getSession()}类
+     * 使用注入的{@link RedisIndexedSessionRepository}来存储session
      * @param request
      * @param response
      * @param handler
