@@ -8,7 +8,7 @@
     <context:component-scan base-package="ioc,tx.annotation"/>
 
     <!--开启自定义属性导入-->
-    <context:property-placeholder location="classpath:jdbc.properties"/>
+    <context:property-placeholder location="classpath:jdbc.properties,classpath:redis.properties"/>
 
 
     <!--默认情况下，它会通过反射调用无参构造函数来创建对象。如果类中没有无参构造函数，将创建失败-->
@@ -53,8 +53,6 @@
     </bean>
 
     <bean id="transferServiceImpl" class="demo.spring.service.impl.TransferServiceImpl"/>
-
-
 
 
     <bean id="companyBean" class="ioc.factorybean.CompanyFactoryBean">
@@ -107,5 +105,17 @@
     <!--parent child bean definition-->
     <bean id="parent" class="ioc.parent.Parent"/>
     <bean id="child" class="ioc.parent.Child" parent="parent"/>
+
+    <!--redis-->
+    <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="${redis.host}"/>
+        <property name="password" value="${redis.password}"/>
+        <property name="port" value="${redis.port}"/>
+        <property name="database" value="${redis.database}"/>
+        <property name="timeout" value="${redis.connectionTimeout}"/>
+    </bean>
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="redisConnectionFactory"/>
+    </bean>
 
 </beans>
