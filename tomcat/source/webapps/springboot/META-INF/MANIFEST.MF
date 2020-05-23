@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: springboot
+Implementation-Version: 0.0.1-SNAPSHOT
+Start-Class: spring.springboot.SpringbootDemoApplication
+Spring-Boot-Classes: WEB-INF/classes/
+Spring-Boot-Lib: WEB-INF/lib/
+Build-Jdk-Spec: 1.8
+Spring-Boot-Version: 2.2.2.RELEASE
+Created-By: Maven Archiver 3.4.0
+Main-Class: org.springframework.boot.loader.WarLauncher
+
