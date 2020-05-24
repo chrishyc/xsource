@@ -2515,7 +2515,7 @@ skip.installer property in build.properties" />
         <include name="RUNNING.txt"/>
         <include name="BUILDING.txt" />
         <include name="CONTRIBUTING.md"/>
-        <exclude name="bin/service.bat"/>
+        <exclude name="bin/stub.bat"/>
         <exclude name="bin/x64/"/>
         <exclude name="bin/*.exe"/>
         <exclude name="bin/*.dll"/>
@@ -2638,7 +2638,7 @@ skip.installer property in build.properties" />
         <include name="CONTRIBUTING.md"/>
         <exclude name="conf/**" />
         <exclude name="src/**" />
-        <exclude name="bin/service.bat"/>
+        <exclude name="bin/stub.bat"/>
         <exclude name="bin/*.sh"/>
         <exclude name="bin/x64/"/>
         <exclude name="bin/*.exe"/>

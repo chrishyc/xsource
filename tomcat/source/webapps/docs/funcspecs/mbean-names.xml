@@ -153,7 +153,7 @@ corresponding values:</p>
     <td>Server / Service / Engine</td>
     <td align="center">1..1</td>
     <td align="center">(none)</td>
-    <td><code>type=${ENGINE}, service=${service.name}</code></td>
+    <td><code>type=${ENGINE}, service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -161,7 +161,7 @@ corresponding values:</p>
     <td align="center">1..n</td>
     <td align="center"><code>name</code></td>
     <td><code>type=${HOST}, host=${name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -169,7 +169,7 @@ corresponding values:</p>
     <td align="center">1..n</td>
     <td align="center"><code>path</code></td>
     <td><code>type=${CONTEXT}, context=${name}, host=${host.name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -178,7 +178,7 @@ corresponding values:</p>
     <td align="center">(none)</td>
     <td><code>type=${INSTANCE-LISTENER}, sequence=${###},
         context=${context.name}, host=${host.name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -186,7 +186,7 @@ corresponding values:</p>
     <td align="center">0..n</td>
     <td align="center">(none)</td>
     <td><code>type=${LISTENER}, sequence=${###}, context=${context.name},
-        host=${host.name}, service=${service.name}</code></td>
+        host=${host.name}, service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -194,7 +194,7 @@ corresponding values:</p>
     <td align="center">0..1</td>
     <td align="center">(none)</td>
     <td><code>type=${LOADER}, context=${context.name}, host=${host.name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -202,7 +202,7 @@ corresponding values:</p>
     <td align="center">0..1</td>
     <td align="center">(none)</td>
     <td><code>type=${MANAGER}, context=${context.name}, host=${host.name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -210,7 +210,7 @@ corresponding values:</p>
     <td align="center">0..1</td>
     <td align="center">(none)</td>
     <td><code>type=${REALM}, context=${context.name}, host=${host.name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -218,7 +218,7 @@ corresponding values:</p>
     <td align="center">0..1</td>
     <td align="center">(none)</td>
     <td><code>type=${RESOURCES}, context=${context.name}, host=${host.name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -226,7 +226,7 @@ corresponding values:</p>
     <td align="center">0..n</td>
     <td align="center">(none)</td>
     <td><code>type=${VALVE}, sequence=${###}, context=${context.name},
-        host=${host.name}, service=${service.name}</code></td>
+        host=${host.name}, service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -245,7 +245,7 @@ corresponding values:</p>
     <td align="center">(none)</td>
     <td><code>type=${WRAPPER-LIFECYCLE}, sequence=${###},
         context=${context.name}, host=${host.name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -254,7 +254,7 @@ corresponding values:</p>
     <td align="center">(none)</td>
     <td><code>type=${WRAPPER-LISTENER}, sequence=${###},
         context=${context.name}, host=${host.name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -262,7 +262,7 @@ corresponding values:</p>
     <td align="center">0..n</td>
     <td align="center">(none)</td>
     <td><code>type=${LISTENER}, sequence=${###}, host=${host.name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -270,7 +270,7 @@ corresponding values:</p>
     <td align="center">0..1</td>
     <td align="center">(none)</td>
     <td><code>type=${REALM}, host=${host.name},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -278,7 +278,7 @@ corresponding values:</p>
     <td align="center">0..n</td>
     <td align="center">(none)</td>
     <td><code>type=${VALVE}, sequence=${###},
-        host=${host.name}, service=${service.name}</code></td>
+        host=${host.name}, service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -294,7 +294,7 @@ corresponding values:</p>
     <td>Server / Service / Engine / Realm</td>
     <td align="center">0..1</td>
     <td align="center">(none)</td>
-    <td><code>type=${REALM}, service=${service.name}</code></td>
+    <td><code>type=${REALM}, service=${stub.name}</code></td>
   </tr>
 
   <tr>
@@ -302,7 +302,7 @@ corresponding values:</p>
     <td align="center">0..n</td>
     <td align="center">(none)</td>
     <td><code>type=${VALVE}, sequence=${###},
-        service=${service.name}</code></td>
+        service=${stub.name}</code></td>
   </tr>
 
   <tr>

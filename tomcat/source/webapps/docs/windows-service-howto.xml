@@ -341,7 +341,7 @@
 <section name="Installing services">
 <p>
 The safest way to manually install the service is to use the provided
-<b>service.bat</b> script. Administrator privileges are required to run this
+<b>stub.bat</b> script. Administrator privileges are required to run this
 script. If necessary, you can use the <code>/user</code> switch to specify
 a user to use for the installation of the service.
 </p>
@@ -365,7 +365,7 @@ C:\> service.bat install</source>
 service, as displayed in Windows services.</p>
 
 <source>Install the service named 'MyService'
-C:\> service.bat install MyService</source>
+    C:\> stub.bat install MyService</source>
 
 <p>When installing the service with a non-default name,
 tomcat<version-major/>.exe and tomcat<version-major/>w.exe may be renamed to
@@ -373,7 +373,7 @@ match the chosen service name. To do this, use the <code>--rename</code>
 option.</p>
 
 <source>Install the service named 'MyService' with renaming
-C:\> service.bat install MyService --rename</source>
+    C:\> stub.bat install MyService --rename</source>
 
 <p>
 If using tomcat<version-major/>.exe, you need to use the <b>//IS//</b> parameter.</p>

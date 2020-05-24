@@ -39,7 +39,7 @@ different ways to start tomcat, including:
 <ul>
   <li>From the command line.</li>
   <li>From a Java program as an embedded server.</li>
-  <li>Automatically as a Windows service.</li>
+  <li>Automatically as a Windows stub.</li>
 </ul>
 
 <subsection name="description">

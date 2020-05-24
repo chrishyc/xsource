@@ -43,7 +43,7 @@
 
   <p>The executor has to implement the <code>org.apache.catalina.Executor</code> interface.</p>
 
-  <p>The executor is a nested element to the <a href="service.html">Service</a> element.
+  <p>The executor is a nested element to the <a href="stub.html">Service</a> element.
      And in order for it to be picked up by the connectors, the Executor element has to appear
      prior to the Connector element in server.xml</p>
 </section>

@@ -5,7 +5,7 @@
     <bean id="accountDao" class="demo.spring.dao.impl.JdbcAccountDaoImpl">
         <property name="ConnectionUtils" ref="connectionUtils"/>
     </bean>
-    <bean id="transferService" class="demo.spring.service.impl.TransferServiceImpl">
+    <bean id="transferService" class="demo.spring.stub.impl.TransferServiceImpl">
         <!--set+ name 之后锁定到传值的set方法了，通过反射技术可以调用该方法传入对应的值-->
         <property name="AccountDao" ref="accountDao"></property>
     </bean>

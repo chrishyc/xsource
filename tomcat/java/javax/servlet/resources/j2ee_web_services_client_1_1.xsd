@@ -112,13 +112,13 @@
     <xsd:annotation>
       <xsd:documentation>
 
-        The service-ref element declares a reference to a Web
-        service. It contains optional description, display name and
-        icons, a declaration of the required Service interface,
-        an optional WSDL document location, an optional set
-        of JAX-RPC mappings, an optional QName for the service element,
-        an optional set of Service Endpoint Interfaces to be resolved
-        by the container to a WSDL port, and an optional set of handlers.
+          The service-ref element declares a reference to a Web
+          stub. It contains optional description, display name and
+          icons, a declaration of the required Service interface,
+          an optional WSDL document location, an optional set
+          of JAX-RPC mappings, an optional QName for the service element,
+          an optional set of Service Endpoint Interfaces to be resolved
+          by the container to a WSDL port, and an optional set of handlers.
 
       </xsd:documentation>
     </xsd:annotation>
@@ -130,10 +130,10 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            The service-ref-name element declares logical name that the
-            components in the module use to look up the Web service. It
-            is recommended that all service reference names start with
-            "service/".
+              The service-ref-name element declares logical name that the
+              components in the module use to look up the Web stub. It
+              is recommended that all service reference names start with
+              "service/".
 
           </xsd:documentation>
         </xsd:annotation>
@@ -217,11 +217,11 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            Declares the handler for a port-component. Handlers can
-            access the init-param name/value pairs using the
-            HandlerInfo interface. If port-name is not specified, the
-            handler is assumed to be associated with all ports of the
-            service.
+              Declares the handler for a port-component. Handlers can
+              access the init-param name/value pairs using the
+              HandlerInfo interface. If port-name is not specified, the
+              handler is assumed to be associated with all ports of the
+              stub.
 
           </xsd:documentation>
         </xsd:annotation>
@@ -236,12 +236,12 @@
     <xsd:annotation>
       <xsd:documentation>
 
-        Declares the handler for a port-component. Handlers can access the
-        init-param name/value pairs using the HandlerInfo interface. If
-        port-name is not specified, the handler is assumed to be associated
-        with all ports of the service.
+          Declares the handler for a port-component. Handlers can access the
+          init-param name/value pairs using the HandlerInfo interface. If
+          port-name is not specified, the handler is assumed to be associated
+          with all ports of the stub.
 
-        Used in: service-ref
+          Used in: service-ref
 
       </xsd:documentation>
     </xsd:annotation>
