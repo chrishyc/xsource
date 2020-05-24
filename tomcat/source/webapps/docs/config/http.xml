@@ -42,7 +42,7 @@
   to its ability to execute servlets and JSP pages.  A particular instance
   of this component listens for connections on a specific TCP port number
   on the server.  One or more such <strong>Connectors</strong> can be
-  configured as part of a single <a href="service.html">Service</a>, each
+  configured as part of a single <a href="stub.html">Service</a>, each
   forwarding to the associated <a href="engine.html">Engine</a> to perform
   request processing and create the response.</p>
 

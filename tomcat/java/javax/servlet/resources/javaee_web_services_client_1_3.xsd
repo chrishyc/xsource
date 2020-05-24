@@ -72,13 +72,13 @@
     <xsd:annotation>
       <xsd:documentation>
 
-        The service-ref element declares a reference to a Web
-        service. It contains optional description, display name and
-        icons, a declaration of the required Service interface,
-        an optional WSDL document location, an optional set
-        of JAX-RPC mappings, an optional QName for the service element,
-        an optional set of Service Endpoint Interfaces to be resolved
-        by the container to a WSDL port, and an optional set of handlers.
+          The service-ref element declares a reference to a Web
+          stub. It contains optional description, display name and
+          icons, a declaration of the required Service interface,
+          an optional WSDL document location, an optional set
+          of JAX-RPC mappings, an optional QName for the service element,
+          an optional set of Service Endpoint Interfaces to be resolved
+          by the container to a WSDL port, and an optional set of handlers.
 
       </xsd:documentation>
     </xsd:annotation>
@@ -89,10 +89,10 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            The service-ref-name element declares logical name that the
-            components in the module use to look up the Web service. It
-            is recommended that all service reference names start with
-            "service/".
+              The service-ref-name element declares logical name that the
+              components in the module use to look up the Web stub. It
+              is recommended that all service reference names start with
+              "service/".
 
           </xsd:documentation>
         </xsd:annotation>
@@ -204,7 +204,7 @@
                 access the init-param name/value pairs using the
                 HandlerInfo interface. If port-name is not specified, the
                 handler is assumed to be associated with all ports of the
-                service.
+                stub.
 
                 To be used with JAX-RPC based runtime only.
 
@@ -295,13 +295,13 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            This specifies the WS-Addressing requirements for a JAX-WS
-            web service. It corresponds to javax.xml.ws.soap.Addressing
-            annotation or its feature javax.xml.ws.soap.AddressingFeature.
+              This specifies the WS-Addressing requirements for a JAX-WS
+              web stub. It corresponds to javax.xml.ws.soap.Addressing
+              annotation or its feature javax.xml.ws.soap.AddressingFeature.
 
-            See the addressingType for more information.
+              See the addressingType for more information.
 
-            Not to be specified for JAX-RPC runtime
+              Not to be specified for JAX-RPC runtime
 
           </xsd:documentation>
         </xsd:annotation>
@@ -313,13 +313,13 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            Corresponds to the javax.xml.ws.RespectBinding annotation
-            or its corresponding javax.xml.ws.RespectBindingFeature web
-            service feature. This is used to control whether a JAX-WS
-            implementation must respect/honor the contents of the
-            wsdl:binding in the WSDL that is associated with the service.
+              Corresponds to the javax.xml.ws.RespectBinding annotation
+              or its corresponding javax.xml.ws.RespectBindingFeature web
+              service feature. This is used to control whether a JAX-WS
+              implementation must respect/honor the contents of the
+              wsdl:binding in the WSDL that is associated with the stub.
 
-            Not to be specified for JAX-RPC runtime
+              Not to be specified for JAX-RPC runtime
 
           </xsd:documentation>
         </xsd:annotation>
@@ -531,28 +531,28 @@
     <xsd:annotation>
       <xsd:documentation>
 
-        This specifies the WS-Addressing requirements for a JAX-WS web service.
-        It corresponds to javax.xml.ws.soap.Addressing annotation or its
-        feature javax.xml.ws.soap.AddressingFeature.
+          This specifies the WS-Addressing requirements for a JAX-WS web stub.
+          It corresponds to javax.xml.ws.soap.Addressing annotation or its
+          feature javax.xml.ws.soap.AddressingFeature.
 
-        If the "enabled" element is "true", WS-Addressing is enabled.
-        It means that the endpoint supports WS-Addressing but does not require
-        its use. The default value for "enabled" is "true".
+          If the "enabled" element is "true", WS-Addressing is enabled.
+          It means that the endpoint supports WS-Addressing but does not require
+          its use. The default value for "enabled" is "true".
 
-        If the WS-Addressing is enabled and the "required" element is "true",
-        it means that the endpoint requires WS-Addressing. The default value
-        for "required" is "false".
+          If the WS-Addressing is enabled and the "required" element is "true",
+          it means that the endpoint requires WS-Addressing. The default value
+          for "required" is "false".
 
-        If WS-Addressing is enabled, the "responses" element determines
-        if an endpoint requires the use of only anonymous responses,
-        or only non-anonymous responses, or all. The value of the "responses"
-        element must be one of the following:
+          If WS-Addressing is enabled, the "responses" element determines
+          if an endpoint requires the use of only anonymous responses,
+          or only non-anonymous responses, or all. The value of the "responses"
+          element must be one of the following:
 
-        ANONYMOUS
-        NON_ANONYMOUS
-        ALL
+          ANONYMOUS
+          NON_ANONYMOUS
+          ALL
 
-        The default value for the "responses" is ALL.
+          The default value for the "responses" is ALL.
 
       </xsd:documentation>
     </xsd:annotation>
@@ -601,14 +601,14 @@
     <xsd:annotation>
       <xsd:documentation>
 
-        Corresponds to the javax.xml.ws.RespectBinding annotation
-        or its corresponding javax.xml.ws.RespectBindingFeature web
-        service feature. This is used to control whether a JAX-WS
-        implementation must respect/honor the contents of the
-        wsdl:binding in the WSDL that is associated with the service.
+          Corresponds to the javax.xml.ws.RespectBinding annotation
+          or its corresponding javax.xml.ws.RespectBindingFeature web
+          service feature. This is used to control whether a JAX-WS
+          implementation must respect/honor the contents of the
+          wsdl:binding in the WSDL that is associated with the stub.
 
-        If the "enabled" element is "true", wsdl:binding in the
-        associated WSDL, if any, must be respected/honored.
+          If the "enabled" element is "true", wsdl:binding in the
+          associated WSDL, if any, must be respected/honored.
 
       </xsd:documentation>
     </xsd:annotation>
@@ -704,12 +704,12 @@
         <xsd:annotation>
           <xsd:documentation>
 
-            The port-name element defines the WSDL port-name that a
-            handler should be associated with. If port-name is not
-            specified, the handler is assumed to be associated with
-            all ports of the service.
+              The port-name element defines the WSDL port-name that a
+              handler should be associated with. If port-name is not
+              specified, the handler is assumed to be associated with
+              all ports of the stub.
 
-            Not to be specified for JAX-WS runtime
+              Not to be specified for JAX-WS runtime
 
           </xsd:documentation>
         </xsd:annotation>

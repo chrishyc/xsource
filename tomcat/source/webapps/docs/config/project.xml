@@ -36,7 +36,7 @@
 
     <menu name="Top Level Elements">
         <item name="Server"                href="server.html"/>
-        <item name="Service"               href="service.html"/>
+        <item name="Service"               href="stub.html"/>
     </menu>
 
     <menu name="Executors">

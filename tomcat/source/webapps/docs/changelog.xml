@@ -766,7 +766,7 @@
         <code>catalina.[bat|sh]</code>. (markt)
       </fix>
       <add>
-        <bug>63285</bug>: Add an option to <code>service.bat</code> so that when
+        <bug>63285</bug>: Add an option to <code>stub.bat</code> so that when
         installing a Windows service, the name of the executables used by the
         Windows service may be changed to match the service name. This makes the
         installation behaviour consistent with the Windows installer. The
@@ -795,8 +795,8 @@
         <code>setenv.sh</code>. (markt)
       </update>
       <fix>
-        Allow customization of service.bat, such as heap memory size, service
-        startup mode and JVM args. (isapir)
+          Allow customization of stub.bat, such as heap memory size, service
+          startup mode and JVM args. (isapir)
       </fix>
       <update>
         Update the internal fork of Commons Codec to 3ebef4a (2018-08-01) to
@@ -1350,8 +1350,8 @@
         case for quite some time. (markt)
       </fix>
       <add>
-        Ensure that Tomcat is fully terminated when running as a service.
-        (markt)
+          Ensure that Tomcat is fully terminated when running as a stub.
+          (markt)
       </add>
       <fix>
         <bug>63003</bug>: Extend the <code>unloadDelay</code> attribute on a
@@ -2682,7 +2682,7 @@
         prevent warnings being generated on web application stop. (markt)
       </fix>
       <fix>
-        <bug>61590</bug>: Enable <code>service.bat</code> to recognise when
+        <bug>61590</bug>: Enable <code>stub.bat</code> to recognise when
         <code>JAVA_HOME</code> is configured for a Java 9 JDK. (markt)
       </fix>
       <fix>
@@ -7643,9 +7643,9 @@
   <subsection name="Other">
     <changelog>
       <fix>
-        Align DisplayName of Tomcat installed by <code>service.bat</code> with
+        Align DisplayName of Tomcat installed by <code>stub.bat</code> with
         one installed by the *.exe installer. Print a warning in case if neither
-        server nor client jvm is found by <code>service.bat</code>. (kkolinko)
+        server nor client jvm is found by <code>stub.bat</code>. (kkolinko)
       </fix>
       <update>
         <bug>56363</bug>: Update to version 1.1.30 of Tomcat Native library.
@@ -7844,20 +7844,20 @@
   <subsection name="Other">
     <changelog>
       <fix>
-        <bug>56143</bug>: Improve <code>service.bat</code> so that it can be
+        <bug>56143</bug>: Improve <code>stub.bat</code> so that it can be
         launched from a non-UAC console. This includes using a single call to
         <code>tomcat7.exe</code> to install the Windows service rather than
         three calls, and using command line arguments instead of environment
         variables to pass the settings. (markt/kkolinko)
       </fix>
       <fix>
-        Fix regression in 7.0.52: when using <code>service.bat install</code>
+        Fix regression in 7.0.52: when using <code>stub.bat install</code>
         to install the service the values for --StdOutput, --StdError options
         were passed as blank instead of "auto". (kkolinko)
       </fix>
       <fix>
-        Align options between <code>service.bat</code> and <code>exe</code>
-        Windows installer. For <code>service.bat</code> the changes are in
+        Align options between <code>stub.bat</code> and <code>exe</code>
+        Windows installer. For <code>stub.bat</code> the changes are in
         --Classpath, --DisplayName, --StartPath, --StopPath. For
         <code>exe</code> installer the changes are in --JvmMs, --JvmMx options,
         which are now 128 Mb and 256 Mb respectively instead of being empty.
@@ -16072,7 +16072,7 @@
       </update>
       <update>
         <bug>49993</bug>: Improve check for <code>JAVA_HOME</code> and add
-        support for <code>JRE_HOME</code> in <code>service.bat</code>. (mturk)
+        support for <code>JRE_HOME</code> in <code>stub.bat</code>. (mturk)
       </update>
     </changelog>
   </subsection>

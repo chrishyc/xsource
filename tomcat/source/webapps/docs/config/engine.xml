@@ -37,13 +37,13 @@
 
   <p>The <strong>Engine</strong> element represents the entire request
   processing machinery associated with a particular Catalina
-  <a href="service.html">Service</a>.  It receives and processes
+  <a href="stub.html">Service</a>.  It receives and processes
   <em>all</em> requests from one or more <strong>Connectors</strong>,
   and returns the completed response to the Connector for ultimate
   transmission back to the client.</p>
 
   <p>Exactly one <strong>Engine</strong> element MUST be nested inside
-  a <a href="service.html">Service</a> element, following all of the
+  a <a href="stub.html">Service</a> element, following all of the
   corresponding Connector elements associated with this Service.</p>
 
 </section>
@@ -103,7 +103,7 @@
 
       <attribute name="name" required="true">
         <p>Logical name of this Engine, used in log and error messages. <em>When
-        using multiple <a href="service.html">Service</a> elements in the same
+        using multiple <a href="stub.html">Service</a> elements in the same
         <a href="server.html">Server</a>, each Engine MUST be assigned a unique
         name.</em></p>
       </attribute>

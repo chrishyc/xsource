@@ -110,7 +110,7 @@ ProxyPassReverse  /myapp  http://localhost:8081/myapp
     name on which Tomcat is running.  In the example above, it would be
     <code>localhost</code>.</li>
 <li>If you also have a <code>&lt;Connector&gt;</code> listening on port
-    8080 (nested within the same <a href="config/service.html">Service</a>
+    8080 (nested within the same <a href="config/stub.html">Service</a>
     element), the requests to either port will share the same set of
     virtual hosts and web applications.</li>
 <li>You might wish to use the IP filtering features of your operating
