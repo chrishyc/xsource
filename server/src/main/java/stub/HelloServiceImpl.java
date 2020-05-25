@@ -14,6 +14,7 @@ public class HelloServiceImpl extends UnicastRemoteObject implements IHelloServi
     
     
     public HelloServiceImpl() throws RemoteException {
+       super();
     }
     
     @Override

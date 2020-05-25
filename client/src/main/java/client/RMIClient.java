@@ -13,6 +13,8 @@ public class RMIClient {
 
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
+        System.getProperties().put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");
+    
         // 在RMI服务注册表中查找名称为zm的对象
         IHelloService helloService = (IHelloService) Naming.lookup("//127.0.0.1:8888/zm");
         //调用方法
