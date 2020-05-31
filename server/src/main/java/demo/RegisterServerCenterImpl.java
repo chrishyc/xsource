@@ -18,7 +18,7 @@ public class RegisterServerCenterImpl implements RegisterServerCenter{
     private static Map<String, Class> serviceRegister = new HashMap<>();
     
     //远程调用端口号
-    private static int port;
+    private int port;
     
     //创建一个定长线程池，可控制线程最大并发数
     //java.lang.Runtime.availableProcessors() 方法返回到Java虚拟机的可用的处理器数量
