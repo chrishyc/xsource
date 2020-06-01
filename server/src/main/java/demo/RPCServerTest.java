@@ -1,5 +1,7 @@
 package demo;
 
+import org.junit.Test;
+
 public class RPCServerTest {
     public static void main(String[] args) {
         
