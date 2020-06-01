@@ -5,6 +5,12 @@ import java.io.*;
 public class SerialDemo {
     public static final String PATH = "/Users/chris/xsource/java/src/main/java/serialization/serializable/";
     
+    /**
+     * {@link ObjectOutputStream#writeObject0}
+     * @param args
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         //序列化
         FileOutputStream fos = new FileOutputStream(PATH + "object.out");
