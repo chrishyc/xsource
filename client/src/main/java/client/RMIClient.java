@@ -16,7 +16,7 @@ public class RMIClient {
         System.getProperties().put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");
     
         // 在RMI服务注册表中查找名称为zm的对象
-        IHelloService helloService = (IHelloService) Naming.lookup("//127.0.0.1:8888/zm");
+        IHelloService helloService = (IHelloService) Naming.lookup("//127.0.0.1:9898/zm");
         //调用方法
         User user = new User();
         user.setName("子慕");
