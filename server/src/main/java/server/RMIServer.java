@@ -18,10 +18,10 @@ public class RMIServer {
         IHelloService helloService = new HelloServiceImpl();
         
         //2.启动注册服务:创建了远程对象注册表Registry的实例，并指定端口为8888
-        LocateRegistry.createRegistry(8888);
+        LocateRegistry.createRegistry(9898);
         
         //3.真正注册：绑定的URL的标准格式：rmi://host:port/name rmi可以省略
-        Naming.bind("//127.0.0.1:8888/zm", helloService);
+        Naming.bind("//127.0.0.1:9898/zm", helloService);
         
         
     }
