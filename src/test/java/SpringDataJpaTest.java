@@ -30,10 +30,11 @@ import java.util.Optional;
 
 /**
  * @author chris
+ * 遇到Caused by: java.lang.NoSuchMethodError: javax.persistence.PersistenceContext.synchronization()
+ * 错误需要删除tomcat 7.24中的PersistenceContext
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring-data-jpa.xml"})
-@Ignore
 public class SpringDataJpaTest {
     
     
