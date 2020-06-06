@@ -4,16 +4,14 @@ package server;
 import stub.HelloServiceImpl;
 import stub.IHelloService;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
 public class RMIServer {
     
-    public static void main(String[] args) throws RemoteException, AlreadyBoundException, MalformedURLException {
-        
+    public static void main(String[] args) throws IOException, AlreadyBoundException {
         //1.创建一个远程对象,同时也会创建stub对象，以及skeleton对象
         IHelloService helloService = new HelloServiceImpl();
         
