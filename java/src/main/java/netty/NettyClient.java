@@ -12,12 +12,12 @@ import io.netty.handler.codec.string.StringEncoder;
 import java.util.Date;
 
 public class NettyClient {
-
+    
     public static void main(String[] args) throws InterruptedException {
-
+        
         //1.创建NioEventLoopGroup的实例对象
         EventLoopGroup group = new NioEventLoopGroup();
-
+        
         //2.创建bootstrap对象
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group)
@@ -29,18 +29,16 @@ public class NettyClient {
                         pipeline.addLast(new StringEncoder());
                     }
                 });
-
+        
         Channel channel = bootstrap.connect("127.0.0.1", 8000).channel();
-
-        while (true){
-            channel.writeAndFlush(new Date()+": hello world");
+        
+        while (true) {
+            channel.writeAndFlush(new Date() + ": hello world");
             Thread.sleep(2000);
         }
-
-
+        
+        
     }
-
-
-
-
+    
+    
 }
