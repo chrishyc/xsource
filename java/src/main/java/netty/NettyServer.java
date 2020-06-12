@@ -22,6 +22,8 @@ public class NettyServer {
         bootstrap.group(bossGroup, workerGroup)
                 //指定服务器端监听套接字通道NioServerSocketChannel
                 .channel(NioServerSocketChannel.class)
+                .option(ChannelOption.SO_BACKLOG, 128)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
                 //设置业务职责链 channel handle组成
                 //ChannelInitializer:初始化channel的chanel pipeline
                 .childHandler(new ChannelInitializer<NioSocketChannel>() {
