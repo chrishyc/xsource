@@ -35,9 +35,14 @@ public class RpcConsumer {
                 if (userClientHandler == null) {
                     initClient();
                 }
-                
+                RpcRequest rpcRequest = new RpcRequest();
+                rpcRequest.setRequestId("1");
+                rpcRequest.setClassName(method.getDeclaringClass().getName());
+                rpcRequest.setMethodName(method.getName());
+                rpcRequest.setParameterTypes(method.getParameterTypes());
+                rpcRequest.setParameters(args);
                 // 设置参数
-                userClientHandler.setPara(providerName + args[0]);
+                userClientHandler.setPara(rpcRequest);
                 
                 // 去服务端请求数据
                 
@@ -60,10 +65,12 @@ public class RpcConsumer {
                 .channel(NioSocketChannel.class)
                 .option(ChannelOption.TCP_NODELAY, true)
                 .handler(new ChannelInitializer<SocketChannel>() {
+                    @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(new StringEncoder());
                         pipeline.addLast(new StringDecoder());
+                        pipeline.addLast(new RpcEncoder(RpcRequest.class, new JSONSerializer()));
                         pipeline.addLast(userClientHandler);
                     }
                 });
