@@ -9,7 +9,7 @@ public class UserClientHandler extends ChannelInboundHandlerAdapter implements C
     
     private ChannelHandlerContext context;
     private String result;
-    private String para;
+    private RpcRequest rpcRequest;
     
     
     @Override
@@ -33,7 +33,7 @@ public class UserClientHandler extends ChannelInboundHandlerAdapter implements C
     
     @Override
     public synchronized Object call() throws InterruptedException {
-        context.writeAndFlush(para);
+        context.writeAndFlush(rpcRequest);
         wait();
         return result;
     }
@@ -41,8 +41,9 @@ public class UserClientHandler extends ChannelInboundHandlerAdapter implements C
     /*
      设置参数
      */
-    void setPara(String para) {
-        this.para = para;
+    
+    void setPara(RpcRequest rpcRequest) {
+        this.rpcRequest = rpcRequest;
     }
     
     

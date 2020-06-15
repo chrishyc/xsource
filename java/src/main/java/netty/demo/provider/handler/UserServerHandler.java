@@ -2,7 +2,10 @@ package netty.demo.provider.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import netty.demo.provider.service.UserServiceImpl;
+import netty.demo.consumer.RpcRequest;
+import org.springframework.util.Assert;
+
+import java.lang.reflect.Method;
 
 public class UserServerHandler extends ChannelInboundHandlerAdapter {
     
@@ -12,10 +15,17 @@ public class UserServerHandler extends ChannelInboundHandlerAdapter {
         
         // 判断是否符合约定，符合则调用本地方法，返回数据
         // msg:  UserService#sayHello#are you ok?
-        if (msg.toString().startsWith("UserService")) {
-            UserServiceImpl userService = new UserServiceImpl();
-            String result = userService.sayHello(msg.toString().substring(msg.toString().lastIndexOf("#") + 1));
-            ctx.writeAndFlush(result);
+        if (msg instanceof RpcRequest) {
+            RpcRequest rpcRequest = (RpcRequest) msg;
+            String className = rpcRequest.getClassName();
+            Assert.notNull(className, "not null");
+            Class clazz = Class.forName(className);
+            Assert.notNull(clazz);
+            //TODO 需要获取对应的实现类
+            Object o = clazz.newInstance();
+            Method method = clazz.getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
+            Object ret = method.invoke(o, rpcRequest.getParameters());
+            ctx.writeAndFlush(ret);
         }
         
         

@@ -9,6 +9,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import netty.UserService;
+import netty.demo.consumer.JSONSerializer;
+import netty.demo.consumer.RpcRequest;
+import netty.demo.provider.RpcDecoder;
 import netty.demo.provider.handler.UserServerHandler;
 
 public class UserServiceImpl implements UserService {
@@ -32,8 +35,9 @@ public class UserServiceImpl implements UserService {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast(new StringEncoder());
-                        pipeline.addLast(new StringDecoder());
+//                        pipeline.addLast(new StringEncoder());
+//                        pipeline.addLast(new StringDecoder());
+                        pipeline.addLast(new RpcDecoder(RpcRequest.class,new JSONSerializer()));
                         pipeline.addLast(new UserServerHandler());
                         
                     }
