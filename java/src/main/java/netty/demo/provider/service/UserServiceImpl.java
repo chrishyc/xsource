@@ -35,8 +35,8 @@ public class UserServiceImpl implements UserService {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
-//                        pipeline.addLast(new StringEncoder());
-//                        pipeline.addLast(new StringDecoder());
+                        pipeline.addLast(new StringEncoder());
+                        pipeline.addLast(new StringDecoder());
                         pipeline.addLast(new RpcDecoder(RpcRequest.class,new JSONSerializer()));
                         pipeline.addLast(new UserServerHandler());
                         

@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import io.netty.channel.*;
 
 public class RpcConsumer {
     
@@ -53,7 +54,84 @@ public class RpcConsumer {
         
     }
     
-    
+    /**
+     * {@link ChannelPipeline}介绍channelHandler执行顺序
+     *
+     *  I/O Request
+     *  *                                            via {@link Channel} or
+     *  *                                        {@link ChannelHandlerContext}
+     *  *                                                      |
+     *  *  +---------------------------------------------------+---------------+
+     *  *  |                           ChannelPipeline         |               |
+     *  *  |                                                  \|/              |
+     *  *  |    +---------------------+            +-----------+----------+    |
+     *  *  |    | Inbound Handler  N  |            | Outbound Handler  1  |    |
+     *  *  |    +----------+----------+            +-----------+----------+    |
+     *  *  |              /|\                                  |               |
+     *  *  |               |                                  \|/              |
+     *  *  |    +----------+----------+            +-----------+----------+    |
+     *  *  |    | Inbound Handler N-1 |            | Outbound Handler  2  |    |
+     *  *  |    +----------+----------+            +-----------+----------+    |
+     *  *  |              /|\                                  .               |
+     *  *  |               .                                   .               |
+     *  *  | ChannelHandlerContext.fireIN_EVT() ChannelHandlerContext.OUT_EVT()|
+     *  *  |        [ method call]                       [method call]         |
+     *  *  |               .                                   .               |
+     *  *  |               .                                  \|/              |
+     *  *  |    +----------+----------+            +-----------+----------+    |
+     *  *  |    | Inbound Handler  2  |            | Outbound Handler M-1 |    |
+     *  *  |    +----------+----------+            +-----------+----------+    |
+     *  *  |              /|\                                  |               |
+     *  *  |               |                                  \|/              |
+     *  *  |    +----------+----------+            +-----------+----------+    |
+     *  *  |    | Inbound Handler  1  |            | Outbound Handler  M  |    |
+     *  *  |    +----------+----------+            +-----------+----------+    |
+     *  *  |              /|\                                  |               |
+     *  *  +---------------+-----------------------------------+---------------+
+     *  *                  |                                  \|/
+     *  *  +---------------+-----------------------------------+---------------+
+     *  *  |               |                                   |               |
+     *  *  |       [ Socket.read() ]                    [ Socket.write() ]     |
+     *  *  |                                                                   |
+     *  *  |  Netty Internal I/O Threads (Transport Implementation)            |
+     *  *  +-------------------------------------------------------------------+
+     *
+     * For example, let us assume that we created the following pipeline:
+     *  * <pre>
+     *  * {@link ChannelPipeline} p = ...;
+     *  * p.addLast("1", new InboundHandlerA());
+     *  * p.addLast("2", new InboundHandlerB());
+     *  * p.addLast("3", new OutboundHandlerA());
+     *  * p.addLast("4", new OutboundHandlerB());
+     *  * p.addLast("5", new InboundOutboundHandlerX());
+     *  * </pre>
+     *  * In the example above, the class whose name starts with {@code Inbound} means it is an inbound handler.
+     *  * The class whose name starts with {@code Outbound} means it is a outbound handler.
+     *  * <p>
+     *  * In the given example configuration, the handler evaluation order is 1, 2, 3, 4, 5 when an event goes inbound.
+     *  * When an event goes outbound, the order is 5, 4, 3, 2, 1.  On top of this principle, {@link ChannelPipeline} skips
+     *  * the evaluation of certain handlers to shorten the stack depth:
+     *  * <ul>
+     *  * <li>3 and 4 don't implement {@link ChannelInboundHandler}, and therefore the actual evaluation order of an inbound
+     *  *     event will be: 1, 2, and 5.</li>
+     *  * <li>1 and 2 don't implement {@link ChannelOutboundHandler}, and therefore the actual evaluation order of a
+     *  *     outbound event will be: 5, 4, and 3.</li>
+     *  * <li>If 5 implements both {@link ChannelInboundHandler} and {@link ChannelOutboundHandler}, the evaluation order of
+     *  *     an inbound and a outbound event could be 125 and 543 respectively.</li>
+     *
+     *  1.怎么区分Inbound,Outbound?
+     *  {@link AbstractChannelHandlerContext#findContextInbound()}
+     *  {@link AbstractChannelHandlerContext#findContextOutbound()}
+     *
+     *  2.channelHandler执行顺序?
+     *  读:inbound1,inbound2,...
+     *  写:outbound n,outbound n-1,...
+     *
+     *  3.首位处理策略?
+     *  {@link DefaultChannelPipeline.HeadContext}
+     *  {@link DefaultChannelPipeline.TailContext}
+     * @throws InterruptedException
+     */
     //2.初始化netty客户端
     public static void initClient() throws InterruptedException {
         userClientHandler = new UserClientHandler();

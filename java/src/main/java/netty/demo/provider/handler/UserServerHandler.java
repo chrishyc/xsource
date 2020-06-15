@@ -3,6 +3,7 @@ package netty.demo.provider.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import netty.demo.consumer.RpcRequest;
+import netty.demo.provider.service.UserServiceImpl;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
@@ -19,7 +20,7 @@ public class UserServerHandler extends ChannelInboundHandlerAdapter {
             RpcRequest rpcRequest = (RpcRequest) msg;
             String className = rpcRequest.getClassName();
             Assert.notNull(className, "not null");
-            Class clazz = Class.forName(className);
+            Class clazz = UserServiceImpl.class;
             Assert.notNull(clazz);
             //TODO 需要获取对应的实现类
             Object o = clazz.newInstance();
