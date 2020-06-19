@@ -30,7 +30,7 @@ public class UpdateNote_curator {
         System.out.println("会话2创建了");
 
         // 创建节点
-        String path = "/lg-curator/c1";
+        String path = "/lg-curator/c2";
 
         // 获取节点的数据内容及状态信息
 

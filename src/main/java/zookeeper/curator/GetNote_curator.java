@@ -31,7 +31,7 @@ public class GetNote_curator {
         System.out.println("会话2创建了");
 
         // 创建节点
-        String path = "/lg-curator/c1";
+        String path = "/lg-curator/c2";
         String s = client.create().creatingParentsIfNeeded()
                 .withMode(CreateMode.PERSISTENT).forPath(path, "init".getBytes());
 
