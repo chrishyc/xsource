@@ -52,6 +52,7 @@ public class Note_API {
                 当节点被删除时，会执行的回调方法
                 s : path
              */
+            @Override
             public void handleDataDeleted(String s) throws Exception {
                 System.out.println(s+"该节点被删除");
             }
