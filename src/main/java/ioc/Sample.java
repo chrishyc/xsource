@@ -1,5 +1,6 @@
 package ioc;
 
+import demo.spring.eventListener.MyApplicationListener;
 import ioc.cycle.TestBean;
 import ioc.lazyinit.LazyInitBean;
 import ioc.life.LifeBean;
@@ -16,31 +17,33 @@ public class Sample {
         TestBean testBean = ac.getBean(TestBean.class);
         System.out.println(testBean);
     }
-
+    
     @Test
     public void testFileSystemXml() {
         ApplicationContext ac = new FileSystemXmlApplicationContext("file:/Users/chris/xsource/src/main/resources/applicationContext.xml");
     }
-
+    
     @Test
     public void testAnnotationConfig() {
         ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+        MyApplicationListener listener = ac.getBean(MyApplicationListener.class);
+        System.out.println(listener);
     }
-
+    
     @Test
     public void testCycle() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("cycleBeans.xml");
 //        TestBean testBean = ac.getBean(TestBean.class);
 //        System.out.println(testBean);
     }
-
+    
     @Test
     public void testLazyInit() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("lazyInit.xml");
         LazyInitBean lazyInitBean = ac.getBean(LazyInitBean.class);
         System.out.println();
     }
-
+    
     /**
      * 1.生成invokeBeanFactoryPostProcessors
      * 2.生成registerBeanPostProcessors
@@ -66,14 +69,14 @@ public class Sample {
         TestBean testBean = ac.getBean(TestBean.class);
         System.out.println(testBean);
     }
-
+    
     @Test
     public void testLife() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("life.xml");
         LifeBean lifeBean = ac.getBean(LifeBean.class);
         System.out.println(lifeBean);
     }
-
+    
     /**
      * {@link org.springframework.context.config.ContextNamespaceHandler}
      */
@@ -81,46 +84,47 @@ public class Sample {
     public void testXmlComponentScan() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
     }
-
+    
     /**
      * {@link org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider#registerDefaultFilters()}
      * 注册@Component.class
-     *
+     * <p>
      * {@link org.springframework.context.annotation.ClassPathBeanDefinitionScanner#doScan}
      */
     @Test
     public void testAnnotationComponentScan() {
         ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
     }
-
+    
     /**
      * {@link org.springframework.beans.factory.support.BeanDefinitionReaderUtils}
-     *
+     * <p>
      * if (isInnerBean) {
      * // Inner bean: generate identity hashcode suffix.
      * id = generatedBeanName + GENERATED_BEAN_NAME_SEPARATOR + ObjectUtils.getIdentityHexString(definition);
      * }
-     *
+     * <p>
      * spring内部bean都会带#
      * 例如DefaultBeanFactoryPointcutAdvisor#0
      */
     @Test
     public void testInnerBean() {
-
+    
     }
-
-    /**debug bean实例关键点
+    
+    /**
+     * debug bean实例关键点
      * postProcessBeforeInitialization，
      * postProcessAfterInitialization，
      * postProcessBeforeInstantiation，
      * postProcessAfterInstantiation，
      * addSingletonFactory，
      * addSingleton
-     *
+     * <p>
      * AbstractApplicationContext.refresh
      */
     @Test
-    public void testDebugPoint(){
-
+    public void testDebugPoint() {
+    
     }
 }
