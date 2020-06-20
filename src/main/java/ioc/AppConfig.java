@@ -7,15 +7,15 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = "demo.spring")
+@ComponentScan(basePackages = {"ioc.eventListener"})
 public class AppConfig {
     @Bean(name = "connectionUtils")
-    public ConnectionUtils createConnectionUtils(){
+    public ConnectionUtils createConnectionUtils() {
         return new ConnectionUtils();
     }
-
+    
     @Bean(name = "transactionManager")
-    public TransactionManager createTransactionManager(ConnectionUtils connectionUtils){
+    public TransactionManager createTransactionManager(ConnectionUtils connectionUtils) {
         return new TransactionManager(connectionUtils);
     }
 }

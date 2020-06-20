@@ -1,7 +1,7 @@
 package ioc;
 
-import demo.spring.eventListener.MyApplicationListener;
 import ioc.cycle.TestBean;
+import ioc.eventListener.MyApplicationListener;
 import ioc.lazyinit.LazyInitBean;
 import ioc.life.LifeBean;
 import org.junit.Test;
@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.*;
 
 public class Sample {
     @Test
@@ -23,6 +24,10 @@ public class Sample {
         ApplicationContext ac = new FileSystemXmlApplicationContext("file:/Users/chris/xsource/src/main/resources/applicationContext.xml");
     }
     
+    /**
+     * 1.ApplicationListener生成逻辑{@link AbstractApplicationContext#registerListeners()}
+     * 2.ApplicationListener调用逻辑{@link AbstractApplicationContext#publishEvent(Object)}
+     */
     @Test
     public void testAnnotationConfig() {
         ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);

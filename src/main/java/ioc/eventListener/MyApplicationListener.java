@@ -2,7 +2,9 @@ package ioc.eventListener;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MyApplicationListener implements ApplicationListener {
     
     public MyApplicationListener() {
@@ -11,6 +13,6 @@ public class MyApplicationListener implements ApplicationListener {
     
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        System.out.println(event == null ? "event" : event.toString());
+        System.out.println(event == null ? "MyApplicationListener===event" : "MyApplicationListener===" + event.toString());
     }
 }
