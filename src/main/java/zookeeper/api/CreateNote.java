@@ -49,12 +49,10 @@ public class CreateNote implements Watcher {
             // 创建节点
             try {
                 createNoteSync();
-            } catch (KeeperException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
+            } catch (KeeperException | InterruptedException e) {
                 e.printStackTrace();
             }
-
+    
         }
 
 
