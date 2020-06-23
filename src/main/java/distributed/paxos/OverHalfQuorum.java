@@ -3,7 +3,12 @@ package distributed.paxos;
 import java.util.Set;
 
 /**
- *
+ * 过半机制:
+ * 1.为什么需要过半机制?
+ * 分布式环境无法保证全部节点正常返回，需要有一定容错且能保证分布式一致性的机制
+ * 2.提出该机制后，为啥要限制过半?相等可以吗?
+ * 不能相等.过半主要是为了避免脑裂.
+ * 参考:https://juejin.im/post/5d36c2f25188257f6a209d37
  */
 public class OverHalfQuorum {
     int half;
