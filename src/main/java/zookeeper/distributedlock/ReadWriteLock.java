@@ -8,6 +8,9 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 
+/**
+ * 只监听前一个node,避免群羊效应
+ */
 public class ReadWriteLock {
     private static final String LOCK_NODE_PARENT_PATH = "/share_lock";
     
@@ -102,7 +105,6 @@ public class ReadWriteLock {
                 lockStatus = LockStatus.LOCKED;
                 return;
             }
-            
             // 4. 不能获取锁，找到比自己小的最后一个的写锁节点，并监视
             int index = Collections.binarySearch(nodes, name, nameComparator);
             for (int i = index - 1; i >= 0; i--) {
