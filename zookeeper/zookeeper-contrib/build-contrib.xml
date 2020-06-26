@@ -39,7 +39,7 @@
   <property name="javac.deprecation" value="on"/>
   <property name="javac.debug" value="on"/>
 
-  <property name="build.encoding" value="ISO-8859-1"/>
+  <property name="build.encoding" value="utf8"/>
 
   <property name="ivy.version" value="2.4.0"/>
   <property name="ivy.url"
@@ -160,21 +160,6 @@
     <echo message="contrib: ${name}"/>
   </target>
 
-  <!-- ====================================================== -->
-  <!-- rpm a contrib's files                                  -->
-  <!-- ====================================================== -->
-  <target name="rpm" depends="jar" unless="skip.contrib"> 
-    <echo message="contrib: ${name}"/>
-
-  </target>
-
-  <!-- ====================================================== -->
-  <!-- deb a contrib's files                                  -->
-  <!-- ====================================================== -->
-  <target name="deb" depends="jar" unless="skip.contrib"> 
-    <echo message="contrib: ${name}"/>
-
-  </target>
   <!-- ================================================================== -->
   <!-- Clean.  Delete the build files, and their directories              -->
   <!-- ================================================================== -->

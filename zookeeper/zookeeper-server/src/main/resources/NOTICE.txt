@@ -1,5 +1,5 @@
 Apache ZooKeeper
-Copyright 2009-2019 The Apache Software Foundation
+Copyright 2009-2017 The Apache Software Foundation
 
 This product includes software developed at
 The Apache Software Foundation (http://www.apache.org/).
@@ -98,3 +98,4 @@ framework implementation, which can be obtained at:
     * license/LICENSE.felix.txt (Apache License 2.0)
   * HOMEPAGE:
     * http://felix.apache.org/
+

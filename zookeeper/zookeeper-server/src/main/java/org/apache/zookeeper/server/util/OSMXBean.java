@@ -39,7 +39,7 @@ import java.lang.reflect.Method;
  */
 public class OSMXBean
 {
-    static final Logger LOG = LoggerFactory.getLogger(OSMXBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OSMXBean.class);
 
     private OperatingSystemMXBean osMbean;
 
@@ -85,7 +85,8 @@ public class OSMXBean
         try {
             classRef = Class.forName("com.sun.management.UnixOperatingSystemMXBean");
             if (classRef.isInstance(osMbean)) {
-                mBeanMethod = classRef.getDeclaredMethod(mBeanMethodName);
+                mBeanMethod = classRef.getDeclaredMethod(mBeanMethodName,
+                new Class<?>[0]);
                 unixos = classRef.cast(osMbean);
                 return (Long)mBeanMethod.invoke(unixos);
             }

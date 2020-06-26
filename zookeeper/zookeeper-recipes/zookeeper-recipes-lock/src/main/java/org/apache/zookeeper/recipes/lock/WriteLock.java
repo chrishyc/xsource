@@ -134,8 +134,9 @@ public class WriteLock extends ProtocolSupport {
                     initCause(e);
             }
             finally {
-                if (callback != null) {
-                    callback.lockReleased();
+                LockListener lockListener = getLockListener();
+                if (lockListener != null) {
+                    lockListener.lockReleased();
                 }
                 id = null;
             }
@@ -204,7 +205,7 @@ public class WriteLock extends ProtocolSupport {
          */
         @SuppressFBWarnings(value = "NP_NULL_PARAM_DEREF_NONVIRTUAL",
                 justification = "findPrefixInChildren will assign a value to this.id")
-        public final boolean execute() throws KeeperException, InterruptedException {
+        public boolean execute() throws KeeperException, InterruptedException {
             do {
                 if (id == null) {
                     long sessionId = zookeeper.getSessionId();
@@ -213,7 +214,7 @@ public class WriteLock extends ProtocolSupport {
                     // in the middle of creating the znode
                     findPrefixInChildren(prefix, zookeeper, dir);
                     idName = new ZNodeName(id);
-                }                
+                }
                 List<String> names = zookeeper.getChildren(dir, false);
                 if (names.isEmpty()) {
                     LOG.warn("No children in: " + dir + " when we've just " +
@@ -250,7 +251,7 @@ public class WriteLock extends ProtocolSupport {
                             return Boolean.TRUE;
                         }
                     }
-                }                
+                }
             }
             while (id == null);
             return Boolean.FALSE;
@@ -294,6 +295,5 @@ public class WriteLock extends ProtocolSupport {
     public String getId() {
        return this.id;
     }
-    
 }
 

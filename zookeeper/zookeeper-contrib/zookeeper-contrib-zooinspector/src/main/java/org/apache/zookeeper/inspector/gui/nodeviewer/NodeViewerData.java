@@ -30,7 +30,8 @@ import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingWorker;
 
-import org.apache.zookeeper.inspector.gui.ZooInspectorIconResources;
+import org.apache.zookeeper.inspector.ZooInspector;
+import org.apache.zookeeper.inspector.gui.IconResource;
 import org.apache.zookeeper.inspector.logger.LoggerFactory;
 import org.apache.zookeeper.inspector.manager.ZooInspectorNodeManager;
 
@@ -43,9 +44,6 @@ public class NodeViewerData extends ZooInspectorNodeViewer {
     private final JToolBar toolbar;
     private String selectedNode;
 
-    /**
-	 * 
-	 */
     public NodeViewerData() {
         this.setLayout(new BorderLayout());
         this.dataArea = new JTextPane();
@@ -56,8 +54,7 @@ public class NodeViewerData extends ZooInspectorNodeViewer {
                 .setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         this.add(scroller, BorderLayout.CENTER);
         this.add(this.toolbar, BorderLayout.NORTH);
-        JButton saveButton = new JButton(ZooInspectorIconResources
-                .getSaveIcon());
+        JButton saveButton = new JButton(ZooInspector.iconResource.get(IconResource.ICON_SAVE,""));
         saveButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {

@@ -39,17 +39,18 @@ import org.slf4j.LoggerFactory;
  * OpCode.getData, OpCode.exists) through to the next processor, but drops
  * state-changing operations (e.g. OpCode.create, OpCode.setData).
  */
-public class ReadOnlyRequestProcessor extends ZooKeeperCriticalThread implements RequestProcessor {
+public class ReadOnlyRequestProcessor extends ZooKeeperCriticalThread implements
+        RequestProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReadOnlyRequestProcessor.class);
 
-    private LinkedBlockingQueue<Request> queuedRequests = new LinkedBlockingQueue<Request>();
+    private final LinkedBlockingQueue<Request> queuedRequests = new LinkedBlockingQueue<Request>();
 
     private boolean finished = false;
 
-    private RequestProcessor nextProcessor;
+    private final RequestProcessor nextProcessor;
 
-    private ZooKeeperServer zks;
+    private final ZooKeeperServer zks;
 
     public ReadOnlyRequestProcessor(ZooKeeperServer zks,
             RequestProcessor nextProcessor) {
@@ -80,8 +81,13 @@ public class ReadOnlyRequestProcessor extends ZooKeeperCriticalThread implements
                 switch (request.type) {
                 case OpCode.sync:
                 case OpCode.create:
+                case OpCode.create2:
+                case OpCode.createTTL:
+                case OpCode.createContainer:
                 case OpCode.delete:
+                case OpCode.deleteContainer:
                 case OpCode.setData:
+                case OpCode.reconfig:
                 case OpCode.setACL:
                 case OpCode.multi:
                 case OpCode.check:

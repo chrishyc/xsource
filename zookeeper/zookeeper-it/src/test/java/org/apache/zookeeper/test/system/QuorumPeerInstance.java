@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.server.quorum.QuorumPeer;
 import org.apache.zookeeper.server.quorum.QuorumPeer.QuorumServer;
+import org.apache.zookeeper.test.TestUtils;
 
 class QuorumPeerInstance implements Instance {
     final private static Logger LOG = LoggerFactory.getLogger(QuorumPeerInstance.class);
@@ -52,7 +53,8 @@ class QuorumPeerInstance implements Instance {
     }
 
     InetSocketAddress clientAddr;
-    InetSocketAddress quorumAddr;
+    InetSocketAddress quorumLeaderAddr;
+    InetSocketAddress quorumLeaderElectionAddr;
     HashMap<Long, QuorumServer> peers;
     File snapDir, logDir;
 
@@ -96,7 +98,7 @@ class QuorumPeerInstance implements Instance {
             // us which machine we are
             serverId = Integer.parseInt(parts[0]);
             if (LOG.isDebugEnabled()) {
-                LOG.info("Setting up server " + serverId);
+                LOG.debug("Setting up server " + serverId);
             }
             if (parts.length > 1 && parts[1].equals("false")) {
                 System.setProperty("zookeeper.leaderServes", "no");
@@ -113,13 +115,20 @@ class QuorumPeerInstance implements Instance {
             }
             try {
                 ServerSocket ss = new ServerSocket(0, 1, InetAddress.getLocalHost());
-                quorumAddr = (InetSocketAddress) ss.getLocalSocketAddress();
+                quorumLeaderAddr = (InetSocketAddress) ss.getLocalSocketAddress();
                 ss.close();
             } catch(IOException e) {
                 e.printStackTrace();
             }
-            String report = clientAddr.getHostName() + ':' + clientAddr.getPort() +
-            ',' + quorumAddr.getHostName() + ':' + quorumAddr.getPort();
+            try {
+                ServerSocket ss = new ServerSocket(0, 1, InetAddress.getLocalHost());
+                quorumLeaderElectionAddr = (InetSocketAddress) ss.getLocalSocketAddress();
+                ss.close();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+            String report = clientAddr.getHostString() + ':' + clientAddr.getPort() +
+            ',' + quorumLeaderAddr.getHostString() + ':' + quorumLeaderAddr.getPort() + ':' + quorumLeaderElectionAddr.getPort();
             try {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Reporting " + report);
@@ -162,8 +171,15 @@ class QuorumPeerInstance implements Instance {
             String parts[] = quorumSpecs.split(",");
             peers = new HashMap<Long,QuorumServer>();
             for(int i = 0; i < parts.length; i++) {
-                String subparts[] = parts[i].split(":");
-                peers.put(Long.valueOf(i), new QuorumServer(i, subparts[0], Integer.parseInt(subparts[1]), 0, null));
+                // parts[i] == "host:leaderPort:leaderElectionPort;clientPort"
+                String subparts[] = ((parts[i].split(";"))[0]).split(":");
+                String clientPort = (parts[i].split(";"))[1];
+                peers.put(Long.valueOf(i),
+                          new QuorumServer(
+                                i,
+                                new InetSocketAddress(subparts[0], Integer.parseInt(subparts[1])),
+                                new InetSocketAddress(subparts[0], Integer.parseInt(subparts[2])),
+                                new InetSocketAddress(subparts[0], Integer.parseInt(clientPort))));
             }
             try {
                 if (LOG.isDebugEnabled()) {
@@ -193,17 +209,6 @@ class QuorumPeerInstance implements Instance {
 
     public void start() {
     }
-
-    static private void recursiveDelete(File dir) {
-        if (!dir.isDirectory()) {
-            dir.delete();
-            return;
-        }
-        for(File f: dir.listFiles()) {
-            recursiveDelete(f);
-        }
-        dir.delete();
-    }
     
     public void stop() {
         if (LOG.isDebugEnabled()) {
@@ -213,10 +218,10 @@ class QuorumPeerInstance implements Instance {
             peer.shutdown();
         }
         if (logDir != null) {
-            recursiveDelete(logDir);
+            TestUtils.deleteFileRecursively(logDir);
         }
         if (snapDir != null) {
-            recursiveDelete(snapDir);
+            TestUtils.deleteFileRecursively(snapDir);
         }
     }
 

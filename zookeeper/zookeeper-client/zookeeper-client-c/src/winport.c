@@ -296,6 +296,11 @@ void Win32WSACleanup()
        WSACleanup();
 }
 
+double drand48(void)
+{
+    return (double)(rand()) / RAND_MAX;
+}
+
 #endif //WIN32
 
 

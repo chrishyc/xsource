@@ -19,6 +19,7 @@ package org.apache.zookeeper.server.persistence;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,25 +56,25 @@ import org.slf4j.LoggerFactory;
  * <blockquote><pre>
  * LogFile:
  *     FileHeader TxnList ZeroPad
- * 
+ *
  * FileHeader: {
  *     magic 4bytes (ZKLG)
  *     version 4bytes
  *     dbid 8bytes
  *   }
- * 
+ *
  * TxnList:
  *     Txn || Txn TxnList
- *     
+ *
  * Txn:
  *     checksum Txnlen TxnHeader Record 0x42
- * 
+ *
  * checksum: 8bytes Adler32 is currently used
  *   calculated across payload -- Txnlen, TxnHeader, Record and 0x42
- * 
+ *
  * Txnlen:
  *     len 4bytes
- * 
+ *
  * TxnHeader: {
  *     sessionid 8bytes
  *     cxid 4bytes
@@ -81,15 +82,16 @@ import org.slf4j.LoggerFactory;
  *     time 8bytes
  *     type 4bytes
  *   }
- *     
+ *
  * Record:
  *     See Jute definition file for details on the various record types
- *      
+ *
  * ZeroPad:
  *     0 padded to EOF (filled during preallocation stage)
- * </pre></blockquote> 
+ * </pre></blockquote>
  */
-public class FileTxnLog implements TxnLog {
+public class FileTxnLog implements TxnLog, Closeable {
+
     private static final Logger LOG;
 
     public final static int TXNLOG_MAGIC =
@@ -121,7 +123,7 @@ public class FileTxnLog implements TxnLog {
     volatile FileOutputStream fos = null;
 
     File logDir;
-    private final boolean forceSync = !System.getProperty("zookeeper.forceSync", "yes").equals("no");;
+    private final boolean forceSync = !System.getProperty("zookeeper.forceSync", "yes").equals("no");
     long dbId;
     private LinkedList<FileOutputStream> streamsToFlush =
         new LinkedList<FileOutputStream>();
@@ -129,6 +131,8 @@ public class FileTxnLog implements TxnLog {
     private FilePadding filePadding = new FilePadding();
 
     private ServerStats serverStats;
+
+    private volatile long syncElapsedMS = -1L;
 
     /**
      * constructor for FileTxnLog. Take the directory
@@ -180,7 +184,7 @@ public class FileTxnLog implements TxnLog {
     /**
      * close all the open file handles
      * @throws IOException
-     */
+      */
     public synchronized void close() throws IOException {
         if (logStream != null) {
             logStream.close();
@@ -189,12 +193,12 @@ public class FileTxnLog implements TxnLog {
             log.close();
         }
     }
-    
+
     /**
      * append an entry to the transaction log
      * @param hdr the header of the transaction
      * @param txn the transaction part of the entry
-     * returns true iff something appended, otw false 
+     * returns true iff something appended, otw false
      */
     public synchronized boolean append(TxnHeader hdr, Record txn)
         throws IOException
@@ -202,7 +206,6 @@ public class FileTxnLog implements TxnLog {
         if (hdr == null) {
             return false;
         }
-
         if (hdr.getZxid() <= lastZxidSeen) {
             LOG.warn("Current zxid " + hdr.getZxid()
                     + " is <= " + lastZxidSeen + " for "
@@ -210,7 +213,6 @@ public class FileTxnLog implements TxnLog {
         } else {
             lastZxidSeen = hdr.getZxid();
         }
-
         if (logStream==null) {
            if(LOG.isInfoEnabled()){
                 LOG.info("Creating new log file: " + Util.makeLogName(hdr.getZxid()));
@@ -318,7 +320,7 @@ public class FileTxnLog implements TxnLog {
     }
 
     /**
-     * commit the logs. make sure that evertyhing hits the
+     * commit the logs. make sure that everything hits the
      * disk
      */
     public synchronized void commit() throws IOException {
@@ -330,10 +332,10 @@ public class FileTxnLog implements TxnLog {
             if (forceSync) {
                 long startSyncNS = System.nanoTime();
 
-                log.getChannel().force(false);
+                FileChannel channel = log.getChannel();
+                channel.force(false);
 
-                long syncElapsedMS =
-                    TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startSyncNS);
+                syncElapsedMS = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startSyncNS);
                 if (syncElapsedMS > fsyncWarningThresholdMS) {
                     if(serverStats != null) {
                         serverStats.incrementFsyncThresholdExceedCount();
@@ -342,6 +344,7 @@ public class FileTxnLog implements TxnLog {
                             + Thread.currentThread().getName()
                             + " took " + syncElapsedMS
                             + "ms which will adversely effect operation latency. "
+                            + "File size is " + channel.size() + " bytes. "
                             + "See the ZooKeeper troubleshooting guide");
                 }
             }
@@ -352,13 +355,34 @@ public class FileTxnLog implements TxnLog {
     }
 
     /**
+     *
+     * @return elapsed sync time of transaction log in milliseconds
+     */
+    public long getTxnLogSyncElapsedTime() {
+        return syncElapsedMS;
+    }
+
+    /**
      * start reading all the transactions from the given zxid
      * @param zxid the zxid to start reading transactions from
      * @return returns an iterator to iterate through the transaction
      * logs
      */
     public TxnIterator read(long zxid) throws IOException {
-        return new FileTxnIterator(logDir, zxid);
+        return read(zxid, true);
+    }
+
+    /**
+     * start reading all the transactions from the given zxid.
+     *
+     * @param zxid the zxid to start reading transactions from
+     * @param fastForward true if the iterator should be fast forwarded to point
+     *        to the txn of a given zxid, else the iterator will point to the
+     *        starting txn of a txnlog that may contain txn of a given zxid
+     * @return returns an iterator to iterate through the transaction logs
+     */
+    public TxnIterator read(long zxid, boolean fastForward) throws IOException {
+        return new FileTxnIterator(logDir, zxid, fastForward);
     }
 
     /**
@@ -378,10 +402,10 @@ public class FileTxnLog implements TxnLog {
             }
             long pos = input.getPosition();
             // now, truncate at the current position
-            RandomAccessFile raf = new RandomAccessFile(itr.logFile, "rw");
+            RandomAccessFile raf=new RandomAccessFile(itr.logFile,"rw");
             raf.setLength(pos);
             raf.close();
-            while (itr.goToNextLog()) {
+            while(itr.goToNextLog()) {
                 if (!itr.logFile.delete()) {
                     LOG.warn("Unable to truncate {}", itr.logFile);
                 }
@@ -395,7 +419,7 @@ public class FileTxnLog implements TxnLog {
     /**
      * read the header of the transaction file
      * @param file the transaction file to read
-     * @return header that was read fomr the file
+     * @return header that was read from the file
      * @throws IOException
      */
     private static FileHeader readHeader(File file) throws IOException {
@@ -437,10 +461,10 @@ public class FileTxnLog implements TxnLog {
     }
 
     /**
-     * a class that keeps track of the position 
+     * a class that keeps track of the position
      * in the input stream. The position points to offset
-     * that has been consumed by the applications. It can 
-     * wrap buffered input streams to provide the right offset 
+     * that has been consumed by the applications. It can
+     * wrap buffered input streams to provide the right offset
      * for the application.
      */
     static class PositionInputStream extends FilterInputStream {
@@ -449,7 +473,7 @@ public class FileTxnLog implements TxnLog {
             super(in);
             position = 0;
         }
-        
+
         @Override
         public int read() throws IOException {
             int rc = super.read();
@@ -464,9 +488,9 @@ public class FileTxnLog implements TxnLog {
             if (rc > 0) {
                 position += rc;
             }
-            return rc;            
+            return rc;
         }
-        
+
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
             int rc = super.read(b, off, len);
@@ -475,7 +499,7 @@ public class FileTxnLog implements TxnLog {
             }
             return rc;
         }
-        
+
         @Override
         public long skip(long n) throws IOException {
             long rc = super.skip(n);
@@ -503,7 +527,7 @@ public class FileTxnLog implements TxnLog {
             throw new UnsupportedOperationException("reset");
         }
     }
-    
+
     /**
      * this class implements the txnlog iterator interface
      * which is used for reading the transaction logs
@@ -516,7 +540,7 @@ public class FileTxnLog implements TxnLog {
         File logFile;
         InputArchive ia;
         static final String CRC_ERROR="CRC check failed";
-       
+
         PositionInputStream inputStream=null;
         //stored files is the list of files greater than
         //the zxid we are looking for.
@@ -526,12 +550,34 @@ public class FileTxnLog implements TxnLog {
          * create an iterator over a transaction database directory
          * @param logDir the transaction database directory
          * @param zxid the zxid to start reading from
+         * @param fastForward   true if the iterator should be fast forwarded to
+         *        point to the txn of a given zxid, else the iterator will
+         *        point to the starting txn of a txnlog that may contain txn of
+         *        a given zxid
+         * @throws IOException
+         */
+        public FileTxnIterator(File logDir, long zxid, boolean fastForward)
+                throws IOException {
+            this.logDir = logDir;
+            this.zxid = zxid;
+            init();
+
+            if (fastForward && hdr != null) {
+                while (hdr.getZxid() < zxid) {
+                    if (!next())
+                        break;
+                }
+            }
+        }
+
+        /**
+         * create an iterator over a transaction database directory
+         * @param logDir the transaction database directory
+         * @param zxid the zxid to start reading from
          * @throws IOException
          */
         public FileTxnIterator(File logDir, long zxid) throws IOException {
-          this.logDir = logDir;
-          this.zxid = zxid;
-          init();
+            this(logDir, zxid, true);
         }
 
         /**
@@ -553,12 +599,18 @@ public class FileTxnLog implements TxnLog {
                 }
             }
             goToNextLog();
-            if (!next())
-                return;
-            while (hdr.getZxid() < zxid) {
-                if (!next())
-                    return;
+            next();
+        }
+
+        /**
+         * Return total storage size of txnlog that will return by this iterator.
+         */
+        public long getStorageSize() {
+            long sum = 0;
+            for (File f : storedFiles) {
+                sum += f.length();
             }
+            return sum;
         }
 
         /**
@@ -587,7 +639,7 @@ public class FileTxnLog implements TxnLog {
             FileHeader header= new FileHeader();
             header.deserialize(ia, "fileheader");
             if (header.getMagic() != FileTxnLog.TXNLOG_MAGIC) {
-                throw new IOException("Transaction log: " + this.logFile + " has invalid magic number " 
+                throw new IOException("Transaction log: " + this.logFile + " has invalid magic number "
                         + header.getMagic()
                         + " != " + FileTxnLog.TXNLOG_MAGIC);
             }
@@ -643,7 +695,7 @@ public class FileTxnLog implements TxnLog {
                 hdr = new TxnHeader();
                 record = SerializeUtils.deserializeTxn(bytes, hdr);
             } catch (EOFException e) {
-                LOG.debug("EOF excepton " + e);
+                LOG.debug("EOF exception " + e);
                 inputStream.close();
                 inputStream = null;
                 ia = null;
@@ -663,7 +715,7 @@ public class FileTxnLog implements TxnLog {
         }
 
         /**
-         * reutrn the current header
+         * return the current header
          * @return the current header that
          * is read
          */

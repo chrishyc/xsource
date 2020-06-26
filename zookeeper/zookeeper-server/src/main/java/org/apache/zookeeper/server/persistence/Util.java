@@ -79,7 +79,7 @@ public class Util {
     /**
      * Creates a valid transaction log file name. 
      * 
-     * @param zxid used as a file name suffix (extention)
+     * @param zxid used as a file name suffix (extension)
      * @return file name
      */
     public static String makeLogName(long zxid) {
@@ -128,7 +128,7 @@ public class Util {
    
     /**
      * Extracts zxid from the file name. The file name should have been created
-     * using one of the {@link makeLogName} or {@link makeSnapshotName}.
+     * using one of the {@link #makeLogName(long)} or {@link #makeSnapshotName(long)}.
      * 
      * @param name the file name to parse
      * @param prefix the file name prefix (snapshot or log)
@@ -161,10 +161,9 @@ public class Util {
             return false;
 
         // Check for a valid snapshot
-        RandomAccessFile raf = new RandomAccessFile(f, "r");
-        try {
+        try (RandomAccessFile raf = new RandomAccessFile(f, "r")) {
             // including the header and the last / bytes
-            // the snapshot should be atleast 10 bytes
+            // the snapshot should be at least 10 bytes
             if (raf.length() < 10) {
                 return false;
             }
@@ -172,8 +171,8 @@ public class Util {
             byte bytes[] = new byte[5];
             int readlen = 0;
             int l;
-            while(readlen < 5 &&
-                  (l = raf.read(bytes, readlen, bytes.length - readlen)) >= 0) {
+            while (readlen < 5 &&
+                    (l = raf.read(bytes, readlen, bytes.length - readlen)) >= 0) {
                 readlen += l;
             }
             if (readlen != bytes.length) {
@@ -189,8 +188,6 @@ public class Util {
                         + " byte = " + (b & 0xff));
                 return false;
             }
-        } finally {
-            raf.close();
         }
 
         return true;
@@ -244,7 +241,7 @@ public class Util {
      * Write the serialized transaction record to the output archive.
      *  
      * @param oa output archive
-     * @param bytes serialized trasnaction record
+     * @param bytes serialized transaction record
      * @throws IOException
      */
     public static void writeTxnBytes(OutputArchive oa, byte[] bytes)

@@ -37,6 +37,7 @@ import org.apache.jute.BinaryInputArchive;
 import org.apache.jute.BinaryOutputArchive;
 import org.apache.zookeeper.Login;
 import org.apache.zookeeper.SaslClientCallbackHandler;
+import org.apache.zookeeper.common.ZKConfig;
 import org.apache.zookeeper.server.quorum.QuorumAuthPacket;
 import org.apache.zookeeper.util.SecurityUtils;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class SaslQuorumAuthLearner implements QuorumAuthLearner {
                                          + "' could not be found.");
             }
             this.learnerLogin = new Login(loginContext,
-                                    new SaslClientCallbackHandler(null, "QuorumLearner"));
+                                    new SaslClientCallbackHandler(null, "QuorumLearner"), new ZKConfig());
             this.learnerLogin.startThreadIfNeeded();
         } catch (LoginException e) {
             throw new SaslException("Failed to initialize authentication mechanism using SASL", e);
@@ -108,10 +109,7 @@ public class SaslQuorumAuthLearner implements QuorumAuthLearner {
                             learnerLogin);
                     // we're done; don't expect to send another BIND
                     if (responseToken != null) {
-                        throw new SaslException(
-                                "Protocol error: attempting to send response after completion"
-                                        + ". Server addr: "
-                                        + sock.getRemoteSocketAddress());
+                        throw new SaslException("Protocol error: attempting to send response after completion");
                     }
                     break;
                 case IN_PROGRESS:
@@ -213,7 +211,7 @@ public class SaslQuorumAuthLearner implements QuorumAuthLearner {
                                 + " '-Dsun.net.spi.nameservice.provider.1=dns,sun' to your server's JVMFLAGS environment.";
                     }
                     LOG.error(error);
-                    throw new SaslException(error);
+                    throw new SaslException(error, e);
                 }
             }
         } else {

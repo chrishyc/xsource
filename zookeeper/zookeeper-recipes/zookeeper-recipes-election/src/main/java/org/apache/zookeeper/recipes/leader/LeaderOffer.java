@@ -73,7 +73,7 @@ public class LeaderOffer {
    * Compare two instances of {@link LeaderOffer} using only the {code}id{code}
    * member.
    */
-  public static final class IdComparator
+  public static class IdComparator
           implements Comparator<LeaderOffer>, Serializable {
 
     @Override

@@ -22,7 +22,7 @@ import org.apache.zookeeper.server.ZooKeeperServer;
 import org.apache.zookeeper.server.ZooKeeperServerBean;
 
 /**
- * Follower MBean interface implementation.
+ * Follower MBean interface implementation
  */
 public class FollowerBean extends ZooKeeperServerBean implements FollowerMXBean {
     private final Follower follower;

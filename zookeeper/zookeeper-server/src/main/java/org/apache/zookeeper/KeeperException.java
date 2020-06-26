@@ -106,6 +106,10 @@ public abstract class KeeperException extends Exception {
                 return new UnimplementedException();
             case OPERATIONTIMEOUT:
                 return new OperationTimeoutException();
+            case NEWCONFIGNOQUORUM:
+               return new NewConfigNoQuorum();
+            case RECONFIGINPROGRESS:
+               return new ReconfigInProgress();
             case BADARGUMENTS:
                 return new BadArgumentsException();
             case APIERROR:
@@ -134,7 +138,14 @@ public abstract class KeeperException extends Exception {
                 return new SessionMovedException();
             case NOTREADONLY:
                 return new NotReadOnlyException();
-
+            case EPHEMERALONLOCALSESSION:
+                return new EphemeralOnLocalSessionException();
+            case NOWATCHER:
+                return new NoWatcherException();
+            case RECONFIGDISABLED:
+                return new ReconfigDisabledException();
+            case REQUESTTIMEOUT:
+                return new RequestTimeoutException();
             case OK:
             default:
                 throw new IllegalArgumentException("Invalid exception code");
@@ -222,6 +233,23 @@ public abstract class KeeperException extends Exception {
         @Deprecated
         public static final int BadArguments = -8;
 
+        @Deprecated
+        public static final int UnknownSession= -12;
+
+        /**
+         * @deprecated deprecated in 3.1.0, use {@link Code#NEWCONFIGNOQUORUM}
+         * instead
+         */
+        @Deprecated
+        public static final int NewConfigNoQuorum = -13;
+
+        /**
+         * @deprecated deprecated in 3.1.0, use {@link Code#RECONFIGINPROGRESS}
+         * instead
+         */
+        @Deprecated
+        public static final int ReconfigInProgress= -14;
+
         /**
          * @deprecated deprecated in 3.1.0, use {@link Code#APIERROR} instead
          */
@@ -281,10 +309,13 @@ public abstract class KeeperException extends Exception {
          */
         @Deprecated
         public static final int AuthFailed = -115;
-        /**
-         * This value will be used directly in {@link CODE#SESSIONMOVED}
-         */
-        // public static final int SessionMoved = -118;
+        
+        // This value will be used directly in {@link CODE#SESSIONMOVED}
+        // public static final int SessionMoved = -118;       
+        
+        @Deprecated
+        public static final int EphemeralOnLocalSession = -120;
+
     }
 
     /** Codes which represent the various KeeperException
@@ -318,6 +349,13 @@ public abstract class KeeperException extends Exception {
         OPERATIONTIMEOUT (OperationTimeout),
         /** Invalid arguments */
         BADARGUMENTS (BadArguments),
+        /** No quorum of new config is connected and up-to-date with the leader of last commmitted config - try 
+         *  invoking reconfiguration after new servers are connected and synced */
+        NEWCONFIGNOQUORUM (NewConfigNoQuorum),
+        /** Another reconfiguration is in progress -- concurrent reconfigs not supported (yet) */
+        RECONFIGINPROGRESS (ReconfigInProgress),
+        /** Unknown session (internal server use only) */
+        UNKNOWNSESSION (UnknownSession),
         
         /** API errors.
          * This is never thrown by the server, it shouldn't be used other than
@@ -331,7 +369,8 @@ public abstract class KeeperException extends Exception {
         NONODE (NoNode),
         /** Not authenticated */
         NOAUTH (NoAuth),
-        /** Version conflict */
+        /** Version conflict
+            In case of reconfiguration: reconfig requested from config version X but last seen config has a different version Y */
         BADVERSION (BadVersion),
         /** Ephemeral nodes may not have children */
         NOCHILDRENFOREPHEMERALS (NoChildrenForEphemerals),
@@ -350,7 +389,15 @@ public abstract class KeeperException extends Exception {
         /** Session moved to another server, so operation is ignored */
         SESSIONMOVED (-118),
         /** State-changing request is passed to read-only server */
-        NOTREADONLY (-119);
+        NOTREADONLY (-119),
+        /** Attempt to create ephemeral node on a local session */
+        EPHEMERALONLOCALSESSION (EphemeralOnLocalSession),
+        /** Attempts to remove a non-existing watcher */
+        NOWATCHER (-121),
+        /** Request not completed within max allowed time.*/
+        REQUESTTIMEOUT (-122),
+        /** Attempts to perform a reconfiguration operation when reconfiguration feature is disabled. */
+        RECONFIGDISABLED(-123);
 
         private static final Map<Integer,Code> lookup
             = new HashMap<Integer,Code>();
@@ -395,6 +442,10 @@ public abstract class KeeperException extends Exception {
                 return "ConnectionLoss";
             case MARSHALLINGERROR:
                 return "MarshallingError";
+            case NEWCONFIGNOQUORUM:
+               return "NewConfigNoQuorum";
+            case RECONFIGINPROGRESS:
+               return "ReconfigInProgress";
             case UNIMPLEMENTED:
                 return "Unimplemented";
             case OPERATIONTIMEOUT:
@@ -427,6 +478,12 @@ public abstract class KeeperException extends Exception {
                 return "Session moved";
             case NOTREADONLY:
                 return "Not a read-only call";
+            case EPHEMERALONLOCALSESSION:
+                return "Ephemeral node on local session";
+            case NOWATCHER:
+                return "No such watcher";
+            case RECONFIGDISABLED:
+                return "Reconfig is disabled";
             default:
                 return "Unknown error " + code;
         }
@@ -473,7 +530,7 @@ public abstract class KeeperException extends Exception {
 
     @Override
     public String getMessage() {
-        if (path == null) {
+        if (path == null || path.isEmpty()) {
             return "KeeperErrorCode = " + getCodeMessage(code);
         }
         return "KeeperErrorCode = " + getCodeMessage(code) + " for " + path;
@@ -605,6 +662,26 @@ public abstract class KeeperException extends Exception {
     }
 
     /**
+     * @see Code#NEWCONFIGNOQUORUM
+     */
+    @InterfaceAudience.Public
+    public static class NewConfigNoQuorum extends KeeperException {
+        public NewConfigNoQuorum() {
+            super(Code.NEWCONFIGNOQUORUM);
+        }
+    }
+    
+    /**
+     * @see Code#RECONFIGINPROGRESS
+     */
+    @InterfaceAudience.Public
+    public static class ReconfigInProgress extends KeeperException {
+        public ReconfigInProgress() {
+            super(Code.RECONFIGINPROGRESS);
+        }
+    }
+    
+    /**
      * @see Code#NOCHILDRENFOREPHEMERALS
      */
     @InterfaceAudience.Public
@@ -687,6 +764,16 @@ public abstract class KeeperException extends Exception {
     }
 
     /**
+     * @see Code#UNKNOWNSESSION
+     */
+    @InterfaceAudience.Public
+    public static class UnknownSessionException extends KeeperException {
+        public UnknownSessionException() {
+            super(Code.UNKNOWNSESSION);
+        }
+    }
+
+    /**
      * @see Code#SESSIONMOVED
      */
     @InterfaceAudience.Public
@@ -707,6 +794,16 @@ public abstract class KeeperException extends Exception {
     }
 
     /**
+     * @see Code#EPHEMERALONLOCALSESSION
+     */
+    @InterfaceAudience.Public
+    public static class EphemeralOnLocalSessionException extends KeeperException {
+        public EphemeralOnLocalSessionException() {
+            super(Code.EPHEMERALONLOCALSESSION);
+        }
+    }
+
+    /**
      * @see Code#SYSTEMERROR
      */
     @InterfaceAudience.Public
@@ -723,6 +820,40 @@ public abstract class KeeperException extends Exception {
     public static class UnimplementedException extends KeeperException {
         public UnimplementedException() {
             super(Code.UNIMPLEMENTED);
+        }
+    }
+
+    /**
+     * @see Code#NOWATCHER
+     */
+    @InterfaceAudience.Public
+    public static class NoWatcherException extends KeeperException {
+        public NoWatcherException() {
+            super(Code.NOWATCHER);
+        }
+
+        public NoWatcherException(String path) {
+            super(Code.NOWATCHER, path);
+        }
+    }
+
+    /**
+     * @see Code#RECONFIGDISABLED
+     */
+    @InterfaceAudience.Public
+    public static class ReconfigDisabledException extends KeeperException {
+        public ReconfigDisabledException() { super(Code.RECONFIGDISABLED); }
+        public ReconfigDisabledException(String path) {
+            super(Code.RECONFIGDISABLED, path);
+        }
+    }
+
+    /**
+     * @see Code#REQUESTTIMEOUT
+     */
+    public static class RequestTimeoutException extends KeeperException {
+        public RequestTimeoutException() {
+            super(Code.REQUESTTIMEOUT);
         }
     }
 }

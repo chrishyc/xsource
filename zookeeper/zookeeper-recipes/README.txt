@@ -1,4 +1,4 @@
-1) This source directory contains various Zookeeper recipe implementations. 
+1) This source directory contains various Zookeeper recipe implementations.
 
 2) The recipe directory name should specify the name of the recipe you are implementing - eg. zookeeper-recipes-lock/.
 

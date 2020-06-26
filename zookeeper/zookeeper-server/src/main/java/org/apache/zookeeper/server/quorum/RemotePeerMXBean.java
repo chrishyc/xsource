@@ -30,4 +30,24 @@ public interface RemotePeerMXBean {
      * @return IP address of the quorum peer 
      */
     public String getQuorumAddress();
+
+    /**
+     * @return the election address
+     */
+    public String getElectionAddress();
+
+    /**
+     * @return the client address
+     */
+    public String getClientAddress();
+
+    /**
+     * @return the learner type
+     */
+    public String getLearnerType();
+
+    /**
+     * @return true if the peer is the current leader
+     */
+    public boolean isLeader();
 }

@@ -22,18 +22,15 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.zookeeper</groupId>
-    <artifactId>zookeeper</artifactId>
-    <version>3.4.14</version>
+    <artifactId>parent</artifactId>
+    <version>3.5.8</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <groupId>org.apache.zookeeper</groupId>
   <artifactId>zookeeper-client</artifactId>
   <packaging>pom</packaging>
   <name>Apache ZooKeeper - Client</name>
   <description>ZooKeeper client</description>
-
-
 
   <profiles>
     <profile>
@@ -47,26 +44,15 @@
       <modules />
     </profile>
   </profiles>
-
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>source-package</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <skipAssembly>true</skipAssembly>
-            </configuration>
-          </execution>
-        </executions>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <!-- this module isn't to be deployed to Maven Central -->
+          <skip>true</skip>
+        </configuration>
       </plugin>
     </plugins>
   </build>
-
 </project>

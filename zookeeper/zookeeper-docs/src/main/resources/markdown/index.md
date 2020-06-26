@@ -48,15 +48,11 @@ archives.
     + [JMX](zookeeperJMX.html) - how to enable JMX in ZooKeeper
     + [Hierarchical quorums](zookeeperHierarchicalQuorums.html)
     + [Observers](zookeeperObservers.html) - non-voting ensemble members that easily improve ZooKeeper's scalability
+    + [Dynamic Reconfiguration](zookeeperReconfig.html) - a guide on how to use dynamic reconfiguration in ZooKeeper
 + **Contributors**
     Documents for Developers Contributing to the ZooKeeper Open Source Project
     + [ZooKeeper Internals](zookeeperInternals.html) - assorted topics on the inner workings of ZooKeeper
 + **Miscellaneous ZooKeeper Documentation**
     + [Wiki](https://cwiki.apache.org/confluence/display/ZOOKEEPER)
     + [FAQ](https://cwiki.apache.org/confluence/display/ZOOKEEPER/FAQ)
-+ **BookKeeper Documentation**
-    BookKeeper is a highly-available system that implements high-performance write-ahead logging. It uses ZooKeeper for metadata, which is the main reason for being a ZooKeeper contrib.
-    + [henn, what's it again?](bookkeeperOverview.html)
-    + [Ok, now how do I try it out](bookkeeperStarted.html)
-    + [Awesome, but how do I integrate it with my app?](bookkeeperProgrammer.html)
-    + [Can I stream bytes instead of entries?](bookkeeperStream.html)
+

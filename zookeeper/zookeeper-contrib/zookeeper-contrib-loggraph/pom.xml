@@ -23,10 +23,9 @@
   <parent>
     <groupId>org.apache.zookeeper</groupId>
     <artifactId>zookeeper-contrib</artifactId>
-    <version>3.4.14</version>
+    <version>3.5.8</version>
   </parent>
 
-  <groupId>org.apache.zookeeper</groupId>
   <artifactId>zookeeper-contrib-loggraph</artifactId>
   <packaging>jar</packaging>
   <name>Apache ZooKeeper - Contrib - Loggraph</name>
@@ -38,12 +37,12 @@
     <dependency>
       <groupId>org.apache.zookeeper</groupId>
       <artifactId>zookeeper-jute</artifactId>
-      <version>3.4.14</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.zookeeper</groupId>
-      <artifactId>zookeeper-server</artifactId>
-      <version>3.4.14</version>
+      <artifactId>zookeeper</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

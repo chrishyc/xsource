@@ -126,36 +126,6 @@ int deserialize_StatPersisted(struct iarchive *in, const char *tag, struct StatP
 }
 void deallocate_StatPersisted(struct StatPersisted*v){
 }
-int serialize_StatPersistedV1(struct oarchive *out, const char *tag, struct StatPersistedV1 *v){
-    int rc;
-    rc = out->start_record(out, tag);
-    rc = rc ? rc : out->serialize_Long(out, "czxid", &v->czxid);
-    rc = rc ? rc : out->serialize_Long(out, "mzxid", &v->mzxid);
-    rc = rc ? rc : out->serialize_Long(out, "ctime", &v->ctime);
-    rc = rc ? rc : out->serialize_Long(out, "mtime", &v->mtime);
-    rc = rc ? rc : out->serialize_Int(out, "version", &v->version);
-    rc = rc ? rc : out->serialize_Int(out, "cversion", &v->cversion);
-    rc = rc ? rc : out->serialize_Int(out, "aversion", &v->aversion);
-    rc = rc ? rc : out->serialize_Long(out, "ephemeralOwner", &v->ephemeralOwner);
-    rc = rc ? rc : out->end_record(out, tag);
-    return rc;
-}
-int deserialize_StatPersistedV1(struct iarchive *in, const char *tag, struct StatPersistedV1*v){
-    int rc;
-    rc = in->start_record(in, tag);
-    rc = rc ? rc : in->deserialize_Long(in, "czxid", &v->czxid);
-    rc = rc ? rc : in->deserialize_Long(in, "mzxid", &v->mzxid);
-    rc = rc ? rc : in->deserialize_Long(in, "ctime", &v->ctime);
-    rc = rc ? rc : in->deserialize_Long(in, "mtime", &v->mtime);
-    rc = rc ? rc : in->deserialize_Int(in, "version", &v->version);
-    rc = rc ? rc : in->deserialize_Int(in, "cversion", &v->cversion);
-    rc = rc ? rc : in->deserialize_Int(in, "aversion", &v->aversion);
-    rc = rc ? rc : in->deserialize_Long(in, "ephemeralOwner", &v->ephemeralOwner);
-    rc = rc ? rc : in->end_record(in, tag);
-    return rc;
-}
-void deallocate_StatPersistedV1(struct StatPersistedV1*v){
-}
 int serialize_ConnectRequest(struct oarchive *out, const char *tag, struct ConnectRequest *v){
     int rc;
     rc = out->start_record(out, tag);
@@ -395,6 +365,31 @@ void deallocate_SetDataRequest(struct SetDataRequest*v){
     deallocate_String(&v->path);
     deallocate_Buffer(&v->data);
 }
+int serialize_ReconfigRequest(struct oarchive *out, const char *tag, struct ReconfigRequest *v){
+    int rc;
+    rc = out->start_record(out, tag);
+    rc = rc ? rc : out->serialize_String(out, "joiningServers", &v->joiningServers);
+    rc = rc ? rc : out->serialize_String(out, "leavingServers", &v->leavingServers);
+    rc = rc ? rc : out->serialize_String(out, "newMembers", &v->newMembers);
+    rc = rc ? rc : out->serialize_Long(out, "curConfigId", &v->curConfigId);
+    rc = rc ? rc : out->end_record(out, tag);
+    return rc;
+}
+int deserialize_ReconfigRequest(struct iarchive *in, const char *tag, struct ReconfigRequest*v){
+    int rc;
+    rc = in->start_record(in, tag);
+    rc = rc ? rc : in->deserialize_String(in, "joiningServers", &v->joiningServers);
+    rc = rc ? rc : in->deserialize_String(in, "leavingServers", &v->leavingServers);
+    rc = rc ? rc : in->deserialize_String(in, "newMembers", &v->newMembers);
+    rc = rc ? rc : in->deserialize_Long(in, "curConfigId", &v->curConfigId);
+    rc = rc ? rc : in->end_record(in, tag);
+    return rc;
+}
+void deallocate_ReconfigRequest(struct ReconfigRequest*v){
+    deallocate_String(&v->joiningServers);
+    deallocate_String(&v->leavingServers);
+    deallocate_String(&v->newMembers);
+}
 int serialize_SetDataResponse(struct oarchive *out, const char *tag, struct SetDataResponse *v){
     int rc;
     rc = out->start_record(out, tag);
@@ -529,6 +524,33 @@ int deserialize_CreateRequest(struct iarchive *in, const char *tag, struct Creat
     return rc;
 }
 void deallocate_CreateRequest(struct CreateRequest*v){
+    deallocate_String(&v->path);
+    deallocate_Buffer(&v->data);
+    deallocate_ACL_vector(&v->acl);
+}
+int serialize_CreateTTLRequest(struct oarchive *out, const char *tag, struct CreateTTLRequest *v){
+    int rc;
+    rc = out->start_record(out, tag);
+    rc = rc ? rc : out->serialize_String(out, "path", &v->path);
+    rc = rc ? rc : out->serialize_Buffer(out, "data", &v->data);
+    rc = rc ? rc : serialize_ACL_vector(out, "acl", &v->acl);
+    rc = rc ? rc : out->serialize_Int(out, "flags", &v->flags);
+    rc = rc ? rc : out->serialize_Long(out, "ttl", &v->ttl);
+    rc = rc ? rc : out->end_record(out, tag);
+    return rc;
+}
+int deserialize_CreateTTLRequest(struct iarchive *in, const char *tag, struct CreateTTLRequest*v){
+    int rc;
+    rc = in->start_record(in, tag);
+    rc = rc ? rc : in->deserialize_String(in, "path", &v->path);
+    rc = rc ? rc : in->deserialize_Buffer(in, "data", &v->data);
+    rc = rc ? rc : deserialize_ACL_vector(in, "acl", &v->acl);
+    rc = rc ? rc : in->deserialize_Int(in, "flags", &v->flags);
+    rc = rc ? rc : in->deserialize_Long(in, "ttl", &v->ttl);
+    rc = rc ? rc : in->end_record(in, tag);
+    return rc;
+}
+void deallocate_CreateTTLRequest(struct CreateTTLRequest*v){
     deallocate_String(&v->path);
     deallocate_Buffer(&v->data);
     deallocate_ACL_vector(&v->acl);
@@ -805,6 +827,26 @@ int deserialize_CreateResponse(struct iarchive *in, const char *tag, struct Crea
 void deallocate_CreateResponse(struct CreateResponse*v){
     deallocate_String(&v->path);
 }
+int serialize_Create2Response(struct oarchive *out, const char *tag, struct Create2Response *v){
+    int rc;
+    rc = out->start_record(out, tag);
+    rc = rc ? rc : out->serialize_String(out, "path", &v->path);
+    rc = rc ? rc : serialize_Stat(out, "stat", &v->stat);
+    rc = rc ? rc : out->end_record(out, tag);
+    return rc;
+}
+int deserialize_Create2Response(struct iarchive *in, const char *tag, struct Create2Response*v){
+    int rc;
+    rc = in->start_record(in, tag);
+    rc = rc ? rc : in->deserialize_String(in, "path", &v->path);
+    rc = rc ? rc : deserialize_Stat(in, "stat", &v->stat);
+    rc = rc ? rc : in->end_record(in, tag);
+    return rc;
+}
+void deallocate_Create2Response(struct Create2Response*v){
+    deallocate_String(&v->path);
+    deallocate_Stat(&v->stat);
+}
 int serialize_ExistsRequest(struct oarchive *out, const char *tag, struct ExistsRequest *v){
     int rc;
     rc = out->start_record(out, tag);
@@ -918,11 +960,50 @@ void deallocate_GetACLResponse(struct GetACLResponse*v){
     deallocate_ACL_vector(&v->acl);
     deallocate_Stat(&v->stat);
 }
+int serialize_CheckWatchesRequest(struct oarchive *out, const char *tag, struct CheckWatchesRequest *v){
+    int rc;
+    rc = out->start_record(out, tag);
+    rc = rc ? rc : out->serialize_String(out, "path", &v->path);
+    rc = rc ? rc : out->serialize_Int(out, "type", &v->type);
+    rc = rc ? rc : out->end_record(out, tag);
+    return rc;
+}
+int deserialize_CheckWatchesRequest(struct iarchive *in, const char *tag, struct CheckWatchesRequest*v){
+    int rc;
+    rc = in->start_record(in, tag);
+    rc = rc ? rc : in->deserialize_String(in, "path", &v->path);
+    rc = rc ? rc : in->deserialize_Int(in, "type", &v->type);
+    rc = rc ? rc : in->end_record(in, tag);
+    return rc;
+}
+void deallocate_CheckWatchesRequest(struct CheckWatchesRequest*v){
+    deallocate_String(&v->path);
+}
+int serialize_RemoveWatchesRequest(struct oarchive *out, const char *tag, struct RemoveWatchesRequest *v){
+    int rc;
+    rc = out->start_record(out, tag);
+    rc = rc ? rc : out->serialize_String(out, "path", &v->path);
+    rc = rc ? rc : out->serialize_Int(out, "type", &v->type);
+    rc = rc ? rc : out->end_record(out, tag);
+    return rc;
+}
+int deserialize_RemoveWatchesRequest(struct iarchive *in, const char *tag, struct RemoveWatchesRequest*v){
+    int rc;
+    rc = in->start_record(in, tag);
+    rc = rc ? rc : in->deserialize_String(in, "path", &v->path);
+    rc = rc ? rc : in->deserialize_Int(in, "type", &v->type);
+    rc = rc ? rc : in->end_record(in, tag);
+    return rc;
+}
+void deallocate_RemoveWatchesRequest(struct RemoveWatchesRequest*v){
+    deallocate_String(&v->path);
+}
 int serialize_LearnerInfo(struct oarchive *out, const char *tag, struct LearnerInfo *v){
     int rc;
     rc = out->start_record(out, tag);
     rc = rc ? rc : out->serialize_Long(out, "serverid", &v->serverid);
     rc = rc ? rc : out->serialize_Int(out, "protocolVersion", &v->protocolVersion);
+    rc = rc ? rc : out->serialize_Long(out, "configVersion", &v->configVersion);
     rc = rc ? rc : out->end_record(out, tag);
     return rc;
 }
@@ -931,6 +1012,7 @@ int deserialize_LearnerInfo(struct iarchive *in, const char *tag, struct Learner
     rc = in->start_record(in, tag);
     rc = rc ? rc : in->deserialize_Long(in, "serverid", &v->serverid);
     rc = rc ? rc : in->deserialize_Int(in, "protocolVersion", &v->protocolVersion);
+    rc = rc ? rc : in->deserialize_Long(in, "configVersion", &v->configVersion);
     rc = rc ? rc : in->end_record(in, tag);
     return rc;
 }
@@ -1118,6 +1200,58 @@ int deserialize_CreateTxn(struct iarchive *in, const char *tag, struct CreateTxn
     return rc;
 }
 void deallocate_CreateTxn(struct CreateTxn*v){
+    deallocate_String(&v->path);
+    deallocate_Buffer(&v->data);
+    deallocate_ACL_vector(&v->acl);
+}
+int serialize_CreateTTLTxn(struct oarchive *out, const char *tag, struct CreateTTLTxn *v){
+    int rc;
+    rc = out->start_record(out, tag);
+    rc = rc ? rc : out->serialize_String(out, "path", &v->path);
+    rc = rc ? rc : out->serialize_Buffer(out, "data", &v->data);
+    rc = rc ? rc : serialize_ACL_vector(out, "acl", &v->acl);
+    rc = rc ? rc : out->serialize_Int(out, "parentCVersion", &v->parentCVersion);
+    rc = rc ? rc : out->serialize_Long(out, "ttl", &v->ttl);
+    rc = rc ? rc : out->end_record(out, tag);
+    return rc;
+}
+int deserialize_CreateTTLTxn(struct iarchive *in, const char *tag, struct CreateTTLTxn*v){
+    int rc;
+    rc = in->start_record(in, tag);
+    rc = rc ? rc : in->deserialize_String(in, "path", &v->path);
+    rc = rc ? rc : in->deserialize_Buffer(in, "data", &v->data);
+    rc = rc ? rc : deserialize_ACL_vector(in, "acl", &v->acl);
+    rc = rc ? rc : in->deserialize_Int(in, "parentCVersion", &v->parentCVersion);
+    rc = rc ? rc : in->deserialize_Long(in, "ttl", &v->ttl);
+    rc = rc ? rc : in->end_record(in, tag);
+    return rc;
+}
+void deallocate_CreateTTLTxn(struct CreateTTLTxn*v){
+    deallocate_String(&v->path);
+    deallocate_Buffer(&v->data);
+    deallocate_ACL_vector(&v->acl);
+}
+int serialize_CreateContainerTxn(struct oarchive *out, const char *tag, struct CreateContainerTxn *v){
+    int rc;
+    rc = out->start_record(out, tag);
+    rc = rc ? rc : out->serialize_String(out, "path", &v->path);
+    rc = rc ? rc : out->serialize_Buffer(out, "data", &v->data);
+    rc = rc ? rc : serialize_ACL_vector(out, "acl", &v->acl);
+    rc = rc ? rc : out->serialize_Int(out, "parentCVersion", &v->parentCVersion);
+    rc = rc ? rc : out->end_record(out, tag);
+    return rc;
+}
+int deserialize_CreateContainerTxn(struct iarchive *in, const char *tag, struct CreateContainerTxn*v){
+    int rc;
+    rc = in->start_record(in, tag);
+    rc = rc ? rc : in->deserialize_String(in, "path", &v->path);
+    rc = rc ? rc : in->deserialize_Buffer(in, "data", &v->data);
+    rc = rc ? rc : deserialize_ACL_vector(in, "acl", &v->acl);
+    rc = rc ? rc : in->deserialize_Int(in, "parentCVersion", &v->parentCVersion);
+    rc = rc ? rc : in->end_record(in, tag);
+    return rc;
+}
+void deallocate_CreateContainerTxn(struct CreateContainerTxn*v){
     deallocate_String(&v->path);
     deallocate_Buffer(&v->data);
     deallocate_ACL_vector(&v->acl);

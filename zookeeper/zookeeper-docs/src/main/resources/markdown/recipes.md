@@ -60,6 +60,20 @@ as event handles or queues, a more practical means of performing the same
 function. In general, the examples in this section are designed to
 stimulate thought.
 
+<a name="sc_recipes_errorHandlingNote"></a>
+
+### Important Note About Error Handling
+
+When implementing the recipes you must handle recoverable exceptions
+(see the [FAQ](https://cwiki.apache.org/confluence/display/ZOOKEEPER/FAQ)). In
+particular, several of the recipes employ sequential ephemeral
+nodes. When creating a sequential ephemeral node there is an error case in
+which the create() succeeds on the server but the server crashes before
+returning the name of the node to the client. When the client reconnects its
+session is still valid and, thus, the node is not removed. The implication is
+that it is difficult for the client to know if its node was created or not. The
+recipes below include measures to handle this.
+
 <a name="sc_outOfTheBox"></a>
 
 ### Out of the Box Applications: Name Service, Configuration, Group Membership
@@ -233,6 +247,17 @@ Here are a few things to notice:
   amount of lock contention, break locks, debug locking problems,
   etc.
 
+<a name="sc_recipes_GuidNote"></a>
+
+#### Recoverable Errors and the GUID
+
+* If a recoverable error occurs calling **create()** the
+  client should call **getChildren()** and check for a node
+  containing the _guid_ used in the path name.
+  This handles the case (noted [above](#sc_recipes_errorHandlingNote)) of
+  the create() succeeding on the server but the server crashing before returning the name
+  of the new node.
+
 <a name="Shared+Locks"></a>
 
 #### Shared Locks
@@ -385,3 +410,7 @@ Notes:
   children does not imply that the creator of this znode is aware that it is
   the current leader. Applications may consider creating a separate znode
   to acknowledge that the leader has executed the leader procedure.
+
+* See the [note for Locks](#sc_recipes_GuidNote) on how to use the guid in the node.
+
+
