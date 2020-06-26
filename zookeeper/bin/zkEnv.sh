@@ -21,10 +21,24 @@
 # We use ZOOCFGDIR if defined,
 # otherwise we use /etc/zookeeper
 # or the conf directory that is
-# a sibling of this script's directory
+# a sibling of this script's directory.
+# Or you can specify the ZOOCFGDIR using the
+# '--config' option in the command line.
 
 ZOOBINDIR="${ZOOBINDIR:-/usr/bin}"
 ZOOKEEPER_PREFIX="${ZOOBINDIR}/.."
+
+#check to see if the conf dir is given as an optional argument
+if [ $# -gt 1 ]
+then
+    if [ "--config" = "$1" ]
+	  then
+	      shift
+	      confdir=$1
+	      shift
+	      ZOOCFGDIR=$confdir
+    fi
+fi
 
 if [ "x$ZOOCFGDIR" = "x" ]
 then
@@ -53,7 +67,7 @@ fi
 
 if [ "x${ZOO_LOG_DIR}" = "x" ]
 then
-    ZOO_LOG_DIR="."
+    ZOO_LOG_DIR="$ZOOKEEPER_PREFIX/logs"
 fi
 
 if [ "x${ZOO_LOG4J_PROP}" = "x" ]
@@ -61,10 +75,13 @@ then
     ZOO_LOG4J_PROP="INFO,CONSOLE"
 fi
 
-if [ "$JAVA_HOME" != "" ]; then
-  JAVA="$JAVA_HOME/bin/java"
+if [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
+    JAVA="$JAVA_HOME/bin/java"
+elif type -p java; then
+    JAVA=java
 else
-  JAVA=java
+    echo "Error: JAVA_HOME is not set and java could not be found in PATH." 1>&2
+    exit 1
 fi
 
 #add the zoocfg dir to classpath
@@ -77,7 +94,7 @@ done
 
 #make it work in the binary package
 #(use array for LIBPATH to account for spaces within wildcard expansion)
-if [ -e "${ZOOKEEPER_PREFIX}"/share/zookeeper/zookeeper-*.jar ]; then
+if ls "${ZOOKEEPER_PREFIX}"/share/zookeeper/zookeeper-*.jar > /dev/null 2>&1; then 
   LIBPATH=("${ZOOKEEPER_PREFIX}"/share/zookeeper/*.jar)
 else
   #release tarball format
@@ -111,7 +128,7 @@ CLASSPATH="$ZOOBINDIR/../build/classes:$CLASSPATH"
 CLASSPATH="$ZOOBINDIR/../zookeeper-server/target/classes:$CLASSPATH"
 
 case "`uname`" in
-    CYGWIN*) cygwin=true ;;
+    CYGWIN*|MINGW*) cygwin=true ;;
     *) cygwin=false ;;
 esac
 
@@ -121,3 +138,11 @@ then
 fi
 
 #echo "CLASSPATH=$CLASSPATH"
+
+# default heap for zookeeper server
+ZK_SERVER_HEAP="${ZK_SERVER_HEAP:-1000}"
+export SERVER_JVMFLAGS="-Xmx${ZK_SERVER_HEAP}m $SERVER_JVMFLAGS"
+
+# default heap for zookeeper client
+ZK_CLIENT_HEAP="${ZK_CLIENT_HEAP:-256}"
+export CLIENT_JVMFLAGS="-Xmx${ZK_CLIENT_HEAP}m $CLIENT_JVMFLAGS"

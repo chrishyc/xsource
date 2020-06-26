@@ -62,20 +62,16 @@ public class MultiTransactionRecord implements Record, Iterable<Op> {
     @Override
     public void serialize(OutputArchive archive, String tag) throws IOException {
         archive.startRecord(this, tag);
-        int index = 0 ;
         for (Op op : ops) {
             MultiHeader h = new MultiHeader(op.getType(), false, -1);
             h.serialize(archive, tag);
             switch (op.getType()) {
-               case ZooDefs.OpCode.create:
-                    op.toRequestRecord().serialize(archive, tag);
-                    break;
+                case ZooDefs.OpCode.create:
+                case ZooDefs.OpCode.create2:
+                case ZooDefs.OpCode.createTTL:
+                case ZooDefs.OpCode.createContainer:
                 case ZooDefs.OpCode.delete:
-                    op.toRequestRecord().serialize(archive, tag);
-                    break;
                 case ZooDefs.OpCode.setData:
-                    op.toRequestRecord().serialize(archive, tag);
-                    break;
                 case ZooDefs.OpCode.check:
                     op.toRequestRecord().serialize(archive, tag);
                     break;
@@ -95,10 +91,17 @@ public class MultiTransactionRecord implements Record, Iterable<Op> {
 
         while (!h.getDone()) {
             switch (h.getType()) {
-               case ZooDefs.OpCode.create:
+                case ZooDefs.OpCode.create:
+                case ZooDefs.OpCode.create2:
+                case ZooDefs.OpCode.createContainer:
                     CreateRequest cr = new CreateRequest();
                     cr.deserialize(archive, tag);
                     add(Op.create(cr.getPath(), cr.getData(), cr.getAcl(), cr.getFlags()));
+                    break;
+                case ZooDefs.OpCode.createTTL:
+                    CreateTTLRequest crTtl = new CreateTTLRequest();
+                    crTtl.deserialize(archive, tag);
+                    add(Op.create(crTtl.getPath(), crTtl.getData(), crTtl.getAcl(), crTtl.getFlags(), crTtl.getTtl()));
                     break;
                 case ZooDefs.OpCode.delete:
                     DeleteRequest dr = new DeleteRequest();

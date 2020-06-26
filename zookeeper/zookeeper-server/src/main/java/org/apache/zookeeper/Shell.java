@@ -38,19 +38,21 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.log4j.Logger;
+
 import org.apache.zookeeper.common.Time;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A base class for running a Unix command.
- * 
+ *
  * <code>Shell</code> can be used to run unix commands like <code>du</code> or
  * <code>df</code>. It also offers facilities to gate commands by 
  * time-intervals.
  */
 abstract public class Shell {
   
-  Logger LOG = Logger.getLogger(Shell.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
   
   /** a Unix command to get the current user's name */
   public final static String USER_NAME_COMMAND = "whoami";

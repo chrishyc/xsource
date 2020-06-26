@@ -17,17 +17,17 @@
  */
 package org.apache.zookeeper.recipes.lock;
 
-import junit.framework.TestCase;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.junit.Test;
-
 /**
  * test for znodenames
  */
-public class ZNodeNameTest extends TestCase {
+public class ZNodeNameTest {
     @Test
     public void testOrderWithSamePrefix() throws Exception {
         String[] names = { "x-3", "x-5", "x-11", "x-1" };
@@ -59,12 +59,12 @@ public class ZNodeNameTest extends TestCase {
         for (String name : names) {
             nodeNames.add(new ZNodeName(name));
         }
-        assertEquals("The SortedSet does not have the expected size!", nodeNames.size(), expected.length);
+        Assert.assertEquals("The SortedSet does not have the expected size!", nodeNames.size(), expected.length);
 
         int index = 0;
         for (ZNodeName nodeName : nodeNames) {
             String name = nodeName.getName();
-            assertEquals("Node " + index, expected[index++], name);
+            Assert.assertEquals("Node " + index, expected[index++], name);
         }
     }
 

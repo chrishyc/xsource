@@ -131,6 +131,7 @@ int gettimeofday(struct timeval *tp, void *tzp);
 int close(SOCKET fd);
 int Win32WSAStartup();
 void Win32WSACleanup();
+double drand48(void);
 #endif //WIN32
 
 

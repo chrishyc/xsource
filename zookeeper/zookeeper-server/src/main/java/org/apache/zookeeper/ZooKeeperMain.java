@@ -25,24 +25,49 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.yetus.audience.InterfaceAudience;
+import org.apache.zookeeper.cli.CliException;
+import org.apache.zookeeper.cli.CommandNotFoundException;
+import org.apache.zookeeper.cli.MalformedCommandException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.zookeeper.AsyncCallback.DataCallback;
 import org.apache.zookeeper.ZooDefs.Ids;
-import org.apache.zookeeper.data.ACL;
-import org.apache.zookeeper.data.Id;
 import org.apache.zookeeper.data.Stat;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.zookeeper.cli.AddAuthCommand;
+import org.apache.zookeeper.cli.CliCommand;
+import org.apache.zookeeper.cli.CloseCommand;
+import org.apache.zookeeper.cli.CreateCommand;
+import org.apache.zookeeper.cli.DelQuotaCommand;
+import org.apache.zookeeper.cli.DeleteAllCommand;
+import org.apache.zookeeper.cli.DeleteCommand;
+import org.apache.zookeeper.cli.RemoveWatchesCommand;
+import org.apache.zookeeper.cli.GetAclCommand;
+import org.apache.zookeeper.cli.GetCommand;
+import org.apache.zookeeper.cli.GetConfigCommand;
+import org.apache.zookeeper.cli.ListQuotaCommand;
+import org.apache.zookeeper.cli.Ls2Command;
+import org.apache.zookeeper.cli.LsCommand;
+import org.apache.zookeeper.cli.ReconfigCommand;
+import org.apache.zookeeper.cli.SetAclCommand;
+import org.apache.zookeeper.cli.SetCommand;
+import org.apache.zookeeper.cli.SetQuotaCommand;
+import org.apache.zookeeper.cli.StatCommand;
+import org.apache.zookeeper.cli.SyncCommand;
+import org.apache.zookeeper.client.ZKClientConfig;
+import org.apache.zookeeper.admin.ZooKeeperAdmin;
 
 /**
  * The command line client to ZooKeeper.
@@ -52,11 +77,14 @@ import java.util.regex.Pattern;
 public class ZooKeeperMain {
     private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperMain.class);
     static final Map<String,String> commandMap = new HashMap<String,String>( );
+    static final Map<String,CliCommand> commandMapCli =
+            new HashMap<String,CliCommand>( );
 
     protected MyCommandOptions cl = new MyCommandOptions();
     protected HashMap<Integer,String> history = new HashMap<Integer,String>( );
     protected int commandCount = 0;
     protected boolean printWatches = true;
+    protected int exitCode = 0;
 
     protected ZooKeeper zk;
     protected String host = "";
@@ -67,32 +95,45 @@ public class ZooKeeperMain {
 
     static {
         commandMap.put("connect", "host:port");
-        commandMap.put("close","");
-        commandMap.put("create", "[-s] [-e] path data acl");
-        commandMap.put("delete","path [version]");
-        commandMap.put("rmr","path");
-        commandMap.put("set","path data [version]");
-        commandMap.put("get","path [watch]");
-        commandMap.put("ls","path [watch]");
-        commandMap.put("ls2","path [watch]");
-        commandMap.put("getAcl","path");
-        commandMap.put("setAcl","path acl");
-        commandMap.put("stat","path [watch]");
-        commandMap.put("sync","path");
-        commandMap.put("setquota","-n|-b val path");
-        commandMap.put("listquota","path");
-        commandMap.put("delquota","[-n|-b] path");
         commandMap.put("history","");
         commandMap.put("redo","cmdno");
         commandMap.put("printwatches", "on|off");
-        commandMap.put("quit","");
-        commandMap.put("addauth", "scheme auth");
+        commandMap.put("quit", "");
+
+        new CloseCommand().addToMap(commandMapCli);
+        new CreateCommand().addToMap(commandMapCli);
+        new DeleteCommand().addToMap(commandMapCli);
+        new DeleteAllCommand().addToMap(commandMapCli);
+        // Depricated: rmr
+        new DeleteAllCommand("rmr").addToMap(commandMapCli);
+        new SetCommand().addToMap(commandMapCli);
+        new GetCommand().addToMap(commandMapCli);
+        new LsCommand().addToMap(commandMapCli);
+        new Ls2Command().addToMap(commandMapCli);
+        new GetAclCommand().addToMap(commandMapCli);
+        new SetAclCommand().addToMap(commandMapCli);
+        new StatCommand().addToMap(commandMapCli);
+        new SyncCommand().addToMap(commandMapCli);
+        new SetQuotaCommand().addToMap(commandMapCli);
+        new ListQuotaCommand().addToMap(commandMapCli);
+        new DelQuotaCommand().addToMap(commandMapCli);
+        new AddAuthCommand().addToMap(commandMapCli);
+        new ReconfigCommand().addToMap(commandMapCli);
+        new GetConfigCommand().addToMap(commandMapCli);
+        new RemoveWatchesCommand().addToMap(commandMapCli);
+        
+        // add all to commandMap
+        for (Entry<String, CliCommand> entry : commandMapCli.entrySet()) {
+            commandMap.put(entry.getKey(), entry.getValue().getOptionStr());
+    }
     }
 
     static void usage() {
         System.err.println("ZooKeeper -server host:port cmd args");
-        for (Map.Entry<String, String> entry : commandMap.entrySet()) {
-            System.err.println("\t" + entry.getKey() + " " + entry.getValue());
+        List<String> cmdList = new ArrayList<String>(commandMap.keySet());
+        Collections.sort(cmdList);
+        for (String cmd : cmdList) {
+            System.err.println("\t"+cmd+ " " + commandMap.get(cmd));
         }
     }
 
@@ -103,48 +144,6 @@ public class ZooKeeperMain {
                 ZooKeeperMain.printMessage(event.toString());
             }
         }
-    }
-
-    static private int getPermFromString(String permString) {
-        int perm = 0;
-        for (int i = 0; i < permString.length(); i++) {
-            switch (permString.charAt(i)) {
-            case 'r':
-                perm |= ZooDefs.Perms.READ;
-                break;
-            case 'w':
-                perm |= ZooDefs.Perms.WRITE;
-                break;
-            case 'c':
-                perm |= ZooDefs.Perms.CREATE;
-                break;
-            case 'd':
-                perm |= ZooDefs.Perms.DELETE;
-                break;
-            case 'a':
-                perm |= ZooDefs.Perms.ADMIN;
-                break;
-            default:
-                System.err
-                .println("Unknown perm type: " + permString.charAt(i));
-            }
-        }
-        return perm;
-    }
-
-    private static void printStat(Stat stat) {
-        System.err.println("cZxid = 0x" + Long.toHexString(stat.getCzxid()));
-        System.err.println("ctime = " + new Date(stat.getCtime()).toString());
-        System.err.println("mZxid = 0x" + Long.toHexString(stat.getMzxid()));
-        System.err.println("mtime = " + new Date(stat.getMtime()).toString());
-        System.err.println("pZxid = 0x" + Long.toHexString(stat.getPzxid()));
-        System.err.println("cversion = " + stat.getCversion());
-        System.err.println("dataVersion = " + stat.getVersion());
-        System.err.println("aclVersion = " + stat.getAversion());
-        System.err.println("ephemeralOwner = 0x"
-        		+ Long.toHexString(stat.getEphemeralOwner()));
-        System.err.println("dataLength = " + stat.getDataLength());
-        System.err.println("numChildren = " + stat.getNumChildren());
     }
 
     /**
@@ -262,7 +261,9 @@ public class ZooKeeperMain {
     }
 
     public static List<String> getCommands() {
-        return new LinkedList<String>(commandMap.keySet());
+        List<String> cmdList = new ArrayList<String>(commandMap.keySet());
+        Collections.sort(cmdList);
+        return cmdList;
     }
 
     protected String getPrompt() {       
@@ -277,16 +278,17 @@ public class ZooKeeperMain {
         if (zk != null && zk.getState().isAlive()) {
             zk.close();
         }
+
         host = newHost;
         boolean readOnly = cl.getOption("readonly") != null;
-        zk = new ZooKeeper(host,
-                 Integer.parseInt(cl.getOption("timeout")),
-                 new MyWatcher(), readOnly);
+        if (cl.getOption("secure") != null) {
+            System.setProperty(ZKClientConfig.SECURE_CLIENT, "true");
+            System.out.println("Secure connection is enabled");
+        }
+        zk = new ZooKeeperAdmin(host, Integer.parseInt(cl.getOption("timeout")), new MyWatcher(), readOnly);
     }
-    
-    public static void main(String args[])
-        throws KeeperException, IOException, InterruptedException
-    {
+
+    public static void main(String args[]) throws IOException, InterruptedException {
         ZooKeeperMain main = new ZooKeeperMain(args);
         main.run();
     }
@@ -295,25 +297,22 @@ public class ZooKeeperMain {
         cl.parseOptions(args);
         System.out.println("Connecting to " + cl.getOption("server"));
         connectToZK(cl.getOption("server"));
-        //zk = new ZooKeeper(cl.getOption("server"),
-//                Integer.parseInt(cl.getOption("timeout")), new MyWatcher());
     }
 
     public ZooKeeperMain(ZooKeeper zk) {
       this.zk = zk;
     }
 
-    @SuppressWarnings("unchecked")
-    void run() throws KeeperException, IOException, InterruptedException {
+    void run() throws IOException, InterruptedException {
         if (cl.getCommand() == null) {
             System.out.println("Welcome to ZooKeeper!");
 
             boolean jlinemissing = false;
             // only use jline if it's in the classpath
             try {
-                Class<?> consoleC = Class.forName("jline.ConsoleReader");
+                Class<?> consoleC = Class.forName("jline.console.ConsoleReader");
                 Class<?> completorC =
-                    Class.forName("org.apache.zookeeper.JLineZNodeCompletor");
+                    Class.forName("org.apache.zookeeper.JLineZNodeCompleter");
 
                 System.out.println("JLine support is enabled");
 
@@ -322,8 +321,8 @@ public class ZooKeeperMain {
 
                 Object completor =
                     completorC.getConstructor(ZooKeeper.class).newInstance(zk);
-                Method addCompletor = consoleC.getMethod("addCompletor",
-                        Class.forName("jline.Completor"));
+                Method addCompletor = consoleC.getMethod("addCompleter",
+                        Class.forName("jline.console.completer.Completer"));
                 addCompletor.invoke(console, completor);
 
                 String line;
@@ -362,10 +361,10 @@ public class ZooKeeperMain {
             // Command line args non-null.  Run what was passed.
             processCmd(cl);
         }
+        System.exit(exitCode);
     }
 
-    public void executeLine(String line)
-    throws InterruptedException, IOException, KeeperException {
+    public void executeLine(String line) throws InterruptedException, IOException {
       if (!line.equals("")) {
         cl.parseCommand(line);
         addToHistory(commandCount,line);
@@ -373,17 +372,6 @@ public class ZooKeeperMain {
         commandCount++;
       }
     }
-
-    private static DataCallback dataCallback = new DataCallback() {
-
-        public void processResult(int rc, String path, Object ctx, byte[] data,
-                Stat stat) {
-            System.out.println("rc = " + rc + " path = " + path + " data = "
-                    + (data == null ? "null" : new String(data)) + " stat = ");
-            printStat(stat);
-        }
-
-    };
 
     /**
      * trim the quota tree to recover unwanted tree elements
@@ -593,76 +581,51 @@ public class ZooKeeperMain {
         return true;
     }
 
-    protected boolean processCmd(MyCommandOptions co)
-        throws KeeperException, IOException, InterruptedException
-    {
+    protected boolean processCmd(MyCommandOptions co) throws IOException, InterruptedException {
+        boolean watch = false;
         try {
-            return processZKCmd(co);
-        } catch (IllegalArgumentException e) {
-            System.err.println("Command failed: " + e);
-        } catch (KeeperException.NoNodeException e) {
-            System.err.println("Node does not exist: " + e.getPath());
-        } catch (KeeperException.NoChildrenForEphemeralsException e) {
-            System.err.println("Ephemerals cannot have children: "
-                    + e.getPath());
-        } catch (KeeperException.NodeExistsException e) {
-            System.err.println("Node already exists: " + e.getPath());
-        } catch (KeeperException.NotEmptyException e) {
-            System.err.println("Node not empty: " + e.getPath());
-        } catch (KeeperException.NotReadOnlyException e) {
-            System.err.println("Not a read-only call: " + e.getPath());
-        }catch (KeeperException.InvalidACLException  e) {
-            System.err.println("Acl is not valid : "+e.getPath());
-        }catch (KeeperException.NoAuthException  e) {
-            System.err.println("Authentication is not valid : "+e.getPath());
-        }catch (KeeperException.BadArgumentsException   e) {
-            System.err.println("Arguments are not valid : "+e.getPath());
-        }catch (KeeperException.BadVersionException e) {
-            System.err.println("version No is not valid : "+e.getPath());
+            watch = processZKCmd(co);
+            exitCode = 0;
+        } catch (CliException ex) {
+            exitCode = ex.getExitCode();
+            System.err.println(ex.getMessage());
         }
-        return false;
+        return watch;
     }
 
-    protected boolean processZKCmd(MyCommandOptions co)
-        throws KeeperException, IOException, InterruptedException
-    {
-        Stat stat = new Stat();
+    protected boolean processZKCmd(MyCommandOptions co) throws CliException, IOException, InterruptedException {
         String[] args = co.getArgArray();
         String cmd = co.getCommand();
         if (args.length < 1) {
             usage();
-            return false;
+            throw new MalformedCommandException("No command entered");
         }
 
         if (!commandMap.containsKey(cmd)) {
             usage();
-            return false;
+            throw new CommandNotFoundException("Command not found " + cmd);
         }
         
-        boolean watch = args.length > 2;
-        String path = null;
-        List<ACL> acl = Ids.OPEN_ACL_UNSAFE;
+        boolean watch = false;
         LOG.debug("Processing " + cmd);
 
+
         if (cmd.equals("quit")) {
-            System.out.println("Quitting...");
             zk.close();
-            System.exit(0);
+            System.exit(exitCode);
         } else if (cmd.equals("redo") && args.length >= 2) {
             Integer i = Integer.decode(args[1]);
-            if (commandCount <= i || i < 0){ // don't allow redoing this redo
-                System.out.println("Command index out of range");
-                return false;
+            if (commandCount <= i || i < 0) { // don't allow redoing this redo
+                throw new MalformedCommandException("Command index out of range");
             }
             cl.parseCommand(history.get(i));
-            if (cl.getCommand().equals( "redo" )){
-                System.out.println("No redoing redos");
-                return false;
+            if (cl.getCommand().equals("redo")) {
+                throw new MalformedCommandException("No redoing redos");
             }
             history.put(commandCount, history.get(i));
-            processCmd( cl);
+            processCmd(cl);
         } else if (cmd.equals("history")) {
-            for (int i=commandCount - 10;i<=commandCount;++i) {
+            for (int i = commandCount - 10; i <= commandCount; ++i) {
                 if (i < 0) continue;
                 System.out.println(i + " - " + history.get(i));
             }
@@ -673,7 +636,7 @@ public class ZooKeeperMain {
                 printWatches = args[1].equals("on");
             }
         } else if (cmd.equals("connect")) {
-            if (args.length >=2) {
+            if (args.length >= 2) {
                 connectToZK(args[1]);
             } else {
                 connectToZK(host);
@@ -686,186 +649,14 @@ public class ZooKeeperMain {
             return false;
         }
         
-        if (cmd.equals("create") && args.length >= 3) {
-            int first = 0;
-            CreateMode flags = CreateMode.PERSISTENT;
-            if ((args[1].equals("-e") && args[2].equals("-s"))
-                    || (args[1]).equals("-s") && (args[2].equals("-e"))) {
-                first+=2;
-                flags = CreateMode.EPHEMERAL_SEQUENTIAL;
-            } else if (args[1].equals("-e")) {
-                first++;
-                flags = CreateMode.EPHEMERAL;
-            } else if (args[1].equals("-s")) {
-                first++;
-                flags = CreateMode.PERSISTENT_SEQUENTIAL;
-            }
-            if (args.length == first + 4) {
-                acl = parseACLs(args[first+3]);
-            }
-            path = args[first + 1];
-            String newPath = zk.create(path, args[first+2].getBytes(), acl,
-                    flags);
-            System.err.println("Created " + newPath);
-        } else if (cmd.equals("delete") && args.length >= 2) {
-            path = args[1];
-            zk.delete(path, watch ? Integer.parseInt(args[2]) : -1);
-        } else if (cmd.equals("rmr") && args.length >= 2) {
-            path = args[1];
-            ZKUtil.deleteRecursive(zk, path);
-        } else if (cmd.equals("set") && args.length >= 3) {
-            path = args[1];
-            stat = zk.setData(path, args[2].getBytes(),
-                    args.length > 3 ? Integer.parseInt(args[3]) : -1);
-            printStat(stat);
-        } else if (cmd.equals("aget") && args.length >= 2) {
-            path = args[1];
-            zk.getData(path, watch, dataCallback, path);
-        } else if (cmd.equals("get") && args.length >= 2) {
-            path = args[1];
-            byte data[] = zk.getData(path, watch, stat);
-            data = (data == null)? "null".getBytes() : data;
-            System.out.println(new String(data));
-            printStat(stat);
-        } else if (cmd.equals("ls") && args.length >= 2) {
-            path = args[1];
-            List<String> children = zk.getChildren(path, watch);
-            System.out.println(children);
-        } else if (cmd.equals("ls2") && args.length >= 2) {
-            path = args[1];
-            List<String> children = zk.getChildren(path, watch, stat);
-            System.out.println(children);
-            printStat(stat);
-        } else if (cmd.equals("getAcl") && args.length >= 2) {
-            path = args[1];
-            acl = zk.getACL(path, stat);
-            for (ACL a : acl) {
-                System.out.println(a.getId() + ": "
-                        + getPermString(a.getPerms()));
-            }
-        } else if (cmd.equals("setAcl") && args.length >= 3) {
-            path = args[1];
-            stat = zk.setACL(path, parseACLs(args[2]),
-                    args.length > 4 ? Integer.parseInt(args[3]) : -1);
-            printStat(stat);
-        } else if (cmd.equals("stat") && args.length >= 2) {
-            path = args[1];
-            stat = zk.exists(path, watch);
-            if (stat == null) {
-              throw new KeeperException.NoNodeException(path);
-            }
-            printStat(stat);
-        } else if (cmd.equals("listquota") && args.length >= 2) {
-            path = args[1];
-            String absolutePath = Quotas.quotaZookeeper + path + "/" + Quotas.limitNode;
-            byte[] data =  null;
-            try {
-                System.err.println("absolute path is " + absolutePath);
-                data = zk.getData(absolutePath, false, stat);
-                StatsTrack st = new StatsTrack(new String(data));
-                System.out.println("Output quota for " + path + " "
-                        + st.toString());
-
-                data = zk.getData(Quotas.quotaZookeeper + path + "/" +
-                        Quotas.statNode, false, stat);
-                System.out.println("Output stat for " + path + " " +
-                        new StatsTrack(new String(data)).toString());
-            } catch(KeeperException.NoNodeException ne) {
-                System.err.println("quota for " + path + " does not exist.");
-            }
-        } else if (cmd.equals("setquota") && args.length >= 4) {
-            String option = args[1];
-            String val = args[2];
-            path = args[3];
-            System.err.println("Comment: the parts are " +
-                               "option " + option +
-                               " val " + val +
-                               " path " + path);
-            if ("-b".equals(option)) {
-                // we are setting the bytes quota
-                createQuota(zk, path, Long.parseLong(val), -1);
-            } else if ("-n".equals(option)) {
-                // we are setting the num quota
-                createQuota(zk, path, -1L, Integer.parseInt(val));
-            } else {
-                usage();
-            }
-
-        } else if (cmd.equals("delquota") && args.length >= 2) {
-            //if neither option -n or -b is specified, we delete
-            // the quota node for thsi node.
-            if (args.length == 3) {
-                //this time we have an option
-                String option = args[1];
-                path = args[2];
-                if ("-b".equals(option)) {
-                    delQuota(zk, path, true, false);
-                } else if ("-n".equals(option)) {
-                    delQuota(zk, path, false, true);
-                }
-            } else if (args.length == 2) {
-                path = args[1];
-                // we dont have an option specified.
-                // just delete whole quota node
-                delQuota(zk, path, true, true);
-            } else if (cmd.equals("help")) {
-                usage();
-            }
-        } else if (cmd.equals("close")) {
-                zk.close();
-        } else if (cmd.equals("sync") && args.length >= 2) {
-            path = args[1];
-            zk.sync(path, new AsyncCallback.VoidCallback() { public void processResult(int rc, String path, Object ctx) { System.out.println("Sync returned " + rc); } }, null );
-        } else if (cmd.equals("addauth") && args.length >=2 ) {
-            byte[] b = null;
-            if (args.length >= 3)
-                b = args[2].getBytes();
-
-            zk.addAuthInfo(args[1], b);
+        // execute from commandMap
+        CliCommand cliCmd = commandMapCli.get(cmd);
+        if(cliCmd != null) {
+            cliCmd.setZk(zk);
+            watch = cliCmd.parse(args).exec();
         } else if (!commandMap.containsKey(cmd)) {
-            usage();
+             usage();
         }
         return watch;
-    }
-
-    private static String getPermString(int perms) {
-        StringBuilder p = new StringBuilder();
-        if ((perms & ZooDefs.Perms.CREATE) != 0) {
-            p.append('c');
-        }
-        if ((perms & ZooDefs.Perms.DELETE) != 0) {
-            p.append('d');
-        }
-        if ((perms & ZooDefs.Perms.READ) != 0) {
-            p.append('r');
-        }
-        if ((perms & ZooDefs.Perms.WRITE) != 0) {
-            p.append('w');
-        }
-        if ((perms & ZooDefs.Perms.ADMIN) != 0) {
-            p.append('a');
-        }
-        return p.toString();
-    }
-
-    private static List<ACL> parseACLs(String aclString) {
-        List<ACL> acl;
-        String acls[] = aclString.split(",");
-        acl = new ArrayList<ACL>();
-        for (String a : acls) {
-            int firstColon = a.indexOf(':');
-            int lastColon = a.lastIndexOf(':');
-            if (firstColon == -1 || lastColon == -1 || firstColon == lastColon) {
-                System.err
-                .println(a + " does not have the form scheme:id:perm");
-                continue;
-            }
-            ACL newAcl = new ACL();
-            newAcl.setId(new Id(a.substring(0, firstColon), a.substring(
-                    firstColon + 1, lastColon)));
-            newAcl.setPerms(getPermFromString(a.substring(lastColon + 1)));
-            acl.add(newAcl);
-        }
-        return acl;
     }
 }

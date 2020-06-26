@@ -23,10 +23,9 @@
   <parent>
     <groupId>org.apache.zookeeper</groupId>
     <artifactId>zookeeper-contrib</artifactId>
-    <version>3.4.14</version>
+    <version>3.5.8</version>
   </parent>
 
-  <groupId>org.apache.zookeeper</groupId>
   <artifactId>zookeeper-contrib-rest</artifactId>
   <packaging>jar</packaging>
   <name>Apache ZooKeeper - Contrib - Rest</name>
@@ -55,13 +54,13 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.zookeeper</groupId>
-      <artifactId>zookeeper-server</artifactId>
-      <version>3.4.14</version>
+      <artifactId>zookeeper</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.zookeeper</groupId>
-      <artifactId>zookeeper-server</artifactId>
-      <version>3.4.14</version>
+      <artifactId>zookeeper</artifactId>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

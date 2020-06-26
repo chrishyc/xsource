@@ -29,8 +29,7 @@ public class ZooKeeperCriticalThread extends ZooKeeperThread {
             .getLogger(ZooKeeperCriticalThread.class);
     private final ZooKeeperServerListener listener;
 
-    public ZooKeeperCriticalThread(String threadName,
-            ZooKeeperServerListener listener) {
+    public ZooKeeperCriticalThread(String threadName, ZooKeeperServerListener listener) {
         super(threadName);
         this.listener = listener;
     }
@@ -38,7 +37,7 @@ public class ZooKeeperCriticalThread extends ZooKeeperThread {
     /**
      * This will be used by the uncaught exception handler and make the system
      * exit.
-     * 
+     *
      * @param threadName
      *            - thread name
      * @param e
@@ -47,6 +46,6 @@ public class ZooKeeperCriticalThread extends ZooKeeperThread {
     @Override
     protected void handleException(String threadName, Throwable e) {
         LOG.error("Severe unrecoverable error, from thread : {}", threadName, e);
-        listener.notifyStopping(threadName, ExitCode.UNEXPECTED_ERROR);
+        listener.notifyStopping(threadName, ExitCode.UNEXPECTED_ERROR.getValue());
     }
 }

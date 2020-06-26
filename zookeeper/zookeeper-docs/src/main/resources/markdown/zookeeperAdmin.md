@@ -42,11 +42,19 @@ limitations under the License.
         * [Minimum Configuration](#sc_minimumConfiguration)
         * [Advanced Configuration](#sc_advancedConfiguration)
         * [Cluster Options](#sc_clusterOptions)
-        * [Authentication and Authorization Options](#sc_authOptions)
+        * [Encryption, Authentication, Authorization Options](#sc_authOptions)
         * [Experimental Options/Features](#Experimental+Options%2FFeatures)
         * [Unsafe Options](#Unsafe+Options)
-        * [Communication using the Netty framework](#Communication+using+the+Netty+framework)
-    * [ZooKeeper Commands: The Four Letter Words](#sc_zkCommands)
+        * [Disabling data directory autocreation](#Disabling+data+directory+autocreation)
+        * [Enabling db existence validation](#sc_db_existence_validation)
+        * [Performance Tuning Options](#sc_performance_options)
+        * [AdminServer configuration](#sc_adminserver_config)
+    * [Communication using the Netty framework](#Communication+using+the+Netty+framework)
+        * [Quorum TLS](#Quorum+TLS)
+        * [Upgrading existing non-TLS cluster with no downtime](#Upgrading+existing+nonTLS+cluster)
+    * [ZooKeeper Commands](#sc_zkCommands)
+        * [The Four Letter Words](#sc_4lw)
+        * [The AdminServer](#sc_adminserver)
     * [Data File Management](#sc_dataFileManagement)
         * [The Data Directory](#The+Data+Directory)
         * [The Log Directory](#The+Log+Directory)
@@ -210,10 +218,9 @@ ensemble:
    and 254 due to internal limitations.
   
 6. If your configuration file is set up, you can start a
-  ZooKeeper server:
+  ZooKeeper server:  
   
-        $ java -cp zookeeper.jar:lib/slf4j-api-1.7.5.jar:lib/slf4j-log4j12-1.7.5.jar:lib/log4j-1.2.17.jar:conf \\
-        org.apache.zookeeper.server.quorum.QuorumPeerMain zoo.cfg
+        $ java -cp zookeeper.jar:lib/*:conf org.apache.zookeeper.server.quorum.QuorumPeerMain zoo.conf 
        
    QuorumPeerMain starts a ZooKeeper server,
    [JMX](http://java.sun.com/javase/technologies/core/mntr-mgmt/javamanagement/)
@@ -267,7 +274,7 @@ ZooKeeper and covers these topics:
 * [Logging](#sc_logging)
 * [Troubleshooting](#sc_troubleshooting)
 * [Configuration Parameters](#sc_configuration)
-* [ZooKeeper Commands: The Four Letter Words](#sc_zkCommands)
+* [ZooKeeper Commands](#sc_zkCommands)
 * [Data File Management](#sc_dataFileManagement)
 * [Things to Avoid](#sc_commonProblems)
 * [Best Practices](#sc_bestPractices)
@@ -443,6 +450,17 @@ examples) managing your ZooKeeper server ensures that if the
 process does exit abnormally it will automatically be restarted
 and will quickly rejoin the cluster.
 
+It is also recommended to configure the ZooKeeper server process to
+terminate and dump its heap if an OutOfMemoryError** occurs.  This is achieved
+by launching the JVM with the following arguments on Linux and Windows
+respectively.  The *zkServer.sh* and
+*zkServer.cmd* scripts that ship with ZooKeeper set
+these options.
+
+    -XX:+HeapDumpOnOutOfMemoryError -XX:OnOutOfMemoryError='kill -9 %p'
+
+    "-XX:+HeapDumpOnOutOfMemoryError" "-XX:OnOutOfMemoryError=cmd /c taskkill /pid %%%%p /t /f"
+
 <a name="sc_monitoring"></a>
 
 ### Monitoring
@@ -455,13 +473,23 @@ your environment/requirements.
 
 ### Logging
 
-ZooKeeper uses **log4j** version 1.2 as its logging infrastructure.
-The ZooKeeper default `log4j.properties` file resides in the `conf`
-directory. Log4j requires that `log4j.properties` either be in the
-working directory (the directory from which ZooKeeper is run) or be accessible from the classpath.
+ZooKeeper uses **[SLF4J](http://www.slf4j.org)**
+version 1.7.5 as its logging infrastructure. For backward compatibility it is bound to
+**LOG4J** but you can use
+**[LOGBack](http://logback.qos.ch/)**
+or any other supported logging framework of your choice.
 
-For more information, see 
-[Log4j Default Initialization Procedure](http://logging.apache.org/log4j/1.2/manual.html#defaultInit) of the log4j manual.
+The ZooKeeper default *log4j.properties*
+file resides in the *conf* directory. Log4j requires that
+*log4j.properties* either be in the working directory
+(the directory from which ZooKeeper is run) or be accessible from the classpath.
+
+For more information about SLF4J, see
+[its manual](http://www.slf4j.org/manual.html).
+
+For more information about LOG4J, see
+[Log4j Default Initialization Procedure](http://logging.apache.org/log4j/1.2/manual.html#defaultInit)
+of the log4j manual.
 
 <a name="sc_troubleshooting"></a>
 
@@ -488,6 +516,12 @@ layouts are the same. If servers use different configuration files, care
 must be taken to ensure that the list of servers in all of the different
 configuration files match.
 
+###### Note
+>In 3.5.0 and later, some of these parameters should be placed in
+a dynamic configuration file. If they are placed in the static
+configuration file, ZooKeeper will automatically move them over to the
+dynamic configuration file. See [Dynamic Reconfiguration](zookeeperReconfig.html) for more information.
+
 <a name="sc_minimumConfiguration"></a>
 
 #### Minimum Configuration
@@ -499,11 +533,20 @@ in the configuration file:
     the port to listen for client connections; that is, the
     port that clients attempt to connect to.
 
+* *secureClientPort* :
+    the port to listen on for secure client connections using SSL.
+    **clientPort** specifies
+    the port for plaintext connections while **secureClientPort** specifies the port for SSL
+    connections. Specifying both enables mixed-mode while omitting
+    either will disable that mode.
+    Note that SSL feature will be enabled when user plugs-in
+    zookeeper.serverCnxnFactory, zookeeper.clientCnxnSocket as Netty.
+
 * *dataDir* :
     the location where ZooKeeper will store the in-memory
     database snapshots and, unless specified otherwise, the
     transaction log of updates to the database.
-    ######Note
+    ###### Note
     >Be careful where you put the transaction log. A
     dedicated transaction log device is key to consistent good
     performance. Putting the log on a busy device will adversely
@@ -531,7 +574,7 @@ property, when available, is noted below.
     transaction log to the **dataLogDir** rather than the **dataDir**. This allows a dedicated log
     device to be used, and helps avoid competition between logging
     and snapshots.
-    ######Note
+    ###### Note
     >Having a dedicated log device has a large impact on
     throughput and stable latencies. It is highly recommended to
     dedicate a log device and set **dataLogDir** to point to a directory on
@@ -626,12 +669,53 @@ property, when available, is noted below.
 
 * *syncEnabled* :
     (Java system property: **zookeeper.observer.syncEnabled**)
-    **New in 3.4.6:**
+    **New in 3.4.6, 3.5.0:**
     The observers now log transaction and write snapshot to disk
     by default like the participants. This reduces the recovery time
     of the observers on restart. Set to "false" to disable this
     feature. Default is "true"
     
+* *zookeeper.extendedTypesEnabled* :
+    (Java system property only: **zookeeper.extendedTypesEnabled**)
+    **New in 3.5.4:**
+    Define to "true" to enable extended features
+    such as the creation of TTL Nodes. They are disabled by default.
+    IMPORTANT: when enabled server IDs must be less than 255 due to
+    internal limitations.
+
+* *zookeeper.emulate353TTLNodes* :
+    (Java system property only: **zookeeper.emulate353TTLNodes**)
+    **New in 3.5.4:**
+    Due to ZOOKEEPER-2901 TTL nodes created in version 3.5.3 are
+    not supported in 3.5.4/3.6.0. However, a workaround is provided
+    via the zookeeper.emulate353TTLNodes system property. If you
+    used TTL nodes in ZooKeeper 3.5.3 and need to maintain compatibility
+    set **zookeeper.emulate353TTLNodes** to "true" in addition to
+    **zookeeper.extendedTypesEnabled**. NOTE: due to the bug, server
+    IDs must be 127 or less. Additionally, the maximum support TTL
+    value is 1099511627775 which is smaller than what was allowed
+    in 3.5.3 (1152921504606846975)
+
+* *serverCnxnFactory* :
+    (Java system property: **zookeeper.serverCnxnFactory**)
+    Specifies ServerCnxnFactory implementation. 
+    This should be set to `NettyServerCnxnFactory` in order to use TLS based server communication.
+    Default is `NIOServerCnxnFactory`.
+
+* *snapshot.trust.empty* :
+    (Java system property: **zookeeper.snapshot.trust.empty**)
+    **New in 3.5.6:**
+    This property controls whether or not ZooKeeper should treat missing
+    snapshot files as a fatal state that can't be recovered from.
+    Set to true to allow ZooKeeper servers recover without snapshot
+    files. This should only be set during upgrading from old versions of
+    ZooKeeper (3.4.x, pre 3.5.3) where ZooKeeper might only have transaction
+    log files but without presence of snapshot files. If the value is set
+    during upgrade, we recommend to set the value back to false after upgrading
+    and restart ZooKeeper process so ZooKeeper can continue normal data
+    consistency check during recovery process.
+    Default value is false.
+
 <a name="sc_clusterOptions"></a>
 
 #### Cluster Options
@@ -646,7 +730,7 @@ of servers -- that is, when deploying clusters of servers.
     corresponds to the authenticated UDP-based version of fast
     leader election, and "3" corresponds to TCP-based version of
     fast leader election. Currently, algorithm 3 is the default.
-    ######Note
+    ###### Note
     >The implementations of leader election 1, and 2 are now
     **deprecated**. We have the intention
     of removing them in the next release, at which point only the
@@ -666,7 +750,7 @@ of servers -- that is, when deploying clusters of servers.
     can be configured to not accept clients and focus on
     coordination. The default to this option is yes, which means
     that a leader will accept client connections.
-    ######Note
+    ###### Note
     >Turning on leader selection is highly recommended when
     you have more than three ZooKeeper servers in an ensemble.
 
@@ -715,8 +799,45 @@ of servers -- that is, when deploying clusters of servers.
     (Java system property: zookeeper.**cnxTimeout**)
     Sets the timeout value for opening connections for leader election notifications.
     Only applicable if you are using electionAlg 3.
-    ######Note
+    ###### Note
     >Default value is 5 seconds.
+
+* *standaloneEnabled* :
+    (No Java system property)
+    **New in 3.5.0:**
+    When set to false, a single server can be started in replicated
+    mode, a lone participant can run with observers, and a cluster
+    can reconfigure down to one node, and up from one node. The
+    default is true for backwards compatibility. It can be set
+    using QuorumPeerConfig's setStandaloneEnabled method or by
+    adding "standaloneEnabled=false" or "standaloneEnabled=true"
+    to a server's config file.
+
+* *reconfigEnabled* :
+    (No Java system property)
+    **New in 3.5.3:**
+    This controls the enabling or disabling of
+    [Dynamic Reconfiguration](zookeeperReconfig.html) feature. When the feature
+    is enabled, users can perform reconfigure operations through
+    the ZooKeeper client API or through ZooKeeper command line tools
+    assuming users are authorized to perform such operations.
+    When the feature is disabled, no user, including the super user,
+    can perform a reconfiguration. Any attempt to reconfigure will return an error.
+    **"reconfigEnabled"** option can be set as
+    **"reconfigEnabled=false"** or
+    **"reconfigEnabled=true"**
+    to a server's config file, or using QuorumPeerConfig's
+    setReconfigEnabled method. The default value is false.
+    If present, the value should be consistent across every server in
+    the entire ensemble. Setting the value as true on some servers and false
+    on other servers will cause inconsistent behavior depending on which server
+    is elected as leader. If the leader has a setting of
+    **"reconfigEnabled=true"**, then the ensemble
+    will have reconfig feature enabled. If the leader has a setting of
+    **"reconfigEnabled=false"**, then the ensemble
+    will have reconfig feature disabled. It is thus recommended to have a consistent
+    value for **"reconfigEnabled"** across servers
+    in the ensemble.
 
 * *4lw.commands.whitelist* :
     (Java system property: **zookeeper.4lw.commands.whitelist**)
@@ -742,24 +863,9 @@ As an example, this will enable all four letter word commands:
     4lw.commands.whitelist=*
 
 
-* *ipReachableTimeout* :
-    (Java system property: **zookeeper.ipReachableTimeout**)
-
-    New in **3.4.11:**
-    Set this timeout value for IP addresses reachable checking when
-    hostname is resolved, as mesured in milliseconds. By default,
-    ZooKeeper will use the first IP address of the hostname(without
-    any reachable checking). When zookeeper.ipReachableTimeout is
-    set(larger than 0), ZooKeeper will will try to pick up the first
-    IP address which is reachable. This is done by calling Java API
-    InetAddress.isReachable(long timeout) function, in which this
-    timeout value is used. If none of such reachable IP address can
-    be found, the first IP address of the hostname will be used 
-    anyway.
-
 * *tcpKeepAlive* :
     (Java system property: **zookeeper.tcpKeepAlive**)
-    **New in 3.4.11:**
+    **New in 3.5.4:**
     Setting this to true sets the TCP keepAlive flag on the
     sockets used by quorum members to perform elections.
     This will allow for connections between quorum members to
@@ -770,13 +876,31 @@ As an example, this will enable all four letter word commands:
     properly, check your operating system's options regarding TCP
     keepalive for more information.  Defaults to
     **false**.
+    
+* *electionPortBindRetry* :
+    (Java system property only: **zookeeper.electionPortBindRetry**)
+    Property set max retry count when Zookeeper server fails to bind 
+    leader election port. Such errors can be temporary and recoverable, 
+    such as DNS issue described in [ZOOKEEPER-3320](https://issues.apache.org/jira/projects/ZOOKEEPER/issues/ZOOKEEPER-3320),
+    or non-retryable, such as port already in use.  
+    In case of transient errors, this property can improve availability 
+    of Zookeeper server and help it to self recover. 
+    Default value 3. In container environment, especially in Kubernetes, 
+    this value should be increased or set to 0(infinite retry) to overcome issues 
+    related to DNS name resolving.
+    
 
 <a name="sc_authOptions"></a>
 
-#### Authentication and Authorization Options
+#### Encryption, Authentication, Authorization Options
 
 The options in this section allow control over
 encryption/authentication/authorization performed by the service.
+
+Beside this page, you can also find useful information about client side configuration in the 
+[Programmers Guide](zookeeperProgrammers.html#sc_java_client_configuration). 
+The ZooKeeper Wiki also has useful pages about [ZooKeeper SSL support](https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+SSL+User+Guide), 
+and [SASL authentication for ZooKeeper](https://cwiki.apache.org/confluence/display/ZOOKEEPER/ZooKeeper+and+SASL).
 
 * *DigestAuthenticationProvider.superDigest* :
     (Java system property: **zookeeper.DigestAuthenticationProvider.superDigest**)
@@ -799,56 +923,146 @@ encryption/authentication/authorization performed by the service.
     localhost (not over the network) or over an encrypted
     connection.
 
-* *isro* :
-    **New in 3.4.0:** Tests if
-    server is running in read-only mode.  The server will respond with
-    "ro" if in read-only mode or "rw" if not in read-only mode.
+* *X509AuthenticationProvider.superUser* :
+    (Java system property: **zookeeper.X509AuthenticationProvider.superUser**)
+    The SSL-backed way to enable a ZooKeeper ensemble
+    administrator to access the znode hierarchy as a "super" user.
+    When this parameter is set to an X500 principal name, only an
+    authenticated client with that principal will be able to bypass
+    ACL checking and have full privileges to all znodes.
 
-* *gtmk* :
-    Gets the current trace mask as a 64-bit signed long value in
-    decimal format.  See `stmk` for an explanation of
-    the possible values.
+* *zookeeper.superUser* :
+    (Java system property: **zookeeper.superUser**)
+    Similar to **zookeeper.X509AuthenticationProvider.superUser**
+    but is generic for SASL based logins. It stores the name of
+    a user that can access the znode hierarchy as a "super" user.
 
-* *stmk* :
-    Sets the current trace mask.  The trace mask is 64 bits,
-    where each bit enables or disables a specific category of trace
-    logging on the server.  Log4J must be configured to enable
-    `TRACE` level first in order to see trace logging
-    messages.  The bits of the trace mask correspond to the following
-    trace logging categories.
+* *ssl.authProvider* :
+    (Java system property: **zookeeper.ssl.authProvider**)
+    Specifies a subclass of **org.apache.zookeeper.auth.X509AuthenticationProvider**
+    to use for secure client authentication. This is useful in
+    certificate key infrastructures that do not use JKS. It may be
+    necessary to extend **javax.net.ssl.X509KeyManager** and **javax.net.ssl.X509TrustManager**
+    to get the desired behavior from the SSL stack. To configure the
+    ZooKeeper server to use the custom provider for authentication,
+    choose a scheme name for the custom AuthenticationProvider and
+    set the property **zookeeper.authProvider.[scheme]** to the fully-qualified class name of the custom
+    implementation. This will load the provider into the ProviderRegistry.
+    Then set this property **zookeeper.ssl.authProvider=[scheme]** and that provider
+    will be used for secure authentication.
+
+* *sslQuorum* :
+    (Java system property: **zookeeper.sslQuorum**)
+    **New in 3.5.5:**
+    Enables encrypted quorum communication. Default is `false`.
+       
+* *ssl.keyStore.location and ssl.keyStore.password* and *ssl.quorum.keyStore.location* and *ssl.quorum.keyStore.password* :
+    (Java system properties: **zookeeper.ssl.keyStore.location** and **zookeeper.ssl.keyStore.password** and **zookeeper.ssl.quorum.keyStore.location** and **zookeeper.ssl.quorum.keyStore.password**)
+    **New in 3.5.5:**
+    Specifies the file path to a Java keystore containing the local
+    credentials to be used for client and quorum TLS connections, and the
+    password to unlock the file.
     
-    | Trace Mask Bit Values |                     |
-    |-----------------------|---------------------|
-    | 0b0000000000 | Unused, reserved for future use. |
-    | 0b0000000010 | Logs client requests, excluding ping requests. |
-    | 0b0000000100 | Unused, reserved for future use. |
-    | 0b0000001000 | Logs client ping requests. |
-    | 0b0000010000 | Logs packets received from the quorum peer that is the current leader, excluding ping requests. |
-    | 0b0000100000 | Logs addition, removal and validation of client sessions. |
-    | 0b0001000000 | Logs delivery of watch events to client sessions. |
-    | 0b0010000000 | Logs ping packets received from the quorum peer that is the current leader. |
-    | 0b0100000000 | Unused, reserved for future use. |
-    | 0b1000000000 | Unused, reserved for future use. |
+* *ssl.keyStore.type* and *ssl.quorum.keyStore.type* :
+    (Java system properties: **zookeeper.ssl.keyStore.type** and **zookeeper.ssl.quorum.keyStore.type**)
+    **New in 3.5.5:**
+    Specifies the file format of client and quorum keystores. Values: JKS, PEM, PKCS12 or null (detect by filename).    
+    Default: null     
+    
+* *ssl.trustStore.location* and *ssl.trustStore.password* and *ssl.quorum.trustStore.location* and *ssl.quorum.trustStore.password* :
+    (Java system properties: **zookeeper.ssl.trustStore.location** and **zookeeper.ssl.trustStore.password** and **zookeeper.ssl.quorum.trustStore.location** and **zookeeper.ssl.quorum.trustStore.password**)
+    **New in 3.5.5:**
+    Specifies the file path to a Java truststore containing the remote
+    credentials to be used for client and quorum TLS connections, and the
+    password to unlock the file.
 
-    All remaining bits in the 64-bit value are unused and
-    reserved for future use.  Multiple trace logging categories are
-    specified by calculating the bitwise OR of the documented values.
-    The default trace mask is 0b0100110010.  Thus, by default, trace
-    logging includes client requests, packets received from the
-    leader and sessions.
-    To set a different trace mask, send a request containing the
-    `stmk` four-letter word followed by the trace
-    mask represented as a 64-bit signed long value.  This example uses
-    the Perl `pack` function to construct a trace
-    mask that enables all trace logging categories described above and
-    convert it to a 64-bit signed long value with big-endian byte
-    order.  The result is appended to `stmk` and sent
-    to the server using netcat.  The server responds with the new
-    trace mask in decimal format.
+* *ssl.trustStore.type* and *ssl.quorum.trustStore.type* :
+    (Java system properties: **zookeeper.ssl.trustStore.type** and **zookeeper.ssl.quorum.trustStore.type**)
+    **New in 3.5.5:**
+    Specifies the file format of client and quorum trustStores. Values: JKS, PEM, PKCS12 or null (detect by filename).    
+    Default: null     
 
+* *ssl.protocol* and *ssl.quorum.protocol* :
+    (Java system properties: **zookeeper.ssl.protocol** and **zookeeper.ssl.quorum.protocol**)
+    **New in 3.5.5:**
+    Specifies to protocol to be used in client and quorum TLS negotiation.
+    Default: TLSv1.2
 
-    $ perl -e "print 'stmk', pack('q>', 0b0011111010)" | nc localhost 2181
-    250
+* *ssl.enabledProtocols* and *ssl.quorum.enabledProtocols* :
+    (Java system properties: **zookeeper.ssl.enabledProtocols** and **zookeeper.ssl.quorum.enabledProtocols**)
+    **New in 3.5.5:**
+    Specifies the enabled protocols in client and quorum TLS negotiation.
+    Default: value of `protocol` property
+    
+* *ssl.ciphersuites* and *ssl.quorum.ciphersuites* :
+    (Java system properties: **zookeeper.ssl.ciphersuites** and **zookeeper.ssl.quorum.ciphersuites**)
+    **New in 3.5.5:**
+    Specifies the enabled cipher suites to be used in client and quorum TLS negotiation.
+    Default: Enabled cipher suites depend on the Java runtime version being used.    
+
+* *ssl.context.supplier.class* and *ssl.quorum.context.supplier.class* :
+    (Java system properties: **zookeeper.ssl.context.supplier.class** and **zookeeper.ssl.quorum.context.supplier.class**)
+    **New in 3.5.5:**
+    Specifies the class to be used for creating SSL context in client and quorum SSL communication.
+    This allows you to use custom SSL context and implement the following scenarios:
+    1. Use hardware keystore, loaded in using PKCS11 or something similar.
+    2. You don't have access to the software keystore, but can retrieve an already-constructed SSLContext from their container.
+    Default: null
+    
+* *ssl.hostnameVerification* and *ssl.quorum.hostnameVerification* :
+    (Java system properties: **zookeeper.ssl.hostnameVerification** and **zookeeper.ssl.quorum.hostnameVerification**)
+    **New in 3.5.5:**
+    Specifies whether the hostname verification is enabled in client and quorum TLS negotiation process.
+    Disabling it only recommended for testing purposes.
+    Default: true
+
+* *ssl.crl* and *ssl.quorum.crl* :
+    (Java system properties: **zookeeper.ssl.crl** and **zookeeper.ssl.quorum.crl**)
+    **New in 3.5.5:**
+    Specifies whether Certificate Revocation List is enabled in client and quorum TLS protocols.
+    Default: false
+
+* *ssl.ocsp* and *ssl.quorum.ocsp* :
+    (Java system properties: **zookeeper.ssl.ocsp** and **zookeeper.ssl.quorum.ocsp**)
+    **New in 3.5.5:**
+    Specifies whether Online Certificate Status Protocol is enabled in client and quorum TLS protocols.
+    Default: false
+    
+* *ssl.clientAuth* and *ssl.quorum.clientAuth* :
+    (Java system properties: **zookeeper.ssl.clientAuth** and **zookeeper.ssl.quorum.clientAuth**)
+    **New in 3.5.5:**
+    TBD
+    
+* *ssl.handshakeDetectionTimeoutMillis* and *ssl.quorum.handshakeDetectionTimeoutMillis* :
+    (Java system properties: **zookeeper.ssl.handshakeDetectionTimeoutMillis** and **zookeeper.ssl.quorum.handshakeDetectionTimeoutMillis**)
+    **New in 3.5.5:**
+    TBD
+
+* *client.portUnification*:
+    (Java system property: **zookeeper.client.portUnification**)
+    **New in 3.5.7**
+    Specifies that the client port should accept SSL connections
+    (using the same configuration as the secure client port).
+    Default: false
+    
+* *authProvider*:
+    (Java system property: **zookeeper.authProvider**)
+    You can specify multiple authentication provider classes for ZooKeeper.
+    Usually you use this parameter to specify the SASL authentication provider
+    like: `authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider`
+    
+* *kerberos.removeHostFromPrincipal*
+    (Java system property: **zookeeper.kerberos.removeHostFromPrincipal**)
+    You can instruct ZooKeeper to remove the host from the client principal name during authentication.
+    (e.g. the zk/myhost@EXAMPLE.COM client principal will be authenticated in ZooKeeper as zk@EXAMPLE.COM)
+    Default: false
+    
+* *kerberos.removeRealmFromPrincipal*
+    (Java system property: **zookeeper.kerberos.removeRealmFromPrincipal**)
+    You can instruct ZooKeeper to remove the realm from the client principal name during authentication.
+    (e.g. the zk/myhost@EXAMPLE.COM client principal will be authenticated in ZooKeeper as zk/myhost)
+    Default: false
+    
 
 <a name="Experimental+Options%2FFeatures"></a>
 
@@ -893,6 +1107,17 @@ the variable does.
     problems will arise. This is really a sanity check. ZooKeeper is
     designed to store data on the order of kilobytes in size.
 
+* *jute.maxbuffer.extrasize*:
+    (Java system property: **zookeeper.jute.maxbuffer.extrasize**)
+    **New in 3.5.7:**
+    While processing client requests ZooKeeper server adds some additional information into 
+    the requests before persisting it as a transaction. Earlier this additional information size 
+    was fixed to 1024 bytes. For many scenarios, specially scenarios where jute.maxbuffer value
+    is more than 1 MB and request type is multi, this fixed size was insufficient.
+    To handle all the scenarios additional information size is increased from 1024 byte 
+    to same as jute.maxbuffer size and also it is made configurable through jute.maxbuffer.extrasize.
+    Generally this property is not required to be configured as default value is the most optimal value.
+
 * *skipACL* :
     (Java system property: **zookeeper.skipACL**)
     Skips ACL checks. This results in a boost in throughput,
@@ -906,9 +1131,136 @@ the variable does.
     ZAB protocol and the Fast Leader Election protocol. Default
     value is **false**.
 
+<a name="Disabling+data+directory+autocreation"></a>
+
+#### Disabling data directory autocreation
+
+**New in 3.5:** The default
+behavior of a ZooKeeper server is to automatically create the
+data directory (specified in the configuration file) when
+started if that directory does not already exist. This can be
+inconvenient and even dangerous in some cases. Take the case
+where a configuration change is made to a running server,
+wherein the **dataDir** parameter
+is accidentally changed. When the ZooKeeper server is
+restarted it will create this non-existent directory and begin
+serving - with an empty znode namespace. This scenario can
+result in an effective "split brain" situation (i.e. data in
+both the new invalid directory and the original valid data
+store). As such is would be good to have an option to turn off
+this autocreate behavior. In general for production
+environments this should be done, unfortunately however the
+default legacy behavior cannot be changed at this point and
+therefore this must be done on a case by case basis. This is
+left to users and to packagers of ZooKeeper distributions.
+
+When running **zkServer.sh** autocreate can be disabled
+by setting the environment variable **ZOO_DATADIR_AUTOCREATE_DISABLE** to 1.
+When running ZooKeeper servers directly from class files this
+can be accomplished by setting **zookeeper.datadir.autocreate=false** on
+the java command line, i.e. **-Dzookeeper.datadir.autocreate=false**
+
+When this feature is disabled, and the ZooKeeper server
+determines that the required directories do not exist it will
+generate an error and refuse to start.
+
+A new script **zkServer-initialize.sh** is provided to
+support this new feature. If autocreate is disabled it is
+necessary for the user to first install ZooKeeper, then create
+the data directory (and potentially txnlog directory), and
+then start the server. Otherwise as mentioned in the previous
+paragraph the server will not start. Running **zkServer-initialize.sh** will create the
+required directories, and optionally setup the myid file
+(optional command line parameter). This script can be used
+even if the autocreate feature itself is not used, and will
+likely be of use to users as this (setup, including creation
+of the myid file) has been an issue for users in the past.
+Note that this script ensures the data directories exist only,
+it does not create a config file, but rather requires a config
+file to be available in order to execute.
+
+<a name="sc_performance_options"></a>
+
+#### Performance Tuning Options
+
+**New in 3.5.0:** Several subsystems have been reworked
+to improve read throughput. This includes multi-threading of the NIO communication subsystem and
+request processing pipeline (Commit Processor). NIO is the default client/server communication
+subsystem. Its threading model comprises 1 acceptor thread, 1-N selector threads and 0-M
+socket I/O worker threads. In the request processing pipeline the system can be configured
+to process multiple read request at once while maintaining the same consistency guarantee
+(same-session read-after-write). The Commit Processor threading model comprises 1 main
+thread and 0-N worker threads.
+
+The default values are aimed at maximizing read throughput on a dedicated ZooKeeper machine.
+Both subsystems need to have sufficient amount of threads to achieve peak read throughput.
+
+* *zookeeper.nio.numSelectorThreads* :
+    (Java system property only: **zookeeper.nio.numSelectorThreads**)
+    **New in 3.5.0:**
+    Number of NIO selector threads. At least 1 selector thread required.
+    It is recommended to use more than one selector for large numbers
+    of client connections. The default value is sqrt( number of cpu cores / 2 ).
+
+* *zookeeper.nio.numWorkerThreads* :
+    (Java system property only: **zookeeper.nio.numWorkerThreads**)
+    **New in 3.5.0:**
+    Number of NIO worker threads. If configured with 0 worker threads, the selector threads
+    do the socket I/O directly. The default value is 2 times the number of cpu cores.
+
+* *zookeeper.commitProcessor.numWorkerThreads* :
+    (Java system property only: **zookeeper.commitProcessor.numWorkerThreads**)
+    **New in 3.5.0:**
+    Number of Commit Processor worker threads. If configured with 0 worker threads, the main thread
+    will process the request directly. The default value is the number of cpu cores.
+
+* *znode.container.checkIntervalMs* :
+    (Java system property only)
+    **New in 3.5.1:** The
+    time interval in milliseconds for each check of candidate container
+    and ttl nodes. Default is "60000".
+
+* *znode.container.maxPerMinute* :
+    (Java system property only)
+    **New in 3.5.1:** The
+    maximum number of container and ttl nodes that can be deleted per
+    minute. This prevents herding during container deletion.
+    Default is "10000".
+
+<a name="sc_adminserver_config"></a>
+
+#### AdminServer configuration
+
+**New in 3.5.0:** The following
+options are used to configure the [AdminServer](#sc_adminserver).
+
+* *admin.enableServer* :
+    (Java system property: **zookeeper.admin.enableServer**)
+    Set to "false" to disable the AdminServer.  By default the
+    AdminServer is enabled.
+
+* *admin.serverAddress* :
+    (Java system property: **zookeeper.admin.serverAddress**)
+    The address the embedded Jetty server listens on. Defaults to 0.0.0.0.
+
+* *admin.serverPort* :
+    (Java system property: **zookeeper.admin.serverPort**)
+    The port the embedded Jetty server listens on.  Defaults to 8080.
+
+* *admin.idleTimeout* :
+    (Java system property: **zookeeper.admin.idleTimeout**)
+    Set the maximum idle time in milliseconds that a connection can wait
+    before sending or receiving data. Defaults to 30000 ms.
+
+* *admin.commandURL* :
+    (Java system property: **zookeeper.admin.commandURL**)
+    The URL for listing and issuing commands relative to the
+    root URL.  Defaults to "/commands".
+
+
 <a name="Communication+using+the+Netty+framework"></a>
 
-#### Communication using the Netty framework
+### Communication using the Netty framework
 
 [Netty](http://netty.io)
 is an NIO based client/server communication framework, it
@@ -926,17 +1278,134 @@ to **org.apache.zookeeper.server.NettyServerCnxnFactory**;
 for the client, set **zookeeper.clientCnxnSocket**
 to **org.apache.zookeeper.ClientCnxnSocketNetty**.
 
-TBD - tuning options for netty - currently there are none that are netty specific but we should add some. Esp around max bound on the number of reader worker threads netty creates.
+<a name="Quorum+TLS"></a>
 
-TBD - how to manage encryption
+#### Quorum TLS
 
-TBD - how to manage certificates
+*New in 3.5.5*
 
-<a name="sc_adminserver_config"></a>
+Based on the Netty Framework ZooKeeper ensembles can be set up
+to use TLS encryption in their communication channels. This section
+describes how to set up encryption on the quorum communication.
+
+Please note that Quorum TLS encapsulates securing both leader election
+and quorum communication protocols.
+
+1. Create SSL keystore JKS to store local credentials
+
+One keystore should be created for each ZK instance.
+
+In this example we generate a self-signed certificate and store it 
+together with the private key in `keystore.jks`. This is suitable for 
+testing purposes, but you probably need an official certificate to sign 
+your keys in a production environment.
+
+Please note that the alias (`-alias`) and the distinguished name (`-dname`)
+must match the hostname of the machine that is associated with, otherwise 
+hostname verification won't work.
+
+```
+keytool -genkeypair -alias $(hostname -f) -keyalg RSA -keysize 2048 -dname "cn=$(hostname -f)" -keypass password -keystore keystore.jks -storepass password
+```
+
+2. Extract the signed public key (certificate) from keystore 
+
+*This step might only necessary for self-signed certificates.*
+
+```
+keytool -exportcert -alias $(hostname -f) -keystore keystore.jks -file $(hostname -f).cer -rfc
+```
+
+3. Create SSL truststore JKS containing certificates of all ZooKeeper instances
+
+The same truststore (storing all accepted certs) should be shared on
+participants of the ensemble. You need to use different aliases to store
+multiple certificates in the same truststore. Name of the aliases doesn't matter.
+
+```
+keytool -importcert -alias [host1..3] -file [host1..3].cer -keystore truststore.jks -storepass password
+```
+
+4. You need to use `NettyServerCnxnFactory` as serverCnxnFactory, because SSL is not supported by NIO.
+Add the following configuration settings to your `zoo.cfg` config file:
+
+```
+sslQuorum=true
+serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
+ssl.quorum.keyStore.location=/path/to/keystore.jks
+ssl.quorum.keyStore.password=password
+ssl.quorum.trustStore.location=/path/to/truststore.jks
+ssl.quorum.trustStore.password=password
+```
+
+5. Verify in the logs that your ensemble is running on TLS:
+
+```
+INFO  [main:QuorumPeer@1789] - Using TLS encrypted quorum communication
+INFO  [main:QuorumPeer@1797] - Port unification disabled
+...
+INFO  [QuorumPeerListener:QuorumCnxManager$Listener@877] - Creating TLS-only quorum server socket
+```
+
+<a name="Upgrading+existing+nonTLS+cluster"></a>
+
+#### Upgrading existing non-TLS cluster with no downtime
+
+*New in 3.5.5*
+
+Here are the steps needed to upgrade an already running ZooKeeper ensemble
+to TLS without downtime by taking advantage of port unification functionality.
+
+1. Create the necessary keystores and truststores for all ZK participants as described in the previous section
+
+2. Add the following config settings and restart the first node
+
+```
+sslQuorum=false
+portUnification=true
+serverCnxnFactory=org.apache.zookeeper.server.NettyServerCnxnFactory
+ssl.quorum.keyStore.location=/path/to/keystore.jks
+ssl.quorum.keyStore.password=password
+ssl.quorum.trustStore.location=/path/to/truststore.jks
+ssl.quorum.trustStore.password=password
+```
+
+Note that TLS is not yet enabled, but we turn on port unification.
+
+3. Repeat step #2 on the remaining nodes. Verify that you see the following entries in the logs:
+
+```
+INFO  [main:QuorumPeer@1791] - Using insecure (non-TLS) quorum communication
+INFO  [main:QuorumPeer@1797] - Port unification enabled
+...
+INFO  [QuorumPeerListener:QuorumCnxManager$Listener@874] - Creating TLS-enabled quorum server socket
+```
+
+You should also double check after each node restart that the quorum become healthy again.
+
+4. Enable Quorum TLS on each node and do rolling restart:
+
+```
+sslQuorum=true
+portUnification=true
+```
+
+5. Once you verified that your entire ensemble is running on TLS, you could disable port unification
+and do another rolling restart
+
+```
+sslQuorum=true
+portUnification=false
+``` 
+
 
 <a name="sc_zkCommands"></a>
 
-### ZooKeeper Commands: The Four Letter Words
+### ZooKeeper Commands
+
+<a name="sc_4lw"></a>
+
+#### The Four Letter Words
 
 ZooKeeper responds to a small set of commands. Each command is
 composed of four letters. You issue the commands to ZooKeeper via telnet
@@ -946,6 +1415,13 @@ Three of the more interesting commands: "stat" gives some
 general information about the server and connected clients,
 while "srvr" and "cons" give extended details on server and
 connections respectively.
+
+**New in 3.5.3:**
+Four Letter Words need to be explicitly white listed before using.
+Please refer **4lw.commands.whitelist**
+described in [cluster configuration section](#sc_clusterOptions) for details.
+Moving forward, Four Letter Words will be deprecated, please use
+[AdminServer](#sc_adminserver) instead.
 
 * *conf* :
     **New in 3.3.0:** Print
@@ -1025,6 +1501,7 @@ connections respectively.
                   zk_min_latency  0
                   zk_packets_received 70
                   zk_packets_sent 69
+                  zk_num_alive_connections 1
                   zk_outstanding_requests 0
                   zk_server_state leader
                   zk_znode_count   4
@@ -1036,7 +1513,9 @@ connections respectively.
                   zk_pending_syncs    0               - only exposed by the Leader
                   zk_open_file_descriptor_count 23    - only available on Unix platforms
                   zk_max_file_descriptor_count 1024   - only available on Unix platforms
-                  zk_fsync_threshold_exceed_count 0
+                  zk_last_proposal_size 23
+                  zk_min_proposal_size 23
+                  zk_max_proposal_size 64
 
 The output is compatible with java properties format and the content
 may change over time (new keys added). Your scripts should expect changes.
@@ -1047,6 +1526,57 @@ The output contains multiple lines with the following format:
     key \t value
 
 
+* *isro* :
+    **New in 3.4.0:** Tests if
+    server is running in read-only mode.  The server will respond with
+    "ro" if in read-only mode or "rw" if not in read-only mode.
+
+* *gtmk* :
+    Gets the current trace mask as a 64-bit signed long value in
+    decimal format.  See `stmk` for an explanation of
+    the possible values.
+
+* *stmk* :
+    Sets the current trace mask.  The trace mask is 64 bits,
+    where each bit enables or disables a specific category of trace
+    logging on the server.  Log4J must be configured to enable
+    `TRACE` level first in order to see trace logging
+    messages.  The bits of the trace mask correspond to the following
+    trace logging categories.
+    
+    | Trace Mask Bit Values |                     |
+    |-----------------------|---------------------|
+    | 0b0000000000 | Unused, reserved for future use. |
+    | 0b0000000010 | Logs client requests, excluding ping requests. |
+    | 0b0000000100 | Unused, reserved for future use. |
+    | 0b0000001000 | Logs client ping requests. |
+    | 0b0000010000 | Logs packets received from the quorum peer that is the current leader, excluding ping requests. |
+    | 0b0000100000 | Logs addition, removal and validation of client sessions. |
+    | 0b0001000000 | Logs delivery of watch events to client sessions. |
+    | 0b0010000000 | Logs ping packets received from the quorum peer that is the current leader. |
+    | 0b0100000000 | Unused, reserved for future use. |
+    | 0b1000000000 | Unused, reserved for future use. |
+
+    All remaining bits in the 64-bit value are unused and
+    reserved for future use.  Multiple trace logging categories are
+    specified by calculating the bitwise OR of the documented values.
+    The default trace mask is 0b0100110010.  Thus, by default, trace
+    logging includes client requests, packets received from the
+    leader and sessions.
+    To set a different trace mask, send a request containing the
+    `stmk` four-letter word followed by the trace
+    mask represented as a 64-bit signed long value.  This example uses
+    the Perl `pack` function to construct a trace
+    mask that enables all trace logging categories described above and
+    convert it to a 64-bit signed long value with big-endian byte
+    order.  The result is appended to `stmk` and sent
+    to the server using netcat.  The server responds with the new
+    trace mask in decimal format.
+
+
+    $ perl -e "print 'stmk', pack('q>', 0b0011111010)" | nc localhost 2181
+    250
+
 
 Here's an example of the **ruok**
 command:
@@ -1054,6 +1584,34 @@ command:
 
     $ echo ruok | nc 127.0.0.1 5111
         imok
+
+
+<a name="sc_adminserver"></a>
+
+#### The AdminServer
+
+**New in 3.5.0:** The AdminServer is
+an embedded Jetty server that provides an HTTP interface to the four
+letter word commands.  By default, the server is started on port 8080,
+and commands are issued by going to the URL "/commands/\[command name]",
+e.g., http://localhost:8080/commands/stat.  The command response is
+returned as JSON.  Unlike the original protocol, commands are not
+restricted to four-letter names, and commands can have multiple names;
+for instance, "stmk" can also be referred to as "set_trace_mask".  To
+view a list of all available commands, point a browser to the URL
+/commands (e.g., http://localhost:8080/commands).  See the [AdminServer configuration options](#sc_adminserver_config)
+for how to change the port and URLs.
+
+The AdminServer is enabled by default, but can be disabled by either:
+
+* Setting the zookeeper.admin.enableServer system
+  property to false.
+* Removing Jetty from the classpath.  (This option is
+  useful if you would like to override ZooKeeper's jetty
+  dependency.)
+
+Note that the TCP four letter word interface is still available if
+the AdminServer is disabled.
 
 <a name="sc_dataFileManagement"></a>
 
@@ -1074,6 +1632,8 @@ This directory has two or three files in it:
 
 * *myid* - contains a single integer in
   human readable ASCII text that represents the server id.
+* *initialize* - presence indicates lack of
+  data tree is expected. Cleaned up once data tree is created.
 * *snapshot.<zxid>* - holds the fuzzy
   snapshot of a data tree.
 

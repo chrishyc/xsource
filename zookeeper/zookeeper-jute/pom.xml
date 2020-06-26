@@ -22,12 +22,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache.zookeeper</groupId>
-    <artifactId>zookeeper</artifactId>
-    <version>3.4.14</version>
+    <artifactId>parent</artifactId>
+    <version>3.5.8</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <groupId>org.apache.zookeeper</groupId>
   <artifactId>zookeeper-jute</artifactId>
   <packaging>jar</packaging>
   <name>Apache ZooKeeper - Jute</name>
@@ -65,14 +64,13 @@
               </includes>
               <lookAhead>2</lookAhead>
               <isStatic>false</isStatic>
-              <outputDirectory>${project.build.directory}/classes/</outputDirectory>
+              <outputDirectory>${project.build.directory}/generated-sources/java</outputDirectory>
             </configuration>
           </execution>
         </executions>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
         <executions>
           <execution>
             <id>pre-compile-jute</id>
@@ -94,7 +92,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <workingDirectory>${project.build.directory}/classes/</workingDirectory>
+              <workingDirectory>${project.build.directory}/generated-sources/java</workingDirectory>
               <executable>java</executable>
               <arguments>
                 <argument>-classpath</argument>
@@ -139,24 +137,8 @@
             </goals>
             <configuration>
               <sources>
-                <source>${basedir}/target/classes</source>
+                <source>${basedir}/target/generated-sources/java</source>
               </sources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>source-package</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <configuration>
-              <skipAssembly>true</skipAssembly>
             </configuration>
           </execution>
         </executions>

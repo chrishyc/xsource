@@ -44,7 +44,8 @@ import org.slf4j.LoggerFactory;
  *             be null. This change the semantic of txnlog on the observer
  *             since it only contains committed txns.
  */
-public class SyncRequestProcessor extends ZooKeeperCriticalThread implements RequestProcessor {
+public class SyncRequestProcessor extends ZooKeeperCriticalThread implements
+        RequestProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(SyncRequestProcessor.class);
     private final ZooKeeperServer zks;
     private final LinkedBlockingQueue<Request> queuedRequests =
@@ -60,17 +61,11 @@ public class SyncRequestProcessor extends ZooKeeperCriticalThread implements Req
      * invoked after flush returns successfully.
      */
     private final LinkedList<Request> toFlush = new LinkedList<Request>();
-    private final Random r = new Random(System.nanoTime());
+    private final Random r = new Random();
     /**
      * The number of log entries to log before starting a snapshot
      */
     private static int snapCount = ZooKeeperServer.getSnapCount();
-    
-    /**
-     * The number of log entries before rolling the log, number
-     * is chosen randomly
-     */
-    private static int randRoll;
 
     private final Request requestOfDeath = Request.requestOfDeath;
 
@@ -82,7 +77,7 @@ public class SyncRequestProcessor extends ZooKeeperCriticalThread implements Req
         this.nextProcessor = nextProcessor;
         running = true;
     }
-    
+
     /**
      * used by tests to check for changing
      * snapcounts
@@ -90,7 +85,6 @@ public class SyncRequestProcessor extends ZooKeeperCriticalThread implements Req
      */
     public static void setSnapCount(int count) {
         snapCount = count;
-        randRoll = count;
     }
 
     /**
@@ -100,18 +94,6 @@ public class SyncRequestProcessor extends ZooKeeperCriticalThread implements Req
     public static int getSnapCount() {
         return snapCount;
     }
-    
-    /**
-     * Sets the value of randRoll. This method 
-     * is here to avoid a findbugs warning for
-     * setting a static variable in an instance
-     * method. 
-     * 
-     * @param roll
-     */
-    private static void setRandRoll(int roll) {
-        randRoll = roll;
-    }
 
     @Override
     public void run() {
@@ -120,7 +102,7 @@ public class SyncRequestProcessor extends ZooKeeperCriticalThread implements Req
 
             // we do this in an attempt to ensure that not all of the servers
             // in the ensemble take a snapshot at the same time
-            setRandRoll(r.nextInt(snapCount/2));
+            int randRoll = r.nextInt(snapCount/2);
             while (true) {
                 Request si = null;
                 if (toFlush.isEmpty()) {
@@ -140,7 +122,7 @@ public class SyncRequestProcessor extends ZooKeeperCriticalThread implements Req
                     if (zks.getZKDatabase().append(si)) {
                         logCount++;
                         if (logCount > (snapCount / 2 + randRoll)) {
-                            setRandRoll(r.nextInt(snapCount/2));
+                            randRoll = r.nextInt(snapCount/2);
                             // roll the log
                             zks.getZKDatabase().rollLog();
                             // take a snapshot
@@ -181,6 +163,7 @@ public class SyncRequestProcessor extends ZooKeeperCriticalThread implements Req
             }
         } catch (Throwable t) {
             handleException(this.getName(), t);
+        } finally{
             running = false;
         }
         LOG.info("SyncRequestProcessor exited!");

@@ -52,7 +52,7 @@ responsibility of implementing coordination services from scratch.
 
 **ZooKeeper is simple.** ZooKeeper
 allows distributed processes to coordinate with each other through a
-shared hierarchal namespace which is organized similarly to a standard
+shared hierarchical namespace which is organized similarly to a standard
 file system. The name space consists of data registers - called znodes,
 in ZooKeeper parlance - and these are similar to files and directories.
 Unlike a typical file system, which is designed for storage, ZooKeeper
@@ -133,8 +133,7 @@ that restricts who can do what.
 
 ZooKeeper also has the notion of ephemeral nodes. These znodes
 exists as long as the session that created the znode is active. When the
-session ends the znode is deleted. Ephemeral nodes are useful when you
-want to implement _[tbd]_.
+session ends the znode is deleted.
 
 <a name="Conditional+updates+and+watches"></a>
 
@@ -144,9 +143,8 @@ ZooKeeper supports the concept of _watches_.
 Clients can set a watch on a znode. A watch will be triggered and
 removed when the znode changes. When a watch is triggered, the client
 receives a packet saying that the znode has changed. If the
-connection between the client and one of the Zoo Keeper servers is
-broken, the client will receive a local notification. These can be used
-to _[tbd]_.
+connection between the client and one of the ZooKeeper servers is
+broken, the client will receive a local notification.
 
 <a name="Guarantees"></a>
 
@@ -162,21 +160,16 @@ synchronization, it provides a set of guarantees. These are:
   results.
 * Single System Image - A client will see the same view of the
   service regardless of the server that it connects to.
-
 * Reliability - Once an update has been applied, it will persist
   from that time forward until a client overwrites the update.
-
 * Timeliness - The clients view of the system is guaranteed to
   be up-to-date within a certain time bound.
-
-For more information on these, and how they can be used, see
-_[tbd]_
 
 <a name="Simple+API"></a>
 
 ### Simple API
 
-One of the design goals of ZooKeeper is provide a very simple
+One of the design goals of ZooKeeper is providing a very simple
 programming interface. As a result, it supports only these
 operations:
 
@@ -201,10 +194,6 @@ operations:
 * *sync* :
     waits for data to be propagated
 
-For a more in-depth discussion on these, and how they can be used
-to implement higher level operations, please refer to
-_[tbd]_
-
 <a name="Implementation"></a>
 
 ### Implementation
@@ -225,7 +214,7 @@ writes are serialized to disk before they are applied to the in-memory
 database.
 
 Every ZooKeeper server services clients. Clients connect to
-exactly one server to submit irequests. Read requests are serviced from
+exactly one server to submit requests. Read requests are serviced from
 the local replica of each server database. Requests that change the
 state of the service, write requests, are processed by an agreement
 protocol.
@@ -251,16 +240,13 @@ state.
 
 The programming interface to ZooKeeper is deliberately simple.
 With it, however, you can implement higher order operations, such as
-synchronizations primitives, group membership, ownership, etc. Some
-distributed applications have used it to: _[tbd: add uses from
-white paper and video presentation.]_ For more information, see
-_[tbd]_
+synchronizations primitives, group membership, ownership, etc.
 
 <a name="Performance"></a>
 
 ### Performance
 
-ZooKeeper is designed to be highly performant. But is it? The
+ZooKeeper is designed to be highly performance. But is it? The
 results of the ZooKeeper's development team at Yahoo! Research indicate
 that it is. (See [ZooKeeper Throughput as the Read-Write Ratio Varies](#zkPerfRW).) It is especially high
 performance in applications where reads outnumber writes, since writes
@@ -282,7 +268,7 @@ service. Approximately 30 other servers were used to simulate
 the clients. The ZooKeeper ensemble was configured such that
 leaders do not allow connections from clients.
 
-###### Note
+######Note
 >In version 3.2 r/w performance improved by ~2x compared to
  the [previous 3.1 release](http://zookeeper.apache.org/docs/r3.1.1/zookeeperOver.html#Performance).
 
@@ -311,7 +297,7 @@ workloads.
 
 ![Reliability in the Presence of Errors](images/zkperfreliability.jpg)
 
-The are a few important observations from this graph. First, if
+There are a few important observations from this graph. First, if
 followers fail and recover quickly, then ZooKeeper is able to sustain a
 high throughput despite the failure. But maybe more importantly, the
 leader election algorithm allows for the system to recover fast enough

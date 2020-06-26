@@ -21,37 +21,33 @@ package org.apache.zookeeper.server;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Set;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import javax.security.auth.login.Configuration;
-import javax.security.auth.login.LoginException;
-import javax.security.auth.login.AppConfigurationEntry;
 
 import javax.management.JMException;
+import javax.security.auth.login.AppConfigurationEntry;
+import javax.security.auth.login.Configuration;
+import javax.security.auth.login.LoginException;
 
-import org.apache.zookeeper.Login;
 import org.apache.zookeeper.Environment;
+import org.apache.zookeeper.Login;
+import org.apache.zookeeper.common.ZKConfig;
 import org.apache.zookeeper.jmx.MBeanRegistry;
 import org.apache.zookeeper.server.auth.SaslServerCallbackHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public abstract class ServerCnxnFactory {
 
     public static final String ZOOKEEPER_SERVER_CNXN_FACTORY = "zookeeper.serverCnxnFactory";
-
-    public interface PacketProcessor {
-        public void processPacket(ByteBuffer packet, ServerCnxn src);
-    }
     
     private static final Logger LOG = LoggerFactory.getLogger(ServerCnxnFactory.class);
 
-    // sessionMap is used to speed up closeSession()
-    protected final ConcurrentMap<Long, ServerCnxn> sessionMap =
-            new ConcurrentHashMap<Long, ServerCnxn>();
+    // Tells whether SSL is enabled on this ServerCnxnFactory
+    protected boolean secure;
 
     /**
      * The buffer will cause the connection to be close when we do a send.
@@ -63,19 +59,27 @@ public abstract class ServerCnxnFactory {
     public abstract Iterable<ServerCnxn> getConnections();
 
     public int getNumAliveConnections() {
-        synchronized(cnxns) {
-            return cnxns.size();
-        }
+        return cnxns.size();
     }
 
-    ZooKeeperServer getZooKeeperServer() {
+    public ZooKeeperServer getZooKeeperServer() {
         return zkServer;
     }
 
-    public abstract void closeSession(long sessionId);
+    /**
+     * @return true if the cnxn that contains the sessionId exists in this ServerCnxnFactory
+     *         and it's closed. Otherwise false.
+     */
+    public abstract boolean closeSession(long sessionId);
 
-    public abstract void configure(InetSocketAddress addr,
-                                   int maxClientCnxns) throws IOException;
+    public void configure(InetSocketAddress addr, int maxcc) throws IOException {
+        configure(addr, maxcc, false);
+    }
+
+    public abstract void configure(InetSocketAddress addr, int maxcc, boolean secure)
+            throws IOException;
+
+    public abstract void reconfigure(InetSocketAddress addr);
 
     protected SaslServerCallbackHandler saslServerCallbackHandler;
     public Login login;
@@ -86,8 +90,18 @@ public abstract class ServerCnxnFactory {
     /** Maximum number of connections allowed from particular host (ip) */
     public abstract void setMaxClientCnxnsPerHost(int max);
 
-    public abstract void startup(ZooKeeperServer zkServer)
-        throws IOException, InterruptedException;
+    public boolean isSecure() {
+        return secure;
+    }
+
+    public void startup(ZooKeeperServer zkServer) throws IOException, InterruptedException {
+        startup(zkServer, true);
+    }
+
+    // This method is to maintain compatiblity of startup(zks) and enable sharing of zks
+    // when we add secureCnxnFactory.
+    public abstract void startup(ZooKeeperServer zkServer, boolean startServer)
+            throws IOException, InterruptedException;
 
     public abstract void join() throws InterruptedException;
 
@@ -96,10 +110,14 @@ public abstract class ServerCnxnFactory {
     public abstract void start();
 
     protected ZooKeeperServer zkServer;
-    final public void setZooKeeperServer(ZooKeeperServer zk) {
-        this.zkServer = zk;
-        if (zk != null) {
-            zk.setServerCnxnFactory(this);
+    final public void setZooKeeperServer(ZooKeeperServer zks) {
+        this.zkServer = zks;
+        if (zks != null) {
+            if (secure) {
+                zks.setSecureServerCnxnFactory(this);
+            } else {
+                zks.setServerCnxnFactory(this);
+            }
         }
     }
 
@@ -140,10 +158,17 @@ public abstract class ServerCnxnFactory {
 
     public abstract InetSocketAddress getLocalAddress();
 
-    private final Map<ServerCnxn, ConnectionBean> connectionBeans
-        = new ConcurrentHashMap<ServerCnxn, ConnectionBean>();
+    public abstract void resetAllConnectionStats();
 
-    protected final HashSet<ServerCnxn> cnxns = new HashSet<ServerCnxn>();
+    public abstract Iterable<Map<String, Object>> getAllConnectionInfo(boolean brief);
+
+    private final ConcurrentHashMap<ServerCnxn, ConnectionBean> connectionBeans =
+        new ConcurrentHashMap<ServerCnxn, ConnectionBean>();
+
+    // Connection set is relied on heavily by four letter commands
+    // Construct a ConcurrentHashSet using a ConcurrentHashMap
+    protected final Set<ServerCnxn> cnxns = Collections.newSetFromMap(
+        new ConcurrentHashMap<ServerCnxn, Boolean>());
     public void unregisterConnection(ServerCnxn serverCnxn) {
         ConnectionBean jmxConnectionBean = connectionBeans.remove(serverCnxn);
         if (jmxConnectionBean != null){
@@ -162,10 +187,6 @@ public abstract class ServerCnxnFactory {
             }
         }
 
-    }
-
-    public void addSession(long sessionId, ServerCnxn cnxn) {
-        sessionMap.put(sessionId, cnxn);
     }
 
     /**
@@ -202,7 +223,7 @@ public abstract class ServerCnxnFactory {
             if (securityException != null && (loginContextName != null || jaasFile != null)) {
                 String errorMessage = "No JAAS configuration section named '" + serverSection +  "' was found";
                 if (jaasFile != null) {
-                    errorMessage += "in '" + jaasFile + "'.";
+                    errorMessage += " in '" + jaasFile + "'.";
                 }
                 if (loginContextName != null) {
                     errorMessage += " But " + ZooKeeperSaslServer.LOGIN_CONTEXT_NAME_KEY + " was set.";
@@ -216,7 +237,7 @@ public abstract class ServerCnxnFactory {
         // jaas.conf entry available
         try {
             saslServerCallbackHandler = new SaslServerCallbackHandler(Configuration.getConfiguration());
-            login = new Login(serverSection, saslServerCallbackHandler);
+            login = new Login(serverSection, saslServerCallbackHandler, new ZKConfig() );
             login.startThreadIfNeeded();
         } catch (LoginException e) {
             throw new IOException("Could not configure server because SASL configuration did not allow the "

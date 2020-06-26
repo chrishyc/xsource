@@ -40,7 +40,6 @@
 			</fileset>
 		</copy>
 		<copy todir="${build.dir}/lib">
-			<fileset file="${basedir}/lib/jtoaster-1.0.4.jar" />
 			<fileset file="${basedir}/src/main/resources/log4j.properties" />
 		</copy>
 		<copy todir="${build.dir}/lib">
@@ -58,7 +57,6 @@
 		<jar jarfile="${jarname}">
 			<manifest>
 				<attribute name="Main-Class" value="org.apache.zookeeper.inspector.ZooInspector" />
-				<attribute name="Class-Path" value="lib/log4j-1.2.15.jar lib/TableLayout-20050920.jar lib/zookeeper-3.3.0.jar lib/jToaster-1.0.4.jar lib" />
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Built-At" value="${build.time}" />
 				<attribute name="Built-On" value="${host.name}" />
@@ -68,6 +66,10 @@
 			</manifest>
 			<fileset file="${zk.root}/LICENSE.txt" />
 			<fileset dir="${build.classes}" />
+			<fileset dir="${basedir}/src/main/resources">
+				<exclude name="*.cfg" />
+				<exclude name="*.properties" />
+			</fileset>
 			<fileset dir="${basedir}/src/main/java" excludes="**/*.jar, **/*.java"/>
 		</jar>
 	</target>
@@ -80,7 +82,7 @@
 		<property name="target.jdk" value="${ant.java.version}" />
 		<property name="src.test.local" location="${basedir}/test" />
 		<mkdir dir="${build.test}" />
-		<javac srcdir="${src.test.local}" destdir="${build.test}" target="${target.jdk}" debug="on">
+		<javac srcdir="${src.test.local}" destdir="${build.test}" target="${target.jdk}" debug="on" encoding="${build.encoding}">
 			<classpath refid="classpath" />
 			<classpath>
 				<pathelement location="${zk.root}/build/test/classes" />
@@ -142,10 +144,5 @@
 				<include name="defaultNodeViewers.cfg" />
 			</fileset>
 		</copy>
-		<copy todir="${dist.dir}/zookeeper-contrib/zookeeper-contrib-${name}/lib">
-			<fileset file="${basedir}/lib/jtoaster-1.0.4.jar" />
-		</copy>
 	</target>
-
 </project>
-

@@ -190,12 +190,11 @@ public class LeaderElectionSupport implements Watcher {
         CreateMode.EPHEMERAL_SEQUENTIAL));
         leaderOffer = newLeaderOffer;
     }
-    
-    logger.debug("Created leader offer {}", newLeaderOffer);
-    
+    logger.debug("Created leader offer {}", leaderOffer);
+
     dispatchEvent(EventType.OFFER_COMPLETE);
   }
-  
+
   private synchronized LeaderOffer getLeaderOffer() {
       return leaderOffer;
   }
@@ -207,7 +206,7 @@ public class LeaderElectionSupport implements Watcher {
     dispatchEvent(EventType.DETERMINE_START);
 
     LeaderOffer currentLeaderOffer = getLeaderOffer();
-    
+
     String[] components = currentLeaderOffer.getNodePath().split("/");
 
     currentLeaderOffer.setId(Integer.valueOf(components[components.length - 1]
@@ -245,7 +244,6 @@ public class LeaderElectionSupport implements Watcher {
 
   private void becomeReady(LeaderOffer neighborLeaderOffer)
       throws KeeperException, InterruptedException {
-    dispatchEvent(EventType.READY_START);
 
     logger.info("{} not elected leader. Watching node:{}",
         getLeaderOffer().getNodePath(), neighborLeaderOffer.getNodePath());
@@ -257,6 +255,7 @@ public class LeaderElectionSupport implements Watcher {
     Stat stat = zooKeeper.exists(neighborLeaderOffer.getNodePath(), this);
 
     if (stat != null) {
+      dispatchEvent(EventType.READY_START);
       logger.debug(
           "We're behind {} in line and they're alive. Keeping an eye on them.",
           neighborLeaderOffer.getNodePath());

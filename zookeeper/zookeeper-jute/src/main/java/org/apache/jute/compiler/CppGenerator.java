@@ -61,12 +61,10 @@ class CppGenerator {
                         + outputDirectory);
             }
         }
-        FileWriter cc = null;
-        FileWriter hh = null;
 
-        try {
-            cc = new FileWriter(new File(outputDirectory, mName+".cc"));
-            hh = new FileWriter(new File(outputDirectory, mName+".hh"));
+        try (FileWriter cc = new FileWriter(new File(outputDirectory, mName + ".cc"));
+             FileWriter hh = new FileWriter(new File(outputDirectory, mName + ".hh"));
+        ) {
             hh.write("/**\n");
             hh.write("* Licensed to the Apache Software Foundation (ASF) under one\n");
             hh.write("* or more contributor license agreements.  See the NOTICE file\n");
@@ -105,32 +103,22 @@ class CppGenerator {
             cc.write("*/\n");
             cc.write("\n");
 
-            hh.write("#ifndef __"+mName.toUpperCase().replace('.','_')+"__\n");
-            hh.write("#define __"+mName.toUpperCase().replace('.','_')+"__\n");
+            hh.write("#ifndef __" + mName.toUpperCase().replace('.', '_') + "__\n");
+            hh.write("#define __" + mName.toUpperCase().replace('.', '_') + "__\n");
 
             hh.write("#include \"recordio.hh\"\n");
-            for (Iterator<JFile> i = mInclFiles.iterator(); i.hasNext();) {
+            for (Iterator<JFile> i = mInclFiles.iterator(); i.hasNext(); ) {
                 JFile f = i.next();
-                hh.write("#include \""+f.getName()+".hh\"\n");
+                hh.write("#include \"" + f.getName() + ".hh\"\n");
             }
-            cc.write("#include \""+mName+".hh\"\n");
+            cc.write("#include \"" + mName + ".hh\"\n");
 
-            for (Iterator<JRecord> i = mRecList.iterator(); i.hasNext();) {
+            for (Iterator<JRecord> i = mRecList.iterator(); i.hasNext(); ) {
                 JRecord jr = i.next();
                 jr.genCppCode(hh, cc);
             }
 
-            hh.write("#endif //"+mName.toUpperCase().replace('.','_')+"__\n");
-        } finally {
-            try {
-                if (hh != null) {
-                    hh.close();
-                }
-            } finally {
-                if (cc != null) {
-                    cc.close();
-                }
-            }
+            hh.write("#endif //" + mName.toUpperCase().replace('.', '_') + "__\n");
         }
     }
 }

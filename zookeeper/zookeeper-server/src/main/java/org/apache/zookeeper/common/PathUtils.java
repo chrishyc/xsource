@@ -86,10 +86,10 @@ public class PathUtils {
                     reason = "relative paths not allowed @" + i;
                     break;
                 }
-            } else if (c > '\u0000' && c < '\u001f'
-                    || c > '\u007f' && c < '\u009F'
-                    || c > '\ud800' && c < '\uf8ff'
-                    || c > '\ufff0' && c < '\uffff') {
+            } else if (c > '\u0000' && c <= '\u001f'
+                    || c >= '\u007f' && c <= '\u009F'
+                    || c >= '\ud800' && c <= '\uf8ff'
+                    || c >= '\ufff0' && c <= '\uffff') {
                 reason = "invalid character @" + i;
                 break;
             }
@@ -99,5 +99,22 @@ public class PathUtils {
             throw new IllegalArgumentException(
                     "Invalid path string \"" + path + "\" caused by " + reason);
         }
+    }
+
+    /**
+     * Convert Windows path to Unix
+     *
+     * @param path
+     *            file path
+     * @return converted file path
+     */
+    public static String normalizeFileSystemPath(String path) {
+        if (path != null) {
+            String osname = java.lang.System.getProperty("os.name");
+            if (osname.toLowerCase().contains("windows")) {
+                return path.replace('\\', '/');
+            }
+        }
+        return path;
     }
 }

@@ -23,10 +23,9 @@
   <parent>
     <groupId>org.apache.zookeeper</groupId>
     <artifactId>zookeeper-contrib</artifactId>
-    <version>3.4.14</version>
+    <version>3.5.8</version>
   </parent>
 
-  <groupId>org.apache.zookeeper</groupId>
   <artifactId>zookeeper-contrib-zooinspector</artifactId>
   <packaging>jar</packaging>
   <name>Apache ZooKeeper - Contrib - ZooInspector</name>
@@ -38,21 +37,13 @@
     <rat.version>0.6</rat.version>
     <commons-lang.version>2.4</commons-lang.version>
     <guava.version>18.0</guava.version>
-    <toaster.version>1.0.4</toaster.version>
   </properties>
-
-  <repositories>
-    <repository>
-      <id>local-contrib-repo</id>
-      <url>file://${basedir}/lib</url>
-    </repository>
-  </repositories>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.zookeeper</groupId>
-      <artifactId>zookeeper-server</artifactId>
-      <version>3.4.14</version>
+      <artifactId>zookeeper</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -101,11 +92,6 @@
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.nitido.utils</groupId>
-      <artifactId>toaster</artifactId>
-      <version>${toaster.version}</version>
     </dependency>
   </dependencies>
 

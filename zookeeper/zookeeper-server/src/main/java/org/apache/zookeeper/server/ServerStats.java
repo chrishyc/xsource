@@ -21,6 +21,9 @@ package org.apache.zookeeper.server;
 
 
 import org.apache.zookeeper.common.Time;
+import org.apache.zookeeper.server.quorum.BufferStats;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -28,6 +31,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * Basic Server Statistics
  */
 public class ServerStats {
+    private static final Logger LOG = LoggerFactory.getLogger(ServerStats.class);
+
     private long packetsSent;
     private long packetsReceived;
     private long maxLatency;
@@ -36,6 +41,8 @@ public class ServerStats {
     private long count = 0;
     private AtomicLong fsyncThresholdExceedCount = new AtomicLong(0);
 
+    private final BufferStats clientResponseStats = new BufferStats();
+
     private final Provider provider;
 
     public interface Provider {
@@ -43,6 +50,8 @@ public class ServerStats {
         public long getLastProcessedZxid();
         public String getState();
         public int getNumAliveConnections();
+        public long getDataDirSize();
+        public long getLogDirSize();
     }
     
     public ServerStats(Provider provider) {
@@ -72,6 +81,14 @@ public class ServerStats {
     public long getLastProcessedZxid(){
         return provider.getLastProcessedZxid();
     }
+
+    public long getDataDirSize() {
+        return provider.getDataDirSize();
+    }
+
+    public long getLogDirSize() {
+        return provider.getLogDirSize();
+    }
     
     synchronized public long getPacketsReceived() {
         return packetsReceived;
@@ -90,6 +107,10 @@ public class ServerStats {
     	return provider.getNumAliveConnections();
     }
 
+    public boolean isProviderNull() {
+        return provider == null;
+    }
+
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
@@ -106,19 +127,6 @@ public class ServerStats {
         sb.append("Mode: " + getServerState() + "\n");
         return sb.toString();
     }
-
-    public long getFsyncThresholdExceedCount() {
-        return fsyncThresholdExceedCount.get();
-    }
-
-    public void incrementFsyncThresholdExceedCount() {
-        fsyncThresholdExceedCount.incrementAndGet();
-    }
-
-    public void resetFsyncThresholdExceedCount() {
-        fsyncThresholdExceedCount.set(0);
-    }
-
     // mutators
     synchronized void updateLatency(long requestCreateTime) {
         long latency = Time.currentElapsedTime() - requestCreateTime;
@@ -150,9 +158,30 @@ public class ServerStats {
         packetsReceived = 0;
         packetsSent = 0;
     }
+
+    public long getFsyncThresholdExceedCount() {
+        return fsyncThresholdExceedCount.get();
+    }
+
+    public void incrementFsyncThresholdExceedCount() {
+        fsyncThresholdExceedCount.incrementAndGet();
+    }
+
+    public void resetFsyncThresholdExceedCount() {
+        fsyncThresholdExceedCount.set(0);
+    }
+
     synchronized public void reset() {
         resetLatency();
         resetRequestCounters();
+        clientResponseStats.reset();
     }
 
+    public void updateClientResponseSize(int size) {
+        clientResponseStats.setLastBufferSize(size);
+    }
+
+    public BufferStats getClientResponseStats() {
+        return clientResponseStats;
+    }
 }

@@ -14,14 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.5)
 
-project(zookeeper VERSION 3.4.14)
+project(zookeeper VERSION 3.5.8)
 set(email user@zookeeper.apache.org)
 set(description "zookeeper C client")
 
 # general options
-include_directories(include tests generated ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 if(UNIX)
   add_compile_options(-Wall -fPIC)
 elseif(WIN32)
@@ -39,11 +38,6 @@ add_definitions(-DUSE_STATIC_LIB)
 option(WANT_SYNCAPI "Enables Sync API support" ON)
 if(WANT_SYNCAPI)
   add_definitions(-DTHREADED)
-  if(WIN32)
-    # Note that the generator expression ensures that `/MTd` is used when Debug
-    # configurations are built.
-    add_compile_options(/MT$<$<CONFIG:Debug>:d>)
-  endif()
 endif()
 
 # CppUnit option
@@ -59,6 +53,15 @@ else()
 endif()
 option(WANT_CPPUNIT "Enables CppUnit and tests" ${DEFAULT_WANT_CPPUNIT})
 
+# SOCK_CLOEXEC
+option(WANT_SOCK_CLOEXEC "Enables SOCK_CLOEXEC on sockets" OFF)
+include(CheckSymbolExists)
+check_symbol_exists(SOCK_CLOEXEC sys/socket.h HAVE_SOCK_CLOEXEC)
+if(WANT_SOCK_CLOEXEC AND HAVE_SOCK_CLOEXEC)
+  set(SOCK_CLOEXEC_ENABLED 1)
+endif()
+
+
 # The function `to_have(in out)` converts a header name like `arpa/inet.h`
 # into an Autotools style preprocessor definition `HAVE_ARPA_INET_H`.
 # This is then set or unset in `configure_file()` step.
@@ -73,7 +76,7 @@ endfunction()
 
 # include file checks
 foreach(f generated/zookeeper.jute.h generated/zookeeper.jute.c)
-  if(EXISTS "${CMAKE_SOURCE_DIR}/${f}")
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${f}")
     to_have(${f} name)
     set(${name} 1)
   else()
@@ -145,12 +148,13 @@ include(CheckStructHasMember)
 check_struct_has_member("struct sockaddr_in6" sin6_addr "netinet/in.h" ZOO_IPV6_ENABLED)
 
 # configure
-configure_file(cmake_config.h.in ${CMAKE_SOURCE_DIR}/include/config.h)
+configure_file(cmake_config.h.in ${CMAKE_CURRENT_BINARY_DIR}/include/config.h)
 
 # hashtable library
 set(hashtable_sources src/hashtable/hashtable_itr.c src/hashtable/hashtable.c)
 add_library(hashtable STATIC ${hashtable_sources})
-target_link_libraries(hashtable PUBLIC $<$<PLATFORM_ID:Linux>:m>)
+target_include_directories(hashtable PUBLIC include)
+target_link_libraries(hashtable PUBLIC $<$<OR:$<PLATFORM_ID:Linux>,$<PLATFORM_ID:FreeBSD>>:m>)
 
 # zookeeper library
 set(zookeeper_sources
@@ -158,7 +162,8 @@ set(zookeeper_sources
   src/recordio.c
   generated/zookeeper.jute.c
   src/zk_log.c
-  src/zk_hashtable.c)
+  src/zk_hashtable.c
+  src/addrvec.c)
 
 if(WANT_SYNCAPI)
   list(APPEND zookeeper_sources src/mt_adaptor.c)
@@ -171,6 +176,7 @@ if(WIN32)
 endif()
 
 add_library(zookeeper STATIC ${zookeeper_sources})
+target_include_directories(zookeeper PUBLIC include ${CMAKE_CURRENT_BINARY_DIR}/include generated)
 target_link_libraries(zookeeper PUBLIC
   hashtable
   $<$<PLATFORM_ID:Linux>:rt> # clock_gettime
@@ -202,11 +208,15 @@ set(test_sources
   tests/ThreadingUtil.cc
   tests/TestZookeeperInit.cc
   tests/TestZookeeperClose.cc
+  tests/TestReconfig.cc
+  tests/TestReconfigServer.cc
   tests/TestClientRetry.cc
   tests/TestOperations.cc
   tests/TestMulti.cc
   tests/TestWatchers.cc
-  tests/TestClient.cc)
+  tests/TestClient.cc
+  tests/ZooKeeperQuorumServer.cc
+  tests/TestReadOnlyClient.cc)
 
 if(WANT_SYNCAPI)
   list(APPEND test_sources tests/PthreadMocks.cc)
@@ -214,8 +224,10 @@ endif()
 
 if(WANT_CPPUNIT)
   add_executable(zktest ${test_sources})
+  target_include_directories(zktest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
   target_compile_definitions(zktest
-    PRIVATE -DZKSERVER_CMD="${CMAKE_SOURCE_DIR}/tests/zkServer.sh")
+    PRIVATE -DZKSERVER_CMD="${CMAKE_CURRENT_SOURCE_DIR}/tests/zkServer.sh")
   # TODO: Use `find_library()` for `cppunit`.
   target_link_libraries(zktest zookeeper cppunit dl)
 
@@ -232,6 +244,6 @@ if(WANT_CPPUNIT)
   enable_testing()
   add_test(NAME zktest_runner COMMAND zktest)
   set_property(TEST zktest_runner PROPERTY ENVIRONMENT
-    "ZKROOT=${CMAKE_SOURCE_DIR}/../.."
+    "ZKROOT=${CMAKE_CURRENT_SOURCE_DIR}/../.."
     "CLASSPATH=$CLASSPATH:$CLOVER_HOME/lib/clover*.jar")
 endif()

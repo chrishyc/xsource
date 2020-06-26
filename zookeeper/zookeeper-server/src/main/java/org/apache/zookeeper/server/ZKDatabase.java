@@ -18,37 +18,43 @@
 
 package org.apache.zookeeper.server;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
-import org.apache.jute.BinaryOutputArchive;
 import org.apache.jute.InputArchive;
 import org.apache.jute.OutputArchive;
 import org.apache.jute.Record;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.KeeperException.NoNodeException;
 import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.Watcher.WatcherType;
+import org.apache.zookeeper.ZooDefs;
+import org.apache.zookeeper.common.Time;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
 import org.apache.zookeeper.server.DataTree.ProcessTxnResult;
 import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
 import org.apache.zookeeper.server.persistence.FileTxnSnapLog.PlayBackListener;
+import org.apache.zookeeper.server.persistence.TxnLog.TxnIterator;
 import org.apache.zookeeper.server.quorum.Leader;
 import org.apache.zookeeper.server.quorum.Leader.Proposal;
 import org.apache.zookeeper.server.quorum.QuorumPacket;
+import org.apache.zookeeper.server.quorum.flexible.QuorumVerifier;
 import org.apache.zookeeper.server.util.SerializeUtils;
 import org.apache.zookeeper.txn.TxnHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class maintains the in memory database of zookeeper
@@ -57,23 +63,31 @@ import org.apache.zookeeper.txn.TxnHeader;
  * and snapshots from the disk.
  */
 public class ZKDatabase {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(ZKDatabase.class);
-    
+
     /**
-     * make sure on a clear you take care of 
+     * make sure on a clear you take care of
      * all these members.
      */
     protected DataTree dataTree;
     protected ConcurrentHashMap<Long, Integer> sessionsWithTimeouts;
     protected FileTxnSnapLog snapLog;
     protected long minCommittedLog, maxCommittedLog;
+
+    /**
+     * Default value is to use snapshot if txnlog size exceeds 1/3 the size of snapshot
+     */
+    public static final String SNAPSHOT_SIZE_FACTOR = "zookeeper.snapshotSizeFactor";
+    public static final double DEFAULT_SNAPSHOT_SIZE_FACTOR = 0.33;
+    private double snapshotSizeFactor;
+
     public static final int commitLogCount = 500;
     protected static int commitLogBuffer = 700;
     protected LinkedList<Proposal> committedLog = new LinkedList<Proposal>();
     protected ReentrantReadWriteLock logLock = new ReentrantReadWriteLock();
     volatile private boolean initialized = false;
-    
+
     /**
      * the filetxnsnaplog that this zk database
      * maps to. There is a one to one relationship
@@ -81,11 +95,28 @@ public class ZKDatabase {
      * @param snapLog the FileTxnSnapLog mapping this zkdatabase
      */
     public ZKDatabase(FileTxnSnapLog snapLog) {
-        dataTree = new DataTree();
+        dataTree = createDataTree();
         sessionsWithTimeouts = new ConcurrentHashMap<Long, Integer>();
         this.snapLog = snapLog;
+
+        try {
+            snapshotSizeFactor = Double.parseDouble(
+                System.getProperty(SNAPSHOT_SIZE_FACTOR,
+                        Double.toString(DEFAULT_SNAPSHOT_SIZE_FACTOR)));
+            if (snapshotSizeFactor > 1) {
+                snapshotSizeFactor = DEFAULT_SNAPSHOT_SIZE_FACTOR;
+                LOG.warn("The configured {} is invalid, going to use " +
+                        "the default {}", SNAPSHOT_SIZE_FACTOR,
+                        DEFAULT_SNAPSHOT_SIZE_FACTOR);
+            }
+        } catch (NumberFormatException e) {
+            LOG.error("Error parsing {}, using default value {}",
+                    SNAPSHOT_SIZE_FACTOR, DEFAULT_SNAPSHOT_SIZE_FACTOR);
+            snapshotSizeFactor = DEFAULT_SNAPSHOT_SIZE_FACTOR;
+        }
+        LOG.info("{} = {}", SNAPSHOT_SIZE_FACTOR, snapshotSizeFactor);
     }
-    
+
     /**
      * checks to see if the zk database has been
      * initialized or not.
@@ -94,23 +125,23 @@ public class ZKDatabase {
     public boolean isInitialized() {
         return initialized;
     }
-    
+
     /**
-     * clear the zkdatabase. 
-     * Note to developers - be careful to see that 
+     * clear the zkdatabase.
+     * Note to developers - be careful to see that
      * the clear method does clear out all the
      * data structures in zkdatabase.
      */
     public void clear() {
         minCommittedLog = 0;
         maxCommittedLog = 0;
-        /* to be safe we just create a new 
+        /* to be safe we just create a new
          * datatree.
          */
-        dataTree = new DataTree();
+        dataTree = createDataTree();
         sessionsWithTimeouts.clear();
         WriteLock lock = logLock.writeLock();
-        try {            
+        try {
             lock.lock();
             committedLog.clear();
         } finally {
@@ -118,7 +149,7 @@ public class ZKDatabase {
         }
         initialized = false;
     }
-    
+
     /**
      * the datatree for this zkdatabase
      * @return the datatree for this zkdatabase
@@ -126,7 +157,7 @@ public class ZKDatabase {
     public DataTree getDataTree() {
         return this.dataTree;
     }
- 
+
     /**
      * the committed log for this zk database
      * @return the committed log for this zkdatabase
@@ -134,8 +165,8 @@ public class ZKDatabase {
     public long getmaxCommittedLog() {
         return maxCommittedLog;
     }
-    
-    
+
+
     /**
      * the minimum committed transaction log
      * available in memory
@@ -153,9 +184,9 @@ public class ZKDatabase {
     public ReentrantReadWriteLock getLogLock() {
         return logLock;
     }
-    
 
-    public synchronized LinkedList<Proposal> getCommittedLog() {
+
+    public synchronized List<Proposal> getCommittedLog() {
         ReadLock rl = logLock.readLock();
         // only make a copy if this thread isn't already holding a lock
         if(logLock.getReadHoldCount() <=0) {
@@ -165,10 +196,10 @@ public class ZKDatabase {
             } finally {
                 rl.unlock();
             }
-        } 
+        }
         return this.committedLog;
-    }      
-    
+    }
+
     /**
      * get the last processed zxid from a datatree
      * @return the last processed zxid of a datatree
@@ -176,15 +207,7 @@ public class ZKDatabase {
     public long getDataTreeLastProcessedZxid() {
         return dataTree.lastProcessedZxid;
     }
-    
-    /**
-     * set the datatree initialized or not
-     * @param b set the datatree initialized to b
-     */
-    public void setDataTreeInit(boolean b) {
-        dataTree.initialized = b;
-    }
-    
+
     /**
      * return the sessions in the datatree
      * @return the data tree sessions
@@ -192,7 +215,7 @@ public class ZKDatabase {
     public Collection<Long> getSessions() {
         return dataTree.getSessions();
     }
-    
+
     /**
      * get sessions with timeouts
      * @return the hashmap of sessions with timeouts
@@ -208,7 +231,7 @@ public class ZKDatabase {
     };
 
     /**
-     * load the database from the disk onto memory and also add 
+     * load the database from the disk onto memory and also add
      * the transactions to the committedlog in memory.
      * @return the last valid zxid on disk
      * @throws IOException
@@ -231,10 +254,7 @@ public class ZKDatabase {
     }
 
     private void addCommittedProposal(TxnHeader hdr, Record txn) {
-        Request r = new Request(null, 0, hdr.getCxid(), hdr.getType(), null, null);
-        r.txn = txn;
-        r.hdr = hdr;
-        r.zxid = hdr.getZxid();
+        Request r = new Request(0, hdr.getCxid(), hdr.getType(), hdr, txn, hdr.getZxid());
         addCommittedProposal(r);
     }
 
@@ -252,12 +272,11 @@ public class ZKDatabase {
                 committedLog.removeFirst();
                 minCommittedLog = committedLog.getFirst().packet.getZxid();
             }
-            if (committedLog.size() == 0) {
+            if (committedLog.isEmpty()) {
                 minCommittedLog = request.zxid;
                 maxCommittedLog = request.zxid;
             }
 
-            //
             byte[] data = SerializeUtils.serializeRequest(request);
             QuorumPacket pp = new QuorumPacket(Leader.PROPOSAL, request.zxid, data, null);
             Proposal p = new Proposal();
@@ -270,6 +289,82 @@ public class ZKDatabase {
         }
     }
 
+    public boolean isTxnLogSyncEnabled() {
+        boolean enabled = snapshotSizeFactor >= 0;
+        if (enabled) {
+            LOG.info("On disk txn sync enabled with snapshotSizeFactor "
+                + snapshotSizeFactor);
+        } else {
+            LOG.info("On disk txn sync disabled");
+        }
+        return enabled;
+    }
+
+    public long calculateTxnLogSizeLimit() {
+        long snapSize = 0;
+        try {
+            File snapFile = snapLog.findMostRecentSnapshot();
+            if (snapFile != null) {
+                snapSize = snapFile.length();
+            }
+        } catch (IOException e) {
+            LOG.error("Unable to get size of most recent snapshot");
+        }
+        return (long) (snapSize * snapshotSizeFactor);
+    }
+
+    /**
+     * Get proposals from txnlog. Only packet part of proposal is populated.
+     *
+     * @param startZxid the starting zxid of the proposal
+     * @param sizeLimit maximum on-disk size of txnlog to fetch
+     *                  0 is unlimited, negative value means disable.
+     * @return list of proposal (request part of each proposal is null)
+     */
+    public Iterator<Proposal> getProposalsFromTxnLog(long startZxid,
+                                                     long sizeLimit) {
+        if (sizeLimit < 0) {
+            LOG.debug("Negative size limit - retrieving proposal via txnlog is disabled");
+            return TxnLogProposalIterator.EMPTY_ITERATOR;
+        }
+
+        TxnIterator itr = null;
+        try {
+
+            itr = snapLog.readTxnLog(startZxid, false);
+
+            // If we cannot guarantee that this is strictly the starting txn
+            // after a given zxid, we should fail.
+            if ((itr.getHeader() != null)
+                    && (itr.getHeader().getZxid() > startZxid)) {
+                LOG.warn("Unable to find proposals from txnlog for zxid: "
+                        + startZxid);
+                itr.close();
+                return TxnLogProposalIterator.EMPTY_ITERATOR;
+            }
+
+            if (sizeLimit > 0) {
+                long txnSize = itr.getStorageSize();
+                if (txnSize > sizeLimit) {
+                    LOG.info("Txnlog size: " + txnSize + " exceeds sizeLimit: "
+                            + sizeLimit);
+                    itr.close();
+                    return TxnLogProposalIterator.EMPTY_ITERATOR;
+                }
+            }
+        } catch (IOException e) {
+            LOG.error("Unable to read txnlog from disk", e);
+            try {
+                if (itr != null) {
+                    itr.close();
+                }
+            } catch (IOException ioe) {
+                LOG.warn("Error closing file iterator", ioe);
+            }
+            return TxnLogProposalIterator.EMPTY_ITERATOR;
+        }
+        return new TxnLogProposalIterator(itr);
+    }
 
     public List<ACL> aclForNode(DataNode n) {
         return dataTree.getACL(n);
@@ -299,6 +394,10 @@ public class ZKDatabase {
         dataTree.dumpEphemerals(pwriter);
     }
 
+    public Map<Long, Set<String>> getEphemerals() {
+        return dataTree.getEphemerals();
+    }
+
     /**
      * the node count of the datatree
      * @return the node count of datatree
@@ -308,11 +407,11 @@ public class ZKDatabase {
     }
 
     /**
-     * the paths for  ephemeral session id 
-     * @param sessionId the session id for which paths match to 
+     * the paths for  ephemeral session id
+     * @param sessionId the session id for which paths match to
      * @return the paths for a session id
      */
-    public HashSet<String> getEphemerals(long sessionId) {
+    public Set<String> getEphemerals(long sessionId) {
         return dataTree.getEphemerals(sessionId);
     }
 
@@ -336,7 +435,7 @@ public class ZKDatabase {
     }
 
     /**
-     * stat the path 
+     * stat the path
      * @param path the path for which stat is to be done
      * @param serverCnxn the servercnxn attached to this request
      * @return the stat of this node
@@ -345,7 +444,7 @@ public class ZKDatabase {
     public Stat statNode(String path, ServerCnxn serverCnxn) throws KeeperException.NoNodeException {
         return dataTree.statNode(path, serverCnxn);
     }
-    
+
     /**
      * get the datanode for this path
      * @param path the path to lookup
@@ -356,14 +455,14 @@ public class ZKDatabase {
     }
 
     /**
-     * get data and stat for a path 
+     * get data and stat for a path
      * @param path the path being queried
      * @param stat the stat for this path
      * @param watcher the watcher function
      * @return
      * @throws KeeperException.NoNodeException
      */
-    public byte[] getData(String path, Stat stat, Watcher watcher) 
+    public byte[] getData(String path, Stat stat, Watcher watcher)
     throws KeeperException.NoNodeException {
         return dataTree.getData(path, stat, watcher);
     }
@@ -380,7 +479,7 @@ public class ZKDatabase {
             List<String> existWatches, List<String> childWatches, Watcher watcher) {
         dataTree.setWatches(relativeZxid, dataWatches, existWatches, childWatches, watcher);
     }
-    
+
     /**
      * get acl for a path
      * @param path the path to query for acl
@@ -441,9 +540,9 @@ public class ZKDatabase {
         loadDataBase();
         return true;
     }
-    
+
     /**
-     * deserialize a snapshot from an input archive 
+     * deserialize a snapshot from an input archive
      * @param ia the input archive you want to deserialize from
      * @throws IOException
      */
@@ -451,8 +550,8 @@ public class ZKDatabase {
         clear();
         SerializeUtils.deserializeSnapshot(getDataTree(),ia,getSessionWithTimeOuts());
         initialized = true;
-    }   
-    
+    }
+
     /**
      * serialize the snapshot
      * @param oa the output archive to which the snapshot needs to be serialized
@@ -465,7 +564,7 @@ public class ZKDatabase {
     }
 
     /**
-     * append to the underlying transaction log 
+     * append to the underlying transaction log
      * @param si the request to append
      * @return true if the append was succesfull and false if not
      */
@@ -487,7 +586,7 @@ public class ZKDatabase {
     public void commit() throws IOException {
         this.snapLog.commit();
     }
-    
+
     /**
      * close this database. free the resources
      * @throws IOException
@@ -495,5 +594,59 @@ public class ZKDatabase {
     public void close() throws IOException {
         this.snapLog.close();
     }
-    
+
+    public synchronized void initConfigInZKDatabase(QuorumVerifier qv) {
+        if (qv == null) return; // only happens during tests
+        try {
+            if (this.dataTree.getNode(ZooDefs.CONFIG_NODE) == null) {
+                // should only happen during upgrade
+                LOG.warn("configuration znode missing (should only happen during upgrade), creating the node");
+                this.dataTree.addConfigNode();
+            }
+            this.dataTree.setData(ZooDefs.CONFIG_NODE, qv.toString().getBytes(), -1, qv.getVersion(), Time.currentWallTime());
+        } catch (NoNodeException e) {
+            System.out.println("configuration node missing - should not happen");
+        }
+    }
+
+    /**
+     * Use for unit testing, so we can turn this feature on/off
+     * @param snapshotSizeFactor Set to minus value to turn this off.
+     */
+    public void setSnapshotSizeFactor(double snapshotSizeFactor) {
+        this.snapshotSizeFactor = snapshotSizeFactor;
+    }
+
+    /**
+     * Check whether the given watcher exists in datatree
+     *
+     * @param path
+     *            node to check watcher existence
+     * @param type
+     *            type of watcher
+     * @param watcher
+     *            watcher function
+     */
+    public boolean containsWatcher(String path, WatcherType type, Watcher watcher) {
+        return dataTree.containsWatcher(path, type, watcher);
+    }
+
+    /**
+     * Remove watch from the datatree
+     *
+     * @param path
+     *            node to remove watches from
+     * @param type
+     *            type of watcher to remove
+     * @param watcher
+     *            watcher function to remove
+     */
+    public boolean removeWatch(String path, WatcherType type, Watcher watcher) {
+        return dataTree.removeWatch(path, type, watcher);
+    }
+
+    // visible for testing
+    public DataTree createDataTree() {
+        return new DataTree();
+    }
 }

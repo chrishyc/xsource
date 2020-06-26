@@ -20,8 +20,6 @@ package org.apache.zookeeper.server.quorum;
 
 import org.apache.zookeeper.server.ZooKeeperServerBean;
 import org.apache.zookeeper.server.ZooKeeperServer;
-import org.apache.zookeeper.server.quorum.LearnerHandler;
-import org.apache.zookeeper.server.quorum.Leader;
 
 /**
  * Leader MBean interface implementation.
@@ -57,17 +55,17 @@ public class LeaderBean extends ZooKeeperServerBean implements LeaderMXBean {
 
     @Override
     public int getLastProposalSize() {
-        return leader.getProposalStats().getLastProposalSize();
+        return leader.getProposalStats().getLastBufferSize();
     }
 
     @Override
     public int getMinProposalSize() {
-        return leader.getProposalStats().getMinProposalSize();
+        return leader.getProposalStats().getMinBufferSize();
     }
 
     @Override
     public int getMaxProposalSize() {
-        return leader.getProposalStats().getMaxProposalSize();
+        return leader.getProposalStats().getMaxBufferSize();
     }
 
     @Override

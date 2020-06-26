@@ -62,12 +62,9 @@ class CGenerator {
             }
         }
 
-        FileWriter c = null;
-        FileWriter h = null;
-        try {
-            c = new FileWriter(new File(outputDirectory, mName+".c"));
-            h = new FileWriter(new File(outputDirectory, mName+".h"));
-
+        try (FileWriter c = new FileWriter(new File(outputDirectory, mName + ".c"));
+             FileWriter h = new FileWriter(new File(outputDirectory, mName + ".h"));
+        ) {
             h.write("/**\n");
             h.write("* Licensed to the Apache Software Foundation (ASF) under one\n");
             h.write("* or more contributor license agreements.  See the NOTICE file\n");
@@ -106,37 +103,27 @@ class CGenerator {
             c.write("*/\n");
             c.write("\n");
 
-            h.write("#ifndef __"+mName.toUpperCase().replace('.','_')+"__\n");
-            h.write("#define __"+mName.toUpperCase().replace('.','_')+"__\n");
+            h.write("#ifndef __" + mName.toUpperCase().replace('.', '_') + "__\n");
+            h.write("#define __" + mName.toUpperCase().replace('.', '_') + "__\n");
 
             h.write("#include \"recordio.h\"\n");
-            for (Iterator<JFile> i = mInclFiles.iterator(); i.hasNext();) {
+            for (Iterator<JFile> i = mInclFiles.iterator(); i.hasNext(); ) {
                 JFile f = i.next();
-                h.write("#include \""+f.getName()+".h\"\n");
+                h.write("#include \"" + f.getName() + ".h\"\n");
             }
             // required for compilation from C++
             h.write("\n#ifdef __cplusplus\nextern \"C\" {\n#endif\n\n");
 
             c.write("#include <stdlib.h>\n"); // need it for calloc() & free()
-            c.write("#include \""+mName+".h\"\n\n");
+            c.write("#include \"" + mName + ".h\"\n\n");
 
-            for (Iterator<JRecord> i = mRecList.iterator(); i.hasNext();) {
+            for (Iterator<JRecord> i = mRecList.iterator(); i.hasNext(); ) {
                 JRecord jr = i.next();
                 jr.genCCode(h, c);
             }
 
             h.write("\n#ifdef __cplusplus\n}\n#endif\n\n");
-            h.write("#endif //"+mName.toUpperCase().replace('.','_')+"__\n");
-        } finally {
-            try {
-                if (h != null) {
-                    h.close();
-                }
-            } finally {
-                if (c != null) {
-                    c.close();
-                }
-            }
+            h.write("#endif //" + mName.toUpperCase().replace('.', '_') + "__\n");
         }
     }
 }

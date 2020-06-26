@@ -21,6 +21,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -31,9 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.SwingWorker;
 import javax.swing.event.TreeSelectionListener;
@@ -43,10 +47,13 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.zookeeper.inspector.gui.actions.AddNodeAction;
+import org.apache.zookeeper.inspector.gui.actions.DeleteNodeAction;
 import org.apache.zookeeper.inspector.manager.NodeListener;
 import org.apache.zookeeper.inspector.manager.ZooInspectorManager;
 
 import com.nitido.utils.toaster.Toaster;
+import static javax.swing.KeyStroke.getKeyStroke;
 
 /**
  * A {@link JPanel} for showing the tree view of all the nodes in the zookeeper
@@ -56,6 +63,7 @@ public class ZooInspectorTreeViewer extends JPanel implements NodeListener {
     private final ZooInspectorManager zooInspectorManager;
     private final JTree tree;
     private final Toaster toasterManager;
+    private final ImageIcon toasterIcon;
 
     /**
      * @param zooInspectorManager
@@ -66,15 +74,36 @@ public class ZooInspectorTreeViewer extends JPanel implements NodeListener {
      */
     public ZooInspectorTreeViewer(
             final ZooInspectorManager zooInspectorManager,
-            TreeSelectionListener listener) {
+            TreeSelectionListener listener, IconResource iconResource) {
+
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(getKeyStroke(KeyEvent.VK_D, InputEvent.CTRL_MASK), "deleteNode");
+
+        this.getActionMap().put("deleteNode",
+                new DeleteNodeAction(this, this, zooInspectorManager));
+
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                .put(getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK), "addNode");
+
+        this.getActionMap().put("addNode",
+                new AddNodeAction(this, this, zooInspectorManager));
+
         this.zooInspectorManager = zooInspectorManager;
         this.setLayout(new BorderLayout());
         final JPopupMenu popupMenu = new JPopupMenu();
+
+        final JMenuItem addNode = new JMenuItem("Add Node");
+        addNode.addActionListener(new AddNodeAction(this, this, zooInspectorManager));
+
+        final JMenuItem deleteNode = new JMenuItem("Delete Node");
+        deleteNode.addActionListener(new DeleteNodeAction(this, this, zooInspectorManager));
+
         final JMenuItem addNotify = new JMenuItem("Add Change Notification");
         this.toasterManager = new Toaster();
         this.toasterManager.setBorderColor(Color.BLACK);
         this.toasterManager.setMessageColor(Color.BLACK);
         this.toasterManager.setToasterColor(Color.WHITE);
+        toasterIcon = iconResource.get(IconResource.ICON_INFORMATION,"");
         addNotify.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 List<String> selectedNodes = getSelectedNodes();
@@ -91,7 +120,7 @@ public class ZooInspectorTreeViewer extends JPanel implements NodeListener {
             }
         });
         tree = new JTree(new DefaultMutableTreeNode());
-        tree.setCellRenderer(new ZooInspectorTreeCellRenderer());
+        tree.setCellRenderer(new ZooInspectorTreeCellRenderer(iconResource));
         tree.setEditable(false);
         tree.getSelectionModel().addTreeSelectionListener(listener);
         tree.addMouseListener(new MouseAdapter() {
@@ -102,6 +131,8 @@ public class ZooInspectorTreeViewer extends JPanel implements NodeListener {
                     // watched, and only show remove if a selected node is being
                     // watched
                     popupMenu.removeAll();
+                    popupMenu.add(addNode);
+                    popupMenu.add(deleteNode);
                     popupMenu.add(addNotify);
                     popupMenu.add(removeNotify);
                     popupMenu.show(ZooInspectorTreeViewer.this, e.getX(), e
@@ -152,23 +183,15 @@ public class ZooInspectorTreeViewer extends JPanel implements NodeListener {
         tree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode()));
     }
 
-    /**
-     * @author Colin
-     * 
-     */
     private static class ZooInspectorTreeCellRenderer extends
             DefaultTreeCellRenderer {
-        public ZooInspectorTreeCellRenderer() {
-            setLeafIcon(ZooInspectorIconResources.getTreeLeafIcon());
-            setOpenIcon(ZooInspectorIconResources.getTreeOpenIcon());
-            setClosedIcon(ZooInspectorIconResources.getTreeClosedIcon());
+        public ZooInspectorTreeCellRenderer(IconResource iconResource) {
+            setLeafIcon(iconResource.get(IconResource.ICON_TREE_LEAF,""));
+            setOpenIcon(iconResource.get(IconResource.ICON_TREE_OPEN,""));
+            setClosedIcon(iconResource.get(IconResource.ICON_TREE_CLOSE,""));
         }
     }
 
-    /**
-     * @author Colin
-     * 
-     */
     private class ZooInspectorTreeNode implements TreeNode {
         private final String nodePath;
         private final String nodeName;
@@ -356,7 +379,6 @@ public class ZooInspectorTreeViewer extends JPanel implements NodeListener {
                 sb.append(entry.getValue());
             }
         }
-        this.toasterManager.showToaster(ZooInspectorIconResources
-                .getInformationIcon(), sb.toString());
+        this.toasterManager.showToaster(toasterIcon, sb.toString());
     }
 }

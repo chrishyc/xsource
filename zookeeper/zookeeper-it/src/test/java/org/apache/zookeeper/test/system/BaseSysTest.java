@@ -20,24 +20,23 @@ package org.apache.zookeeper.test.system;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-
-import junit.framework.TestCase;
 
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.server.quorum.QuorumPeer;
 import org.apache.zookeeper.server.quorum.QuorumPeer.QuorumServer;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.JUnitCore;
 
 @Ignore("No tests in this class.")
-public class BaseSysTest extends TestCase {
+public class BaseSysTest {
     private static final File testData = new File(
             System.getProperty("test.data.dir", "src/test/resources/data"));
     private static int fakeBasePort = 33222;
@@ -52,16 +51,15 @@ public class BaseSysTest extends TestCase {
         }
     }
     InstanceManager im;
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         if (!fakeMachines) {
-            String localHost = InetAddress.getLocalHost().getCanonicalHostName();
             zk = new ZooKeeper(zkHostPort, 15000, new Watcher() {public void process(WatchedEvent e){}});
             im = new InstanceManager(zk, prefix);
         }
     }
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (null != im) {
             im.close();
         }
@@ -130,8 +128,9 @@ public class BaseSysTest extends TestCase {
                     sbClient.append(',');
                     sbServer.append(',');
                 }
-                sbClient.append(r[0]);
-                sbServer.append(r[1]);
+                sbClient.append(r[0]); // r[0] == "host:clientPort"
+                sbServer.append(r[1]); // r[1] == "host:leaderPort:leaderElectionPort"
+                sbServer.append(";"+(r[0].split(":"))[1]); // Appending ";clientPort"
             }
             serverHostPort = sbClient.toString();
             quorumHostPort = sbServer.toString();
@@ -150,8 +149,12 @@ public class BaseSysTest extends TestCase {
         qps = new QuorumPeer[count];
         qpsDirs = new File[count];
         for(int i = 1; i <= count; i++) {
-            peers.put(Long.valueOf(i), new QuorumServer(
-                i, "127.0.0.1", fakeBasePort + i, serverCount + fakeBasePort + i, null));
+            InetSocketAddress peerAddress = new InetSocketAddress("127.0.0.1",
+                    fakeBasePort + i);
+            InetSocketAddress electionAddr = new InetSocketAddress("127.0.0.1",
+                    serverCount + fakeBasePort + i);
+            peers.put(Long.valueOf(i), new QuorumServer(i, peerAddress,
+                    electionAddr));
         }
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < count; i++) {
@@ -222,17 +225,11 @@ public class BaseSysTest extends TestCase {
         fakeBaseClients = new Instance[count];
         for(int i = 0; i < count; i++) {
             try {
-                fakeBaseClients[i] = clazz.getDeclaredConstructor().newInstance();
+                fakeBaseClients[i] = clazz.newInstance();
             } catch (InstantiationException e) {
                 e.printStackTrace();
                 return;
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                return;
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-                return;
-            } catch (InvocationTargetException e) {
                 e.printStackTrace();
                 return;
             }

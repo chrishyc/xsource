@@ -55,6 +55,7 @@ import org.apache.zookeeper.data.Stat;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.common.Time;
 
+
 public class GenerateLoad {
     protected static final Logger LOG = LoggerFactory.getLogger(GenerateLoad.class);
 
@@ -542,10 +543,6 @@ public class GenerateLoad {
             }
         }
 
-        public boolean isConnected() {
-            return connected;
-        }
-
         synchronized public boolean waitConnected(long timeout)
                 throws InterruptedException {
             long endTime = Time.currentElapsedTime() + timeout;
@@ -608,8 +605,9 @@ public class GenerateLoad {
                         quorumHostPort.append(',');
                         zkHostPort.append(',');
                     }
-                    zkHostPort.append(r[0]);
-                    quorumHostPort.append(r[1]);
+                    zkHostPort.append(r[0]);     // r[0] == "host:clientPort"
+                    quorumHostPort.append(r[1]); // r[1] == "host:leaderPort:leaderElectionPort"
+                    quorumHostPort.append(";"+(r[0].split(":"))[1]); // Appending ";clientPort"
                 }
                 for (int i = 0; i < serverCount; i++) {
                     QuorumPeerInstance.startInstance(im, quorumHostPort

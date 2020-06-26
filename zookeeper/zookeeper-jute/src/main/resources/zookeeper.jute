@@ -51,18 +51,6 @@ module org.apache.zookeeper.data {
         long ephemeralOwner; // owner id if ephemeral, 0 otw
         long pzxid;      // last modified children
     }
-
-   // information explicitly stored by the version 1 database of servers 
-   class StatPersistedV1 {
-       long czxid; //created zxid
-       long mzxid; //last modified zxid
-       long ctime; //created
-       long mtime; //last modified
-       int version; //version
-       int cversion; //child version
-       int aversion; //acl version
-       long ephemeralOwner; //owner id if ephemeral. 0 otw
-    }
 }
 
 module org.apache.zookeeper.proto {
@@ -104,14 +92,22 @@ module org.apache.zookeeper.proto {
         long zxid;
         int err;
     }
-    class GetDataRequest {
+    
+    class GetDataRequest {       
         ustring path;
         boolean watch;
     }
+    
     class SetDataRequest {
         ustring path;
         buffer data;
         int version;
+    }
+    class ReconfigRequest {
+        ustring joiningServers;
+        ustring leavingServers;
+        ustring newMembers;
+        long curConfigId;
     }
     class SetDataResponse {
         org.apache.zookeeper.data.Stat stat;
@@ -130,6 +126,13 @@ module org.apache.zookeeper.proto {
         buffer data;
         vector<org.apache.zookeeper.data.ACL> acl;
         int flags;
+    }
+    class CreateTTLRequest {
+        ustring path;
+        buffer data;
+        vector<org.apache.zookeeper.data.ACL> acl;
+        int flags;
+        long ttl;
     }
     class DeleteRequest {
         ustring path;
@@ -185,6 +188,10 @@ module org.apache.zookeeper.proto {
     class CreateResponse {
         ustring path;
     }
+    class Create2Response {
+        ustring path;
+        org.apache.zookeeper.data.Stat stat;
+    }
     class ExistsRequest {
         ustring path;
         boolean watch;
@@ -207,12 +214,21 @@ module org.apache.zookeeper.proto {
         vector<org.apache.zookeeper.data.ACL> acl;
         org.apache.zookeeper.data.Stat stat;
     }
+    class CheckWatchesRequest {
+        ustring path;
+        int type;
+    }
+    class RemoveWatchesRequest {
+        ustring path;
+        int type;
+    }
 }
 
 module org.apache.zookeeper.server.quorum {
     class LearnerInfo {
         long serverid;
         int protocolVersion;
+        long configVersion;
     }
     class QuorumPacket {
         int type; // Request, Ack, Commit, Ping
@@ -254,6 +270,19 @@ module org.apache.zookeeper.txn {
         buffer data;
         vector<org.apache.zookeeper.data.ACL> acl;
         boolean ephemeral;
+        int parentCVersion;
+    }
+    class CreateTTLTxn {
+        ustring path;
+        buffer data;
+        vector<org.apache.zookeeper.data.ACL> acl;
+        int parentCVersion;
+        long ttl;
+    }
+    class CreateContainerTxn {
+        ustring path;
+        buffer data;
+        vector<org.apache.zookeeper.data.ACL> acl;
         int parentCVersion;
     }
     class DeleteTxn {

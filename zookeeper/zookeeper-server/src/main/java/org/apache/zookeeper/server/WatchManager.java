@@ -21,21 +21,23 @@ package org.apache.zookeeper.server;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class manages watches. It allows watches to be associated with a string
  * and removes watchers and their watches in addition to managing triggers.
  */
-public class WatchManager {
+class WatchManager {
     private static final Logger LOG = LoggerFactory.getLogger(WatchManager.class);
 
     private final HashMap<String, HashSet<Watcher>> watchTable =
@@ -44,7 +46,7 @@ public class WatchManager {
     private final HashMap<Watcher, HashSet<String>> watch2Paths =
         new HashMap<Watcher, HashSet<String>>();
 
-    public synchronized int size(){
+    synchronized int size(){
         int result = 0;
         for(Set<Watcher> watches : watchTable.values()) {
             result += watches.size();
@@ -52,7 +54,7 @@ public class WatchManager {
         return result;
     }
 
-    public synchronized void addWatch(String path, Watcher watcher) {
+    synchronized void addWatch(String path, Watcher watcher) {
         HashSet<Watcher> list = watchTable.get(path);
         if (list == null) {
             // don't waste memory if there are few watches on a node
@@ -72,7 +74,7 @@ public class WatchManager {
         paths.add(path);
     }
 
-    public synchronized void removeWatcher(Watcher watcher) {
+    synchronized void removeWatcher(Watcher watcher) {
         HashSet<String> paths = watch2Paths.remove(watcher);
         if (paths == null) {
             return;
@@ -88,11 +90,11 @@ public class WatchManager {
         }
     }
 
-    public Set<Watcher> triggerWatch(String path, EventType type) {
+    Set<Watcher> triggerWatch(String path, EventType type) {
         return triggerWatch(path, type, null);
     }
 
-    public Set<Watcher> triggerWatch(String path, EventType type, Set<Watcher> supress) {
+    Set<Watcher> triggerWatch(String path, EventType type, Set<Watcher> supress) {
         WatchedEvent e = new WatchedEvent(type,
                 KeeperState.SyncConnected, path);
         HashSet<Watcher> watchers;
@@ -147,7 +149,7 @@ public class WatchManager {
      * watches by connection
      * @return string representation of watches
      */
-    public synchronized void dumpWatches(PrintWriter pwriter, boolean byPath) {
+    synchronized void dumpWatches(PrintWriter pwriter, boolean byPath) {
         if (byPath) {
             for (Entry<String, HashSet<Watcher>> e : watchTable.entrySet()) {
                 pwriter.println(e.getKey());
@@ -167,5 +169,98 @@ public class WatchManager {
                 }
             }
         }
+    }
+
+    /**
+     * Checks the specified watcher exists for the given path
+     *
+     * @param path
+     *            znode path
+     * @param watcher
+     *            watcher object reference
+     * @return true if the watcher exists, false otherwise
+     */
+    synchronized boolean containsWatcher(String path, Watcher watcher) {
+        HashSet<String> paths = watch2Paths.get(watcher);
+        if (paths == null || !paths.contains(path)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Removes the specified watcher for the given path
+     *
+     * @param path
+     *            znode path
+     * @param watcher
+     *            watcher object reference
+     * @return true if the watcher successfully removed, false otherwise
+     */
+    synchronized boolean removeWatcher(String path, Watcher watcher) {
+        HashSet<String> paths = watch2Paths.get(watcher);
+        if (paths == null || !paths.remove(path)) {
+            return false;
+        }
+
+        HashSet<Watcher> list = watchTable.get(path);
+        if (list == null || !list.remove(watcher)) {
+            return false;
+        }
+
+        if (list.size() == 0) {
+            watchTable.remove(path);
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns a watch report.
+     *
+     * @return watch report
+     * @see WatchesReport
+     */
+    synchronized WatchesReport getWatches() {
+        Map<Long, Set<String>> id2paths = new HashMap<Long, Set<String>>();
+        for (Entry<Watcher, HashSet<String>> e: watch2Paths.entrySet()) {
+            Long id = ((ServerCnxn) e.getKey()).getSessionId();
+            HashSet<String> paths = new HashSet<String>(e.getValue());
+            id2paths.put(id, paths);
+        }
+        return new WatchesReport(id2paths);
+    }
+
+    /**
+     * Returns a watch report by path.
+     *
+     * @return watch report
+     * @see WatchesPathReport
+     */
+    synchronized WatchesPathReport getWatchesByPath() {
+        Map<String, Set<Long>> path2ids = new HashMap<String, Set<Long>>();
+        for (Entry<String, HashSet<Watcher>> e : watchTable.entrySet()) {
+            Set<Long> ids = new HashSet<Long>(e.getValue().size());
+            path2ids.put(e.getKey(), ids);
+            for (Watcher watcher : e.getValue()) {
+                ids.add(((ServerCnxn) watcher).getSessionId());
+            }
+        }
+        return new WatchesPathReport(path2ids);
+    }
+
+    /**
+     * Returns a watch summary.
+     *
+     * @return watch summary
+     * @see WatchesSummary
+     */
+    synchronized WatchesSummary getWatchesSummary() {
+        int totalWatches = 0;
+        for (HashSet<String> paths : watch2Paths.values()) {
+            totalWatches += paths.size();
+        }
+        return new WatchesSummary (watch2Paths.size(), watchTable.size(),
+                                   totalWatches);
     }
 }

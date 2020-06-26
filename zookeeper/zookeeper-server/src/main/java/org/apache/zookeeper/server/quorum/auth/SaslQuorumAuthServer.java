@@ -34,6 +34,7 @@ import javax.security.sasl.SaslServer;
 import org.apache.jute.BinaryInputArchive;
 import org.apache.jute.BinaryOutputArchive;
 import org.apache.zookeeper.Login;
+import org.apache.zookeeper.common.ZKConfig;
 import org.apache.zookeeper.server.quorum.QuorumAuthPacket;
 import org.apache.zookeeper.util.SecurityUtils;
 import org.slf4j.Logger;
@@ -61,7 +62,7 @@ public class SaslQuorumAuthServer implements QuorumAuthServer {
             }
             SaslQuorumServerCallbackHandler saslServerCallbackHandler = new SaslQuorumServerCallbackHandler(
                     Configuration.getConfiguration(), loginContext, authzHosts);
-            serverLogin = new Login(loginContext, saslServerCallbackHandler);
+            serverLogin = new Login(loginContext, saslServerCallbackHandler, new ZKConfig());
             serverLogin.startThreadIfNeeded();
         } catch (Throwable e) {
             throw new SaslException(
@@ -78,10 +79,8 @@ public class SaslQuorumAuthServer implements QuorumAuthServer {
         try {
             if (!QuorumAuth.nextPacketIsAuth(din)) {
                 if (quorumRequireSasl) {
-                    throw new SaslException(
-                            "Learner " + sock.getRemoteSocketAddress()
-                                    + " not trying to authenticate"
-                                    + " and authentication is required");
+                    throw new SaslException("Learner not trying to authenticate"
+                                            + " and authentication is required");
                 } else {
                     // let it through, we don't require auth
                     return;

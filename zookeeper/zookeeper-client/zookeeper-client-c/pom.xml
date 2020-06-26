@@ -23,11 +23,10 @@
   <parent>
     <groupId>org.apache.zookeeper</groupId>
     <artifactId>zookeeper-client</artifactId>
-    <version>3.4.14</version>
+    <version>3.5.8</version>
     <relativePath>..</relativePath>
   </parent>
 
-  <groupId>org.apache.zookeeper</groupId>
   <artifactId>zookeeper-client-c</artifactId>
   <packaging>jar</packaging>
   <name>Apache ZooKeeper - Client - C</name>
@@ -55,6 +54,8 @@
             <id>test-cppunit</id>
             <phase>test</phase>
             <configuration>
+              <!-- do not run cpp tests if tests are globally skipped -->
+              <skip>${skipTests}</skip> 
               <tasks>
                 <exec dir="${basedir}/target/c" executable="make" failonerror="true">
                   <env key="LD_LIBRARY_PATH" value="${env.LD_LIBRARY_PATH};/usr/lib" />
@@ -78,7 +79,7 @@
         <executions>
           <execution>
             <id>autoreconf</id>
-            <phase>test-compile</phase>
+            <phase>process-sources</phase>
             <goals>
               <goal>exec</goal>
             </goals>
@@ -95,7 +96,7 @@
           </execution>
           <execution>
             <id>configure</id>
-            <phase>test-compile</phase>
+            <phase>process-sources</phase>
             <goals>
               <goal>exec</goal>
             </goals>
@@ -109,6 +110,21 @@
               <arguments>
                 <argument>--prefix=${project.build.directory}/c</argument>
                 <argument>--enable-gcov</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>build-c-client</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <workingDirectory>${project.build.directory}/c</workingDirectory>
+              <executable>make</executable>
+              <arguments>
+                <argument>clean</argument>
+                <argument>install</argument>
               </arguments>
             </configuration>
           </execution>

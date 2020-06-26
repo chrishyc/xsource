@@ -20,6 +20,7 @@ package org.apache.zookeeper;
 import org.apache.jute.InputArchive;
 import org.apache.jute.OutputArchive;
 import org.apache.jute.Record;
+import org.apache.zookeeper.proto.Create2Response;
 import org.apache.zookeeper.proto.CreateResponse;
 import org.apache.zookeeper.proto.MultiHeader;
 import org.apache.zookeeper.proto.SetDataResponse;
@@ -57,7 +58,6 @@ public class MultiResponse implements Record, Iterable<OpResult> {
     public void serialize(OutputArchive archive, String tag) throws IOException {
         archive.startRecord(this, tag);
 
-        int index = 0;
         for (OpResult result : results) {
             int err = result.getType() == ZooDefs.OpCode.error ? ((OpResult.ErrorResult)result).getErr() : 0;
 
@@ -66,6 +66,11 @@ public class MultiResponse implements Record, Iterable<OpResult> {
             switch (result.getType()) {
                 case ZooDefs.OpCode.create:
                     new CreateResponse(((OpResult.CreateResult) result).getPath()).serialize(archive, tag);
+                    break;
+                case ZooDefs.OpCode.create2:
+                	OpResult.CreateResult createResult = (OpResult.CreateResult) result;
+                    new Create2Response(createResult.getPath(),
+                    		createResult.getStat()).serialize(archive, tag);
                     break;
                 case ZooDefs.OpCode.delete:
                 case ZooDefs.OpCode.check:
@@ -97,6 +102,12 @@ public class MultiResponse implements Record, Iterable<OpResult> {
                     CreateResponse cr = new CreateResponse();
                     cr.deserialize(archive, tag);
                     results.add(new OpResult.CreateResult(cr.getPath()));
+                    break;
+
+                case ZooDefs.OpCode.create2:
+                    Create2Response cr2 = new Create2Response();
+                    cr2.deserialize(archive, tag);
+                    results.add(new OpResult.CreateResult(cr2.getPath(), cr2.getStat()));
                     break;
 
                 case ZooDefs.OpCode.delete:

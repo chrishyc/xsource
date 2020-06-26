@@ -19,6 +19,8 @@
 package org.apache.zookeeper.server.quorum;
 
 
+import static org.apache.zookeeper.common.NetUtils.formatInetAddr;
+
 /**
  * Implementation of the local peer MBean interface.
  */
@@ -70,10 +72,45 @@ public class LocalPeerBean extends ServerBean implements LocalPeerMXBean {
     }
     
     public String getQuorumAddress() {
-        return peer.getQuorumAddress().toString();
+        return formatInetAddr(peer.getQuorumAddress());
     }
     
     public int getElectionType() {
         return peer.getElectionType();
+    }
+
+    public String getElectionAddress() {
+        return formatInetAddr(peer.getElectionAddress());
+    }
+
+    public String getClientAddress() {
+        if (null != peer.cnxnFactory) {
+            return formatInetAddr(peer.cnxnFactory.getLocalAddress());
+        } else {
+            return "";
+        }
+    }
+
+    public String getLearnerType(){
+        return peer.getLearnerType().toString();
+    }
+
+    public long getConfigVersion(){
+        return peer.getQuorumVerifier().getVersion();
+    }
+
+    @Override
+    public String getQuorumSystemInfo() {
+        return peer.getQuorumVerifier().toString();
+    }
+
+    @Override
+    public boolean isPartOfEnsemble() {
+        return peer.getView().containsKey(peer.getId());
+    }
+
+    @Override
+    public boolean isLeader() {
+        return peer.isLeader(peer.getId());
     }
 }

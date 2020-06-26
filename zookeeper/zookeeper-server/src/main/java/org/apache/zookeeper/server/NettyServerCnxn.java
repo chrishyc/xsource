@@ -18,77 +18,78 @@
 
 package org.apache.zookeeper.server;
 
-import static org.jboss.netty.buffer.ChannelBuffers.wrappedBuffer;
-
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.nio.ByteBuffer;
-import java.util.AbstractSet;
-import java.util.HashSet;
-import java.util.List;
+import java.nio.channels.SelectionKey;
+import java.security.cert.Certificate;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.CompositeByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.apache.jute.BinaryInputArchive;
-import org.apache.jute.BinaryOutputArchive;
 import org.apache.jute.Record;
-import org.apache.zookeeper.server.quorum.ProposalStats;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.zookeeper.Environment;
-import org.apache.zookeeper.Version;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.proto.ReplyHeader;
 import org.apache.zookeeper.proto.WatcherEvent;
-import org.apache.zookeeper.server.quorum.Leader;
-import org.apache.zookeeper.server.quorum.LeaderZooKeeperServer;
-import org.apache.zookeeper.server.quorum.ReadOnlyZooKeeperServer;
-import org.apache.zookeeper.server.util.OSMXBean;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.MessageEvent;
+import org.apache.zookeeper.server.command.CommandExecutor;
+import org.apache.zookeeper.server.command.FourLetterCommands;
+import org.apache.zookeeper.server.command.NopCommand;
+import org.apache.zookeeper.server.command.SetTraceMaskCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NettyServerCnxn extends ServerCnxn {
-    Logger LOG = LoggerFactory.getLogger(NettyServerCnxn.class);
-    Channel channel;
-    ChannelBuffer queuedBuffer;
-    volatile boolean throttled;
-    ByteBuffer bb;
-    ByteBuffer bbLen = ByteBuffer.allocate(4);
-    long sessionId;
-    int sessionTimeout;
-    AtomicLong outstandingCount = new AtomicLong();
+    private static final Logger LOG = LoggerFactory.getLogger(NettyServerCnxn.class);
+    private final Channel channel;
+    private CompositeByteBuf queuedBuffer;
+    private final AtomicBoolean throttled = new AtomicBoolean(false);
+    private ByteBuffer bb;
+    private final ByteBuffer bbLen = ByteBuffer.allocate(4);
+    private long sessionId;
+    private int sessionTimeout;
+    private AtomicLong outstandingCount = new AtomicLong();
+    private Certificate[] clientChain;
+    private volatile boolean closingChannel;
 
     /** The ZooKeeperServer for this connection. May be null if the server
-     * is not currently serving requests (for example if the server is not
-     * an active quorum participant.
-     */
+      * is not currently serving requests (for example if the server is not
+      * an active quorum participant.
+      */
     private volatile ZooKeeperServer zkServer;
 
-    NettyServerCnxnFactory factory;
-    boolean initialized;
-    
+    private final NettyServerCnxnFactory factory;
+    private boolean initialized;
+
     NettyServerCnxn(Channel channel, ZooKeeperServer zks, NettyServerCnxnFactory factory) {
         this.channel = channel;
+        this.closingChannel = false;
         this.zkServer = zks;
         this.factory = factory;
         if (this.factory.login != null) {
             this.zooKeeperSaslServer = new ZooKeeperSaslServer(factory.login);
         }
     }
-    
+
     @Override
     public void close() {
+        closingChannel = true;
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug("close called for sessionid:0x"
-                    + Long.toHexString(sessionId));
+            LOG.debug("close called for sessionid:0x{}",
+                    Long.toHexString(sessionId));
         }
 
         // ZOOKEEPER-2743:
@@ -96,10 +97,38 @@ public class NettyServerCnxn extends ServerCnxn {
         // connection bean leak under certain race conditions.
         factory.unregisterConnection(this);
 
-        factory.removeCnxn(this);
+        // if this is not in cnxns then it's already closed
+        if (!factory.cnxns.remove(this)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("cnxns size:{}", factory.cnxns.size());
+            }
+            return;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("close in progress for sessionid:0x{}",
+                    Long.toHexString(sessionId));
+        }
+
+        factory.removeCnxnFromIpMap(
+                this,
+                ((InetSocketAddress)channel.remoteAddress()).getAddress());
+
+        if (zkServer != null) {
+            zkServer.removeCnxn(this);
+        }
 
         if (channel.isOpen()) {
-            channel.close();
+            // Since we don't check on the futures created by write calls to the channel complete we need to make sure
+            // that all writes have been completed before closing the channel or we risk data loss
+            // See: http://lists.jboss.org/pipermail/netty-users/2009-August/001122.html
+            channel.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) {
+                    future.channel().close().addListener(f -> releaseQueuedBuffer());
+                }
+            });
+        } else {
+            channel.eventLoop().execute(this::releaseQueuedBuffer);
         }
     }
 
@@ -136,45 +165,13 @@ public class NettyServerCnxn extends ServerCnxn {
         }
     }
 
-    private static final byte[] fourBytes = new byte[4];
-    static class ResumeMessageEvent implements MessageEvent {
-        Channel channel;
-        ResumeMessageEvent(Channel channel) {
-            this.channel = channel;
-        }
-        @Override
-        public Object getMessage() {return null;}
-        @Override
-        public SocketAddress getRemoteAddress() {return null;}
-        @Override
-        public Channel getChannel() {return channel;}
-        @Override
-        public ChannelFuture getFuture() {return null;}
-    };
-    
     @Override
     public void sendResponse(ReplyHeader h, Record r, String tag)
             throws IOException {
-        if (!channel.isOpen()) {
+        if (closingChannel || !channel.isOpen()) {
             return;
         }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        // Make space for length
-        BinaryOutputArchive bos = BinaryOutputArchive.getArchive(baos);
-        try {
-            baos.write(fourBytes);
-            bos.writeRecord(h, "header");
-            if (r != null) {
-                bos.writeRecord(r, tag);
-            }
-            baos.close();
-        } catch (IOException e) {
-            LOG.error("Error serializing response");
-        }
-        byte b[] = baos.toByteArray();
-        ByteBuffer bb = ByteBuffer.wrap(b);
-        bb.putInt(b.length - 4).rewind();
-        sendBuffer(bb);
+        super.sendResponse(h, r, tag);
         if (h.getXid() > 0) {
             // zks cannot be null otherwise we would not have gotten here!
             if (!zkServer.shouldThrottle(outstandingCount.decrementAndGet())) {
@@ -186,19 +183,14 @@ public class NettyServerCnxn extends ServerCnxn {
     @Override
     public void setSessionId(long sessionId) {
         this.sessionId = sessionId;
-        factory.addSession(sessionId, this);
     }
 
-    @Override
-    public void enableRecv() {
-        if (throttled) {
-            throttled = false;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending unthrottle event " + this);
-            }
-            channel.getPipeline().sendUpstream(new ResumeMessageEvent(channel));
+    // Use a single listener instance to reduce GC
+    private final GenericFutureListener<Future<Void>> onSendBufferDoneListener = f -> {
+        if (f.isSuccess()) {
+            packetSent();
         }
-    }
+    };
 
     @Override
     public void sendBuffer(ByteBuffer sendBuffer) {
@@ -206,41 +198,7 @@ public class NettyServerCnxn extends ServerCnxn {
             close();
             return;
         }
-        channel.write(wrappedBuffer(sendBuffer));
-        packetSent();
-    }
-
-    @Override
-    public InetAddress getSocketAddress() {
-        if (channel == null) {
-            return null;
-        }
-
-        return ((InetSocketAddress)(channel.getRemoteAddress())).getAddress();
-    }
-
-    /**
-     * clean up the socket related to a command and also make sure we flush the
-     * data before we do that
-     * 
-     * @param pwriter
-     *            the pwriter for a command socket
-     */
-    private void cleanupWriterSocket(PrintWriter pwriter) {
-        try {
-            if (pwriter != null) {
-                pwriter.flush();
-                pwriter.close();
-            }
-        } catch (Exception e) {
-            LOG.info("Error closing PrintWriter ", e);
-        } finally {
-            try {
-                close();
-            } catch (Exception e) {
-                LOG.error("Error closing a command socket ", e);
-            }
-        }
+        channel.writeAndFlush(Unpooled.wrappedBuffer(sendBuffer)).addListener(onSendBufferDoneListener);
     }
 
     /**
@@ -251,7 +209,7 @@ public class NettyServerCnxn extends ServerCnxn {
      */
     private class SendBufferWriter extends Writer {
         private StringBuffer sb = new StringBuffer();
-        
+
         /**
          * Check if we are ready to send another chunk.
          * @param force force sending, even if not a full chunk
@@ -283,468 +241,210 @@ public class NettyServerCnxn extends ServerCnxn {
         }
     }
 
-    private static final String ZK_NOT_SERVING =
-        "This ZooKeeper instance is not currently serving requests";
-    
-    /**
-     * Set of threads for commmand ports. All the 4
-     * letter commands are run via a thread. Each class
-     * maps to a correspoding 4 letter command. CommandThread
-     * is the abstract class from which all the others inherit.
-     */
-    private abstract class CommandThread /*extends Thread*/ {
-        PrintWriter pw;
-        
-        CommandThread(PrintWriter pw) {
-            this.pw = pw;
-        }
-        
-        public void start() {
-            run();
-        }
-
-        public void run() {
-            try {
-                commandRun();
-            } catch (IOException ie) {
-                LOG.error("Error in running command ", ie);
-            } finally {
-                cleanupWriterSocket(pw);
-            }
-        }
-        
-        public abstract void commandRun() throws IOException;
-    }
-    
-    private class RuokCommand extends CommandThread {
-        public RuokCommand(PrintWriter pw) {
-            super(pw);
-        }
-        
-        @Override
-        public void commandRun() {
-            pw.print("imok");
-            
-        }
-    }
-    
-    private class TraceMaskCommand extends CommandThread {
-        TraceMaskCommand(PrintWriter pw) {
-            super(pw);
-        }
-        
-        @Override
-        public void commandRun() {
-            long traceMask = ZooTrace.getTextTraceLevel();
-            pw.print(traceMask);
-        }
-    }
-    
-    private class SetTraceMaskCommand extends CommandThread {
-        long trace = 0;
-        SetTraceMaskCommand(PrintWriter pw, long trace) {
-            super(pw);
-            this.trace = trace;
-        }
-        
-        @Override
-        public void commandRun() {
-            pw.print(trace);
-        }
-    }
-    
-    private class EnvCommand extends CommandThread {
-        EnvCommand(PrintWriter pw) {
-            super(pw);
-        }
-        
-        @Override
-        public void commandRun() {
-            List<Environment.Entry> env = Environment.list();
-
-            pw.println("Environment:");
-            for(Environment.Entry e : env) {
-                pw.print(e.getKey());
-                pw.print("=");
-                pw.println(e.getValue());
-            }
-            
-        } 
-    }
-    
-    private class ConfCommand extends CommandThread {
-        ConfCommand(PrintWriter pw) {
-            super(pw);
-        }
-            
-        @Override
-        public void commandRun() {
-            if (!isZKServerRunning()) {
-                pw.println(ZK_NOT_SERVING);
-            } else {
-                zkServer.dumpConf(pw);
-            }
-        }
-    }
-    
-    private class StatResetCommand extends CommandThread {
-        public StatResetCommand(PrintWriter pw) {
-            super(pw);
-        }
-        
-        @Override
-        public void commandRun() {
-            if (!isZKServerRunning()) {
-                pw.println(ZK_NOT_SERVING);
-            }
-            else {
-                ServerStats serverStats = zkServer.serverStats();
-                serverStats.reset();
-                if (serverStats.getServerState().equals("leader")) {
-                    ((LeaderZooKeeperServer)zkServer).getLeader().getProposalStats().reset();
-                }
-                pw.println("Server stats reset.");
-            }
-        }
-    }
-    
-    private class CnxnStatResetCommand extends CommandThread {
-        public CnxnStatResetCommand(PrintWriter pw) {
-            super(pw);
-        }
-        
-        @Override
-        public void commandRun() {
-            if (!isZKServerRunning()) {
-                pw.println(ZK_NOT_SERVING);
-            } else {
-                synchronized(factory.cnxns){
-                    for(ServerCnxn c : factory.cnxns){
-                        c.resetStats();
-                    }
-                }
-                pw.println("Connection stats reset.");
-            }
-        }
-    }
-
-    private class DumpCommand extends CommandThread {
-        public DumpCommand(PrintWriter pw) {
-            super(pw);
-        }
-        
-        @Override
-        public void commandRun() {
-            if (!isZKServerRunning()) {
-                pw.println(ZK_NOT_SERVING);
-            }
-            else {
-                pw.println("SessionTracker dump:");
-                zkServer.sessionTracker.dumpSessions(pw);
-                pw.println("ephemeral nodes dump:");
-                zkServer.dumpEphemerals(pw);
-            }
-        }
-    }
-    
-    private class StatCommand extends CommandThread {
-        int len;
-        public StatCommand(PrintWriter pw, int len) {
-            super(pw);
-            this.len = len;
-        }
-        
-        @Override
-        public void commandRun() {
-            if (!isZKServerRunning()) {
-                pw.println(ZK_NOT_SERVING);
-            }
-            else {   
-                pw.print("Zookeeper version: ");
-                pw.println(Version.getFullVersion());
-                if (zkServer instanceof ReadOnlyZooKeeperServer) {
-                    pw.println("READ-ONLY mode; serving only " +
-                               "read-only clients");
-                }
-                if (len == statCmd) {
-                    LOG.info("Stat command output");
-                    pw.println("Clients:");
-                    // clone should be faster than iteration
-                    // ie give up the cnxns lock faster
-                    HashSet<ServerCnxn> cnxns;
-                    synchronized(factory.cnxns){
-                        cnxns = new HashSet<ServerCnxn>(factory.cnxns);
-                    }
-                    for(ServerCnxn c : cnxns){
-                        c.dumpConnectionInfo(pw, true);
-                        pw.println();
-                    }
-                    pw.println();
-                }
-                ServerStats serverStats = zkServer.serverStats();
-                pw.print(serverStats.toString());
-                pw.print("Node count: ");
-                pw.println(zkServer.getZKDatabase().getNodeCount());
-                if (serverStats.getServerState().equals("leader")) {
-                    Leader leader = ((LeaderZooKeeperServer)zkServer).getLeader();
-                    ProposalStats proposalStats = leader.getProposalStats();
-                    pw.printf("Proposal sizes last/min/max: %s%n", proposalStats.toString());
-                }
-            }
-        }
-    }
-    
-    private class ConsCommand extends CommandThread {
-        public ConsCommand(PrintWriter pw) {
-            super(pw);
-        }
-        
-        @Override
-        public void commandRun() {
-            if (!isZKServerRunning()) {
-                pw.println(ZK_NOT_SERVING);
-            } else {
-                // clone should be faster than iteration
-                // ie give up the cnxns lock faster
-                AbstractSet<ServerCnxn> cnxns;
-                synchronized (factory.cnxns) {
-                    cnxns = new HashSet<ServerCnxn>(factory.cnxns);
-                }
-                for (ServerCnxn c : cnxns) {
-                    c.dumpConnectionInfo(pw, false);
-                    pw.println();
-                }
-                pw.println();
-            }
-        }
-    }
-    
-    private class WatchCommand extends CommandThread {
-        int len = 0;
-        public WatchCommand(PrintWriter pw, int len) {
-            super(pw);
-            this.len = len;
-        }
-
-        @Override
-        public void commandRun() {
-            if (!isZKServerRunning()) {
-                pw.println(ZK_NOT_SERVING);
-            } else {
-                DataTree dt = zkServer.getZKDatabase().getDataTree();
-                if (len == wchsCmd) {
-                    dt.dumpWatchesSummary(pw);
-                } else if (len == wchpCmd) {
-                    dt.dumpWatches(pw, true);
-                } else {
-                    dt.dumpWatches(pw, false);
-                }
-                pw.println();
-            }
-        }
-    }
-
-    private class MonitorCommand extends CommandThread {
-
-        MonitorCommand(PrintWriter pw) {
-            super(pw);
-        }
-
-        @Override
-        public void commandRun() {
-            if(!isZKServerRunning()) {
-                pw.println(ZK_NOT_SERVING);
-                return;
-            }
-            ZKDatabase zkdb = zkServer.getZKDatabase();
-            ServerStats stats = zkServer.serverStats();
-
-            print("version", Version.getFullVersion());
-
-            print("avg_latency", stats.getAvgLatency());
-            print("max_latency", stats.getMaxLatency());
-            print("min_latency", stats.getMinLatency());
-
-            print("packets_received", stats.getPacketsReceived());
-            print("packets_sent", stats.getPacketsSent());
-            print("num_alive_connections", stats.getNumAliveClientConnections());
-
-            print("outstanding_requests", stats.getOutstandingRequests());
-
-            print("server_state", stats.getServerState());
-            print("znode_count", zkdb.getNodeCount());
-
-            print("watch_count", zkdb.getDataTree().getWatchCount());
-            print("ephemerals_count", zkdb.getDataTree().getEphemeralsCount());
-            print("approximate_data_size", zkdb.getDataTree().approximateDataSize());
-
-            OSMXBean osMbean = new OSMXBean();
-            if (osMbean != null && osMbean.getUnix() == true) {
-                print("open_file_descriptor_count", osMbean.getOpenFileDescriptorCount());
-                print("max_file_descriptor_count", osMbean.getMaxFileDescriptorCount());
-            }
-
-            print("fsync_threshold_exceed_count", stats.getFsyncThresholdExceedCount());
-
-            if(stats.getServerState().equals("leader")) {
-                Leader leader = ((LeaderZooKeeperServer)zkServer).getLeader();
-
-                print("followers", leader.getLearners().size());
-                print("synced_followers", leader.getForwardingFollowers().size());
-                print("pending_syncs", leader.getNumPendingSyncs());
-
-                print("last_proposal_size", leader.getProposalStats().getLastProposalSize());
-                print("max_proposal_size", leader.getProposalStats().getMaxProposalSize());
-                print("min_proposal_size", leader.getProposalStats().getMinProposalSize());
-            }
-        }
-
-        private void print(String key, long number) {
-            print(key, "" + number);
-        }
-
-        private void print(String key, String value) {
-            pw.print("zk_");
-            pw.print(key);
-            pw.print("\t");
-            pw.println(value);
-        }
-
-    }
-
-    private class IsroCommand extends CommandThread {
-
-        public IsroCommand(PrintWriter pw) {
-            super(pw);
-        }
-
-        @Override
-        public void commandRun() {
-            if (!isZKServerRunning()) {
-                pw.print("null");
-            } else if (zkServer instanceof ReadOnlyZooKeeperServer) {
-                pw.print("ro");
-            } else {
-                pw.print("rw");
-            }
-        }
-    }
-
-    private class NopCommand extends CommandThread {
-        private String msg;
-
-        public NopCommand(PrintWriter pw, String msg) {
-            super(pw);
-            this.msg = msg;
-        }
-
-        @Override
-        public void commandRun() {
-            pw.println(msg);
-        }
-    }
-
     /** Return if four letter word found and responded to, otw false **/
-    private boolean checkFourLetterWord(final Channel channel,
-            ChannelBuffer message, final int len) throws IOException
-    {
+    private boolean checkFourLetterWord(final Channel channel, ByteBuf message, final int len) {
         // We take advantage of the limited size of the length to look
         // for cmds. They are all 4-bytes which fits inside of an int
-        if (!ServerCnxn.isKnown(len)) {
+        if (!FourLetterCommands.isKnown(len)) {
             return false;
         }
 
-        channel.setInterestOps(0).awaitUninterruptibly();
+        String cmd = FourLetterCommands.getCommandString(len);
+
+        // Stops automatic reads of incoming data on this channel. We don't
+        // expect any more traffic from the client when processing a 4LW
+        // so this shouldn't break anything.
+        channel.config().setAutoRead(false);
         packetReceived();
 
         final PrintWriter pwriter = new PrintWriter(
                 new BufferedWriter(new SendBufferWriter()));
 
-        String cmd = ServerCnxn.getCommandString(len);
         // ZOOKEEPER-2693: don't execute 4lw if it's not enabled.
-        if (!ServerCnxn.isEnabled(cmd)) {
+        if (!FourLetterCommands.isEnabled(cmd)) {
             LOG.debug("Command {} is not executed because it is not in the whitelist.", cmd);
-            NopCommand nopCmd = new NopCommand(pwriter, cmd + " is not executed because it is not in the whitelist.");
+            NopCommand nopCmd = new NopCommand(pwriter, this, cmd +
+                    " is not executed because it is not in the whitelist.");
             nopCmd.start();
             return true;
         }
 
-        LOG.info("Processing " + cmd + " command from " + channel.getRemoteAddress());
+        LOG.info("Processing {} command from {}", cmd, channel.remoteAddress());
 
-        if (len == ruokCmd) {
-            RuokCommand ruok = new RuokCommand(pwriter);
-            ruok.start();
-            return true;
-        } else if (len == getTraceMaskCmd) {
-            TraceMaskCommand tmask = new TraceMaskCommand(pwriter);
-            tmask.start();
-            return true;
-        } else if (len == setTraceMaskCmd) {
+       if (len == FourLetterCommands.setTraceMaskCmd) {
             ByteBuffer mask = ByteBuffer.allocate(8);
             message.readBytes(mask);
             mask.flip();
             long traceMask = mask.getLong();
             ZooTrace.setTextTraceLevel(traceMask);
-            SetTraceMaskCommand setMask = new SetTraceMaskCommand(pwriter, traceMask);
+            SetTraceMaskCommand setMask = new SetTraceMaskCommand(pwriter, this, traceMask);
             setMask.start();
             return true;
-        } else if (len == enviCmd) {
-            EnvCommand env = new EnvCommand(pwriter);
-            env.start();
-            return true;
-        } else if (len == confCmd) {
-            ConfCommand ccmd = new ConfCommand(pwriter);
-            ccmd.start();
-            return true;
-        } else if (len == srstCmd) {
-            StatResetCommand strst = new StatResetCommand(pwriter);
-            strst.start();
-            return true;
-        } else if (len == crstCmd) {
-            CnxnStatResetCommand crst = new CnxnStatResetCommand(pwriter);
-            crst.start();
-            return true;
-        } else if (len == dumpCmd) {
-            DumpCommand dump = new DumpCommand(pwriter);
-            dump.start();
-            return true;
-        } else if (len == statCmd || len == srvrCmd) {
-            StatCommand stat = new StatCommand(pwriter, len);
-            stat.start();
-            return true;
-        } else if (len == consCmd) {
-            ConsCommand cons = new ConsCommand(pwriter);
-            cons.start();
-            return true;
-        } else if (len == wchpCmd || len == wchcCmd || len == wchsCmd) {
-            WatchCommand wcmd = new WatchCommand(pwriter, len);
-            wcmd.start();
-            return true;
-        } else if (len == mntrCmd) {
-            MonitorCommand mntr = new MonitorCommand(pwriter);
-            mntr.start();
-            return true;
-        } else if (len == isroCmd) {
-            IsroCommand isro = new IsroCommand(pwriter);
-            isro.start();
-            return true;
+        } else {
+            CommandExecutor commandExecutor = new CommandExecutor();
+            return commandExecutor.execute(this, pwriter, len, zkServer,factory);
         }
-        return false;
     }
 
-    public void receiveMessage(ChannelBuffer message) {
+    /**
+     * Helper that throws an IllegalStateException if the current thread is not
+     * executing in the channel's event loop thread.
+     * @param callerMethodName the name of the calling method to add to the exception message.
+     */
+    private void checkIsInEventLoop(String callerMethodName) {
+        if (!channel.eventLoop().inEventLoop()) {
+            throw new IllegalStateException(
+                    callerMethodName + "() called from non-EventLoop thread");
+        }
+    }
+
+    /**
+     * Appends <code>buf</code> to <code>queuedBuffer</code>. Does not duplicate <code>buf</code>
+     * or call any flavor of {@link ByteBuf#retain()}. Caller must ensure that <code>buf</code>
+     * is not owned by anyone else, as this call transfers ownership of <code>buf</code> to the
+     * <code>queuedBuffer</code>.
+     *
+     * This method should only be called from the event loop thread.
+     * @param buf the buffer to append to the queue.
+     */
+    private void appendToQueuedBuffer(ByteBuf buf) {
+        checkIsInEventLoop("appendToQueuedBuffer");
+        if (queuedBuffer.numComponents() == queuedBuffer.maxNumComponents()) {
+            // queuedBuffer has reached its component limit, so combine the existing components.
+            queuedBuffer.consolidate();
+        }
+        queuedBuffer.addComponent(true, buf);
+    }
+
+    /**
+     * Process incoming message. This should only be called from the event
+     * loop thread.
+     * Note that this method does not call <code>buf.release()</code>. The caller
+     * is responsible for making sure the buf is released after this method
+     * returns.
+     * @param buf the message bytes to process.
+     */
+    void processMessage(ByteBuf buf) {
+        checkIsInEventLoop("processMessage");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("0x{} queuedBuffer: {}",
+                    Long.toHexString(sessionId),
+                    queuedBuffer);
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("0x{} buf {}",
+                    Long.toHexString(sessionId),
+                    ByteBufUtil.hexDump(buf));
+        }
+
+        if (throttled.get()) {
+            LOG.debug("Received message while throttled");
+            // we are throttled, so we need to queue
+            if (queuedBuffer == null) {
+                LOG.debug("allocating queue");
+                queuedBuffer = channel.alloc().compositeBuffer();
+            }
+            appendToQueuedBuffer(buf.retainedDuplicate());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("0x{} queuedBuffer {}",
+                        Long.toHexString(sessionId),
+                        ByteBufUtil.hexDump(queuedBuffer));
+            }
+        } else {
+            LOG.debug("not throttled");
+            if (queuedBuffer != null) {
+                appendToQueuedBuffer(buf.retainedDuplicate());
+                processQueuedBuffer();
+            } else {
+                receiveMessage(buf);
+                // Have to check !closingChannel, because an error in
+                // receiveMessage() could have led to close() being called.
+                if (!closingChannel && buf.isReadable()) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Before copy {}", buf);
+                    }
+                    if (queuedBuffer == null) {
+                        queuedBuffer = channel.alloc().compositeBuffer();
+                    }
+                    appendToQueuedBuffer(buf.retainedSlice(buf.readerIndex(), buf.readableBytes()));
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Copy is {}", queuedBuffer);
+                        LOG.trace("0x{} queuedBuffer {}",
+                                Long.toHexString(sessionId),
+                                ByteBufUtil.hexDump(queuedBuffer));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Try to process previously queued message. This should only be called
+     * from the event loop thread.
+     */
+    void processQueuedBuffer() {
+        checkIsInEventLoop("processQueuedBuffer");
+        if (queuedBuffer != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("processing queue 0x{} queuedBuffer {}",
+                        Long.toHexString(sessionId),
+                        ByteBufUtil.hexDump(queuedBuffer));
+            }
+            receiveMessage(queuedBuffer);
+            if (closingChannel) {
+                // close() could have been called if receiveMessage() failed
+                LOG.debug("Processed queue - channel closed, dropping remaining bytes");
+            } else if (!queuedBuffer.isReadable()) {
+                LOG.debug("Processed queue - no bytes remaining");
+                releaseQueuedBuffer();
+            } else {
+                LOG.debug("Processed queue - bytes remaining");
+                // Try to reduce memory consumption by freeing up buffer space
+                // which is no longer needed.
+                queuedBuffer.discardReadComponents();
+            }
+        } else {
+            LOG.debug("queue empty");
+        }
+    }
+
+    /**
+     * Clean up queued buffer once it's no longer needed. This should only be
+     * called from the event loop thread.
+     */
+    private void releaseQueuedBuffer() {
+        checkIsInEventLoop("releaseQueuedBuffer");
+        if (queuedBuffer != null) {
+            queuedBuffer.release();
+            queuedBuffer = null;
+        }
+    }
+
+    /**
+     * Receive a message, which can come from the queued buffer or from a new
+     * buffer coming in over the channel. This should only be called from the
+     * event loop thread.
+     * Note that this method does not call <code>message.release()</code>. The
+     * caller is responsible for making sure the message is released after this
+     * method returns.
+     * @param message the message bytes to process.
+     */
+    private void receiveMessage(ByteBuf message) {
+        checkIsInEventLoop("receiveMessage");
         try {
-            while(message.readable() && !throttled) {
+            while(message.isReadable() && !throttled.get()) {
                 if (bb != null) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("message readable " + message.readableBytes()
-                                + " bb len " + bb.remaining() + " " + bb);
+                        LOG.trace("message readable {} bb len {} {}",
+                                message.readableBytes(),
+                                bb.remaining(),
+                                bb);
                         ByteBuffer dat = bb.duplicate();
                         dat.flip();
-                        LOG.trace(Long.toHexString(sessionId)
-                                + " bb 0x"
-                                + ChannelBuffers.hexDump(
-                                        ChannelBuffers.copiedBuffer(dat)));
+                        LOG.trace("0x{} bb {}",
+                                Long.toHexString(sessionId),
+                                ByteBufUtil.hexDump(Unpooled.wrappedBuffer(dat)));
                     }
 
                     if (bb.remaining() > message.readableBytes()) {
@@ -755,16 +455,15 @@ public class NettyServerCnxn extends ServerCnxn {
                     bb.limit(bb.capacity());
 
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("after readBytes message readable "
-                                + message.readableBytes()
-                                + " bb len " + bb.remaining() + " " + bb);
+                        LOG.trace("after readBytes message readable {} bb len {} {}",
+                                message.readableBytes(),
+                                bb.remaining(),
+                                bb);
                         ByteBuffer dat = bb.duplicate();
                         dat.flip();
-                        LOG.trace("after readbytes "
-                                + Long.toHexString(sessionId)
-                                + " bb 0x"
-                                + ChannelBuffers.hexDump(
-                                        ChannelBuffers.copiedBuffer(dat)));
+                        LOG.trace("after readbytes 0x{} bb {}",
+                                Long.toHexString(sessionId),
+                                ByteBufUtil.hexDump(Unpooled.wrappedBuffer(dat)));
                     }
                     if (bb.remaining() == 0) {
                         packetReceived();
@@ -775,14 +474,18 @@ public class NettyServerCnxn extends ServerCnxn {
                             throw new IOException("ZK down");
                         }
                         if (initialized) {
+                            // TODO: if zks.processPacket() is changed to take a ByteBuffer[],
+                            // we could implement zero-copy queueing.
                             zks.processPacket(this, bb);
 
                             if (zks.shouldThrottle(outstandingCount.incrementAndGet())) {
                                 disableRecvNoWait();
                             }
                         } else {
-                            LOG.debug("got conn req request from "
-                                    + getRemoteSocketAddress());
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("got conn req request from {}",
+                                        getRemoteSocketAddress());
+                            }
                             zks.processConnectRequest(this, bb);
                             initialized = true;
                         }
@@ -790,15 +493,14 @@ public class NettyServerCnxn extends ServerCnxn {
                     }
                 } else {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("message readable "
-                                + message.readableBytes()
-                                + " bblenrem " + bbLen.remaining());
+                        LOG.trace("message readable {} bblenrem {}",
+                                message.readableBytes(),
+                                bbLen.remaining());
                         ByteBuffer dat = bbLen.duplicate();
                         dat.flip();
-                        LOG.trace(Long.toHexString(sessionId)
-                                + " bbLen 0x"
-                                + ChannelBuffers.hexDump(
-                                        ChannelBuffers.copiedBuffer(dat)));
+                        LOG.trace("0x{} bbLen {}",
+                                Long.toHexString(sessionId),
+                                ByteBufUtil.hexDump(Unpooled.wrappedBuffer(dat)));
                     }
 
                     if (message.readableBytes() < bbLen.remaining()) {
@@ -810,15 +512,15 @@ public class NettyServerCnxn extends ServerCnxn {
                         bbLen.flip();
 
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace(Long.toHexString(sessionId)
-                                    + " bbLen 0x"
-                                    + ChannelBuffers.hexDump(
-                                            ChannelBuffers.copiedBuffer(bbLen)));
+                            LOG.trace("0x{} bbLen {}",
+                                    Long.toHexString(sessionId),
+                                    ByteBufUtil.hexDump(Unpooled.wrappedBuffer(bbLen)));
                         }
                         int len = bbLen.getInt();
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace(Long.toHexString(sessionId)
-                                    + " bbLen len is " + len);
+                            LOG.trace("0x{} bbLen len is {}",
+                                    Long.toHexString(sessionId),
+                                    len);
                         }
 
                         bbLen.clear();
@@ -840,19 +542,43 @@ public class NettyServerCnxn extends ServerCnxn {
         }
     }
 
+    /**
+     * An event that triggers a change in the channel's "Auto Read" setting.
+     * Used for throttling. By using an enum we can treat the two values as
+     * singletons and compare with ==.
+     */
+    enum AutoReadEvent {
+        DISABLE,
+        ENABLE
+    }
+
+    /**
+     * Note that both disableRecv() and disableRecvNoWait() are asynchronous in the netty implementation.
+     */
     @Override
     public void disableRecv() {
-        disableRecvNoWait().awaitUninterruptibly();
-    }
-    
-    private ChannelFuture disableRecvNoWait() {
-        throttled = true;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Throttling - disabling recv " + this);
+        if (throttled.compareAndSet(false, true)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Throttling - disabling recv {}", this);
+            }
+            channel.pipeline().fireUserEventTriggered(AutoReadEvent.DISABLE);
         }
-        return channel.setReadable(false);
     }
-    
+
+    private void disableRecvNoWait() {
+        disableRecv();
+    }
+
+    @Override
+    public void enableRecv() {
+        if (throttled.compareAndSet(true, false)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending unthrottle event {}", this);
+            }
+            channel.pipeline().fireUserEventTriggered(AutoReadEvent.ENABLE);
+        }
+    }
+
     @Override
     public long getOutstandingRequests() {
         return outstandingCount.longValue();
@@ -865,12 +591,26 @@ public class NettyServerCnxn extends ServerCnxn {
 
     @Override
     public int getInterestOps() {
-        return channel.getInterestOps();
+        // This might not be 100% right, but it's only used for printing
+        // connection info in the netty implementation so it's probably ok.
+        if (channel == null || !channel.isOpen()) {
+            return 0;
+        }
+        int interestOps = 0;
+        if (!throttled.get()) {
+            interestOps |= SelectionKey.OP_READ;
+        }
+        if (!channel.isWritable()) {
+            // OP_READ means "can read", but OP_WRITE means "cannot write",
+            // it's weird.
+            interestOps |= SelectionKey.OP_WRITE;
+        }
+        return interestOps;
     }
 
     @Override
     public InetSocketAddress getRemoteSocketAddress() {
-        return (InetSocketAddress)channel.getRemoteAddress();
+        return (InetSocketAddress)channel.remoteAddress();
     }
 
     /** Send close connection packet to the client.
@@ -882,16 +622,38 @@ public class NettyServerCnxn extends ServerCnxn {
 
     @Override
     protected ServerStats serverStats() {
-        if (!isZKServerRunning()) {
+        if (zkServer == null) {
             return null;
         }
         return zkServer.serverStats();
     }
 
-    /**
-     * @return true if the server is running, false otherwise.
-     */
-    boolean isZKServerRunning() {
-        return zkServer != null && zkServer.isRunning();
+    @Override
+    public boolean isSecure() {
+        return factory.secure;
+    }
+
+    @Override
+    public Certificate[] getClientCertificateChain() {
+        if (clientChain == null)
+        {
+            return null;
+        }
+        return Arrays.copyOf(clientChain, clientChain.length);
+    }
+
+    @Override
+    public void setClientCertificateChain(Certificate[] chain) {
+        if (chain == null)
+        {
+            clientChain = null;
+        } else {
+            clientChain = Arrays.copyOf(chain, chain.length);
+        }
+    }
+
+    // For tests and NettyServerCnxnFactory only, thus package-private.
+    Channel getChannel() {
+        return channel;
     }
 }
