@@ -1,4 +1,4 @@
-package jmx;
+package jmx.client;
 
 import jmx.mbean.HelloMBean;
 import jmx.mxbean.HelloMXBean;
@@ -36,7 +36,7 @@ public class Client {
         echo("\nCreate an RMI connector client and " +
                 "connect it to the RMI connector server");
         //构造并获取RMI连接
-        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://127.0.0.1:60940/jmxrmi");
+        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://127.0.0.1:9999/jmxrmi");
         JMXConnector jmxc = JMXConnectorFactory.connect(url, null);
         
         //获取MBeanServer的连接
