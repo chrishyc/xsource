@@ -12,16 +12,16 @@ public class Agent {
     public static void main(String[] args)
             throws Exception {
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-//        ObjectName name = new ObjectName("jmx:type=Hello");
-//        Hello mbean = new Hello();
-//        ObjectName nameMX = new ObjectName("jmx:type=HelloMX");
+        ObjectName name = new ObjectName("jmx:type=Hello");
+        Hello mbean = new Hello();
+        ObjectName nameMX = new ObjectName("jmx:type=HelloMX");
 
-//        HelloMX mxBean = new HelloMX();
+        HelloMX mxBean = new HelloMX();
         ObjectName notiName = new ObjectName("jmx:type=MyNotification");
         MyNotification notificationBean = new MyNotification();
         mbs.registerMBean(notificationBean, notiName);
-//        mbs.registerMBean(mbean, name);
-//        mbs.registerMBean(mxBean, nameMX);
+        mbs.registerMBean(mbean, name);
+        mbs.registerMBean(mxBean, nameMX);
         System.out.println("Waiting forever...");
         Thread.sleep(Long.MAX_VALUE);
     }
