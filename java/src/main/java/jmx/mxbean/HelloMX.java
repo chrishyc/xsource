@@ -1,4 +1,4 @@
-package jmx;
+package jmx.mxbean;
 
 public class HelloMX implements HelloMXBean{
     public void sayHello() {
