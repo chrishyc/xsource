@@ -1,6 +1,6 @@
-package jmx;
+package jmx.mxbean;
 
-public interface HelloMBean {
+public interface HelloMXBean {
     public void sayHello();
     
     public int add(int x, int y);
@@ -10,4 +10,7 @@ public interface HelloMBean {
     public int getCacheSize();
     
     public void setCacheSize(int size);
+    
+    public Book getBook();
+    public void addBook(Book book);
 }

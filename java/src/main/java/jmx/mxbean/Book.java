@@ -1,4 +1,4 @@
-package jmx;
+package jmx.mxbean;
 
 public class Book {
     public String name;

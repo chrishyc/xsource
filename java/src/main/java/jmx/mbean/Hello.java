@@ -1,4 +1,4 @@
-package jmx;
+package jmx.mbean;
 
 public class Hello implements HelloMBean {
     public void sayHello() {
