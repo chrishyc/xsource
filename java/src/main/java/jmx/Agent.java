@@ -7,7 +7,12 @@ import jmx.notification.MyNotification;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
-
+/**
+ * refer: https://www.cnblogs.com/dongguacai/p/5900507.html
+ * refer: http://www.tianshouzhi.com/api/tutorials/jmx/34
+ *
+ * Java Management Extensions (JMX)用于监控和管理CPU,JVM等资源
+ */
 public class Agent {
     public static void main(String[] args)
             throws Exception {
