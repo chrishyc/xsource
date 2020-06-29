@@ -20,7 +20,6 @@ public class GC {
     
     public static void main(String[] args) throws InterruptedException {
         List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        //register every GarbageCollectorMXBean
         for (GarbageCollectorMXBean gcBean : gcBeans) {
             
             NotificationEmitter emitter = (NotificationEmitter) gcBean;
