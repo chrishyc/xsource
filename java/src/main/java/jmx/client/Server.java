@@ -1,6 +1,5 @@
 package jmx.client;
 
-import jmx.mbean.Hello;
 import jmx.notification.MyNotification;
 
 import javax.management.JMException;

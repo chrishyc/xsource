@@ -1,8 +1,6 @@
 package jmx.client;
 
-import jmx.mbean.HelloMBean;
 import jmx.mxbean.HelloMXBean;
-import jmx.notification.MyNotification;
 
 import javax.management.*;
 import javax.management.remote.JMXConnector;
