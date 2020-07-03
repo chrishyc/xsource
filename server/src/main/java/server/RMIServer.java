@@ -11,12 +11,12 @@ import java.rmi.Naming;
 import java.rmi.Remote;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.RemoteCall;
-
-import sun.rmi.registry.*;
-import sun.rmi.server.*;
-import sun.rmi.transport.tcp.*;
-import sun.rmi.transport.*;
-import java.rmi.server.*;
+//
+//import sun.rmi.registry.*;
+//import sun.rmi.server.*;
+//import sun.rmi.transport.tcp.*;
+//import sun.rmi.transport.*;
+//import java.rmi.server.*;
 /**
  * 调试rpc:
  * 1.查看状态机watch -n 0.5 -d 'netstat -ant | grep -E "9898|63039|63121"'
