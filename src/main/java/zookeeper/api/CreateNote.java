@@ -6,12 +6,12 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
 public class CreateNote implements Watcher {
-
-    private  static CountDownLatch countDownLatch = new CountDownLatch(1);
-
+    
+    private static CountDownLatch countDownLatch = new CountDownLatch(1);
+    
     private static ZooKeeper zooKeeper;
-
-
+    
+    
     /*
       建立会话
      */
@@ -24,26 +24,25 @@ public class CreateNote implements Watcher {
         sesssionTimeOut：会话超时时间：单位毫秒
         Wather：监听器(当特定事件触发监听时，zk会通过watcher通知到客户端)
      */
-
-         zooKeeper = new ZooKeeper("127.0.0.1:2181", 5000, new CreateNote());
+        
+        zooKeeper = new ZooKeeper("127.0.0.1:2181", 5000, new CreateNote());
         System.out.println(zooKeeper.getState());
-
+        
         // 计数工具类：CountDownLatch:不让main方法结束，让线程处于等待阻塞
         //countDownLatch.await();\
         Thread.sleep(Integer.MAX_VALUE);
-
+        
     }
-
-
-
+    
+    
     /*
         回调方法：处理来自服务器端的watcher通知
      */
     @Override
     public void process(WatchedEvent watchedEvent) {
         // SyncConnected
-        if(watchedEvent.getState() == Event.KeeperState.SyncConnected){
-
+        if (watchedEvent.getState() == Event.KeeperState.SyncConnected) {
+            
             //解除主程序在CountDownLatch上的等待阻塞
             System.out.println("process方法执行了...");
             // 创建节点
@@ -52,18 +51,23 @@ public class CreateNote implements Watcher {
             } catch (KeeperException | InterruptedException e) {
                 e.printStackTrace();
             }
-    
+            
         }
-
-
+        
+        
     }
-
-
+    
+    public static final String DATASOURCE = "driverClass=com.mysql.cj.jdbc.Driver\n" +
+            "url=jdbc:mysql:///mysql\n" +
+            "username=root\n" +
+            "password=00000000\n" +
+            "maxWait=5000";
+    
     /*
        创建节点的方法
    */
     private static void createNoteSync() throws KeeperException, InterruptedException {
-
+        
         /**
          *  path        ：节点创建的路径
          *  data[]      ：节点创建要保存的数据，是个byte类型的
@@ -79,19 +83,20 @@ public class CreateNote implements Watcher {
          *                  EPHEMERAL_SEQUENTIAL：临时顺序节点
          String node = zookeeper.create(path,data,acl,createMode);
          */
-
+        
         // 持久节点
-        String note_persistent = zooKeeper.create("/lg-persistent", "持久节点内容".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-
+//        String note_persistent = zooKeeper.create("/lg-persistent", "持久节点内容".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        
         // 临时节点
-        String note_ephemeral = zooKeeper.create("/lg-ephemeral", "临时节点内容".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-
+//        String note_ephemeral = zooKeeper.create("/lg-ephemeral", "临时节点内容".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+        String dataSource = zooKeeper.create("/dataSource", DATASOURCE.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+        
         // 持久顺序节点
-        String note_persistent_sequential = zooKeeper.create("/lg-persistent_sequential", "持久顺序节点内容".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
-
-        System.out.println("创建的持久节点" + note_persistent);
-        System.out.println("创建的临时节点" + note_ephemeral);
-        System.out.println("创建的持久顺序节点" + note_persistent_sequential);
-
+//        String note_persistent_sequential = zooKeeper.create("/lg-persistent_sequential", "持久顺序节点内容".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
+        
+        System.out.println("创建的持久节点" + dataSource);
+//        System.out.println("创建的临时节点" + note_ephemeral);
+//        System.out.println("创建的持久顺序节点" + note_persistent_sequential);
+    
     }
 }
