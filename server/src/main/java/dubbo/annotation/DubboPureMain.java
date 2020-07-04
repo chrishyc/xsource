@@ -1,4 +1,4 @@
-package dubbo;
+package dubbo.annotation;
 
 
 import org.apache.dubbo.config.RegistryConfig;
