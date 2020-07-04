@@ -1,4 +1,4 @@
-package dubbo;
+package dubbo.annotation;
 
 import demo.HelloService;
 import org.apache.dubbo.config.annotation.Reference;
