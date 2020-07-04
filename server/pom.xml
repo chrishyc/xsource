@@ -11,6 +11,14 @@
 
     <groupId>server</groupId>
     <artifactId>server</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>2.7.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 
 </project>

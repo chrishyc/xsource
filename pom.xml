@@ -395,6 +395,11 @@
             <artifactId>parquet-jackson</artifactId>
             <version>1.7.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.dubbo</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>2.7.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
