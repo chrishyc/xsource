@@ -5,7 +5,7 @@ import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.rpc.*;
 
 
-@Activate(group = {CommonConstants.PROVIDER})
+@Activate(group = {CommonConstants.PROVIDER, CommonConstants.CONSUMER})
 public class DubboInvokeFilter implements Filter {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
