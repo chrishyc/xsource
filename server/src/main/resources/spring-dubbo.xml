@@ -12,7 +12,7 @@
     <!-- 用dubbo协议在20882端口暴露服务
     <dubbo:protocol name="dubbo" port="20882" /> -->
     <!-- 用dubbo协议在20883端口暴露服务 -->
-    <dubbo:protocol name="dubbo" port="20883"/>
+    <dubbo:protocol name="dubbo" port="20883" />
     <!-- 声明需要暴露的服务接口 -->
     <dubbo:service interface="demo.HelloService" ref="helloService" filter="timeFilter"/>
 
