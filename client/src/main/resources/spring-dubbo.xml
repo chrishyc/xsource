@@ -9,7 +9,7 @@
         <dubbo:parameter key="qos.accept.foreign.ip" value="true"/>
     </dubbo:application>
     <!--    -->
-    <dubbo:consumer timeout="2000" check="false"/>
+    <dubbo:consumer timeout="2000" check="false" loadbalance="onlyFirst"/>
 
     <!-- 使用zookeeper注册中心暴露发现服务地址 -->
     <dubbo:registry address="zookeeper://127.0.0.1:2181" timeout="10000"/>
