@@ -20,7 +20,9 @@ import org.apache.dubbo.config.spring.*;
  * 1.{@link DubboNamespaceHandler}自定义handler订阅自定义标签{@link DubboNamespaceHandler#init()}
  * 2.解析自定义标签时，根据namespaceURL定位到对应handler,然后从{@link DubboNamespaceHandler}中找到自定义标签对应的标签处理器进行处理
  * {@link ServiceBean}
- *
+ * 3.{@link DubboBeanDefinitionParser#parse(Element, ParserContext, Class, boolean)}解析RootBeanDefinition时,会将实例class
+ * 设置为{@link ServiceBean},这样实例化标签<dubbo:service interface="demo.HelloService" ref="helloService" filter="timeFilter"/>
+ * 即实例化{@link ServiceBean}
  */
 public class ProviderApplication {
     public static void main(String[] args) throws Exception {
