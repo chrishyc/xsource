@@ -1,4 +1,4 @@
-package dubbo.adaptive;
+package dubbo.javaassist;
 
 import org.apache.dubbo.common.extension.ExtensionLoader;
 
