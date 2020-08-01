@@ -3,17 +3,13 @@ package configuration;
 import org.junit.Test;
 import org.springframework.core.ResolvableType;
 
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Stream;
 
 public class Sample<E> {
-    private HashMap<Integer, List<String>> myMap;
+    private HashMap<Integer[], E> myMap;
     
     @Test
     public void testResolvableType() throws NoSuchFieldException {
@@ -32,20 +28,20 @@ public class Sample<E> {
                 .filter(method -> method.getName().contains("method"))
                 .forEach(method -> Stream.of(method.getGenericParameterTypes()).forEach(param -> {
                     if (param instanceof ParameterizedType) {
-                        System.out.println("param:" + param + ",type:ParameterizedType");
+                        System.out.println("=========" + param + "=========");
+                        Stream.of(((ParameterizedType) param).getActualTypeArguments()).map(Type::getClass).forEach(System.out::println);
                     } else if (param instanceof GenericArrayType) {
-                        System.out.println("param:" + param + ",type:GenericArrayType");
                     } else if (param instanceof TypeVariable) {
-                        System.out.println("param:" + param + ",type:TypeVariable");
                     } else if (param instanceof WildcardType) {
-                        System.out.println("param:" + param + ",type:WildcardType");
                     } else if (param instanceof Class) {
-                        System.out.println("param:" + param + ",type:Class");
+                        System.out.println("=========" + param + "=========");
                     }
                 }));
     }
     
-    public E method(ArrayList<ArrayList<String>> al1, ArrayList al2, ArrayList<String> al3, ArrayList<? extends Number> al4, ArrayList[] al5, int a) {
+    public E method(ArrayList<ArrayList<String>> al1, ArrayList<E> al2, ArrayList<String> al3,
+                    ArrayList<? extends Number> al4, ArrayList<E[]> al5, ArrayList<ArrayList<E>[]> al6,
+                    ArrayList<ArrayList> al7, int la8, Integer la9) {
         return null;
     }
 }
