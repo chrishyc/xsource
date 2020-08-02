@@ -1,37 +1,42 @@
 Classfile /Users/chris/xsource/java/src/main/java/interfaces/MyInterface.class
-  Last modified 2020-8-2; size 429 bytes
-  MD5 checksum 97b197794c02de61eba5ce04e0dd368d
+  Last modified 2020-8-2; size 537 bytes
+  MD5 checksum f9d345e77d6c18f9f5aef0150dba3582
   Compiled from "MyInterface.java"
-public interface interfaces.MyInterface
+public interface interfaces.MyInterface<T extends java.lang.Object>
   minor version: 0
   major version: 52
   flags: ACC_PUBLIC, ACC_INTERFACE, ACC_ABSTRACT
 Constant pool:
-   #1 = String             #13            // 123456
-   #2 = Fieldref           #14.#15        // java/lang/System.out:Ljava/io/PrintStream;
-   #3 = Methodref          #16.#17        // java/io/PrintStream.println:(Ljava/lang/String;)V
-   #4 = Class              #18            // interfaces/MyInterface
-   #5 = Class              #19            // java/lang/Object
-   #6 = Utf8               testDefault
-   #7 = Utf8               ()V
-   #8 = Utf8               Code
-   #9 = Utf8               LineNumberTable
-  #10 = Utf8               testStatic
-  #11 = Utf8               SourceFile
-  #12 = Utf8               MyInterface.java
-  #13 = Utf8               123456
-  #14 = Class              #20            // java/lang/System
-  #15 = NameAndType        #21:#22        // out:Ljava/io/PrintStream;
-  #16 = Class              #23            // java/io/PrintStream
-  #17 = NameAndType        #24:#25        // println:(Ljava/lang/String;)V
-  #18 = Utf8               interfaces/MyInterface
-  #19 = Utf8               java/lang/Object
-  #20 = Utf8               java/lang/System
-  #21 = Utf8               out
-  #22 = Utf8               Ljava/io/PrintStream;
-  #23 = Utf8               java/io/PrintStream
-  #24 = Utf8               println
-  #25 = Utf8               (Ljava/lang/String;)V
+   #1 = String             #16            // 123456
+   #2 = Fieldref           #17.#18        // java/lang/System.out:Ljava/io/PrintStream;
+   #3 = Methodref          #19.#20        // java/io/PrintStream.println:(Ljava/lang/String;)V
+   #4 = Methodref          #19.#21        // java/io/PrintStream.println:(Ljava/lang/Object;)V
+   #5 = Class              #22            // interfaces/MyInterface
+   #6 = Class              #23            // java/lang/Object
+   #7 = Utf8               testDefault
+   #8 = Utf8               ()V
+   #9 = Utf8               Code
+  #10 = Utf8               LineNumberTable
+  #11 = Utf8               testStatic
+  #12 = Utf8               Signature
+  #13 = Utf8               <T:Ljava/lang/Object;>Ljava/lang/Object;
+  #14 = Utf8               SourceFile
+  #15 = Utf8               MyInterface.java
+  #16 = Utf8               123456
+  #17 = Class              #24            // java/lang/System
+  #18 = NameAndType        #25:#26        // out:Ljava/io/PrintStream;
+  #19 = Class              #27            // java/io/PrintStream
+  #20 = NameAndType        #28:#29        // println:(Ljava/lang/String;)V
+  #21 = NameAndType        #28:#30        // println:(Ljava/lang/Object;)V
+  #22 = Utf8               interfaces/MyInterface
+  #23 = Utf8               java/lang/Object
+  #24 = Utf8               java/lang/System
+  #25 = Utf8               out
+  #26 = Utf8               Ljava/io/PrintStream;
+  #27 = Utf8               java/io/PrintStream
+  #28 = Utf8               println
+  #29 = Utf8               (Ljava/lang/String;)V
+  #30 = Utf8               (Ljava/lang/Object;)V
 {
   public void testDefault();
     descriptor: ()V
@@ -43,11 +48,15 @@ Constant pool:
          3: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
          6: aload_1
          7: invokevirtual #3                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
-        10: return
+        10: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+        13: aload_0
+        14: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/Object;)V
+        17: return
       LineNumberTable:
         line 5: 0
         line 6: 3
         line 7: 10
+        line 8: 17
 
   public static void testStatic();
     descriptor: ()V
@@ -61,8 +70,9 @@ Constant pool:
          7: invokevirtual #3                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
         10: return
       LineNumberTable:
-        line 10: 0
-        line 11: 3
-        line 12: 10
+        line 11: 0
+        line 12: 3
+        line 13: 10
 }
+Signature: #13                          // <T:Ljava/lang/Object;>Ljava/lang/Object;
 SourceFile: "MyInterface.java"
