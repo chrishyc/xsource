@@ -1,0 +1,68 @@
+Classfile /Users/chris/xsource/java/src/main/java/interfaces/MyInterface.class
+  Last modified 2020-8-2; size 429 bytes
+  MD5 checksum 97b197794c02de61eba5ce04e0dd368d
+  Compiled from "MyInterface.java"
+public interface interfaces.MyInterface
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_INTERFACE, ACC_ABSTRACT
+Constant pool:
+   #1 = String             #13            // 123456
+   #2 = Fieldref           #14.#15        // java/lang/System.out:Ljava/io/PrintStream;
+   #3 = Methodref          #16.#17        // java/io/PrintStream.println:(Ljava/lang/String;)V
+   #4 = Class              #18            // interfaces/MyInterface
+   #5 = Class              #19            // java/lang/Object
+   #6 = Utf8               testDefault
+   #7 = Utf8               ()V
+   #8 = Utf8               Code
+   #9 = Utf8               LineNumberTable
+  #10 = Utf8               testStatic
+  #11 = Utf8               SourceFile
+  #12 = Utf8               MyInterface.java
+  #13 = Utf8               123456
+  #14 = Class              #20            // java/lang/System
+  #15 = NameAndType        #21:#22        // out:Ljava/io/PrintStream;
+  #16 = Class              #23            // java/io/PrintStream
+  #17 = NameAndType        #24:#25        // println:(Ljava/lang/String;)V
+  #18 = Utf8               interfaces/MyInterface
+  #19 = Utf8               java/lang/Object
+  #20 = Utf8               java/lang/System
+  #21 = Utf8               out
+  #22 = Utf8               Ljava/io/PrintStream;
+  #23 = Utf8               java/io/PrintStream
+  #24 = Utf8               println
+  #25 = Utf8               (Ljava/lang/String;)V
+{
+  public void testDefault();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=2, args_size=1
+         0: ldc           #1                  // String 123456
+         2: astore_1
+         3: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         6: aload_1
+         7: invokevirtual #3                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        10: return
+      LineNumberTable:
+        line 5: 0
+        line 6: 3
+        line 7: 10
+
+  public static void testStatic();
+    descriptor: ()V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=1, args_size=0
+         0: ldc           #1                  // String 123456
+         2: astore_0
+         3: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         6: aload_0
+         7: invokevirtual #3                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        10: return
+      LineNumberTable:
+        line 10: 0
+        line 11: 3
+        line 12: 10
+}
+SourceFile: "MyInterface.java"
