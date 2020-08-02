@@ -9,13 +9,16 @@ import java.util.HashMap;
 import java.util.stream.Stream;
 
 public class Sample<E> {
-    private HashMap<Integer[], E> myMap;
+    private HashMap<ArrayList<E>, E> myMap;
     
     @Test
     public void testResolvableType() throws NoSuchFieldException {
+        System.getProperties().put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");
         ResolvableType t = ResolvableType.forField(getClass().getDeclaredField("myMap"));
-        ResolvableType superType = t.getSuperType();// AbstractMap&lt;Integer, List&lt;String&gt;&gt;
-        ResolvableType resolvableType = t.asMap();// Map&lt;Integer, List&lt;String&gt;&gt;
+        ResolvableType superType = t.getSuperType();
+        System.out.println(superType.resolve());
+        ResolvableType resolvableType = t.asMap();
+        System.out.println(resolvableType.resolve());
         t.getGeneric(0).resolve(); // Integer
         t.getGeneric(1).resolve(); // List
         t.getGeneric(1); // List&lt;String&gt;
