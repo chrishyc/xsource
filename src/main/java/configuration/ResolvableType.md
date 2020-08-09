@@ -36,7 +36,7 @@ private ResolvableType(Type type, @Nullable TypeProvider typeProvider,
 		if (this.type == EmptyType.INSTANCE) {
 			return null;
 		}
-		if (this.type instanceof Class) {
+		if (this.type instanceof Class) {=
 			return (Class<?>) this.type;
 		}
 		if (this.type instanceof GenericArrayType) {
