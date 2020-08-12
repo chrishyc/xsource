@@ -8,42 +8,44 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 public class Target implements InitializingBean, ApplicationContextAware, DisposableBean, BeanPostProcessor,
-        BeanFactoryPostProcessor, InstantiationAwareBeanPostProcessor {
+        BeanFactoryPostProcessor, InstantiationAwareBeanPostProcessor, BeanDefinitionRegistryPostProcessor {
     public void transfer() {
 //        throw new RuntimeException("no error");
     }
-
+    
     public Target() {
         System.out.println("Target.Target");
     }
-
+    
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         System.out.println("Target.ApplicationContextAware.setApplicationContext");
-
+        
     }
-
+    
     @Override
     public void afterPropertiesSet() throws Exception {
         System.out.println("Target.InitializingBean.afterPropertiesSet");
     }
-
+    
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         System.out.println("Target.BeanFactoryPostProcessor.postProcessBeanFactory");
-
+        
     }
-
+    
     @Override
     public void destroy() throws Exception {
         System.out.println("Target.DisposableBean.destroy");
-
+        
     }
-
+    
     /**
      * 初始化
      *
@@ -57,14 +59,14 @@ public class Target implements InitializingBean, ApplicationContextAware, Dispos
         System.out.println("Target.BeanPostProcessor.postProcessBeforeInitialization:" + beanName);
         return bean;
     }
-
-
+    
+    
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         System.out.println("Target.BeanPostProcessor.postProcessAfterInitialization:" + beanName);
         return bean;
     }
-
+    
     /**
      * 实例化
      *
@@ -77,19 +79,24 @@ public class Target implements InitializingBean, ApplicationContextAware, Dispos
         System.out.println("Target.InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation:" + beanName);
         return null;
     }
-
-
+    
+    
     @Override
     public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
         System.out.println("Target.InstantiationAwareBeanPostProcessor.postProcessAfterInstantiation:" + beanName);
         return true;
     }
-
-
+    
+    
     @Override
     public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)
             throws BeansException {
         System.out.println("Target.InstantiationAwareBeanPostProcessor.postProcessProperties:" + beanName);
         return null;
+    }
+    
+    @Override
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+        System.out.println("Target.BeanDefinitionRegistry.registry:" + registry);
     }
 }
