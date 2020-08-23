@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
-@ComponentScan(basePackages = "aop")
-@EnableAspectJAutoProxy
+@ComponentScan(basePackages = "aop.pojo")
+//@EnableAspectJAutoProxy
 public class Config {
 }

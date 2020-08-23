@@ -31,8 +31,8 @@ public class Sample {
     @Test
     public void testAnnotationConfig() {
         ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
-        MyApplicationListener listener = ac.getBean(MyApplicationListener.class);
-        System.out.println(listener);
+//        MyApplicationListener listener = ac.getBean(MyApplicationListener.class);
+//        System.out.println(listener);
     }
     
     @Test

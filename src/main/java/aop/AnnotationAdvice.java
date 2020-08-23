@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Aspect
 public class AnnotationAdvice {
-    @Pointcut("execution(* aop.Target2.transfer(..))")
+    @Pointcut("execution(* aop.pojo.Target2.transfer(..))")
     public void pointcut() {
 
     }
