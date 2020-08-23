@@ -1,0 +1,26 @@
+registerBeanPostProcessors
+##1.需求:
+将BeanPostProcessor按顺序执行
+##2.方案:
+按PriorityOrdered,Ordered优先级生成BeanPostProcessor实例并注入容器
+##3.实现:
+1.将BeanPostProcessorChecker加入beanFactory
+2.从BeanDefinition Map中获取BeanPostProcessor集合
+3.生成PriorityOrdered类型的BeanPostProcessor实例,排序并加入beanFactory
+AutowiredAnnotationBeanPostProcessor在此处加入
+
+4.生成Ordered类型的BeanPostProcessor实例,排序并加入beanFactory
+5.生成普通类型的BeanPostProcessor实例,排序并加入beanFactory
+6.将ApplicationListenerDetector加入beanFactory
+
+设计模式:
+语法:
+命名:
+eager
+checker
+ordered
+internal
+priority
+Merged
+ppName
+Detector
