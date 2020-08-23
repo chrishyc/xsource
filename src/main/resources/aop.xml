@@ -6,11 +6,11 @@
 
     <!-- aop xml方式-->
     <bean id="advice" class="aop.XmlAdvice"/>
-    <bean id="target" class="aop.Target"/>
+    <bean id="target" class="aop.pojo.Target"/>
     <aop:aspectj-autoproxy proxy-target-class="true"/>
     <aop:config proxy-target-class="true">
         <aop:aspect id="aspect" ref="advice">
-            <aop:pointcut id="pointcut" expression="execution(* aop.Target.transfer(..))"/>
+            <aop:pointcut id="pointcut" expression="execution(* aop.pojo.Target.transfer(..))"/>
             <aop:before method="before" pointcut-ref="pointcut"/>
             <aop:after-returning method="afterReturn" pointcut-ref="pointcut"/>
             <aop:after-throwing method="afterThrowing" pointcut-ref="pointcut" throwing="ex"/>

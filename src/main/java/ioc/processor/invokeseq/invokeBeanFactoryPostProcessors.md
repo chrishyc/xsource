@@ -1,0 +1,30 @@
+
+invokeBeanFactoryPostProcessors
+##1.需求:
+处理多个BeanDefinitionRegistryPostProcessor的调用顺序关系
+##2.方案:
+对BeanDefinitionRegistryPostProcessor按优先级执行,
+然后对BeanFactoryPostProcessor按优先级执行
+##3.实现:
+1.对于已生成实例的BeanDefinitionRegistryPostProcessor,直接postProcessBeanDefinitionRegistry
+2.获取PriorityOrdered类型的BeanDefinitionRegistryPostProcessor,生成对应实例,进行排序,并执行postProcessBeanDefinitionRegistry
+ConfigurationClassPostProcessor在此处进行解析扫描和生成BeanDefinition
+3.获取Ordered类型的BeanDefinitionRegistryPostProcessor,生成对应实例,进行排序,并执行postProcessBeanDefinitionRegistry
+自定义的BeanDefinitionRegistryPostProcessor在此处执行postProcessBeanDefinitionRegistry
+4.获取剩余普通的BeanDefinitionRegistryPostProcessor,生成对应实例,进行排序,并执行postProcessBeanDefinitionRegistry
+自定义的BeanDefinitionRegistryPostProcessor在此处执行postProcessBeanDefinitionRegistry
+
+5.对BeanFactoryPostProcessor重复上诉2,3,4,执行postProcessBeanFactory.此处的BeanFactoryPostProcessor不包含上诉已执行的
+BeanDefinitionRegistryPostProcessor
+  
+###设计模式:
+###语法:
+final class
+private PostProcessorRegistrationDelegate()
+###命名:
+Registry
+regular
+Processor
+PriorityOrdered
+Ordered
+clearMetadataCache

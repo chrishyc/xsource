@@ -1,4 +1,4 @@
-package aop;
+package aop.pojo;
 
 import org.springframework.stereotype.Component;
 

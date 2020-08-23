@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = {"ioc.eventListener"})
+@ComponentScan(basePackages = {"ioc.eventListener", "ioc.processor.invokeseq"})
 public class AppConfig {
     @Bean(name = "connectionUtils")
     public ConnectionUtils createConnectionUtils() {

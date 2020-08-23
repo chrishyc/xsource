@@ -1,5 +1,7 @@
 package aop;
 
+import aop.pojo.Target;
+import aop.pojo.Target2;
 import net.sf.cglib.core.DebuggingClassWriter;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -20,7 +22,7 @@ public class Sample {
     @Test
     public void testAnnotationAop() {
         ApplicationContext ac = new AnnotationConfigApplicationContext(Config.class);
-        Target2 target = ac.getBean(Target2.class);
+        Target target = ac.getBean(Target.class);
         target.transfer();
     }
     

@@ -1,9 +1,10 @@
-package aop;
+package aop.pojo;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -12,15 +13,21 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Target implements InitializingBean, ApplicationContextAware, DisposableBean, BeanPostProcessor,
         BeanFactoryPostProcessor, InstantiationAwareBeanPostProcessor, BeanDefinitionRegistryPostProcessor {
+    
+    @Autowired
+    private Target2 target2;
+    
     public void transfer() {
 //        throw new RuntimeException("no error");
     }
     
     public Target() {
-        System.out.println("Target.Target");
+        System.out.println("Target.Target" + target2);
     }
     
     @Override
@@ -42,7 +49,7 @@ public class Target implements InitializingBean, ApplicationContextAware, Dispos
     
     @Override
     public void destroy() throws Exception {
-        System.out.println("Target.DisposableBean.destroy");
+        System.out.println("Target.DisposableBean.destroy" + target2);
         
     }
     
@@ -83,7 +90,7 @@ public class Target implements InitializingBean, ApplicationContextAware, Dispos
     
     @Override
     public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
-        System.out.println("Target.InstantiationAwareBeanPostProcessor.postProcessAfterInstantiation:" + beanName);
+        System.out.println("Target.InstantiationAwareBeanPostProcessor.postProcessAfterInstantiation:" + beanName + target2);
         return true;
     }
     
