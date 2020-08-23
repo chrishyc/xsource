@@ -1,4 +1,4 @@
-package ioc.processor.invokeseq;
+package ioc.processor.beanfactorypostprocessor;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

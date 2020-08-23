@@ -1,20 +1,20 @@
-package ioc.processor.invokeseq;
+package ioc.processor.beanfactorypostprocessor;
 
 import org.springframework.stereotype.Component;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
 
 @Component
-public class OBeanFactoryPostProcessor implements BeanFactoryPostProcessor, Ordered {
-    public OBeanFactoryPostProcessor() {
-        System.out.println("OBeanFactoryPostProcessor constructor");
+public class PBeanFactoryPostProcessor implements BeanFactoryPostProcessor, PriorityOrdered {
+    public PBeanFactoryPostProcessor() {
+        System.out.println("PBeanFactoryPostProcessor constructor");
     }
     
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        System.out.println("OBeanFactoryPostProcessor postProcessBeanFactory");
+        System.out.println("PBeanFactoryPostProcessor postProcessBeanFactory");
     }
     
     @Override

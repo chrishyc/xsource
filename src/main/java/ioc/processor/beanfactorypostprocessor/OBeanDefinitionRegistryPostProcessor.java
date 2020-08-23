@@ -1,27 +1,27 @@
-package ioc.processor.invokeseq;
+package ioc.processor.beanfactorypostprocessor;
 
 import org.springframework.stereotype.Component;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.core.PriorityOrdered;
+import org.springframework.core.Ordered;
 
 @Component
-public class PBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor, PriorityOrdered {
-    public PBeanDefinitionRegistryPostProcessor() {
-        System.out.println("PBeanDefinitionRegistryPostProcessor constructor");
+public class OBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor, Ordered {
+    public OBeanDefinitionRegistryPostProcessor() {
+        System.out.println("OBeanDefinitionRegistryPostProcessor constructor");
     }
     
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-        System.out.println("PBeanDefinitionRegistryPostProcessor postProcessBeanDefinitionRegistry");
+        System.out.println("OBeanDefinitionRegistryPostProcessor postProcessBeanDefinitionRegistry");
         
     }
     
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        System.out.println("PBeanDefinitionRegistryPostProcessor postProcessBeanFactory");
+        System.out.println("OBeanDefinitionRegistryPostProcessor postProcessBeanFactory");
     }
     
     @Override
