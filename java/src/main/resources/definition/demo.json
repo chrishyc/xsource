@@ -1,0 +1,30 @@
+{
+  "groupId": "com.xiaomi.fintech",
+  "artifactId": "demo",
+  "version": "1.0.0-SNAPSHOT",
+  "description": "demo",
+  "rootPackage": "freemaker",
+  "models": [
+    {
+      "name": "User",
+      "type": "object",
+      "properties": [
+        {
+          "name": "userId",
+          "type": "String",
+          "comment": "用户ID"
+        },
+        {
+          "name": "realName",
+          "type": "String",
+          "comment": "姓名"
+        },
+        {
+          "name": "age",
+          "type": "Integer",
+          "comment": "年纪"
+        }
+      ]
+    }
+  ]
+}
