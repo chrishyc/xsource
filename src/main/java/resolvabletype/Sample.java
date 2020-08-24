@@ -1,4 +1,4 @@
-package configuration;
+package resolvabletype;
 
 import org.junit.Test;
 import org.springframework.core.ResolvableType;
