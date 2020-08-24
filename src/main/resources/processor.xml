@@ -5,7 +5,7 @@
 >
 
 
-    <bean id="myBeanPostProcessor" class="ioc.processor.DefaultBeanPostProcessor"/>
+    <bean id="myBeanPostProcessor" class="ioc.processor.componentcandidate.DefaultBeanPostProcessor"/>
     <bean id="testBean" class="ioc.cycle.TestBean"/>
     <bean id="factoryProcessor" class="ioc.processor.FactoryPrcessor"/>
 </beans>
