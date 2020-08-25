@@ -7,7 +7,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = {"ioc.eventListener", "ioc.processor.beanfactorypostprocessor","ioc.processor.beanpostprocessor"})
+@ComponentScan(basePackages = {
+        "ioc.eventListener",
+        "ioc.processor.beanfactorypostprocessor",
+        "ioc.processor.beanpostprocessor",
+        "ioc.processor.importcandidate"})
 public class AppConfig {
     @Bean(name = "connectionUtils")
     public ConnectionUtils createConnectionUtils() {
