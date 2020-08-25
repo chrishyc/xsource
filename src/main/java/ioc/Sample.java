@@ -4,6 +4,9 @@ import ioc.cycle.TestBean;
 import ioc.eventListener.MyApplicationListener;
 import ioc.lazyinit.LazyInitBean;
 import ioc.life.LifeBean;
+import ioc.processor.importcandidate.MyComponent;
+import ioc.processor.importcandidate.MyConfiguration;
+import ioc.processor.importcandidate.MyImportSelector;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -31,8 +34,10 @@ public class Sample {
     @Test
     public void testAnnotationConfig() {
         ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
-//        MyApplicationListener listener = ac.getBean(MyApplicationListener.class);
-//        System.out.println(listener);
+        MyComponent myComponent = ac.getBean(MyComponent.class);
+        System.out.println(myComponent);
+        MyImportSelector myImportSelector = ac.getBean(MyImportSelector.class);
+        System.out.println(myImportSelector);
     }
     
     @Test
