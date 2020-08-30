@@ -6,7 +6,7 @@ ConfigurationClassPostProcessor生成beandefinition时判断是否有bean实例
 
 ##3.实现
 ConfigurationClassBeanDefinitionReader.loadBeanDefinitionsForConfigurationClass时判断是否存在指定
-beanDefinition,存在说明之后会存在该bean实例。
+beanDefinition,存在,说明之后会存在该bean实例。
 
 条件注解的解析一定发生在spring ioc的bean definition阶段，因为 spring bean初始化的前提条件就是有对应的bean definition，条件注解正是通过判断bean definition来控制bean能否实例化
 
