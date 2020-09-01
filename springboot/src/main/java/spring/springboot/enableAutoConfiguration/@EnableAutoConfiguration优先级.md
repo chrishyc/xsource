@@ -1,0 +1,63 @@
+@EnableAutoConfiguration加载类的优先级问题:@AutoConfigureBefore,@AutoConfigureAfter,@AutoConfigureOrder注解
+##1.需求:
+调整多个bean之间的相对注入顺序
+
+##2.方案:
+对@EnableAutoConfiguration加载类的进行排序.
+使用AutoConfigurationImportSelector类型的延时DeferredImportSelector,对由@EnableAutoConfiguration加载的类进行排序处理.
+触发时机发生在延时DeferredImportSelector将类放入configurationClass缓存中
+
+##3.实现:
+1.@EnableAutoConfiguration导入AutoConfigurationImportSelector,且AutoConfigurationImportSelector是
+DeferredImportSelector类型,且申明group类型为AutoConfigurationGroup,不同的group会对"DeferredImportSelector
+申明的注解元数据"有不同的处理逻辑.AutoConfigurationGroup会对注解元数据进行排序.
+
+2.由于AutoConfigurationImportSelector为DeferredImportSelector类型,会先缓存在deferredImportSelectors list中
+所有类已缓存在configurationClass map中,此时开始对deferredImportSelectors(延期) list进行处理
+
+3.DeferredImportSelectorGroupingHandler开始处理deferredImportSelectors,获取每一个DeferredImportSelector的group类型,
+按照group类型分成不同DeferredImportSelectorGrouping,每个DeferredImportSelectorGrouping记录group类型
+以及该类型缓存的DeferredImportSelector数量
+
+4.使用AutoConfigurationImportSelector的group进行process,从@EnableAutoConfiguration对应的spring.loadfactories中加载
+所有类,然后使用selectImports进行排序处理,排序使用AutoConfigurationSorter,排序完成后返回排序后列表,并放入configurationClass缓存
+中,供后续生成beanDedifinition使用
+
+##类型
+包装类:DeferredImportSelectorHolder,DeferredImportSelectorGrouping
+实体类:ConfigurationClass
+工具类:AutoConfigurationSorter
+
+##设计模式:
+策略模式:group
+接口内部类:group接口中含有Entry类
+
+##语法:
+lambda:
+```
+private static final Comparator<DeferredImportSelectorHolder> DEFERRED_IMPORT_COMPARATOR =
+			(o1, o2) -> AnnotationAwareOrderComparator.INSTANCE.compare(o1.getImportSelector(), o2.getImportSelector());
+```
+hashmap:computeIfAbsent,putIfAbsent
+
+stream:flatMap,map,collect,LinkedHashSet::new
+
+接口default方法:default V computeIfAbsent
+
+Predicate接口:
+
+接口内部的接口:interface Group
+
+接口内部的class:interface Group ,class entry
+
+
+##命名:
+DeferredImport
+GroupingHandler
+Group
+ImportSelector
+Grouping
+register
+processGroupImports
+removeDuplicates
+getInPriorityOrder
