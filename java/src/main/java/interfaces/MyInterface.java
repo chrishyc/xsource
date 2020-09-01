@@ -9,7 +9,7 @@ package interfaces;
  * One thing you are missing is, that the this keyword represents the current "Object"
  * and not current "Class". So, if and when you create an object of this "Interface"
  * (by implementing it in another class of course), the this keyword will represent that specific object.
- *
+ * <p>
  * javap -p -v -l /Users/chris/xsource/java/src/main/java/interfaces/MyInterface.class > /Users/chris/xsource/java/src/main/java/interfaces/MyInterface.load
  *
  * @param <T>
@@ -29,5 +29,12 @@ public interface MyInterface<T> {
     static void testStatic() {
         String a = "123456";
         System.out.println(a);
+    }
+    
+    interface InnerInterface {
+        void innerMethod();
+        
+        default void innerDefault() {
+        }
     }
 }
