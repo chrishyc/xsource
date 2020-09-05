@@ -1,6 +1,6 @@
 package jmx.mxbean;
 
-public interface HelloMXBean {
+public interface Hello1MXBean {
     public void sayHello();
     
     public int add(int x, int y);

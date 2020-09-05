@@ -1,6 +1,6 @@
 package jmx.client;
 
-import jmx.mxbean.HelloMXBean;
+import jmx.mxbean.Hello1MXBean;
 
 import javax.management.*;
 import javax.management.remote.JMXConnector;
@@ -56,7 +56,7 @@ public class Client {
         
         //管理 Hello MBean
         ObjectName mbeanName = new ObjectName("jmx:type=MyNotification");
-        HelloMXBean mbeanProxy = JMX.newMBeanProxy(mbsc, mbeanName, HelloMXBean.class, true);
+        Hello1MXBean mbeanProxy = JMX.newMBeanProxy(mbsc, mbeanName, Hello1MXBean.class, true);
         echo("\nAdd notification listener...");
         mbsc.addNotificationListener(mbeanName, listener, null, null);
         
