@@ -1,6 +1,6 @@
 package jmx.mxbean;
 
-public class HelloMX implements HelloMXBean{
+public class Hello1 implements Hello1MXBean{
     public void sayHello() {
         System.out.println("hello, world");
     }
@@ -25,7 +25,7 @@ public class HelloMX implements HelloMXBean{
     
     @Override
     public Book getBook() {
-        return book;
+        return new Book();
     }
     
     @Override

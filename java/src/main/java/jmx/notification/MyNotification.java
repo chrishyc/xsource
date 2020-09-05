@@ -1,14 +1,14 @@
 package jmx.notification;
 
 import jmx.mxbean.Book;
-import jmx.mxbean.HelloMXBean;
+import jmx.mxbean.Hello1MXBean;
 
 import javax.management.AttributeChangeNotification;
 import javax.management.MBeanNotificationInfo;
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 
-public class MyNotification extends NotificationBroadcasterSupport implements HelloMXBean {
+public class MyNotification extends NotificationBroadcasterSupport implements Hello1MXBean {
     private int seq = 0;
     
     public void sayHello() {
