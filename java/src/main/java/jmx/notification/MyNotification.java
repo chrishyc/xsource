@@ -1,6 +1,5 @@
 package jmx.notification;
 
-import jmx.mbean.HelloMBean;
 import jmx.mxbean.Book;
 import jmx.mxbean.HelloMXBean;
 
@@ -10,8 +9,14 @@ import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 
 public class MyNotification extends NotificationBroadcasterSupport implements HelloMXBean {
+    private int seq = 0;
+    
     public void sayHello() {
         System.out.println("hello, world");
+        Notification notify =
+                //通知名称；谁发起的通知；序列号；发起通知时间；发送的消息
+                new Notification("jack.hi", this, ++seq, System.currentTimeMillis(), "jack");
+        sendNotification(notify);
     }
     
     public int add(int x, int y) {
@@ -53,12 +58,12 @@ public class MyNotification extends NotificationBroadcasterSupport implements He
     //返回这个MBean将会发送的通知类型信息
     @Override
     public MBeanNotificationInfo[] getNotificationInfo() {
-        String[] types = new String[] { AttributeChangeNotification.ATTRIBUTE_CHANGE };
+        String[] types = new String[]{AttributeChangeNotification.ATTRIBUTE_CHANGE};
         String name = AttributeChangeNotification.class.getName();
         String description = "An attribute of this MBean has changed";
         MBeanNotificationInfo info = new MBeanNotificationInfo(types, name,
                 description);
-        return new MBeanNotificationInfo[] { info };
+        return new MBeanNotificationInfo[]{info};
     }
     
     private final String name = "Reginald";
