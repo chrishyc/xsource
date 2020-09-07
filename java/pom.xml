@@ -89,5 +89,10 @@
             <artifactId>metrics-jmx</artifactId>
             <version>4.1.7</version>
         </dependency>
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-healthchecks</artifactId>
+            <version>4.1.7</version>
+        </dependency>
     </dependencies>
 </project>
