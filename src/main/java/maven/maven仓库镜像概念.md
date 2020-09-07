@@ -67,5 +67,5 @@ repo,repo1 = repo or repo1
 
 ###4.案例
 动态更换镜像仓库:
-mvn help:effective-settings -Dmi='*'
+mvn help:effective-settings -Daliyun='*'
 
