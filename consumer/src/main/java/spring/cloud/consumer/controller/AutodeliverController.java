@@ -34,4 +34,12 @@ public class AutodeliverController {
         Integer forObject = restTemplate.getForObject(url, Integer.class);
         return forObject;
     }
+    
+    @GetMapping("/checkState1/{userId}")
+    public Integer findResumeOpenState1(@PathVariable Long userId) {
+        // 使用ribbon不需要我们自己获取服务实例然后选择一个那么去访问了（自己的负载均衡）
+        String url = "http://eureka-provider/resume/openstate/" + userId;  // 指定服务名
+        Integer forObject = restTemplate.getForObject(url, Integer.class);
+        return forObject;
+    }
 }
