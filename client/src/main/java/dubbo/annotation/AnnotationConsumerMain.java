@@ -6,6 +6,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class AnnotationConsumerMain {
     public static void main(String[] args) throws Exception {
         System.out.println("-------------");
@@ -13,10 +16,14 @@ public class AnnotationConsumerMain {
         context.start();
         // 获取消费者组件
         ComsumerComponet service = context.getBean(ComsumerComponet.class);
+        
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
         while (true) {
-            Thread.sleep(3000);
-            String hello = service.sayHello("world");
-            System.out.println("result:" + hello);
+            executorService.execute(() -> {
+                service.monitorMethodA();
+                service.monitorMethodB();
+                service.monitorMethodC();
+            });
         }
     }
     
