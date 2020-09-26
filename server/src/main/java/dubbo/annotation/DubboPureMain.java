@@ -16,7 +16,7 @@ public class DubboPureMain {
     }
     
     @Configuration
-    @EnableDubbo(scanBasePackages = "dubbo")
+    @EnableDubbo(scanBasePackages = "dubbo.impl")
     @PropertySource("classpath:/dubbo-provider.properties")
     static class ProviderConfiguration {
         @Bean

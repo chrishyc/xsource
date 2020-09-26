@@ -22,8 +22,8 @@ public class AnnotationConsumerMain {
     
     @Configuration
     @PropertySource("classpath:/dubbo-consumer.properties")
-    @ComponentScan(basePackages = "dubbo")
-    @EnableDubbo
+    @ComponentScan(basePackages = "dubbo.annotation")
+    @EnableDubbo(scanBasePackages = "dubbo.annotation")
     static class ConsumerConfiguration {
     
     }

@@ -1,6 +1,6 @@
 package dubbo.annotation;
 
-import demo.HelloService;
+import com.rpc.api.service.HelloService;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Component;
 
@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 public class ComsumerComponet {
     @DubboReference
     private HelloService helloService;
-    public String  sayHello(String name){
-        return  helloService.sayHi(name);
+    
+    public String sayHello(String name) {
+        return helloService.sayHello(name, 1);
     }
-
+    
 }
