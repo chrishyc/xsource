@@ -14,7 +14,8 @@ public class DubboInvokeFilter implements Filter {
             // 执行方法
             return invoker.invoke(invocation);
         } finally {
-            System.out.println("invoke time:" + (System.currentTimeMillis() - startTime) + "毫秒");
+            System.out.println("invoke time:" + (System.currentTimeMillis() - startTime) + "毫秒" +
+                    ",clientIp:" + RpcContext.getContext().getAttachment("clientIp"));
         }
         
     }

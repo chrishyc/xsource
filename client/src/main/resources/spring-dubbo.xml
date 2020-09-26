@@ -15,7 +15,7 @@
     <dubbo:registry address="zookeeper://127.0.0.1:2181" timeout="10000"/>
 
     <!-- 生成远程服务代理，可以和本地bean一样使用demoService -->
-    <dubbo:reference id="helloService" interface="demo.HelloService" timeout="4000" retries="2">
-        <dubbo:method name="sayHi" async="true" />
+    <dubbo:reference id="helloService" interface="com.rpc.api.service.HelloService" timeout="4000" retries="2">
+        <dubbo:method name="sayHello" async="true" />
     </dubbo:reference>
 </beans>
