@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: hello-gateway
+          uri: https://leetcode.com/
+          predicates:
+            - Path=/problemset/*
