@@ -14,10 +14,42 @@ public class GatewayApplication {
     }
     
     @Bean
-    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+    public RouteLocator pathRouteLocator(RouteLocatorBuilder builder) {
         return builder
                 .routes()
                 .route("path_route", r -> r.path("/about").uri("http://ityouknow.com"))
+                .build();
+    }
+    
+    @Bean
+    public RouteLocator cookieRouteLocator(RouteLocatorBuilder builder) {
+        return builder
+                .routes()
+                .route("path_route", r -> r.cookie("Cookie", "*").uri("http://ityouknow.com"))
+                .build();
+    }
+    
+    @Bean
+    public RouteLocator headerRouteLocator(RouteLocatorBuilder builder) {
+        return builder
+                .routes()
+                .route("path_route", r -> r.header("Cookie", "*").uri("http://ityouknow.com"))
+                .build();
+    }
+    
+    @Bean
+    public RouteLocator methodRouteLocator(RouteLocatorBuilder builder) {
+        return builder
+                .routes()
+                .route("path_route", r -> r.method("GET", "POST").uri("http://ityouknow.com"))
+                .build();
+    }
+    
+    @Bean
+    public RouteLocator queryRouteLocator(RouteLocatorBuilder builder) {
+        return builder
+                .routes()
+                .route("path_route", r -> r.query("red", "gree").uri("http://ityouknow.com"))
                 .build();
     }
 }
