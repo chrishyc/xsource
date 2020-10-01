@@ -7,6 +7,9 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 手动刷新:curl -X POST 'http://localhost:8002/actuator/refresh'
+ */
 @SpringBootApplication
 public class ConfigclientApplication {
     
@@ -14,12 +17,13 @@ public class ConfigclientApplication {
         SpringApplication.run(ConfigclientApplication.class, args);
     }
     
+    @RefreshScope
     @RestController
     public class HelloController {
         @Value("${dev.hello}")
         private String hello;
         
-        @RefreshScope
+        
         @RequestMapping("/hello")
         public String hello() {
             return hello;
