@@ -1,0 +1,22 @@
+server:
+  port: 9090
+spring:
+  application:
+    name: cloud-stream-producer
+  cloud:
+    stream:
+      binders: # 绑定MQ服务信息（此处我们是RabbitMQ）
+        RabbitBinder: # 给Binder定义的名称，用于后面的关联
+          type: rabbit # MQ类型，如果是Kafka的话，此处配置kafka
+          environment: # MQ环境配置（用户名、密码等）
+            spring:
+              rabbitmq:
+                host: localhost
+                port: 5672
+                username: guest
+                password: guest
+      bindings: # 关联整合通道和binder对象
+        output: # output是我们定义的通道名称，此处不能乱改
+          destination: lagouExchange # 要使用的Exchange名称（消息队列主题名称）
+          content-type: text/plain # application/json # 消息类型设置，比如json
+          binder: RabbitBinder # 关联MQ服务
