@@ -1,0 +1,10 @@
+server:
+  port: 9411
+management:
+  metrics:
+    web:
+      server:
+        request:
+          autotime:
+            enabled: false
+
