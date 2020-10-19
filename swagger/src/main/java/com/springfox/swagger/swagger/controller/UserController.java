@@ -1,5 +1,6 @@
 package com.springfox.swagger.swagger.controller;
 
+import com.springfox.swagger.swagger.model.User2;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class UserController {
     }
     
     @GetMapping("/find/{id}")
-    public List<User> findById(@PathVariable("id") int id) {
+    public List<User2> findById(@PathVariable("id") int id) {
         return new ArrayList<>();
     }
     
