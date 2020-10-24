@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
  * https://www.cnblogs.com/0201zcr/p/5131602.html
  * https://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index
  *
- *
+ * access_token vs refresh_token:https://www.cnblogs.com/blowing00/p/4524132.html
  */
 @RestController
 public class OauthController {
