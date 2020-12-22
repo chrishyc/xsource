@@ -5,6 +5,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * problem:
+ * 1.共享资源/共享队列
+ * 2.消费者/生产者协作通知机制
+ * 3.多消费者/生产者线程管理
+ */
 public class Blockqueue {
     private static BlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<>(100);
     public static Integer sharedData = 0;

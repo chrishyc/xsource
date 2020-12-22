@@ -4,6 +4,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * problem:
+ * 1.共享资源/共享队列
+ * 2.消费者/生产者协作通知机制
+ * 3.多消费者/生产者线程管理
+ * <p>
  * got:
  * 1.productor/consumer以runnable形式展示
  * 2.object wait&notifyAll,不能使用if需要使用while
