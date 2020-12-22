@@ -5,6 +5,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * problem:
+ * 1.共享资源/共享队列
+ * 2.消费者/生产者协作通知机制
+ * 3.多消费者/生产者线程管理
+ */
 public class ReentryNotify {
     public static final int FULL = 100;
     public static final int EMPTY = 0;
