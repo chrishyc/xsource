@@ -4,6 +4,9 @@ package annotation;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 1.注解在哪用
@@ -12,10 +15,10 @@ import java.util.Arrays;
  */
 public class Sample {
     @Test
-    public void testCombinationAnnotation(){
+    public void testCombinationAnnotation() {
         System.out.println(Arrays.toString(Combination.class.getAnnotations()));
     }
-
+    
     public static void main(String[] args) {
         System.out.println(InheritedTest.class.isAnnotationPresent(SQL.class));
     }

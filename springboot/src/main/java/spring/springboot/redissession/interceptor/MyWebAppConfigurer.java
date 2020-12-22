@@ -2,15 +2,15 @@ package spring.springboot.redissession.interceptor;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 
 @Configuration(proxyBeanMethods = false)
-public class MyWebAppConfigurer extends WebMvcConfigurerAdapter{
+public class MyWebAppConfigurer implements WebMvcConfigurer {
     
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new RequestInterceptor()).addPathPatterns("/**").excludePathPatterns("/login/**","/error");
-        super.addInterceptors(registry);
+        registry.addInterceptor(new RequestInterceptor());
     }
 }
