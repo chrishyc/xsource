@@ -1,5 +1,12 @@
 package spring.springboot.redissession.interceptor;
 
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.session.config.annotation.web.http.SpringHttpSessionConfiguration;
+import org.springframework.session.data.redis.RedisIndexedSessionRepository;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
+import org.springframework.session.web.http.SessionRepositoryFilter;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -7,11 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
-import org.springframework.session.data.redis.config.annotation.web.http.*;
-import org.springframework.session.data.redis.*;
-import org.springframework.data.redis.core.*;
-import org.springframework.session.config.annotation.web.http.*;
-import org.springframework.session.web.http.*;
+
 /**
  * 请求权限验证
  */
@@ -20,19 +23,20 @@ public class RequestInterceptor implements HandlerInterceptor {
     /**
      * 之前执行（进入Handler处理之前）
      * 可以进行权限验证
-     *
+     * <p>
      * {@link EnableRedisHttpSession}redis缓存session
      * 自动配置{@link RedisHttpSessionConfiguration}中
      * 注入{@link RedisIndexedSessionRepository}
      * {@link RedisTemplate}
-     *
+     * <p>
      * 他的父类{@link SpringHttpSessionConfiguration}注入{@link SessionRepositoryFilter}
      * 核心逻辑就在{@link SessionRepositoryFilter#doFilterInternal}
      * 会生成两个装饰类{@link SessionRepositoryFilter.SessionRepositoryRequestWrapper}
      * {@link SessionRepositoryFilter.SessionRepositoryResponseWrapper}
-     *
+     * <p>
      * {@link SessionRepositoryFilter.SessionRepositoryRequestWrapper#getSession()}类
      * 使用注入的{@link RedisIndexedSessionRepository}来存储session
+     *
      * @param request
      * @param response
      * @param handler
@@ -44,7 +48,9 @@ public class RequestInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession();
         System.out.println("==========>>>>sessionId:" + session.getId());
         System.out.println("======SESSION::::" + session);
-        
+        if (handler instanceof HandlerMethod) {
+            return true;
+        }
         Enumeration<String> attrs = session.getAttributeNames();
         // 遍历attrs中的
         while (attrs.hasMoreElements()) {
