@@ -6,7 +6,7 @@
 
     <groupId>com.xsource</groupId>
     <artifactId>xsource</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
 <!--        <modules>-->
 <!--            <module>agent</module>-->
@@ -413,8 +413,8 @@
                 <configuration>
                     <!--反射获取方法的形参名称-->
                     <compilerArgument>-parameters</compilerArgument>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>

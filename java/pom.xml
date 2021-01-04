@@ -94,5 +94,9 @@
             <artifactId>metrics-healthchecks</artifactId>
             <version>4.1.7</version>
         </dependency>
+        <dependency>
+            <groupId></groupId>
+            <artifactId></artifactId>
+        </dependency>
     </dependencies>
 </project>
