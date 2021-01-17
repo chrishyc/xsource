@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan(basePackages = {
-        "ioc.abs",
+        "ioc",
         "ioc.eventListener",
         "ioc.processor.beanfactorypostprocessor",
         "ioc.processor.beanpostprocessor",

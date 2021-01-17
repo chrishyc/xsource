@@ -14,7 +14,7 @@ public class Sample {
      */
     @Test
     public void testXmlAop() {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("aop.xml");
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         Target target = ac.getBean(Target.class);
         target.transfer();
     }
