@@ -21,7 +21,7 @@ import java.nio.channels.FileChannel;
  * https://mp.weixin.qq.com/s?__biz=MzIwMzY1OTU1NQ==&mid=2247483792&idx=1&sn=bf48352a05d4727b69b9e3dd02663b91&chksm=96cd41dca1bac8caafb4f4a90fd1a6887c9e49fd221225080f657037ebe57c2e8cd438198c08&scene=21#wechat_redirect
  */
 public class GetChannel {
-    private static String name = "data.txt";
+    private static String name = "java/src/main/java/nio/data.txt";
     private static final int BSIZE = 1024;
     
     public static void main(String[] args) {
