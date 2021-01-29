@@ -1,0 +1,18 @@
+package rules
+
+import com.kie.pojo.Car;
+import com.kie.pojo.Person;
+
+rule "car-discount>30"
+when
+    $car : Car(person.age > 30)
+    then
+        $car.setDiscount(80);
+    end
+
+rule "car-discount<=30"
+when
+    $car : Car(person.age <= 30)
+    then
+        $car.setDiscount(90);
+    end
