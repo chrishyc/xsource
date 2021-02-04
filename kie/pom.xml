@@ -16,6 +16,8 @@
         <drools.version>7.5.0.Final</drools.version>
         <commons-lang3.version>3.7</commons-lang3.version>
         <junit.version>4.12</junit.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jbpm.version>6.0.0.Final</jbpm.version>
     </properties>
 
     <dependencies>
@@ -45,19 +47,13 @@
             <version>${drools.version}</version>
         </dependency>
 
-        <!-- tools -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
-
 
     </dependencies>
 </project>

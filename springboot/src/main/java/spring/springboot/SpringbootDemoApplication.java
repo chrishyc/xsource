@@ -1,6 +1,5 @@
 package spring.springboot;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.*;
@@ -12,8 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
-import org.springframework.boot.env.*;
-import org.springframework.boot.autoconfigure.condition.*;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 /**
@@ -46,16 +43,16 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
  * {@link PropertiesPropertySourceLoader#loadProperties}加载配置文件
  * <p>
  * 4.run方法开始运行bean工厂{@link AbstractApplicationContext#refresh()}
- *
+ * <p>
  * 5.{@link SpringApplication}构造时,会从classpath目录所有jar中加载spring.factories,
  * 从中获取key={@link org.springframework.context.ApplicationContextInitializer}
  * key={@link org.springframework.context.ApplicationListener}
  * key={@link org.springframework.boot.SpringApplicationRunListener}
  * key={@link org.springframework.boot.SpringBootExceptionReporter}
- *
+ * <p>
  * 6.key={@link org.springframework.boot.autoconfigure.EnableAutoConfiguration}
  * 任何需要实现自动配置的类,key都为此值
- *
+ * <p>
  * key={@link org.springframework.boot.autoconfigure.AutoConfigurationImportFilter}
  * ```
  * org.springframework.boot.autoconfigure.condition.OnBeanCondition,\
@@ -64,26 +61,19 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
  * ```
  * 自动配置过滤逻辑{@link AutoConfigurationImportSelector#filter}
  * {@link OnClassCondition#getOutcomes}
- *
+ * <p>
  * META-INF/spring-autoconfigure-metadata.properties配置classpath中所有META-INF/spring.factories中申明的所有***AutoConfiguaration以及
  * 他们对应的OnClassCondition，通过此处的OnClassCondition来决定这些***AutoConfiguaration是否被加载，最后把能加载的类
  * 存入{@link AutoConfigurationImportSelector.AutoConfigurationEntry}中
- *
- *
  */
-@MapperScan(basePackages = {"spring.springboot.mapper"})
+//@MapperScan(basePackages = {"spring.springboot.mapper"})
 @SpringBootApplication
-@EnableCaching
-@EnableRedisHttpSession
-public class SpringbootDemoApplication extends SpringBootServletInitializer {
+@ComponentScan(basePackages = "spring.springboot.pojo")
+//@EnableCaching
+//@EnableRedisHttpSession
+public class SpringbootDemoApplication {
     
     public static void main(String[] args) {
         SpringApplication.run(SpringbootDemoApplication.class, args);
     }
-    
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-        return builder.sources(SpringbootDemoApplication.class);
-    }
-    
 }
