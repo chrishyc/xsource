@@ -36,6 +36,15 @@ public class Sample {
         ApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
         MyComponent myComponent = ac.getBean(MyComponent.class);
         System.out.println(myComponent);
+//        MyImportSelector myImportSelector = ac.getBean(MyImportSelector.class);
+//        System.out.println(myImportSelector);
+    }
+    
+    @Test
+    public void testAnnotationConfigScan() {
+        ApplicationContext ac = new AnnotationConfigApplicationContext("ioc");
+        MyComponent myComponent = ac.getBean(MyComponent.class);
+        System.out.println(myComponent);
         MyImportSelector myImportSelector = ac.getBean(MyImportSelector.class);
         System.out.println(myImportSelector);
     }
