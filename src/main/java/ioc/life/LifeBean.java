@@ -49,26 +49,6 @@ public class LifeBean implements InitializingBean, ApplicationContextAware, Disp
     }
 
     /**
-     * 初始化
-     * @param bean
-     * @param beanName
-     * @return
-     * @throws BeansException
-     */
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        System.out.println("LifeBean.BeanPostProcessor.postProcessBeforeInitialization");
-        return bean;
-    }
-
-
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        System.out.println("LifeBean.BeanPostProcessor.postProcessAfterInitialization");
-        return bean;
-    }
-
-    /**
      * 实例化
      * @param beanName
      * @return
@@ -86,7 +66,27 @@ public class LifeBean implements InitializingBean, ApplicationContextAware, Disp
         System.out.println("LifeBean.InstantiationAwareBeanPostProcessor.postProcessAfterInstantiation");
         return true;
     }
-
+    
+    
+    /**
+     * 初始化
+     * @param bean
+     * @param beanName
+     * @return
+     * @throws BeansException
+     */
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println("LifeBean.BeanPostProcessor.postProcessBeforeInitialization");
+        return bean;
+    }
+    
+    
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println("LifeBean.BeanPostProcessor.postProcessAfterInitialization");
+        return bean;
+    }
 
     @Override
     public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)
