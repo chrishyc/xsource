@@ -1,5 +1,6 @@
 package ioc.cycle;
 
+import demo.spring.annotation.Autowired;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 //@Lazy
 @Component
 public class TestBean implements InitializingBean, ApplicationContextAware {
+    @Autowired
     private CycleBean cycleBean;
 
     public void setCycleBean(CycleBean cycleBean) {

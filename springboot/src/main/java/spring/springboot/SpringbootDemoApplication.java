@@ -68,7 +68,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
  */
 //@MapperScan(basePackages = {"spring.springboot.mapper"})
 @SpringBootApplication
-@ComponentScan(basePackages = "spring.springboot.pojo")
+@ComponentScan(basePackages = "spring.springboot.conditional")
 //@EnableCaching
 //@EnableRedisHttpSession
 public class SpringbootDemoApplication {
