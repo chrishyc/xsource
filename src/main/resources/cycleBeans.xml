@@ -15,11 +15,11 @@
     <!--    </bean>-->
 
     <!--prototype 单利 bean循环依赖(构造方法无法解决) set可以解决-->
-    <bean id="testBean" class="ioc.cycle.TestBean" scope="singleton" lazy-init="false">
-        <property name="cycleBean" ref="cycleBean"/>
-    </bean>
-    <bean id="cycleBean" class="ioc.cycle.CycleBean" scope="singleton" lazy-init="false">
-        <property name="testBean" ref="testBean"/>
-    </bean>
+<!--    <bean id="testBean" class="ioc.cycle.TestBean" scope="singleton" lazy-init="false">-->
+<!--        <property name="cycleBean" ref="cycleBean"/>-->
+<!--    </bean>-->
+<!--    <bean id="cycleBean" class="ioc.cycle.CycleBean" scope="singleton" lazy-init="false">-->
+<!--        <property name="testBean" ref="testBean"/>-->
+<!--    </bean>-->
 
 </beans>
