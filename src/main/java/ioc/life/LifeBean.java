@@ -1,5 +1,6 @@
 package ioc.life;
 
+import demo.spring.annotation.Component;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.DisposableBean;

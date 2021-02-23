@@ -6,7 +6,7 @@
 
     <!-- aop xml方式-->
     <bean id="advice" class="aop.XmlAdvice"/>
-    <bean id="target" class="aop.pojo.Target2"/>
+<!--    <bean id="target" class="aop.pojo.Target2"/>-->
     <aop:aspectj-autoproxy proxy-target-class="true"/>
     <aop:config proxy-target-class="true">
         <aop:aspect id="aspect" ref="advice">
