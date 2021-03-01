@@ -1,18 +1,20 @@
 package ioc;
 
+import ioc.beanwrapper.Car;
 import ioc.cycle.TestBean;
-import ioc.eventListener.MyApplicationListener;
 import ioc.lazyinit.LazyInitBean;
 import ioc.life.LifeBean;
 import ioc.processor.importcandidate.MyComponent;
-import ioc.processor.importcandidate.MyConfiguration;
 import ioc.processor.importcandidate.MyImportSelector;
 import org.junit.Test;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.beans.PropertyValue;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.context.support.*;
 
 public class Sample {
     @Test
@@ -145,5 +147,20 @@ public class Sample {
     @Test
     public void testDebugPoint() {
     
+    }
+    
+    @Test
+    public void testBeanWrapper() {
+        Car car = new Car();
+        BeanWrapper beanWrapperOfCar = PropertyAccessorFactory.forBeanPropertyAccess(car);
+        
+        PropertyValue brandValue = new PropertyValue("brand", "东风");
+        
+        PropertyValue maxSpeedValue = new PropertyValue("maxSpeed", 333);
+        PropertyValue priceValue = new PropertyValue("price", 202020);
+    
+        beanWrapperOfCar.setPropertyValue(brandValue);
+        beanWrapperOfCar.setPropertyValue(maxSpeedValue);
+        beanWrapperOfCar.setPropertyValue(priceValue);
     }
 }

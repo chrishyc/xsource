@@ -3,15 +3,12 @@ package spring.springboot;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.*;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.*;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+
+//import org.springframework.context.annotation.ConfigurationClassParser;
 
 /**
  * @author chris
@@ -68,7 +65,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
  */
 //@MapperScan(basePackages = {"spring.springboot.mapper"})
 @SpringBootApplication
-@ComponentScan(basePackages = "spring.springboot.conditional")
+@ComponentScan(basePackages = {"spring.springboot.conditional", "spring.springboot.controller"})
 //@EnableCaching
 //@EnableRedisHttpSession
 public class SpringbootDemoApplication {

@@ -10,7 +10,7 @@ import spring.springboot.service.ApiCommentService;
 @RequestMapping("api")
 public class ApiCommentController {
 
-    @Autowired
+//    @Autowired
     private ApiCommentService commentService;
 
 

@@ -14,8 +14,8 @@ import java.util.Calendar;
  */
 @RestController
 public class DemoController {
-    
-    @Autowired
+
+//    @Autowired
     private CommentService commentService;
     
     @RequestMapping(value = "/springboot", produces = "application/json; charset=utf-8")
