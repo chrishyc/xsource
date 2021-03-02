@@ -154,10 +154,10 @@ public class Sample {
         Car car = new Car();
         BeanWrapper beanWrapperOfCar = PropertyAccessorFactory.forBeanPropertyAccess(car);
         
-        PropertyValue brandValue = new PropertyValue("brand", "东风");
+        PropertyValue brandValue = new PropertyValue("brand", 124);
         
-        PropertyValue maxSpeedValue = new PropertyValue("maxSpeed", 333);
-        PropertyValue priceValue = new PropertyValue("price", 202020);
+        PropertyValue maxSpeedValue = new PropertyValue("maxSpeed", "333");
+        PropertyValue priceValue = new PropertyValue("price", "324.0");
     
         beanWrapperOfCar.setPropertyValue(brandValue);
         beanWrapperOfCar.setPropertyValue(maxSpeedValue);
