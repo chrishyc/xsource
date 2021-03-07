@@ -1,25 +1,25 @@
-package aop.pojo;
+package spring.springboot.service;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
 
-@Component
-public class Target2 implements InitializingBean {
+@Service
+public class Target implements InitializingBean {
     
-    @Value("${user.name}")
+    @Value("${user.age}")
     private Integer name;
     
     @Autowired
-    private Target3 target3;
+    private CommentService service;
     
     @Resource
-    private AnnotationAdvice annotationAdvice;
+    private ApiCommentService apiCommentService;
     
     @PostConstruct
     public void init() {
@@ -27,7 +27,6 @@ public class Target2 implements InitializingBean {
     }
     
     public void transfer() {
-//        throw new RuntimeException("no error");
         Map<Integer, List<Integer>> out = new HashMap<>();
         Iterator<Map.Entry<Integer, List<Integer>>> it = out.entrySet().iterator();
         while (it.hasNext()) {
