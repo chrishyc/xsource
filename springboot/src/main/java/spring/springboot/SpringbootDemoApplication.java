@@ -65,7 +65,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  */
 //@MapperScan(basePackages = {"spring.springboot.mapper"})
 @SpringBootApplication
-@ComponentScan(basePackages = {"spring.springboot.conditional", "spring.springboot.controller"})
+@ComponentScan(basePackages = {"spring.springboot.conditional", "spring.springboot.service","spring.springboot.aspect"})
 //@EnableCaching
 //@EnableRedisHttpSession
 public class SpringbootDemoApplication {
