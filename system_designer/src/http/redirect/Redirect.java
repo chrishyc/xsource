@@ -1,4 +1,4 @@
-package shorturl.redirect;
+package http.redirect;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
