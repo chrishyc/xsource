@@ -64,10 +64,11 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  * 存入{@link AutoConfigurationImportSelector.AutoConfigurationEntry}中
  */
 //@MapperScan(basePackages = {"spring.springboot.mapper"})
-@SpringBootApplication
-@ComponentScan(basePackages = {"spring.springboot.conditional", "spring.springboot.service","spring.springboot.aspect"})
+
+//@ComponentScan(basePackages = {"spring.springboot.conditional", "spring.springboot.service","spring.springboot.aspect"})
 //@EnableCaching
 //@EnableRedisHttpSession
+@SpringBootApplication
 public class SpringbootDemoApplication {
     
     public static void main(String[] args) {
