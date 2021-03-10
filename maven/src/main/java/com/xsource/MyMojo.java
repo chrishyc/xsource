@@ -18,15 +18,13 @@ package com.xsource;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 
-/**
- * Goal which touches a timestamp file.
- *
- * @goal chris
- * @phase process-sources
- */
+@Mojo(name = "chris", defaultPhase = LifecyclePhase.COMPILE)
 public class MyMojo
         extends AbstractMojo {
     /**
@@ -35,10 +33,24 @@ public class MyMojo
      * @parameter expression="${project.build.directory}"
      * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}", required = true )
     private File outputDirectory;
+    
+    @Parameter
+    private String fruit;
+    
+    @Parameter
+    private String book;
+    
+    @Parameter
+    private String hobby;
     
     public void execute()
             throws MojoExecutionException {
-        System.out.println("==================hi,i am chris==============");
+        System.out.println("==================hi,i am chris==============:\n" +
+                "project.build.directory:" + outputDirectory + "\n" +
+                "fruit:" + fruit + "\n" +
+                "book:" + book + "\n" +
+                "hobby:" + hobby + "\n");
     }
 }

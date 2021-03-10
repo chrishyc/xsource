@@ -139,12 +139,18 @@
                 <version>1.0.0</version>
                 <executions>
                     <execution>
-                        <phase>clean</phase>
+<!--                        <phase>clean</phase>-->
                         <goals>
                             <goal>chris</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                    <fruit>orange</fruit>
+                    <book>be hated</book>
+                    <hobby>eat</hobby>
+                </configuration>
             </plugin>
         </plugins>
     </build>
