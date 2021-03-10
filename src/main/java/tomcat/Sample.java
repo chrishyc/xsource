@@ -25,7 +25,7 @@ public class Sample {
     public void textTomcat() throws LifecycleException {
         RestTemplate template = new RestTemplate();
         Tomcat tomcat = new Tomcat();
-        File appDir = new File("/Users/chris/xsource/target/xsource-1.0-SNAPSHOT.war");
+        File appDir = new File("/Users/chris/workspace/xsource/target/xsource-1.0-SNAPSHOT.war");
         // url 和 path 分别代表这个应用在 Tomcat 中的访问路径和这个应用实际的物理路径
         tomcat.addWebapp(null, "/", appDir.getAbsolutePath());
         tomcat.start();
