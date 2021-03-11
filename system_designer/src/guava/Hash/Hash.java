@@ -8,12 +8,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hash {
+    
+    /**
+     * md5,sha,murmur比较
+     */
     @Test
     public void test() {
         HashFunction hf = Hashing.sha256();
         HashCode hc = hf.newHasher()
                 .putLong(10L)
-                .putString("CHRIS", Charsets.UTF_8)
+                .putString("chris", Charsets.UTF_8)
+                .hash();
+        System.out.println(hc.asLong());
+    }
+    
+    @Test
+    public void testMurmurHash(){
+        HashFunction hf = Hashing.murmur3_128(); // 32bit version available as well
+        HashCode hc = hf.newHasher()
+                .putLong(10L)
+                .putString("chris", Charsets.UTF_8)
                 .hash();
         System.out.println(hc.asLong());
     }
