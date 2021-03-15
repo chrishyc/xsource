@@ -8,6 +8,10 @@ import java.net.Socket;
 
 /**
  * @author chris
+ * <p>
+ * lsof -i tcp:9877
+ * COMMAND   PID  USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+ * java    11663 chris  137u  IPv6 0x2056b827c566e7df      0t0  TCP *:9877 (LISTEN)
  */
 public class EchoServer {
     private final ServerSocket mServerSocket;
@@ -20,10 +24,17 @@ public class EchoServer {
     public void run() throws IOException {
         // 2. 开始接受客户连接
         Socket client = mServerSocket.accept();
-        handleClient(client);
+        new Thread(() -> {
+            try {
+                handleClient(client);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        
     }
     
-    private void handleClient(Socket socket) throws IOException {
+    public void handleClient(Socket socket) throws IOException {
         // 3. 使用 socket 进行通信 ...
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
