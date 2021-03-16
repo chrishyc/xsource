@@ -15,4 +15,5 @@ sudo cp lib/error.c  /usr/include/
 ## 5.编译执行.c程序
 gcc PrintPid.c
 ./PrintPid.o
-
+## 6.查看汇编指令代码
+gcc -S PrintPid.c
