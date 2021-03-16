@@ -439,6 +439,33 @@
                     <path>/</path>
                 </configuration>
             </plugin>
+            <plugin>
+                <!--已下载maven-shade-plugin源码-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactSet>
+                        <excludes>
+                        </excludes>
+                    </artifactSet>
+                    <filters>
+                        <filter>hello</filter>
+                    </filters>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!--已下载源码-->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 </project>
