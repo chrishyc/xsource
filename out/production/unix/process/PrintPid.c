@@ -1,5 +1,4 @@
-#include <unistd.h>
-#include <stdio.h>
+#include <apue.h>
 int main(){
         printf("pid: %ld\n",(long)getpid());
         return 0;

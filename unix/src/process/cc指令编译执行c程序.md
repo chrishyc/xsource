@@ -4,3 +4,4 @@ open abc.c   // 打开
 cc -c abc.c  // 编译
 cc abc.o     // 链接
 ./a.out      // 运行
+
