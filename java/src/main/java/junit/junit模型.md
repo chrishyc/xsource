@@ -22,3 +22,6 @@ https://www.cnblogs.com/jinsdu/p/4709270.html
 https://www.codenong.com/b-junit-4-custom-runners/
 
 ## junit扩展
+
+## junit spring springboot
+https://www.yuque.com/binarylei/spring/junit
