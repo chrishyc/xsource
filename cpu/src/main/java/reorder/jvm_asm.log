@@ -1,0 +1,158 @@
+Classfile /Users/chris/workspace/xsource/cpu/target/classes/reorder/DCL.class
+  Last modified 2021-3-21; size 846 bytes
+  MD5 checksum ffa2979f5ab866ff01ecc5f23e6fb605
+  Compiled from "DCL.java"
+public class reorder.DCL
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #9.#31         // java/lang/Object."<init>":()V
+   #2 = Fieldref           #4.#32         // reorder/DCL.a:I
+   #3 = Fieldref           #4.#33         // reorder/DCL.dcl:Lreorder/DCL;
+   #4 = Class              #34            // reorder/DCL
+   #5 = Methodref          #4.#31         // reorder/DCL."<init>":()V
+   #6 = Fieldref           #35.#36        // java/lang/System.err:Ljava/io/PrintStream;
+   #7 = String             #37            // 指令重排序了
+   #8 = Methodref          #38.#39        // java/io/PrintStream.println:(Ljava/lang/String;)V
+   #9 = Class              #40            // java/lang/Object
+  #10 = Utf8               a
+  #11 = Utf8               I
+  #12 = Utf8               dcl
+  #13 = Utf8               Lreorder/DCL;
+  #14 = Utf8               <init>
+  #15 = Utf8               ()V
+  #16 = Utf8               Code
+  #17 = Utf8               LineNumberTable
+  #18 = Utf8               LocalVariableTable
+  #19 = Utf8               this
+  #20 = Utf8               getInstance
+  #21 = Utf8               ()Lreorder/DCL;
+  #22 = Utf8               StackMapTable
+  #23 = Class              #40            // java/lang/Object
+  #24 = Class              #41            // java/lang/Throwable
+  #25 = Utf8               main
+  #26 = Utf8               ([Ljava/lang/String;)V
+  #27 = Utf8               args
+  #28 = Utf8               [Ljava/lang/String;
+  #29 = Utf8               SourceFile
+  #30 = Utf8               DCL.java
+  #31 = NameAndType        #14:#15        // "<init>":()V
+  #32 = NameAndType        #10:#11        // a:I
+  #33 = NameAndType        #12:#13        // dcl:Lreorder/DCL;
+  #34 = Utf8               reorder/DCL
+  #35 = Class              #42            // java/lang/System
+  #36 = NameAndType        #43:#44        // err:Ljava/io/PrintStream;
+  #37 = Utf8               指令重排序了
+  #38 = Class              #45            // java/io/PrintStream
+  #39 = NameAndType        #46:#47        // println:(Ljava/lang/String;)V
+  #40 = Utf8               java/lang/Object
+  #41 = Utf8               java/lang/Throwable
+  #42 = Utf8               java/lang/System
+  #43 = Utf8               err
+  #44 = Utf8               Ljava/io/PrintStream;
+  #45 = Utf8               java/io/PrintStream
+  #46 = Utf8               println
+  #47 = Utf8               (Ljava/lang/String;)V
+{
+  int a;
+    descriptor: I
+    flags:
+
+  static reorder.DCL dcl;
+    descriptor: Lreorder/DCL;
+    flags: ACC_STATIC
+
+  public reorder.DCL();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: aload_0
+         5: bipush        8
+         7: putfield      #2                  // Field a:I
+        10: return
+      LineNumberTable:
+        line 7: 0
+        line 4: 4
+        line 9: 10
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      11     0  this   Lreorder/DCL;
+
+  public static reorder.DCL getInstance();
+    descriptor: ()Lreorder/DCL;
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=2, args_size=0
+         0: getstatic     #3                  // Field dcl:Lreorder/DCL;
+         3: ifnonnull     37
+         6: ldc           #4                  // class reorder/DCL
+         8: dup
+         9: astore_0
+        10: monitorenter
+        11: getstatic     #3                  // Field dcl:Lreorder/DCL;
+        14: ifnonnull     27
+        17: new           #4                  // class reorder/DCL
+        20: dup
+        21: invokespecial #5                  // Method "<init>":()V
+        24: putstatic     #3                  // Field dcl:Lreorder/DCL;
+        27: aload_0
+        28: monitorexit
+        29: goto          37
+        32: astore_1
+        33: aload_0
+        34: monitorexit
+        35: aload_1
+        36: athrow
+        37: getstatic     #3                  // Field dcl:Lreorder/DCL;
+        40: areturn
+      Exception table:
+         from    to  target type
+            11    29    32   any
+            32    35    32   any
+      LineNumberTable:
+        line 12: 0
+        line 13: 6
+        line 14: 11
+        line 15: 17
+        line 17: 27
+        line 19: 37
+      StackMapTable: number_of_entries = 3
+        frame_type = 252 /* append */
+          offset_delta = 27
+          locals = [ class java/lang/Object ]
+        frame_type = 68 /* same_locals_1_stack_item */
+          stack = [ class java/lang/Throwable ]
+        frame_type = 250 /* chop */
+          offset_delta = 4
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: new           #4                  // class reorder/DCL
+         3: dup
+         4: invokespecial #5                  // Method "<init>":()V
+         7: getfield      #2                  // Field a:I
+        10: ifeq          16
+        13: goto          0
+        16: getstatic     #6                  // Field java/lang/System.err:Ljava/io/PrintStream;
+        19: ldc           #7                  // String 指令重排序了
+        21: invokevirtual #8                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        24: return
+      LineNumberTable:
+        line 23: 0
+        line 25: 16
+        line 26: 24
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      25     0  args   [Ljava/lang/String;
+      StackMapTable: number_of_entries = 2
+        frame_type = 0 /* same */
+        frame_type = 15 /* same */
+}
+SourceFile: "DCL.java"
