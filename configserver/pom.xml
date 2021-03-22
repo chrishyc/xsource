@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>springcloud.config</groupId>
-    <artifactId>server</artifactId>
+    <artifactId>configserver</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>server</name>
+    <name>configserver</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

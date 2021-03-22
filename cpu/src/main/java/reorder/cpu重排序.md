@@ -7,6 +7,7 @@ lock指令
 ##4.hotspot内存屏障规范
 volatile内存屏障实现方案,使用硬件lock指令
 ##hanppens-before重排序
+指令重排是jvm完成的吗?
 ##as-if-serial并行执行
 SingleThreadPool串行执行
 线程池拒绝执行策略
