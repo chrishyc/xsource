@@ -1,13 +1,13 @@
 package stub;
 
 
-import pojo.User;
+import kie.User;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.server.*;
 import java.rmi.*;
-import java.io.*;
+
 /**
  <p>There are eight ways to export remote objects:
  *

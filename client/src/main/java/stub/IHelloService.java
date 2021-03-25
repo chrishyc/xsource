@@ -1,7 +1,7 @@
 package stub;
 
 
-import pojo.User;
+import kie.User;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

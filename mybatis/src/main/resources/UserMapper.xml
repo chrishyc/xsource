@@ -7,21 +7,21 @@
     <!--默认为PerpetualCache-->
     <cache/>
 
-    <select id="select" parameterType="java.lang.Integer" resultType="start.pojo.User">
+    <select id="select" parameterType="java.lang.Integer" resultType="start.kie.User">
         select *
         from user_test
         where id = #{id}
     </select>
 
-    <select id="findAll" resultType="start.pojo.User">
+    <select id="findAll" resultType="start.kie.User">
         select *
         from user_test
     </select>
-    <insert id="insert" parameterType="start.pojo.User">
+    <insert id="insert" parameterType="start.kie.User">
         insert into user_test
         values (#{id}, #{username}, #{password})
     </insert>
-    <update id="update" parameterType="start.pojo.User">
+    <update id="update" parameterType="start.kie.User">
         update user_test
         set username=#{username},
             password=#{password}
@@ -35,7 +35,7 @@
 
     <!--where 元素只会在子元素返回任何内容的情况下才插入 “WHERE” 子句。
     而且，若子句的开头为 “AND” 或 “OR”，where 元素也会将它们去除 -->
-    <select id="findByCondition" resultType="start.pojo.User">
+    <select id="findByCondition" resultType="start.kie.User">
         select *
         from user_test
         <where>
@@ -51,7 +51,7 @@
     <!-- 1. 如果传入的是单参数且参数类型是一个List的时候，collection属性值为list
     2. 如果传入的是单参数且参数类型是一个array数组的时候，collection的属性值为array
     3. 如果传入的参数是多个的时候，我们就需要把它们封装成一个Map了，当然单参-->
-    <select id="findByIds" resultType="start.pojo.User">
+    <select id="findByIds" resultType="start.kie.User">
         select *
         from user_test
         <where>
@@ -62,7 +62,7 @@
         </where>
     </select>
 
-    <select id="findByIdsAndName" resultType="start.pojo.User">
+    <select id="findByIdsAndName" resultType="start.kie.User">
         select *
         from user_test
         <where>
@@ -85,12 +85,12 @@
     <!--        <include refid="selectUser"/>-->
     <!--    </select>-->
 
-    <resultMap id="userMap" type="start.pojo.User">
+    <resultMap id="userMap" type="start.kie.User">
         <result column="id" property="id"></result>
         <result column="username" property="username"></result>
         <result column="password" property="password"></result>
         <result column="birthday" property="birthday"></result>
-        <collection property="orderList" ofType="start.pojo.Order">
+        <collection property="orderList" ofType="start.kie.Order">
             <result column="cid" property="uid"/>
             <result column="timestamp" property="ordertime"/>
             <result column="totalcount" property="total"/>

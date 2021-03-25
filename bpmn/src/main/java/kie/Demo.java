@@ -1,4 +1,5 @@
-package com.kie.pojo;
+package kie;
+
 
 import org.junit.jupiter.api.Test;
 import org.kie.api.KieBase;
