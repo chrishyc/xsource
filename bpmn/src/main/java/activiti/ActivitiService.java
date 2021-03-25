@@ -1,4 +1,4 @@
-package com.chris.activiti;
+package activiti;
 
 import org.springframework.stereotype.Service;
 
