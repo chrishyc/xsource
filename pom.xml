@@ -8,12 +8,12 @@
     <artifactId>xsource</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
-    <modules>
-        <module>cpu</module>
-        <module>monitor</module>
-        <module>springcloud</module>
-        <!--        <module>bpmn</module>-->
-    </modules>
+    <!--    <modules>-->
+<!--        <module>cpu</module>-->
+<!--        <module>monitor</module>-->
+<!--        <module>springcloud</module>-->
+<!--        &lt;!&ndash;        <module>bpmn</module>&ndash;&gt;-->
+<!--    </modules>-->
     <!--    <modules>-->
 <!--        <module>kie</module>-->
 <!--        <module>maven</module>-->
