@@ -1,9 +1,11 @@
 package activiti;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.activiti.spring.boot.SecurityAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@Ignore
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class ActivitiApplication {
 

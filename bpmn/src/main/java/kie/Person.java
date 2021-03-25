@@ -1,4 +1,4 @@
-package com.kie.pojo;
+package kie;
 
 public class Person {
     private String name;

@@ -1,7 +1,7 @@
 package client;
 
 
-import pojo.User;
+import kie.User;
 import stub.IHelloService;
 
 import java.net.MalformedURLException;

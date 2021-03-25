@@ -11,7 +11,7 @@
     <modules>
         <module>cpu</module>
         <module>monitor</module>
-        <module>bpmn</module>
+<!--        <module>bpmn</module>-->
     </modules>
     <!--    <modules>-->
 <!--        <module>kie</module>-->

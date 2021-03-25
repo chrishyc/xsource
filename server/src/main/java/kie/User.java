@@ -1,4 +1,4 @@
-package pojo;
+package kie;
 
 import java.io.Serializable;
 

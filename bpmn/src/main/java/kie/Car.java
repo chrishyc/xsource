@@ -1,4 +1,4 @@
-package com.kie.pojo;
+package kie;
 
 public class Car {
     private int discount = 100;
