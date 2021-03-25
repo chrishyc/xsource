@@ -5,6 +5,9 @@
 #include <assert.h>
 #include <sys/types.h>
 
+/**
+ps指令
+**/
 int main() {
         pid_t pid = fork();
 
