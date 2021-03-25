@@ -1,4 +1,4 @@
-package com.chris.activiti;
+package activiti;
 
 import org.activiti.spring.boot.SecurityAutoConfiguration;
 import org.springframework.boot.SpringApplication;
