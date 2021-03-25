@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>cpu</module>
+        <module>monitor</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>kie</module>-->
