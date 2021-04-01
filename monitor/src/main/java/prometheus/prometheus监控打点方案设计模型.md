@@ -12,6 +12,7 @@ c.Micrometer
 ###监控
 b.Prometheus
 [Prometheus使用以及主要概念](https://www.cnblogs.com/chenqionghe/p/10494868.html)
+[prometheus 指标与标签](https://prometheus.io/docs/concepts/data_model/)
 使用Prometheus的原因?
 
 对比open-falcon vs prometheus?
@@ -67,8 +68,14 @@ http://127.0.0.1:3000/
 ##5.grafana alter和prometheus报警区别
 ###使用
 grafana:plane配置，面板管理，sqlite
+使用grafana报警
+优点:视图ui,ha
+缺点:不可使用变量,分组
 
 prometheus:分组，抑制，Silences
+使用prometheus，报警
+优点:分组，变量
+缺点:无视图
 
 方案
 
