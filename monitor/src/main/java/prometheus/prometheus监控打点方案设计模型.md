@@ -27,6 +27,8 @@ c.Grafana
 [grafana api使用](https://grafana.com/docs/grafana/latest/http_api/)
 [grafana变量模板化](https://yunlzheng.gitbook.io/prometheus-book/part-ii-prometheus-jin-jie/grafana/templating)
 [grafana link tuotial](https://grafana.com/docs/grafana/latest/linking/dashboard-links/)
+Grafana是否有临时dashborad?
+
 ###容器化
 f.docker容器化
 g.k8s技术

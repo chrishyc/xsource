@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Hash {
     
@@ -20,10 +22,12 @@ public class Hash {
                 .putString("chris", Charsets.UTF_8)
                 .hash();
         System.out.println(hc.asLong());
+        List<List<Integer>> list = new ArrayList<>();
+        list.add(IntStream.of(new int[]{}).boxed().collect(Collectors.toList()));
     }
     
     @Test
-    public void testMurmurHash(){
+    public void testMurmurHash() {
         HashFunction hf = Hashing.murmur3_128(); // 32bit version available as well
         HashCode hc = hf.newHasher()
                 .putLong(10L)
@@ -41,7 +45,7 @@ public class Hash {
     @Test
     public void testBloomFilter() {
         int size = 1000000;
-        BloomFilter<Integer> bloomFilter = BloomFilter.create(Funnels.integerFunnel(), size,0.0001);
+        BloomFilter<Integer> bloomFilter = BloomFilter.create(Funnels.integerFunnel(), size, 0.0001);
         for (int i = 0; i < size; i++) {
             bloomFilter.put(i);
         }
