@@ -52,6 +52,8 @@ http://localhost:9090/graph
 ###Prometheus组件架构
 ####Prometheus Server
 a.Service Discovery的方式动态管理监控目标
+
+
 b.Prometheus Server的联邦集群能力可以使其从其他的Prometheus Server实例中获取数据
 
 ####Exporters
