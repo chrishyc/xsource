@@ -1,7 +1,7 @@
-##prometheus常见概念
+## prometheus常见概念
 rate速率
 [prometheus常见函数](https://prometheus.io/docs/prometheus/latest/querying/functions/#histogram_quantile)
-##直方图
+## 直方图
 [直方图本身的概念](https://zhuanlan.zhihu.com/p/32857009)
 ##prometheus累加直方图
 [prometheus累加直方图](https://cloud.tencent.com/developer/article/1495303)
@@ -29,3 +29,10 @@ histogram_quantile(0.9, rate(http_request_duration_seconds_bucket[10m]))
 3.bucket数量
 4.期望最大最小数
 [micrometer中使用histogram](https://micrometer.io/docs/concepts#_histograms_and_percentiles)
+
+
+##prometheus expression语言
+###rule expr、description加入变量表达式
+expr: '{__name__=~"order_amount_sum_count.*"}'	
+description: "http://grafana.staging.mifi.pt.xiaomi.com/d/HBrq2YlGk/temporary-dashboard?orgId=1&fullscreen&panelId=2&var-metrics={{ $labels.__name__ }}"
+获取所有标签:label_names()
