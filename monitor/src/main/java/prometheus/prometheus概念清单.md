@@ -32,6 +32,7 @@ histogram_quantile(0.9, rate(http_request_duration_seconds_bucket[10m]))
 
 
 ##prometheus expression语言
+[prometheus template](https://prometheus.io/docs/prometheus/latest/configuration/template_examples/)
 ###rule expr、description加入变量表达式
 expr: '{__name__=~"order_amount_sum_count.*"}'	
 description: "http://grafana.staging.mifi.pt.xiaomi.com/d/HBrq2YlGk/temporary-dashboard?orgId=1&fullscreen&panelId=2&var-metrics={{ $labels.__name__ }}"
