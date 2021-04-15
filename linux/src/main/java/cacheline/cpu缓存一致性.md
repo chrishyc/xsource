@@ -11,10 +11,10 @@ p+n=二极管,n+p+n=三极管
 jvm机器码是jvm可理解的二进制文件
 jvm将其转化为本地计算机机器码
 ##6.cpu可以和显示器,磁盘交互吗?
-![](/Users/chris/workspace/xsource/cpu/src/main/resources/images/cpu架构图.jpg)
+![](/Users/chris/workspace/xsource/linux/src/main/resources/images/cpu架构图.jpg)
 各种设备通过信号与cpu交互
 ##7.cpu的组成部分有哪些?
-![](/Users/chris/workspace/xsource/cpu/src/main/resources/images/cpu内部图.jpg)
+![](/Users/chris/workspace/xsource/linux/src/main/resources/images/cpu内部图.jpg)
 1.指令位置:pc,Program Counter 程序计数器 （记录当前指令地址）,指令不包括数据，指令存储数据
 2.数据:寄存器,暂时存储CPU计算需要用到的数据
 3.数据计算:alu,Arithmetic & Logic Unit 运算单元
@@ -24,11 +24,11 @@ jvm将其转化为本地计算机机器码
 ##8.jvm的组成部分?
 todo:
 ##9.线程切换在cpu中的过程?
-![](/Users/chris/workspace/xsource/cpu/src/main/resources/images/多核cpu.jpg)
+![](/Users/chris/workspace/xsource/linux/src/main/resources/images/多核cpu.jpg)
 需要保存当前线程的寄存器数据,pc数据并记录在缓存中
 并将另一个线程的寄存器数据,pc数据读入寄存器和pc中
 ##10.cpu缓存机制，设置缓存为啥能优化时间?
-![](/Users/chris/workspace/xsource/cpu/src/main/resources/images/存储缓存级别.jpg)
+![](/Users/chris/workspace/xsource/linux/src/main/resources/images/存储缓存级别.jpg)
 1.程序局部性原理
 局部时间、空间原理
 2.数据都是按块读取，程序从磁盘读取一个字节,实际是cpu发送读指令给DMA，DMA执行指令，磁盘通过主存总线直接发给内存(磁盘读取的数据不经过cpu，直接给内存,所以磁盘也有控制单元?).
@@ -40,8 +40,8 @@ todo:
 实验测试得到的数据,时间和空间的平衡
 
 ###缓存行cache line
-![](/Users/chris/workspace/xsource/cpu/src/main/resources/images/缓存行.jpg)
-![](/Users/chris/workspace/xsource/cpu/src/main/resources/images/缓存地址.jpg)
+![](/Users/chris/workspace/xsource/linux/src/main/resources/images/缓存行.jpg)
+![](/Users/chris/workspace/xsource/linux/src/main/resources/images/缓存地址.jpg)
 内存最小读写单位:1字节，8位
 内存与缓存协作的统一最小单位cache line(块):32字节?8位的整数倍
 内存地址=块地址+块内地址
@@ -64,7 +64,7 @@ cache line 64B,64字节
 ###cache line参数
 块号+块内地址+状态(2位)
 ###缓存一致性协议MESI(缓存锁)
-![](/Users/chris/workspace/xsource/cpu/src/main/resources/images/缓存一致性协议.jpg)
+![](/Users/chris/workspace/xsource/linux/src/main/resources/images/缓存一致性协议.jpg)
 
 使用状态号MESI
 https://www.cnblogs.com/z00377750/p/9180644.html
@@ -115,4 +115,4 @@ cache line2个状态位
 [cmpxchg](https://www.zhihu.com/search?type=content&q=CMPXCHG)
 [原子操作](https://www.bilibili.com/video/BV1Sp4y1h7bu?from=search&seid=1126417998132914696)
 ###cache line性能测试
-![](/Users/chris/workspace/xsource/cpu/src/main/resources/images/缓存padding.jpg)
+![](/Users/chris/workspace/xsource/linux/src/main/resources/images/缓存padding.jpg)
