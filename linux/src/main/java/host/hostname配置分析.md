@@ -4,10 +4,10 @@
 
    
  
-/etc/nsswitch.conf  
-/etc/host.conf  
+名字服务切换配置:/etc/nsswitch.conf  
+解析器查询顺序配置文件:/etc/host.conf  [](https://www.cnblogs.com/losbyday/p/5860666.html)
 
-/etc/resolv.conf  
+dns服务器ip配置:/etc/resolv.conf  
 
 hostname从/proc/sys/kernel/hostname获取参数,系统启动时/proc/sys/kernel/hostname从
 /etc/sysconfig/network获取hostname,/etc/sysconfig/network没有获取到hostname则默认为localhost。
@@ -17,6 +17,7 @@ hostname从/proc/sys/kernel/hostname获取参数,系统启动时/proc/sys/kernel
 [hostname配置](https://www.cnblogs.com/kerrycode/p/3595724.html)
 [三个文件的关系](https://jaminzhang.github.io/linux/deep-understanding-of-linux-hostname/)
 
+strace hostname -i
 ###/etc/hosts
 [配置ip,hostname,域名的映射关系](https://blog.csdn.net/aeolus_pu/article/details/9037377)
 
@@ -58,17 +59,41 @@ unsigned server_index =
 主机名的含义是机器本身的名字，域名是方面记录IP地址才做的一种IP映射；通过上述介绍可以看到，二者有共性：都能对应到一个唯一的IP上，
 从应用场景上可以这么简单理解二者的区别：主机名用于局域网中；域名用于公网中
 
-##hostname uname host nslookup命令
+##常见命令使用
 hostname:
 获取ip:hostname -i
 获取hostname:hostname
 
+uname:  
+  
+
+host:  
+域名查询
+   
+nslookup
+
+dig
+
+traceroute
+
+##域名体系
+baidu.com是顶级域名，而www.baidu.com是二级域名
+ping得到的结果是两个域名所指向的服务器的ip地址
+
+
 ##dns命令
 查看dns服务器:cat /etc/resolv.conf
+追溯ip路由:traceroute,[追踪路由ip](https://www.cnblogs.com/machangwei-8/p/10353279.html)
+```
+traceroute domain
 
-
+```
+查看域名的A记录和dns服务器ip:
+```
+nslookup domain
+nslookup -qt=type domain [dns-server]
+```
 ##java InetAddress.getLocalHost分析
-[](https://blog.csdn.net/raintungli/article/details/8191701)
 ```
 JNIEXPORT jstring JNICALL
 Java_java_net_Inet6AddressImpl_getLocalHostName(JNIEnv *env, jobject this) {
@@ -96,7 +121,7 @@ inline int hpi::get_host_name(char* name, int namelen){
 }
 
 ```
-获取linux内核hostname变量
+[获取linux内核hostname变量](https://blog.csdn.net/raintungli/article/details/8191701)
 
 ##常见概念 A,AAAA,CNAME
 A就是把域名解析到一个IPv4地址，
