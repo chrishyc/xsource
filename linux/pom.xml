@@ -11,6 +11,26 @@
 
     <groupId>com.xsource</groupId>
     <artifactId>linux</artifactId>
+    <build>
+        <plugins>
+            <!-- 配置Maven的JDK编译级别 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <!--反射获取方法的形参名称-->
+                    <compilerArgument>-parameters</compilerArgument>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- tomcat7插件 -->
+            <!-- 注意：目前来说，maven中央仓库还没有tomcat8的插件 -->
+        </plugins>
+    </build>
 
 
 </project>
