@@ -1,5 +1,5 @@
 package demo
 
-object Ab extends Aa {
+object Ab  {
 
 }

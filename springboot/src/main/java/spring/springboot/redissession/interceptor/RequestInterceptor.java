@@ -69,7 +69,7 @@ public class RequestInterceptor implements HandlerInterceptor {
         if (username == null) {
             // 没有登录,重定向到登录页
             System.out.println("未登录，请登录");
-            return false;
+            return true;
         } else {
             System.out.println("已登录，放行请求");
             // 已登录，放行
