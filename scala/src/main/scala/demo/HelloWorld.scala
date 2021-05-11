@@ -1,11 +1,22 @@
 package demo
 
 import java.awt.event
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 object HelloWorld {
 
   def main(args: Array[String]) {
-    println("Hello, world!") // 输出 Hello World
+    println(firstDay()) // 输出 Hello World
+  }
+
+  def firstDay(): String = {
+    val dateFormat: SimpleDateFormat = new SimpleDateFormat("yyyyMMdd")
+    val cal: Calendar = Calendar.getInstance()
+    cal.add(Calendar.MONTH, 0);
+    cal.set(Calendar.DAY_OF_MONTH, 1); //设置为1号,当前日期既为本月第一天
+    val yesterday = dateFormat.format(cal.getTime)
+    yesterday
   }
 
   def myMethodName(): Unit = {

@@ -130,6 +130,12 @@
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.xsource</groupId>
+            <artifactId>mystarter</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
