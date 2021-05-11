@@ -1,4 +1,4 @@
-package spring.springboot.redissession.interceptor;
+package spring.springboot.interceptor;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.session.config.annotation.web.http.SpringHttpSessionConfiguration;
