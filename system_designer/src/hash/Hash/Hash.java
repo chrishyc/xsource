@@ -1,4 +1,4 @@
-package guava.Hash;
+package hash.Hash;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.*;
