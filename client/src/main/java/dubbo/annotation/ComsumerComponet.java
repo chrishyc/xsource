@@ -4,8 +4,6 @@ import com.rpc.api.service.HelloService;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Component;
 
-import java.util.Random;
-
 @Component
 public class ComsumerComponet {
     @DubboReference
