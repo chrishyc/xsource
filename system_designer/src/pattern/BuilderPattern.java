@@ -1,8 +1,8 @@
 package pattern;
 
 /**
- * 1.解决对象初始化时的参数扩展问题
- * 2.使用final优化初始化
+ * 1.需求:解决对象初始化时的参数扩展问题
+ * 2.优化:使用final优化初始化
  */
 public class BuilderPattern {
     private final int age;
