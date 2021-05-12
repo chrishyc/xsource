@@ -1,4 +1,4 @@
-package pattern;
+package pattern.builder;
 
 /**
  * 1.需求:解决对象初始化时的参数扩展问题
