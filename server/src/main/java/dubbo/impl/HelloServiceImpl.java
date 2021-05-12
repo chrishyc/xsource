@@ -43,12 +43,13 @@ public class HelloServiceImpl implements HelloService {
     
     @Override
     public String monitorMethodC() {
-        try {
-            Thread.sleep(new Random().nextInt(100));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println("enter monitorMethodC");
-        return null;
+//        try {
+//            Thread.sleep(new Random().nextInt(100));
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("enter monitorMethodC");
+//        return null;
+        throw new RuntimeException("hello exception");
     }
 }

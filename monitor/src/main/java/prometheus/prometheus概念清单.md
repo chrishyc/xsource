@@ -1,10 +1,119 @@
 ## prometheus常见概念
 rate速率
 [prometheus常见函数](https://prometheus.io/docs/prometheus/latest/querying/functions/#histogram_quantile)
+
+###irate和rate区别
+irate和rate都会用于计算某个指标在一定时间间隔内的变化速率。但是它们的计算方法有所不同：irate取的是在指定时间范围内的最近两个数据点来算速率，
+而rate会取指定时间范围内所有数据点，算出一组速率，然后取平均值作为结果
+
+###sum函数
+指标名相同,tag不同会形成多个指标时序
+将相同指标名的多个指标时序求和
+[sum函数含义](https://my.oschina.net/54188zz/blog/3070582)
+```
+sum(metricsName{}[]) by (tag)
+sum(increase(node_cpu_seconds_total{mode="idle"}[1m]))by (instance)
+```
+
+###平均值
+
+###中位数
+中位数（Median）又称中值，统计学中的专有名词，是按顺序排列的一组数据中居于中间位置的数，代表一个样本、种群或概率分布中的一个数值，其可将数值集合划分为相等的上下两部分
+
+###长尾问题
+
 ## 直方图
 [直方图本身的概念](https://zhuanlan.zhihu.com/p/32857009)
+按区间划分样本的分布,计算延时使用的时间区间
+
 ##prometheus累加直方图
 [prometheus累加直方图](https://cloud.tencent.com/developer/article/1495303)
+
+```
+# TYPE dubbo_invoke_seconds histogram
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.001",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.001048576",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.001398101",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.001747626",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.002097151",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.002446676",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.002796201",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.003145726",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.003495251",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.003844776",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.004194304",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.005592405",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.006990506",} 2.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.008388607",} 3.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.009786708",} 3.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.011184809",} 3.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.01258291",} 3.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.013981011",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.015379112",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.016777216",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.022369621",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.027962026",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.033554431",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.039146836",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.044739241",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.050331646",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.055924051",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.061516456",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.067108864",} 4.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.089478485",} 11.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.111848106",} 48.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.134217727",} 94.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.156587348",} 132.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.178956969",} 146.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.20132659",} 156.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.223696211",} 160.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.246065832",} 160.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.268435456",} 160.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.357913941",} 162.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.447392426",} 163.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.536870911",} 165.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.626349396",} 172.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.715827881",} 173.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.805306366",} 174.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.894784851",} 174.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="0.984263336",} 174.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="1.073741824",} 174.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="1.431655765",} 175.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="1.789569706",} 176.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="2.147483647",} 176.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="2.505397588",} 176.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="2.863311529",} 176.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="3.22122547",} 176.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="3.579139411",} 177.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="3.937053352",} 177.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="4.294967296",} 178.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="5.726623061",} 180.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="7.158278826",} 181.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="8.589934591",} 181.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="10.021590356",} 182.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="11.453246121",} 182.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="12.884901886",} 183.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="14.316557651",} 183.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="15.748213416",} 183.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="17.179869184",} 183.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="22.906492245",} 184.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="28.633115306",} 184.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="30.0",} 184.0
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",le="+Inf",} 184.0
+dubbo_invoke_seconds_count{application="mifi-policy-platform-execution",} 184.0
+dubbo_invoke_seconds_sum{application="mifi-policy-platform-execution",} 94.688
+```
+
+le<=28.633115306的请求有184个
+请求延时为[le="22.906492245",le="28.633115306"]区间的请求有0个
+
+###为啥使用累加直方图
+[](https://www.robustperception.io/why-are-prometheus-histograms-cumulative)
+删减一些bucket,其他区间值不变,不需要重新计算
+
+###90分位计算原理
+90%数值都<=该数值
+
 
 ##histogram和summary概念
 promQL语法了解
