@@ -20,9 +20,13 @@ public class AnnotationConsumerMain {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         while (true) {
             executorService.execute(() -> {
-                service.monitorMethodA();
-                service.monitorMethodB();
-                service.monitorMethodC();
+//                service.monitorMethodA();
+//                service.monitorMethodB();
+                try {
+                    service.monitorMethodC();
+                } catch (Exception e) {
+                    System.out.println("catch you again");
+                }
             });
         }
     }

@@ -13,6 +13,10 @@ public class DubboInvokeFilter implements Filter {
         try {
             // 执行方法
             return invoker.invoke(invocation);
+        } catch (Throwable e) {
+            System.out.println("exception invoke time:" + (System.currentTimeMillis() - startTime) + "毫秒" +
+                    ",clientIp:" + RpcContext.getContext().getAttachment("clientIp"));
+            throw e;
         } finally {
             System.out.println("invoke time:" + (System.currentTimeMillis() - startTime) + "毫秒" +
                     ",clientIp:" + RpcContext.getContext().getAttachment("clientIp"));
