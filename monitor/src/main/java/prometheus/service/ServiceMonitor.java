@@ -30,7 +30,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
-public class AlertServiceImpl implements AbstractAlertService {
+public class ServiceMonitor implements AbstractAlertService {
 
   private static final String TOKEN_URL = "https://open.f.mioffice.cn/open-apis/auth/v3/tenant_access_token/internal/";
   private static final String SEND_URL = "https://open.f.mioffice.cn/open-apis/message/v4/send/";
