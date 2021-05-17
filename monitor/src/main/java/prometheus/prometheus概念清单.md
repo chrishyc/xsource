@@ -107,6 +107,12 @@ dubbo_invoke_seconds_sum{application="mifi-policy-platform-execution",} 94.688
 le<=28.633115306的请求有184个
 请求延时为[le="22.906492245",le="28.633115306"]区间的请求有0个
 
+prometheus会将instance等公共label附加上,最终指标类似:
+dubbo_invoke_seconds_bucket{application="mifi-policy-platform-execution",instance="tj1-miui-micfc-ksc-vr1-10293-ko2v4abi4.kscn:8890",job="mifi-policy-platform-execution"}
+
+
+histogram_quantile(0.95, sum by (instance,le) (rate(dubbo_invoke_seconds_bucket[5m])))
+
 ###为啥使用累加直方图
 [](https://www.robustperception.io/why-are-prometheus-histograms-cumulative)
 删减一些bucket,其他区间值不变,不需要重新计算
