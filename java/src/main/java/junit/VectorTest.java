@@ -9,36 +9,54 @@ import java.util.Vector;
 public class VectorTest extends TestCase {
     protected Vector fEmpty;
     protected Vector fFull;
-    public static void main (String[] args) {
-        junit.textui.TestRunner.run (suite());
+    
+    public VectorTest(String name) {
+        super(name);
     }
+    
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite1());
+    }
+    
     protected void setUp() {
-        fEmpty= new Vector();
-        fFull= new Vector();
+        fEmpty = new Vector();
+        fFull = new Vector();
         fFull.addElement(new Integer(1));
         fFull.addElement(new Integer(2));
         fFull.addElement(new Integer(3));
     }
+    
     public static Test suite() {
         return new TestSuite(VectorTest.class);
     }
-    public void testCapacity() {
-        int size= fFull.size();
-        for (int i= 0; i < 100; i++)
-            fFull.addElement(new Integer(i));
-        assertTrue(fFull.size() == 100+size);
+    
+    public static Test suite1() {
+        TestSuite suite = new TestSuite();
+        suite.addTest(new VectorTest("testCapacity"));
+        suite.addTest(new VectorTest("testClone"));
+        return suite;
     }
+    
+    public void testCapacity() {
+        int size = fFull.size();
+        for (int i = 0; i < 100; i++)
+            fFull.addElement(new Integer(i));
+        assertTrue(fFull.size() == 100 + size);
+    }
+    
     public void testClone() {
-        Vector clone= (Vector)fFull.clone();
+        Vector clone = (Vector) fFull.clone();
         assertTrue(clone.size() == fFull.size());
         assertTrue(clone.contains(new Integer(1)));
     }
+    
     public void testContains() {
         assertTrue(fFull.contains(new Integer(1)));
         assertTrue(!fEmpty.contains(new Integer(1)));
     }
+    
     public void testElementAt() {
-        Integer i= (Integer)fFull.elementAt(0);
+        Integer i = (Integer) fFull.elementAt(0);
         assertTrue(i.intValue() == 1);
         try {
             fFull.elementAt(fFull.size());
@@ -47,14 +65,16 @@ public class VectorTest extends TestCase {
         }
         fail("Should raise an ArrayIndexOutOfBoundsException");
     }
+    
     public void testRemoveAll() {
         fFull.removeAllElements();
         fEmpty.removeAllElements();
         assertTrue(fFull.isEmpty());
         assertTrue(fEmpty.isEmpty());
     }
+    
     public void testRemoveElement() {
         fFull.removeElement(new Integer(3));
-        assertTrue(!fFull.contains(new Integer(3)) );
+        assertTrue(!fFull.contains(new Integer(3)));
     }
 }
