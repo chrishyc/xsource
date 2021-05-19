@@ -203,3 +203,5 @@ address_space中的prio_tree_root指向了所有与该页缓存相关联的进�
 
 ##普通文件IO需要复制两次，内存映射文件mmap只需要复制一次，原理分析
 [](https://blog.csdn.net/GDJ0001/article/details/80136364)
+[](https://www.cnblogs.com/huxiao-tee/p/4660352.html#_label1)
+[](http://www.vuln.cn/7036)
