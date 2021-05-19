@@ -5,7 +5,7 @@ public class TalkService {
         try {
             new HelloService().sayHi();
         } catch (Exception e) {
-            System.out.println("hello,catch you");
+            throw e;
         }
     }
 }
