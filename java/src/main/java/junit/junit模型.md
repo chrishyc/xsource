@@ -13,6 +13,11 @@ https://blog.csdn.net/chenjiazhu/article/details/78092789
 https://my.oschina.net/itblog/blog/1550931
 
 [单元测试设计模式](https://www.cnblogs.com/kavenmo/articles/58744.html)
+命令模式：TestResult是receiver,TestCase是command,Runner是invoke
+
+组合模式：TestSuite是容器，TestCase是叶子
+
+模板方法模式:TestCase.runBare
 ## 注解方式
 https://www.cnblogs.com/jinsdu/p/4456824.html
 
