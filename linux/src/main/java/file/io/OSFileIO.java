@@ -20,7 +20,7 @@ import java.nio.channels.FileChannel;
 public class OSFileIO {
     
     static byte[] data = "123456789\n".getBytes();
-    static String path = "/home/java/out.txt";
+    static String path = "/Users/chris/workspace/xsource/out.txt";
     
     
     public static void main(String[] args) throws Exception {
@@ -34,9 +34,9 @@ public class OSFileIO {
                 testBufferedFileIO();
                 break;
             case "2":
-//                testRandomAccessFileWrite();
+                testRandomAccessFileWrite();
             case "3":
-//                whatByteBuffer();
+                whatByteBuffer();
             default:
             
         }
@@ -74,7 +74,7 @@ public class OSFileIO {
     //测试文件NIO
     
     @Test
-    public void testRandomAccessFileWrite() throws Exception {
+    public static void testRandomAccessFileWrite() throws Exception {
         
         
         RandomAccessFile raf = new RandomAccessFile(path, "rw");
@@ -95,7 +95,7 @@ public class OSFileIO {
         MappedByteBuffer map = rafchannel.map(FileChannel.MapMode.READ_WRITE, 0, 4096);
         
         
-        map.put("@@@".getBytes());  //不是系统调用  但是数据会到达 内核的pagecache
+        map.put("@@@".getBytes());  //不是系统调用?  但是数据会到达 内核的pagecache
         //曾经我们是需要out.write()  这样的系统调用，才能让程序的data 进入内核的pagecache
         //曾经必须有用户态内核态切换
         //mmap的内存映射，依然是内核的pagecache体系所约束的！！！
@@ -107,7 +107,7 @@ public class OSFileIO {
         System.out.println("map--put--------");
         System.in.read();
 
-//        map.force(); //  flush
+        map.force(); //  flush
         
         
         raf.seek(0);
@@ -129,7 +129,7 @@ public class OSFileIO {
     }
     
     @Test
-    public void whatByteBuffer() {
+    public static void whatByteBuffer() {
 
 //        ByteBuffer buffer = ByteBuffer.allocate(1024);
         ByteBuffer buffer = ByteBuffer.allocateDirect(1024);
