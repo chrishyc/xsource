@@ -4,12 +4,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MyRunner.class)
 public class AnnotationTest {
+    public static void main(String[] args) {
+        JUnitCore.runClasses(AnnotationTest.class);
+    }
     
     private int i = 0;
     
