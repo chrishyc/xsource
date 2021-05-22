@@ -3,17 +3,19 @@ package socket;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class EchoClient {
     private final Socket mSocket;
     
     public EchoClient(String host, int port) throws IOException {
+        mSocket = new Socket();
         // 创建 socket 并连接服务器
-        mSocket = new Socket(host, port);
+        mSocket.setReuseAddress(true);
+        mSocket.bind(new InetSocketAddress(3000));
+        
+        mSocket.connect(new InetSocketAddress(host, port));
     }
     
     public void run() throws IOException {

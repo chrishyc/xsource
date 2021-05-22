@@ -41,15 +41,29 @@ public class SocketIOPropertites {
     StandardSocketOptions.SO_REUSEADDR
 
  */
-
-
+    
+    
+    /**
+     * 参考UNIX网络编程
+     * @param args
+     */
     public static void main(String[] args) {
 
         ServerSocket server = null;
         try {
             server = new ServerSocket();
+            /**
+             * 对应listen(int sockfd,int backlog)中第二个参数
+             */
             server.bind(new InetSocketAddress(9090), BACK_LOG);
+            /**
+             *对应setsockopt(int sockfs,int level,int optname,const void *optvalue,socklen_t optlen)
+             * 第七章
+             */
             server.setReceiveBufferSize(RECEIVE_BUFFER);
+            /**
+             * TIME_WAIT时也可以重用端口号，不会导致对端一直重发FIN?
+             */
             server.setReuseAddress(REUSE_ADDR);
             server.setSoTimeout(SO_TIMEOUT);
 
