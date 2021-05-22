@@ -47,6 +47,11 @@ accept
 ##RST的应用
 [](https://www.zhihu.com/question/24853633/answer/573627478)
 
+##PUSH
+S=SYN 发起连接标志
+P=PUSH 传送数据标志
+F=FIN 关闭连接标志
+R=RESET 异常关闭连接，链接重置
 ##连接keepalive
 
 ##长链接
@@ -83,7 +88,16 @@ TCP协议是一种面向连接的、可靠的、基于字节流的运输层通�
 任何一端只能主动关闭自身的 发送 操作
 任何一端只能在确定对方已经停止 发送 操作以后才能停止相应的 接收 操作
 ```
+
+##四次挥手的状态
+CLOSE,FIN_WAIT1
+CLOSE_WAIT,
+FIN_WAIT2
+LAST_ACK
+TIME_WAIT
+CLOSED
 ##TIME_WAIT
+
 ```
 TIME_WAIT 这个状态也是比较常见的一个问题了，第四次挥手后进行第四次挥手的一方会进入 TIME_WAIT 状态，要至少等待 2MSL 才关闭连接。
 
@@ -95,3 +109,12 @@ TIME_WAIT 这个状态也是比较常见的一个问题了，第四次挥手后�
 
 因此，可以考虑通过将 2MSL 调低来解决这样问题。
 ```
+
+###Address already in use问题
+[](https://www.jianshu.com/p/711be2f1ec6a)
+使用SO_REUSEADDR，可以在time_wait期间复用
+##三次握手四次挥手实践
+[](https://www.jianshu.com/p/a4beee06220c)
+
+##tcp参数实战
+[](https://www.cnblogs.com/embedded-linux/p/9534205.html)
