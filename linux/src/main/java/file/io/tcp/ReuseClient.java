@@ -11,7 +11,7 @@ public class ReuseClient {
     
     public ReuseClient(String host, int port) throws IOException {
         mSocket = new Socket();
-        // 创建 socket 并连接服务器
+        // 创建 socket 并连接服务器，客户端同时重用有效，serversocket同时重用报错
         mSocket.setReuseAddress(true);
         mSocket.bind(new InetSocketAddress(3000));
         
