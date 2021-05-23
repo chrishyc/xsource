@@ -150,3 +150,6 @@ Java_java_net_PlainSocketImpl_socketConnect(...){
     }
 }
 ```
+
+## socket通信
+![](/Users/chris/workspace/xsource/linux/src/main/java/file/images/socket通信模型.jpg)
