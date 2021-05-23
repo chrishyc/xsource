@@ -9,9 +9,18 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * @author: 马士兵教育
  * @create: 2020-05-17 05:34
  * BIO  多线程的方式
+ *
+ * 查看tcp连接状态
+ * lsof -i -n -P | grep 9090
+ *
+ * jps -l
+ *
+ * 查看tcp文件fd
+ * lsof -p 5288
+ *
+ * pstree查看进程树
  */
 public class SocketIOPropertites {
 
@@ -30,6 +39,10 @@ public class SocketIOPropertites {
     private static final boolean CLI_LINGER = true;
     private static final int CLI_LINGER_N = 0;
     private static final int CLI_TIMEOUT = 0;
+    /**
+     * Disable Nagle's algorithm for this connection
+     * unix网络编程7.9
+     */
     private static final boolean CLI_NO_DELAY = false;
 /*
 
@@ -76,10 +89,30 @@ public class SocketIOPropertites {
         System.out.println("server up use 9090!");
         try {
             while (true) {
-
-                // System.in.read();  //分水岭：
-
+    
+                /**
+                 * 内核创建了socker连接，但还未绑定到服务器进程
+                 *
+                 *  lsof -p 5765
+                 * java    5765 chris  130u  IPv6 0x3db2bb7ec1726071      0t0                 TCP *:websm (LISTEN)
+                 */
+                 System.in.read();  //分水岭：
+    
+                /**
+                 * linux内核accept源码,创建socker fd绑定到进程描述符
+                 * https://cloud.tencent.com/developer/article/1441582
+                 *
+                 * 此时losf -p server_pid只能看到listen的socketfd,没有来自客户端的socketfd连接
+                 *
+                 *
+                 */
                 Socket client = server.accept();  //阻塞的，没有 -1  一直卡着不动  accept(4,
+                /**
+                 * lsof -p 5765
+                 * java    5765 chris  130u  IPv6 0x3db2bb7ec1726071      0t0                 TCP *:websm (LISTEN)
+                 * java    5765 chris  132u  IPv6 0x3db2bb7ebd85dd51      0t0                 TCP localhost:websm->localhost:49572 (CLOSE_WAIT)
+                 * java    5765 chris  133u  IPv6 0x3db2bb7ebd85ea11      0t0                 TCP localhost:websm->localhost:49606 (ESTABLISHED)
+                 */
                 System.out.println("client port: " + client.getPort());
 
                 client.setKeepAlive(CLI_KEEPALIVE);
