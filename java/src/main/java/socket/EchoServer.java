@@ -27,14 +27,15 @@ public class EchoServer {
         new Thread(() -> {
             try {
                 handleClient(client);
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
         
     }
     
-    public void handleClient(Socket socket) throws IOException {
+    public void handleClient(Socket socket) throws IOException, InterruptedException {
+        Thread.sleep(100000);
         // 3. 使用 socket 进行通信 ...
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
