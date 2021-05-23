@@ -1,4 +1,4 @@
-package file.io;
+package file.io.tcp;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -67,6 +67,8 @@ public class SocketIOPropertites {
             server = new ServerSocket();
             /**
              * 对应listen(int sockfd,int backlog)中第二个参数
+             *
+             * https://www.cnblogs.com/Orgliny/p/5780796.html
              */
             server.bind(new InetSocketAddress(9090), BACK_LOG);
             /**

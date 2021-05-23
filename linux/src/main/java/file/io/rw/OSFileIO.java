@@ -1,4 +1,4 @@
-package file.io;
+package file.io.rw;
 
 import org.junit.Test;
 

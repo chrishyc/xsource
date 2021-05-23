@@ -1,6 +1,7 @@
-package file.io;
+package file.io.tcp;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
@@ -11,7 +12,10 @@ public class SocketClient {
     public static void main(String[] args) {
 
         try {
-            Socket client = new Socket("localhost",9090);
+            Socket client = new Socket();
+            // 创建 socket 并连接服务器
+            client.bind(new InetSocketAddress(3000));
+            client.connect(new InetSocketAddress("localhost", 9090));
 
             client.setSendBufferSize(20);
             

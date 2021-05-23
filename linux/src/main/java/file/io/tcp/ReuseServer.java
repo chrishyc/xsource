@@ -1,4 +1,4 @@
-package socket;
+package file.io.tcp;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,10 +13,10 @@ import java.net.Socket;
  * COMMAND   PID  USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
  * java    11663 chris  137u  IPv6 0x2056b827c566e7df      0t0  TCP *:9877 (LISTEN)
  */
-public class EchoServer {
+public class ReuseServer {
     private final ServerSocket mServerSocket;
     
-    public EchoServer(int port) throws IOException {
+    public ReuseServer(int port) throws IOException {
         // 1. 创建一个 ServerSocket 并监听端口 port
         mServerSocket = new ServerSocket(port);
     }
@@ -49,7 +49,7 @@ public class EchoServer {
     
     public static void main(String[] argv) {
         try {
-            EchoServer server = new EchoServer(9877);
+            ReuseServer server = new ReuseServer(9878);
             server.run();
         } catch (IOException e) {
             e.printStackTrace();
