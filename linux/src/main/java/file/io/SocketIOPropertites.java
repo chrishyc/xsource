@@ -91,7 +91,7 @@ public class SocketIOPropertites {
             while (true) {
     
                 /**
-                 * 内核创建了socker连接，但还未绑定到服务器进程
+                 * 内核创建了socker连接，只是创建了四元组(ip1,port1,ip2,port2),但还未绑定到服务器进程
                  *
                  *  lsof -p 5765
                  * java    5765 chris  130u  IPv6 0x3db2bb7ec1726071      0t0                 TCP *:websm (LISTEN)
@@ -99,10 +99,14 @@ public class SocketIOPropertites {
                  System.in.read();  //分水岭：
     
                 /**
-                 * linux内核accept源码,创建socker fd绑定到进程描述符
+                 * linux内核accept源码,创建socket fd绑定到进程描述符,但是并没有创建新的端口号
+                 * accept绑定四元组(ip1,port1,ip2,port2)到 fd,形成socket fd，程序从socket fd中
+                 * 读取数据，socket fd从四元组(ip1,port1,ip2,port2)中读取数据
+                 *
                  * https://cloud.tencent.com/developer/article/1441582
                  *
                  * 此时losf -p server_pid只能看到listen的socketfd,没有来自客户端的socketfd连接
+                 *
                  *
                  *
                  */
