@@ -65,6 +65,9 @@ public class SocketIOPropertites {
              * TIME_WAIT时也可以重用端口号，不会导致对端一直重发FIN?
              */
             server.setReuseAddress(REUSE_ADDR);
+            /**
+             * 超时逻辑分析:https://cloud.tencent.com/developer/article/1574588
+             */
             server.setSoTimeout(SO_TIMEOUT);
 
         } catch (IOException e) {

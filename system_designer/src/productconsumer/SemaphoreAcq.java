@@ -24,6 +24,9 @@ public class SemaphoreAcq {
         @Override
         public void run() {
             try {
+                /**
+                 * 顺序不能换,不能让范围大的mutex依赖范围小的full
+                 */
                 full.acquire();
                 mutex.acquire();
                 sharedData++;

@@ -118,3 +118,35 @@ TIME_WAIT 这个状态也是比较常见的一个问题了，第四次挥手后�
 
 ##tcp参数实战
 [](https://www.cnblogs.com/embedded-linux/p/9534205.html)
+##client超时重试
+[](https://cloud.tencent.com/developer/article/1574588)
+```
+Java_java_net_PlainSocketImpl_socketConnect(...){
+
+    if (timeout <= 0) {
+    	 ......
+        connect_rv = NET_Connect(fd, (struct sockaddr *)&him, len);
+    	 .....
+    }else{
+    	 // 如果timeout > 0 ，则设置为nonblock模式
+        SET_NONBLOCKING(fd);
+        /* no need to use NET_Connect as non-blocking */
+        connect_rv = connect(fd, (struct sockaddr *)&him, len);
+        /*
+         * 这边用系统调用select来模拟阻塞调用超时
+         */
+        while (1) {
+            ......
+            struct timeval t;
+            t.tv_sec = timeout / 1000;
+            t.tv_usec = (timeout % 1000) * 1000;
+            connect_rv = NET_Select(fd+1, 0, &wr, &ex, &t);
+            ......
+        }
+        ......
+        // 重新设置为阻塞模式
+        SET_BLOCKING(fd);
+        ......
+    }
+}
+```
