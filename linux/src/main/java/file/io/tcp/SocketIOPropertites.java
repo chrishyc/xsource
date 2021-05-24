@@ -27,7 +27,7 @@ public class SocketIOPropertites {
 
     //server socket listen property:
     private static final int RECEIVE_BUFFER = 10;
-    private static final int SO_TIMEOUT = 0;
+    private static final int SO_TIMEOUT = 3000;
     private static final boolean REUSE_ADDR = false;
     private static final int BACK_LOG = 2;
     //client socket listen property on server endpoint:
@@ -81,7 +81,9 @@ public class SocketIOPropertites {
              */
             server.setReuseAddress(REUSE_ADDR);
             /**
-             * 超时逻辑分析:https://cloud.tencent.com/developer/article/1574588
+             * 客户端连接超时,connect等待时间逻辑分析:https://cloud.tencent.com/developer/article/1574588
+             *
+             * 服务端accept等待超时连接,SO_TIMEOUT
              */
             server.setSoTimeout(SO_TIMEOUT);
 
