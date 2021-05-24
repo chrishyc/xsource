@@ -61,6 +61,7 @@ backlog是listen端口的全队列大小
 tomcat ServerProperties.acceptcount
 
 [参考](https://juejin.cn/post/6847902222425161735)
+[](https://blog.csdn.net/weixin_39634438/article/details/112670713)
 
 ##数据报文分片
 
