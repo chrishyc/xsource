@@ -58,6 +58,8 @@ wrk -t12 -c400 -d30s http://127.0.0.1:8080/index.html
 
 backlog是listen端口的全队列大小
 
+tomcat ServerProperties.acceptcount
+
 [参考](https://juejin.cn/post/6847902222425161735)
 
 ##数据报文分片
