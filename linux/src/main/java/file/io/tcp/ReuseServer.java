@@ -39,6 +39,7 @@ public class ReuseServer {
     
     public void handleClient(Socket socket) throws IOException, InterruptedException {
 //        Thread.sleep(100000);
+        System.out.println(socket.getPort());
         // 3. 使用 socket 进行通信 ...
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();

@@ -14,7 +14,6 @@ public class SocketClient {
         try {
             Socket client = new Socket();
             // 创建 socket 并连接服务器
-            client.bind(new InetSocketAddress(3000));
             client.connect(new InetSocketAddress("localhost", 9090));
 
             client.setSendBufferSize(20);

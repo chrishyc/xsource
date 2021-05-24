@@ -39,6 +39,27 @@ accept
 
 ##tcp等待队列，完成队列,最大队列数
 
+###socket等待队列，完成队列压测
+ubuntu docker,
+压测工具:wrk
+socket队列查看工具:ss [ss](https://commandnotfound.cn/linux/1/232/ss-%E5%91%BD%E4%BB%A4)
+
+wrk -t12 -c400 -d30s http://127.0.0.1:8080/index.html
+
+查看tcp队列：ss -lnt
+
+查看tcp队列：watch -n 0.1 'netstat -antp| grep 9090'
+
+查看队列溢出:netstat -s | egrep "listen|LISTEN"
+查看等待队列:netstat -natp | grep SYN_RECV | wc -l
+
+/proc/sys/net/core/somaxconn
+/proc/sys/net/ipv4/tcp_max_syn_backlog
+
+backlog是listen端口的全队列大小
+
+[参考](https://juejin.cn/post/6847902222425161735)
+
 ##数据报文分片
 
 ##tcp窗口大小
@@ -153,3 +174,6 @@ Java_java_net_PlainSocketImpl_socketConnect(...){
 
 ## socket通信
 ![](/Users/chris/workspace/xsource/linux/src/main/java/file/images/socket通信模型.jpg)
+![](https://img-blog.csdnimg.cn/img_convert/1079c3922c9b2d1031514aee55b91b39.png)
+
+
