@@ -180,3 +180,30 @@ Java_java_net_PlainSocketImpl_socketConnect(...){
 ![](https://img-blog.csdnimg.cn/img_convert/1079c3922c9b2d1031514aee55b91b39.png)
 
 
+##查看系统调用
+strace -ff -o out cmd
+
+##为啥线程accept不与read在同一个线程,而要创造子线程?
+accept创造socket fd,read读 socket fd
+在同一个线程处理,可能导致socket连接处理来不及,内核缓存溢出
+
+##阻塞&同步
+阻塞,non-blocking:
+[](https://www.remlab.net/op/nonblock.shtml)
+
+
+同步:
+read write
+
+##tcp keepalive
+
+####为什么应用层需要heart beat/
+[](https://blog.csdn.net/lanyang123456/article/details/90578453)
+
+##tcp包大小
+tcp窗口大小，序列号,tcp包大小mtu 1500，mss
+缓存阻塞，窗口数据丢弃
+##
+nodelay
+##
+oobinline

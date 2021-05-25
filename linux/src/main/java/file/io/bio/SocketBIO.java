@@ -7,6 +7,9 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * https://www.remlab.net/op/nonblock.shtml
+ */
 public class SocketBIO {
 
 

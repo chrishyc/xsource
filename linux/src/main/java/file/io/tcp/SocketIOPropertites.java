@@ -31,7 +31,7 @@ public class SocketIOPropertites {
     private static final boolean REUSE_ADDR = false;
     private static final int BACK_LOG = 2;
     //client socket listen property on server endpoint:
-    private static final boolean CLI_KEEPALIVE = false;
+    private static final boolean CLI_KEEPALIVE = true;
     private static final boolean CLI_OOB = false;
     private static final int CLI_REC_BUF = 20;
     private static final boolean CLI_REUSE_ADDR = false;
