@@ -127,3 +127,7 @@ inline int hpi::get_host_name(char* name, int namelen){
 A就是把域名解析到一个IPv4地址，
 而AAAA是解析到IPv6地址，
 CNAME是解析到另外一个域名
+(domain information groper)：dig www.baidu.com 
+
+##
+[](/Users/chris/workspace/xsource/linux/src/main/java/host/images/dns配置.jpg)
