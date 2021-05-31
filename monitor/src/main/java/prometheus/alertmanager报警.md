@@ -109,3 +109,4 @@ kill -SIGHUP alertmanager_pid
 [__name__ remove](https://www.robustperception.io/whats-in-a-__name__)
 ##使用record优化指标计算
 
+{{ $labels.instance }} 
