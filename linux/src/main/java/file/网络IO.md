@@ -58,6 +58,9 @@ wrk -t12 -c400 -d30s http://127.0.0.1:8080/index.html
 
 backlog是listen端口的全队列大小
 
+root用户 优先级高，队列数不受限制
+
+
 tomcat ServerProperties.acceptcount
 
 [参考](https://juejin.cn/post/6847902222425161735)
@@ -207,3 +210,7 @@ tcp窗口大小，序列号,tcp包大小mtu 1500，mss
 nodelay
 ##
 oobinline
+
+
+##查看进程资源限制
+ulimit -a
