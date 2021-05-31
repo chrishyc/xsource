@@ -152,3 +152,7 @@ histogram_quantile(0.9, rate(http_request_duration_seconds_bucket[10m]))
 expr: '{__name__=~"order_amount_sum_count.*"}'	
 description: "http://grafana.staging.mifi.pt.xiaomi.com/d/HBrq2YlGk/temporary-dashboard?orgId=1&fullscreen&panelId=2&var-metrics={{ $labels.__name__ }}"
 获取所有标签:label_names()
+
+###prometheus record/alert rule中label丢失问题
+[](https://stackoverflow.com/questions/67273594/missing-labels-in-prometheus-alerts)
+验证丢失的label,使用prometheus面板
