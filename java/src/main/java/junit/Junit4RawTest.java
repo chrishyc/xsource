@@ -6,11 +6,11 @@ import junit.framework.TestSuite;
 
 import java.util.Vector;
 
-public class VectorTest extends TestCase {
+public class Junit4RawTest extends TestCase {
     protected Vector fEmpty;
     protected Vector fFull;
     
-    public VectorTest(String name) {
+    public Junit4RawTest(String name) {
         super(name);
     }
     
@@ -27,13 +27,13 @@ public class VectorTest extends TestCase {
     }
     
     public static Test suite() {
-        return new TestSuite(VectorTest.class);
+        return new TestSuite(Junit4RawTest.class);
     }
     
     public static Test suite1() {
         TestSuite suite = new TestSuite();
-        suite.addTest(new VectorTest("testCapacity"));
-        suite.addTest(new VectorTest("testClone"));
+        suite.addTest(new Junit4RawTest("testCapacity"));
+        suite.addTest(new Junit4RawTest("testClone"));
         return suite;
     }
     
