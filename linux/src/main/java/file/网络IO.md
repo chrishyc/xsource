@@ -214,3 +214,5 @@ oobinline
 
 ##查看进程资源限制
 ulimit -a
+
+cat /proc/sys/fs/file-max

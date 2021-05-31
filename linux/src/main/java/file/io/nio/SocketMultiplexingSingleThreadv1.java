@@ -8,6 +8,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+/**
+ *
+ -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.EPollSelectorProvider
+ 
+ -Djava.nio.channels.spi.SelectorProvider=sun.nio.ch.PollSelectorProvider
+ */
 public class SocketMultiplexingSingleThreadv1 {
 
     //马老师的坦克 一 二期
@@ -62,12 +68,17 @@ public class SocketMultiplexingSingleThreadv1 {
                 其实再触碰到selector.select()调用的时候触发了epoll_ctl的调用
 
                  */
+                /**
+                 * epoll_create(256)                       = 19
+                 * epoll_ctl(19, EPOLL_CTL_ADD, 17, {EPOLLIN, {u32=17, u64=140131897966609}}) = 0
+                 * epoll_ctl(19, EPOLL_CTL_ADD, 16, {EPOLLIN, {u32=16, u64=140131897966608}}) = 0
+                 * epoll_wait(19,  <unfinished ...>)       = ?
+                 */
                 while (selector.select() > 0) {
                     Set<SelectionKey> selectionKeys = selector.selectedKeys();  //返回的有状态的fd集合
                     Iterator<SelectionKey> iter = selectionKeys.iterator();
                     //so，管你啥多路复用器，你呀只能给我状态，我还得一个一个的去处理他们的R/W。同步好辛苦！！！！！！！！
                     //  NIO  自己对着每一个fd调用系统调用，浪费资源，那么你看，这里是不是调用了一次select方法，知道具体的那些可以R/W了？
-                    //幕兰，是不是很省力？
                     //我前边可以强调过，socket：  listen   通信 R/W
                     while (iter.hasNext()) {
                         SelectionKey key = iter.next();
