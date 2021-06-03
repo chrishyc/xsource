@@ -51,11 +51,26 @@ int poll(struct pollfd *name,int num,int timeout);
 一共有三个，分别是监听的结构体数组的数组名，实际监听着多少个结构体数组成员，阻塞时间控制参数。
 [](https://blog.csdn.net/u014453898/article/details/53992003)
 
-
+```
+openat(AT_FDCWD, "/proc/net/if_inet6", O_RDONLY) = 17
+socket(AF_INET, SOCK_STREAM, IPPROTO_IP) = 16
+setsockopt(16, SOL_SOCKET, SO_REUSEADDR, [1], 4) = 0
+fcntl(16, F_GETFL)                      = 0x2 (flags O_RDWR)
+fcntl(16, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+bind(16, {sa_family=AF_INET, sin_port=htons(9090), sin_addr=inet_addr("0.0.0.0")}, 16) = 0
+//The backlog argument defines the maximum  length  to  which  the queue  of pending connections for sockfd may grow
+listen(16, 50)
+poll([{fd=17, events=POLLIN}, {fd=16, events=POLLIN}], 2, -1) = 1 ([{fd=16, revents=POLLIN}])
+```
 ###epoll
+
 //TODO
 
 [](https://cloud.tencent.com/developer/article/1401558)
 ##阻塞&非阻塞,同步&异步
 
+普通文件读写不会阻塞
+
 ##从网卡读数据过程涉及对象和过程?
+
+

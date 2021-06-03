@@ -140,6 +140,9 @@ TIME_WAIT 这个状态也是比较常见的一个问题了，第四次挥手后�
 ###Address already in use问题
 [](https://www.jianshu.com/p/711be2f1ec6a)
 使用SO_REUSEADDR，可以在time_wait期间复用
+
+###2MSL消耗的资源
+消耗本机四元组
 ##三次握手四次挥手实践
 [](https://www.jianshu.com/p/a4beee06220c)
 
@@ -216,3 +219,14 @@ oobinline
 ulimit -a
 
 cat /proc/sys/fs/file-max
+##安全问题ddos攻击
+1.攻击方式
+tcp syn阶段
+带宽
+web请求
+2.解决方案
+防火墙
+nginx
+增加带宽
+[](https://www.bilibili.com/video/BV14W411d7Cp?from=search&seid=483521343909660865)
+
