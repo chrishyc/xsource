@@ -24,9 +24,11 @@ public class ReuseServer {
         mServerSocket.bind(new InetSocketAddress(9877));
     }
     
-    public void run() throws IOException {
+    public void run() throws IOException, InterruptedException {
         // 2. 开始接受客户连接
         Socket client = mServerSocket.accept();
+        Thread.sleep(100000);
+        
         new Thread(() -> {
             try {
                 handleClient(client);
@@ -55,7 +57,7 @@ public class ReuseServer {
         try {
             ReuseServer server = new ReuseServer(9877);
             server.run();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

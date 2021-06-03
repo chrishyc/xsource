@@ -13,7 +13,7 @@ public class ReuseClient {
         mSocket = new Socket();
         // 创建 socket 并连接服务器，客户端同时重用有效，serversocket同时重用报错
         mSocket.setReuseAddress(true);
-        mSocket.bind(new InetSocketAddress(3000));
+        mSocket.bind(new InetSocketAddress(3001));
         
         mSocket.connect(new InetSocketAddress(host, port));
     }
@@ -48,7 +48,7 @@ public class ReuseClient {
     public static void main(String[] argv) {
         try {
             // 由于服务端运行在同一主机，这里我们使用 localhost
-            ReuseClient client = new ReuseClient("localhost", 9878);
+            ReuseClient client = new ReuseClient("localhost", 9877);
             client.run();
         } catch (IOException e) {
             e.printStackTrace();
