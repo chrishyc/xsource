@@ -44,6 +44,7 @@ public class SocketMultiplexingSingleThreadv1_1 {
                         if (key.isAcceptable()) {
                             acceptHandler(key);
                         } else if (key.isReadable()) {
+                            // cancel，取消红黑树中的fd读事件
 //                            key.cancel();
                             readHandler(key);  //只处理了  read  并注册 关心这个key的write事件
 
@@ -54,6 +55,7 @@ public class SocketMultiplexingSingleThreadv1_1 {
                             //2，第二步你才关心send-queue是否有空间
                             //3，so，读 read 一开始就要注册，但是write依赖以上关系，什么时候用什么时候注册
                             //4，如果一开始就注册了write的事件，进入死循环，一直调起！！！
+                            // cancel，取消红黑树中的fd写事件
 //                            key.cancel();
                             writeHandler(key);
                         }

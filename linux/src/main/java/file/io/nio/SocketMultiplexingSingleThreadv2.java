@@ -38,12 +38,13 @@ public class SocketMultiplexingSingleThreadv2 {
                     while (iter.hasNext()) {
                         SelectionKey key = iter.next();
                         iter.remove();
+                        // tcp完成队列中存在，
                         if (key.isAcceptable()) {
                             acceptHandler(key);
                         } else if (key.isReadable()) {
-//                            key.cancel();  //现在多路复用器里把key  cancel了
+                            key.cancel();  //现在多路复用器里把key  cancel了
                             System.out.println("in.....");
-                            key.interestOps(key.interestOps() | ~SelectionKey.OP_READ);
+//                            key.interestOps(key.interestOps() | ~SelectionKey.OP_READ);
 
                             readHandler(key);//还是阻塞的嘛？ 即便以抛出了线程去读取，但是在时差里，这个key的read事件会被重复触发
 
@@ -54,8 +55,9 @@ public class SocketMultiplexingSingleThreadv2 {
                             //2，第二步你才关心send-queue是否有空间
                             //3，so，读 read 一开始就要注册，但是write依赖以上关系，什么时候用什么时候注册
                             //4，如果一开始就注册了write的事件，进入死循环，一直调起！！！
-//                            key.cancel();
-                            key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
+                            key.cancel();
+                            //key.interestOps事件更改
+//                            key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
 
 
 
@@ -83,11 +85,11 @@ public class SocketMultiplexingSingleThreadv2 {
                     e.printStackTrace();
                 }
             }
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
             buffer.clear();
 //            key.cancel();
 

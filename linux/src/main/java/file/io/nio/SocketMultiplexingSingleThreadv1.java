@@ -16,7 +16,6 @@ import java.util.Set;
  */
 public class SocketMultiplexingSingleThreadv1 {
 
-    //马老师的坦克 一 二期
     private ServerSocketChannel server = null;
     private Selector selector = null;   //linux 多路复用器（select poll    epoll kqueue） nginx  event{}
     int port = 9090;
@@ -38,6 +37,7 @@ public class SocketMultiplexingSingleThreadv1 {
             select，poll：jvm里开辟一个数组 fd4 放进去
             epoll：  epoll_ctl(fd3,ADD,fd4,EPOLLIN
              */
+            // register过程是生成selectionKey对象，加入集合，此过程在Java层不涉及c层
             server.register(selector, SelectionKey.OP_ACCEPT);
 
 
@@ -52,6 +52,7 @@ public class SocketMultiplexingSingleThreadv1 {
         try {
             while (true) {  //死循环
 
+                // 所有注册的事件
                 Set<SelectionKey> keys = selector.keys();
                 System.out.println(keys.size()+"   size");
 
@@ -74,6 +75,7 @@ public class SocketMultiplexingSingleThreadv1 {
                  * epoll_ctl(19, EPOLL_CTL_ADD, 16, {EPOLLIN, {u32=16, u64=140131897966608}}) = 0
                  * epoll_wait(19,  <unfinished ...>)       = ?
                  */
+                // 懒加载:selectKey集合在此处才真正经过c层，传入内核
                 while (selector.select() > 0) {
                     Set<SelectionKey> selectionKeys = selector.selectedKeys();  //返回的有状态的fd集合
                     Iterator<SelectionKey> iter = selectionKeys.iterator();
@@ -119,6 +121,7 @@ public class SocketMultiplexingSingleThreadv1 {
             select，poll：jvm里开辟一个数组 fd7 放进去
             epoll：  epoll_ctl(fd3,ADD,fd7,EPOLLIN
              */
+            // attachment和selectionKey绑定的附件，用于后续共享
             client.register(selector, SelectionKey.OP_READ, buffer);
             System.out.println("-------------------------------------------");
             System.out.println("新客户端：" + client.getRemoteAddress());
