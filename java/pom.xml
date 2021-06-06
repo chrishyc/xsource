@@ -144,5 +144,10 @@
             <version>5.3.5</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.googlecode.aviator</groupId>
+            <artifactId>aviator</artifactId>
+            <version>5.0.0</version>
+        </dependency>
     </dependencies>
 </project>

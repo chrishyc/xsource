@@ -74,3 +74,68 @@ poll([{fd=17, events=POLLIN}, {fd=16, events=POLLIN}], 2, -1) = 1 ([{fd=16, reve
 ##从网卡读数据过程涉及对象和过程?
 
 
+##NIO模型演变
+###accept阻塞模型
+方案:accept创建fd关联四元组+读写在同一个线程,accept阻塞，read阻塞
+优点:由于是同步执行，每个连接执行完成关闭后才执行其他连接,因此无需集合保存连接
+缺点:accept可能阻塞线程，read可能阻塞线程，互相干扰
+实现:SocketBIO
+###accept非阻塞模型
+方案:accept创建fd关联四元组+读写在同一个线程,accept非阻塞，read非阻塞，
+优点:accept非阻塞,read非阻塞不会相互干扰
+缺点:连接可能未执行完就往下执行，需要使用集合记录连接,每次循环都要将所有连接集合执行一遍，且每个连接都需要进行一次系统调用
+    连接过多后，大部分时间都消耗在系统调用上面
+实现:SocketNIO
+
+###多路复用模型select
+select和accept的区别：select的入参是读fd，写fd,然后内核对入参的fd进行状态判断，
+accept用于生成连接对应的fd
+方案:select监听指定fd集合,并返回fd集合，应用层自己根据返回的fd决定具体的连接/读/写过程
+优点:相对accept无需每个连接进行系统调用,一个系统调用查找所有fd状态
+缺点:指定的所有fd都去查找状态,如果连接非常多,查找状态也非常耗时
+实现:SocketMultiplexingSingleThreadv1
+###多路复用模型poll
+select数据结构和数组长度由内核定义，有连接最大数限制
+poll数据结构是动态数组，内核不定义数组长度
+###多路复用模型epoll
+对指定的fd集合使用事件，监听到来的事件并以红黑树集合缓存
+每次只返回有事件到来的集合
+###多路复用模型单线程
+读写会阻塞select
+###多路复用模型read,write多线程，select单个单线程
+读写开新线程,不阻塞select,但由于多线程io状态难以维护，需要通过cancel来维护状态
+且cancel涉及系统调用,会导致性能降低
+SocketMultiplexingSingleThreadv2
+
+为啥需要取消注册epoll cancel,fd红黑树，fd内核?
+多线程导致异步执行io,io读还未结束，又进行select轮训，由于fd状态仍是可读，又会创建线程
+因此需要cancel
+
+###多路复用模型select多个多线程,select每个内部的read,write是单线程阻塞
+每个cpu开一个select线程，每个select线程负责fd的连接/读/写,相当于select线程内是单线程阻塞执行
+不用维护多线程io状态，无cancel系统调用
+SocketMultiplexingThreads
+
+io通过selector线性处理，io读到的数据可以异步处理
+
+###
+
+
+###acceptable, readable有东西可读,writeable有空间可写
+[](https://zhuanlan.zhihu.com/p/340304658)
+###io同步异步，处理过程同步异步
+
+###数据结构
+tcp待完成队列
+tcp已完成队列
+发送队列，接受队列[](https://blog.csdn.net/weixin_39934085/article/details/111205630)
+accept建立fd和四元组
+epoll红黑树记录fd
+###accept select
+fd与四元组，是在accept创建的fd吗?
+###tcp syn队列数据结构
+首先我们需要明白一点，accept()是从accept队列里面取出客户端的syn请求，然后完成三次握手，
+并且socket server对于每个客户端都创建一个新的socketfd，然后通过这socketfd来跟client数据传输。 
+
+
+
