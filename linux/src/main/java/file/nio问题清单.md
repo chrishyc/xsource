@@ -117,7 +117,7 @@ SocketMultiplexingSingleThreadv2
 SocketMultiplexingThreads
 
 io通过selector线性处理，io读到的数据可以异步处理
-
+![](/Users/chris/workspace/xsource/linux/src/main/java/file/images/netty.jpeg)
 ###
 
 

@@ -10,5 +10,4 @@ public class Order implements Serializable {
     private int uid;
     private Date ordertime;
     private double total;
-    private User user;
 }
