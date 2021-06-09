@@ -95,7 +95,7 @@ public class SelectorThreadGroup {  //天生都是boss
     }
     
     public void nextSelector(Channel c) {
-        SelectorThread st = next();  //在 main线程种，取到堆里的selectorThread对象
+        SelectorThread st = nextV3();  //在 main线程种，取到堆里的selectorThread对象
 
         //1,通过队列传递数据 消息
         st.lbq.add(c);
