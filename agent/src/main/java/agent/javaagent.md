@@ -97,7 +97,10 @@ typedef struct {
 ###jvm运行时Instrumentation,能操作什么?如何实现操作class?
 Attach API
 [](https://www.jianshu.com/p/b72f66da679f)
-[](https://tech.meituan.com/2019/11/07/java-dynamic-debugging-technology.html)
+[debug原理](https://tech.meituan.com/2019/11/07/java-dynamic-debugging-technology.html)
 [](https://juejin.cn/post/6844903744266584071)
 [](https://www.jianshu.com/p/86ec47435cfc)
 
+
+###Java-debug-tool原理
+![](https://p0.meituan.net/travelcube/810f16bba746dcf85c788037e9138a6c78210.png)
