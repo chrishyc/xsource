@@ -31,6 +31,14 @@
             <!-- 注意：目前来说，maven中央仓库还没有tomcat8的插件 -->
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.60.Final</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 
 </project>
