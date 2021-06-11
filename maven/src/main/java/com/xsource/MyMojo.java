@@ -24,6 +24,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 
+/**
+ * https://shengulong.github.io/blog/2019/07/23/maven%E6%8F%92%E4%BB%B6%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/
+ * 0.例子maven-shade-plugins
+ * 1.如何debug maven
+ * 2.debug如何运作?
+ */
 @Mojo(name = "chris", defaultPhase = LifecyclePhase.COMPILE)
 public class MyMojo
         extends AbstractMojo {
