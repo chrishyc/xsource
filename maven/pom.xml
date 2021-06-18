@@ -7,6 +7,9 @@
     <name>maven Maven Mojo</name>
     <version>1.0.0</version>
     <url>http://maven.apache.org</url>
+    <properties>
+        <mypackage>com.xsource</mypackage>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -25,4 +28,93 @@
             <version>3.5.2</version>
         </dependency>
     </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/java/com/xsource</directory>
+                <includes>
+                    <include>**/*.txt</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+    <profiles>
+        <profile>
+            <id>global</id>
+            <activation>
+                <property>
+                    <name>global</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <version>1.5.3</version>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <ignoreMissingFile>false</ignoreMissingFile>
+                            <includes>
+                                <include>${project.basedir}/**/*.java</include>
+                            </includes>
+                            <replacements>
+                                <replacement>
+                                    <token>com.xsource</token>
+                                    <value>com.oversea.xsource</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>!global</id>
+            <activation>
+                <property>
+                    <name>global</name>
+                    <value>false</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <version>1.5.3</version>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <ignoreMissingFile>false</ignoreMissingFile>
+                            <includes>
+                                <include>${project.basedir}/**/*.java</include>
+                            </includes>
+                            <replacements>
+                                <replacement>
+                                    <token>com.oversea.xsource</token>
+                                    <value>com.xsource</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
