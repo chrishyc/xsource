@@ -92,28 +92,28 @@ public class MyNetty {
     @Test
     public void loopExecutor() throws Exception {
         //group  线程池
-        NioEventLoopGroup selector = new NioEventLoopGroup(2);
+        NioEventLoopGroup selector = new NioEventLoopGroup(1);
         selector.execute(() -> {
             try {
-                for (; ; ) {
-                    System.out.println("hello world001");
-                    Thread.sleep(1000);
-                }
+//                for (; ; ) {
+                System.out.println(Thread.currentThread().getName() + "hello world001");
+                Thread.sleep(1000);
+//                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
         selector.execute(() -> {
             try {
-                for (; ; ) {
-                    System.out.println("hello world002");
-                    Thread.sleep(1000);
-                }
+//                for (; ; ) {
+                System.out.println(Thread.currentThread().getName() + "hello world002");
+                Thread.sleep(1000);
+//                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
-        System.in.read();
+//        System.in.read();
     }
     
     
@@ -131,7 +131,7 @@ public class MyNetty {
         p.addLast(new MyInHandler());
         
         //reactor  异步的特征
-        ChannelFuture connect = client.connect(new InetSocketAddress("192.168.150.11", 9090));
+        ChannelFuture connect = client.connect(new InetSocketAddress("localhost", 9090));
         ChannelFuture sync = connect.sync();
         
         ByteBuf buf = Unpooled.copiedBuffer("hello server".getBytes());
@@ -160,7 +160,7 @@ public class MyNetty {
                         p.addLast(new MyInHandler());
                     }
                 })
-                .connect(new InetSocketAddress("192.168.150.11", 9090));
+                .connect(new InetSocketAddress("localhost", 9090));
         
         Channel client = connect.sync().channel();
         
@@ -179,19 +179,16 @@ public class MyNetty {
         NioEventLoopGroup thread = new NioEventLoopGroup(1);
         NioServerSocketChannel server = new NioServerSocketChannel();
         
-        
         thread.register(server);
         //指不定什么时候家里来人。。响应式
         ChannelPipeline p = server.pipeline();
         p.addLast(new MyAcceptHandler(thread, new ChannelInit()));  //accept接收客户端，并且注册到selector
 //        p.addLast(new MyAcceptHandler(thread,new MyInHandler()));  //accept接收客户端，并且注册到selector
-        ChannelFuture bind = server.bind(new InetSocketAddress("192.168.150.1", 9090));
+        ChannelFuture bind = server.bind(new InetSocketAddress("localhost", 9090));
         
         
         bind.sync().channel().closeFuture().sync();
         System.out.println("server close....");
-        
-        
     }
     
     @Test
@@ -208,7 +205,7 @@ public class MyNetty {
                         p.addLast(new MyInHandler());
                     }
                 })
-                .bind(new InetSocketAddress("192.168.150.1", 9090));
+                .bind(new InetSocketAddress("localhost", 9090));
         
         bind.sync().channel().closeFuture().sync();
         
@@ -242,11 +239,8 @@ class MyAcceptHandler extends ChannelInboundHandlerAdapter {
         //2，响应式的  handler
         ChannelPipeline p = client.pipeline();
         p.addLast(handler);  //1,client::pipeline[ChannelInit,]
-        
         //1，注册
         selector.register(client);
-        
-        
     }
 }
 
@@ -292,7 +286,8 @@ class MyInHandler extends ChannelInboundHandlerAdapter {
         ByteBuf buf = (ByteBuf) msg;
 //        CharSequence str = buf.readCharSequence(buf.readableBytes(), CharsetUtil.UTF_8);
         CharSequence str = buf.getCharSequence(0, buf.readableBytes(), CharsetUtil.UTF_8);
-        System.out.println(str);
+        System.out.println(str + ";" + this.toString());
+        //为何死循环,client和server都用到了
         ctx.writeAndFlush(buf);
     }
 }
