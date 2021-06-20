@@ -24,7 +24,7 @@ public class SocketMultiplexingSingleThreadv1 {
         try {
             server = ServerSocketChannel.open();
             server.configureBlocking(false);
-            server.bind(new InetSocketAddress(port));
+            
 
 
             //如果在epoll模型下，open--》  epoll_create -> fd3
@@ -39,7 +39,7 @@ public class SocketMultiplexingSingleThreadv1 {
              */
             // register过程是生成selectionKey对象，加入集合，此过程在Java层不涉及c层
             server.register(selector, SelectionKey.OP_ACCEPT);
-
+            server.bind(new InetSocketAddress(port));
 
         } catch (IOException e) {
             e.printStackTrace();
