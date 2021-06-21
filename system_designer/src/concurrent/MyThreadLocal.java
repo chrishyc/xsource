@@ -13,6 +13,11 @@ import java.util.concurrent.Executors;
  * threadlocal使用
  * threadlocal概念模型
  * threadlocal对象模型
+ *
+ * 1.thread,每个thread可以持有多个threadlocal
+ * 2.threadlocal,一个threadlocal可以被多个线程持有
+ * 3.thread map
+ *
  * threadlocal实现模型
  * threadlocal注意事项
  * threadlocal问题
@@ -35,11 +40,13 @@ public class MyThreadLocal {
     public static class MyRunnable implements Runnable {
         
         private static ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
+        private static ThreadLocal<Integer> threadLocal1 = new ThreadLocal<>();
         
         @Override
         public void run() {
             System.out.println(Thread.currentThread().getName() + ":before:threadLocal:" + threadLocal.get());
             threadLocal.set((int) (Math.random() * 100D));
+            threadLocal1.set((int) (Math.random() * 100D));
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
