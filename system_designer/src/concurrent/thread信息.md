@@ -28,13 +28,21 @@ at org.apache.log4j.Category.callAppenders(Category.java:201)
 
 ```
 ## 线程状态
+
+创建,停止,运行,sleep(time)
+等待锁,获取到锁运行,获取到锁且sleep,等待队列wait
 ```
-1、NEW,未启动的。不会出现在Dump中。
-2、RUNNABLE,在虚拟机内执行的。
-3、BLOCKED,受阻塞并等待监视器锁。
-4、WATING,无限期等待另一个线程执行特定操作。
-5、TIMED_WATING,有时限的等待另一个线程的特定操作。
-6、TERMINATED,已退出的。
+NEW,未启动的。不会出现在Dump中。
+
+RUNNABLE,在虚拟机内执行的。运行中状态，可能里面还能看到locked字样，表明它获得了某把锁。
+
+BLOCKED,受阻塞并等待监视器锁。被某个锁(synchronizers)給block住了。
+
+WATING,无限期等待另一个线程执行特定操作。等待某个condition或monitor发生，一般停留在park(), wait(), sleep(),join() 等语句里。
+
+TIMED_WATING,有时限的等待另一个线程的特定操作。和WAITING的区别是wait() 等语句加上了时间限制 wait(timeout)。
+
+TERMINATED,已退出的。
 ```
 ```
 1、runnable：状态一般为RUNNABLE，表示线程具备所有运行条件，在运行队列中准备操作系统的调度，或者正在运行。
@@ -43,6 +51,21 @@ at org.apache.log4j.Category.callAppenders(Category.java:201)
 4、waiting on condition：等待去等待，被park。
 5、sleeping：休眠的线程，调用了Thread.sleep()。
 ```
+
+```
+locked <地址> 目标：使用synchronized申请对象锁成功,监视器的拥有者。
+
+waiting to lock <地址> 目标：使用synchronized申请对象锁未成功,在迚入区等待。
+
+waiting on <地址> 目标：使用synchronized申请对象锁成功后,释放锁幵在等待区等待。
+
+parking to wait for <地址> 目标
+```
 [](https://blog.csdn.net/lmb55/article/details/79349680)
 [](https://www.javatang.com/archives/2017/10/25/36441958.html#waiting_on_condition)
 [](https://blog.csdn.net/liwenxia626/article/details/80791704)
+
+## 线程常见问题
+###runnable状态有io
+###死锁
+###大量锁等待
