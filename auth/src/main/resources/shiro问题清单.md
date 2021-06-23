@@ -133,3 +133,5 @@ Register a @Bean with Filter type in Spring @Configuration
 Register a @Bean with FilterRegistrationBean type in Spring @Configuration
 ```
 
+##springboot filter添加servletcontext源码
+[](https://www.cnblogs.com/youzhibing/p/9866690.html)
