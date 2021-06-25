@@ -9,11 +9,11 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
+import org.apache.shiro.web.filter.authc.AnonymousFilter;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
-import org.apache.shiro.web.servlet.OncePerRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,12 +28,31 @@ import java.util.Map;
  * 1.引入shiro会影响其他项目的某些框架加载吗?
  * 2.引入新shiro会影响其他api path的校验吗?
  * 会影响,限制路径
- * 3.多个ShiroFilterFactoryBean中的filter会互相干扰吗?会生成多个独立的FactoryShiroFilter,他们的filter互不干扰
- * 只能使用一个ShiroFilterFactoryBean，多个无效，不会递归调用
+ * 3.多个ShiroFilterFactoryBean中的filter会互相干扰吗?
+ * 会生成多个独立的FactoryShiroFilter,他们的filter互不干扰
+ * 但是每个请求都会经过所有的springShiroFilter,每个springShiroFilter的sessionManger
+ * cacheManger机制不一样,promehteus进行无状态处理,不进行缓存
+ * 其他的springShiroFilter可能缓存promehteus的账号
+ * 为了避免多个FactoryShiroFilter验证互相干扰导致递归验证,每个FactoryShiroFilter应该屏蔽其他FactoryShiroFilter的验证路径
+ *
  * <p>
  * 4.引入shiro后session存在哪?同一个用户会存几个session?session有缓存吗?缓存在哪?
+ * session默认在内存map中,一个用户一个
  * <p>
  * 5.session应该无状态吗?
+ * 最好无状态
+ * 6.cache是否同一个?
+ * cache是原型模型，每个securitymanager一个
+ * 7.session是否同一个?
+ * 每个securitymanager一个
+ *
+ * 8.
+ * 其他不影响我,其他排除我,我直接被其他人通过，因此我也没有在其他人那里留下缓存
+ * 不影响其他，加入指定路径和拦截器，不加缓存，不缓存其他人
+ *
+ * 9.如果其他系统先缓存session然后再验证,会有系统漏洞
+ *
+ *
  */
 @Configuration
 public class ShiroSpringWebConfig {
@@ -48,14 +67,14 @@ public class ShiroSpringWebConfig {
         System.out.println("shiroFilter=============");
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
         Map<String, Filter> filterMap = new LinkedHashMap<>();
-        filterMap.put("myAnon", new MyFilter());
+        filterMap.put("myAnon", new AnonymousFilter());
         filterMap.put("myBasic", new BasicHttpAuthenticationFilter());
         bean.setFilters(filterMap);
         DefaultWebSecurityManager securityManager = securityManager();
         bean.setSecurityManager(securityManager);
         Map<String, String> filterMap1 = new LinkedHashMap<>();
-        
-        filterMap1.put("/list", "myBasic");
+        filterMap1.put("/springboot", "myAnon");
+        filterMap1.put("/**", "myBasic");
 //        filterMap1.put("/**", "myBasic");
         
         bean.setFilterChainDefinitionMap(filterMap1);
@@ -78,7 +97,7 @@ public class ShiroSpringWebConfig {
     public ShiroFilterFactoryBean shiroFilter$1() {
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
         Map<String, Filter> filterMap = new LinkedHashMap<>();
-        filterMap.put("helloFilter", new AuthProxyFilter());
+        filterMap.put("helloFilter", new MyFilter$1());
         bean.setFilters(filterMap);
         bean.setSecurityManager(securityManager$1());
         Map<String, String> filterMap1 = new LinkedHashMap<>();
@@ -165,12 +184,25 @@ public class ShiroSpringWebConfig {
         return defaultSessionManager;
     }
     
-    class MyFilter extends OncePerRequestFilter {
+    
+    class MyFilter extends BasicHttpAuthenticationFilter {
         
         @Override
-        protected void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+        protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+            return false;
+        }
+        
+        
+        @Override
+        protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
             System.out.println("==========MyFilter==========");
-            chain.doFilter(request, response);
+            return super.onAccessDenied(request, response);
+        }
+        
+        @Override
+        protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
+            subject.getSession().stop();
+            return super.onLoginSuccess(token, subject, request, response);
         }
     }
     
