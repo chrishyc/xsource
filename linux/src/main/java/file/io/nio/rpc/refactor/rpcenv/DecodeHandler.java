@@ -1,7 +1,7 @@
 package file.io.nio.rpc.refactor.rpcenv;
 
-import com.bjmashibing.system.lession.test.packmode.Myheader;
-import com.bjmashibing.system.lession.test.proxymode.rpcprotocol.RpcContent;
+import file.io.nio.rpc.refactor.packmode.Myheader;
+import file.io.nio.rpc.refactor.proxymode.rpcprotocol.RpcContent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -11,8 +11,6 @@ import java.io.ObjectInputStream;
 import java.util.List;
 
 /**
- * @author: 马士兵教育
- * @create: 2020-07-19 02:36
  */
 public class DecodeHandler extends ByteToMessageDecoder {
 

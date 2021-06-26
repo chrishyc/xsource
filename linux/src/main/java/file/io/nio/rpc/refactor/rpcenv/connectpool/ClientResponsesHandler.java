@@ -1,7 +1,7 @@
 package file.io.nio.rpc.refactor.rpcenv.connectpool;
 
-import com.bjmashibing.system.lession.test.packmode.MsgCallBackMapping;
-import com.bjmashibing.system.lession.test.rpcenv.PackageMsg;
+import file.io.nio.rpc.refactor.packmode.MsgCallBackMapping;
+import file.io.nio.rpc.refactor.rpcenv.PackageMsg;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 

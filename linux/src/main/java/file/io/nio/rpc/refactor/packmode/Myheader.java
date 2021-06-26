@@ -2,7 +2,6 @@ package file.io.nio.rpc.refactor.packmode;
 
 
 import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * @author: 马士兵教育

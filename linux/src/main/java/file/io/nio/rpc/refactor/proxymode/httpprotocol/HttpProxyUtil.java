@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * @author: 马士兵教育
- * @create: 2020-07-18 20:23
  */
 public class HttpProxyUtil {
 
