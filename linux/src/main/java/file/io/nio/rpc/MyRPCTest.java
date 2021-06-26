@@ -25,11 +25,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author: 马士兵教育
- * @create: 2020-07-12 20:08
- * <p>
  * 12号的课开始手写RPC ，把前边的IO的课程都看看
  * http://mashibing.com/vip.html#%E5%91%A8%E8%80%81%E5%B8%88%E5%86%85%E5%AD%98%E4%B8%8Eio%E7%A3%81%E7%9B%98io%E7%BD%91%E7%BB%9Cio
+ * <p>
+ * 上节课，基本写了一个能发送
+ * 小问题，当并发通过一个连接发送后，服务端解析bytebuf 转 对象的过程出错
+ * <p>
+ * 上节课，基本写了一个能发送
+ * 小问题，当并发通过一个连接发送后，服务端解析bytebuf 转 对象的过程出错
  */
 
 /*
@@ -44,6 +47,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 上节课，基本写了一个能发送
  * 小问题，当并发通过一个连接发送后，服务端解析bytebuf 转 对象的过程出错
+ */
+
+/**
+ * 重点实践参数:
+ * client Channel ClientFactory poolSize
+ * clinet request Thread pool
+ *
+ * server boss io eventloop
+ * server work io eventloop
+ *
+ * server handler logic thread
  */
 public class MyRPCTest {
     
@@ -60,8 +74,11 @@ public class MyRPCTest {
         dis.register(Fly.class.getName(), fly);
         
         NioEventLoopGroup boss = new NioEventLoopGroup(20);
+        //混杂模式，accept,read/write在同一个线程组，但不在同一个线程
         NioEventLoopGroup worker = boss;
-        
+        //accept ,read/write分离模式,不在同一个线程组
+//        worker = new NioEventLoopGroup(17);
+        System.out.println(boss + ";" + worker);
         ServerBootstrap sbs = new ServerBootstrap();
         ChannelFuture bind = sbs.group(boss, worker)
                 .channel(NioServerSocketChannel.class)
@@ -250,11 +267,15 @@ class ServerDecode extends ByteToMessageDecoder {
     
     //父类里一定有channelread{  前老的拼buf  decode（）；剩余留存 ;对out遍历 } -> bytebuf
     //因为你偷懒，自己能不能实现！
+    
+    //ByteToMessageDecoder中的cumulation bytebuffer来收集未读完的buffer
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
         //不能使用if,可能有多条
+        //粘包，多个过来要处理多次，能拿到header则进行处理
         while (buf.readableBytes() >= 94) {
             byte[] bytes = new byte[94];
+            
             buf.getBytes(buf.readerIndex(), bytes);  //从哪里读取，读多少，但是readindex不变
             ByteArrayInputStream in = new ByteArrayInputStream(bytes);
             ObjectInputStream oin = new ObjectInputStream(in);
@@ -263,6 +284,7 @@ class ServerDecode extends ByteToMessageDecoder {
             
             //DECODE在2个方向都使用
             //通信的协议
+            //读到的数据>head data len,则说明数据全部读取出来了
             if (buf.readableBytes() >= header.getDataLen()) {
                 //处理指针
                 buf.readBytes(94);  //移动指针到body开始的位置
@@ -270,7 +292,7 @@ class ServerDecode extends ByteToMessageDecoder {
                 buf.readBytes(data);
                 ByteArrayInputStream din = new ByteArrayInputStream(data);
                 ObjectInputStream doin = new ObjectInputStream(din);
-                
+                //通信协议
                 if (header.getFlag() == 0x14141414) {
                     MyContent content = (MyContent) doin.readObject();
                     out.add(new Packmsg(header, content));
@@ -308,8 +330,8 @@ class ServerRequestHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         
         Packmsg requestPkg = (Packmsg) msg;
-
-        System.out.println("server handler :"+ requestPkg.content.getArgs()[0]);
+        
+        System.out.println("server handler :" + requestPkg.content.getArgs()[0]);
         
         //如果假设处理完了，要给客户端返回了~！！！
         //你需要注意哪些环节~！！！！！！！！
@@ -326,51 +348,52 @@ class ServerRequestHandler extends ChannelInboundHandlerAdapter {
         
         //3，自己创建线程池
         //2,使用netty自己的eventloop来处理业务及返回
-        ctx.executor().execute(new Runnable() {
-//        ctx.executor().parent().next().execute(new Runnable() {
-            
-            @Override
-            public void run() {
-                
-                String serviceName = requestPkg.content.getName();
-                String method = requestPkg.content.getMethodName();
-                Object c = dis.get(serviceName);
-                Class<?> clazz = c.getClass();
-                Object res = null;
-                try {
-                    
-                    
-                    Method m = clazz.getMethod(method, requestPkg.content.parameterTypes);
-                    res = m.invoke(c, requestPkg.content.getArgs());
-                    
-                    
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-
-
-//                String execThreadName = Thread.currentThread().getName();
-                MyContent content = new MyContent();
-//                String s = "io thread: " + ioThreadName + " exec thread: " + execThreadName + " from args:" + requestPkg.content.getArgs()[0];
-                content.setRes((String) res);
-                byte[] contentByte = SerDerUtil.ser(content);
-                
-                Myheader resHeader = new Myheader();
-                resHeader.setRequestID(requestPkg.header.getRequestID());
-                resHeader.setFlag(0x14141424);
-                resHeader.setDataLen(contentByte.length);
-                byte[] headerByte = SerDerUtil.ser(resHeader);
-                ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.directBuffer(headerByte.length + contentByte.length);
-                
-                byteBuf.writeBytes(headerByte);
-                byteBuf.writeBytes(contentByte);
-                ctx.writeAndFlush(byteBuf);
-            }
+        ctx.executor().parent().next().execute(() -> {
+            String execThreadName = Thread.currentThread().getName();
+            String s = "next io thread: " + ioThreadName + " exec thread: " + execThreadName + " from args:" + requestPkg.content.getArgs()[0];
+            System.out.println(s);
         });
+        //        ctx.executor().parent().next().execute(new Runnable() {
+        ctx.executor().execute(() -> ctx.executor().execute(() -> {
+            String serviceName = requestPkg.content.getName();
+            String method = requestPkg.content.getMethodName();
+            Object c = dis.get(serviceName);
+            Class<?> clazz = c.getClass();
+            Object res = null;
+            try {
+                
+                
+                Method m = clazz.getMethod(method, requestPkg.content.parameterTypes);
+                res = m.invoke(c, requestPkg.content.getArgs());
+                
+                
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            
+            
+            String execThreadName = Thread.currentThread().getName();
+            MyContent content = new MyContent();
+            String s = "io thread: " + ioThreadName + " exec thread: " + execThreadName + " from args:" + requestPkg.content.getArgs()[0];
+            System.out.println(s);
+            content.setRes((String) res);
+            byte[] contentByte = SerDerUtil.ser(content);
+            
+            Myheader resHeader = new Myheader();
+            resHeader.setRequestID(requestPkg.header.getRequestID());
+            resHeader.setFlag(0x14141424);
+            resHeader.setDataLen(contentByte.length);
+            byte[] headerByte = SerDerUtil.ser(resHeader);
+            ByteBuf byteBuf = PooledByteBufAllocator.DEFAULT.directBuffer(headerByte.length + contentByte.length);
+            
+            byteBuf.writeBytes(headerByte);
+            byteBuf.writeBytes(contentByte);
+            ctx.writeAndFlush(byteBuf);
+        }));
         
         
     }
@@ -381,6 +404,9 @@ class ServerRequestHandler extends ChannelInboundHandlerAdapter {
 //源于 spark 源码
 class ClientFactory {
     
+    /**
+     * 1个时，所有请求由一个select处理,
+     */
     int poolSize = 1;
     NioEventLoopGroup clientWorker;
     Random rand = new Random();
@@ -501,7 +527,9 @@ class ClientResponses extends ChannelInboundHandlerAdapter {
     }
 }
 
-
+/**
+ * 通信协议
+ */
 class Myheader implements Serializable {
     //通信上的协议
     /*

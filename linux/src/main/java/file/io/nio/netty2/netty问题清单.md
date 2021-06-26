@@ -1,0 +1,53 @@
+channel
+
+对象模型
+
+ChannelHandler，ChannelInboundHandlerAdapter，ChannelOutboundHandlerAdapter
+方法对应的原型?
+
+ChannelHandlerContext的作用?ChannelHandlerContext有几个?
+每当有 ChannelHandler 添加到 ChannelPipeline 中时，都会创建 ChannelHandler- Context。ChannelHandlerContext 的主要功能是管理它所关联的 ChannelHandler 和在 同一个 ChannelPipeline 中的其他 ChannelHandler 之间的交互。
+
+ChannelHandlerContext 有很多的方法，其中一些方法也存在于 Channel 和 Channel- Pipeline 本身上，但是有一点重要的不同。如果调用 Channel 或者 ChannelPipeline 上的这 些方法，它们将沿着整个 ChannelPipeline 进行传播。而调用位于 ChannelHandlerContext 上的相同方法，则将从当前所关联的 ChannelHandler 开始，并且只会传播给位于该 ChannelPipeline 中的下一个能够处理该事件的 ChannelHandler。
+
+
+要想调用从某个特定的 ChannelHandler 开始的处理过程，必须获取到在(Channel-
+Pipeline)该 ChannelHandler 之前的 ChannelHandler 所关联的 ChannelHandler- Context。这个 ChannelHandlerContext 将调用和它所关联的 ChannelHandler 之后的 ChannelHandler。
+
+
+因为一个 ChannelHandler 可以从属于多个 ChannelPipeline，所以它也可以绑定到多 个 ChannelHandlerContext 实例。对于这种用法指在多个 ChannelPipeline 中共享同一 个 ChannelHandler，对应的 ChannelHandler 必须要使用@Sharable 注解标注;否则， 试图将它添加到多个 ChannelPipeline 时将会触发异常。显而易见，为了安全地被用于多个 并发的 Channel(即连接)，这样的 ChannelHandler 必须是线程安全的。
+
+总之，只应该在确定了你的 ChannelHandler 是线程安全的时才使用@Sharable 注解。
+
+为何要共享同一个ChannelHandler 在多个ChannelPipeline中安装同一个ChannelHandler
+的一个常见的原因是用于收集跨越多个 Channel 的统计信息。
+
+
+ChannelPipeline入栈出站的方向
+
+如同在图 6-5 中所能够看到的一样，代码清单 6-6 和代码清单 6-7 中的事件流是一样的。重要的 是要注意到，虽然被调用的 Channel 或 ChannelPipeline 上的 write()方法将一直传播事件通 过整个 ChannelPipeline，但是在 ChannelHandler 的级别上，事件从一个 ChannelHandler 到下一个 ChannelHandler 的移动是由 ChannelHandlerContext 上的调用完成的。
+
+
+编码器和解码器是ChannelHandler的实现
+
+
+
+EventLoop
+
+socket关联select和socket绑定port过程
+
+
+buffer池化概念,buffer与jdk8的翻转改善,直接存储，堆存储
+
+线程池执行循环任务会阻塞吗?
+
+future实现原理,netty异步原理,channel共享
+
+连接对象:thread,select,channel,socket,pipeline,handler,future,bytebuf,listener
+
+
+接收事件，注册，读取,c中select,java 8 select,netty select三者间的关系
+
+
+netty源码回顾,share模式,childHandler##channelRead##msg总结,sync,ChannelPipeline
+##
