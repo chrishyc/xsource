@@ -14,6 +14,8 @@ import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -101,9 +103,9 @@ public class ShiroSpringWebConfig {
         bean.setFilters(filterMap);
         bean.setSecurityManager(securityManager$1());
         Map<String, String> filterMap1 = new LinkedHashMap<>();
-        
+
         filterMap1.put("/springboot", "helloFilter");
-        
+
         bean.setFilterChainDefinitionMap(filterMap1);
         return bean;
     }
@@ -161,7 +163,7 @@ public class ShiroSpringWebConfig {
         securityManager.setSessionManager(defaultSessionManager());
         DefaultSubjectDAO subjectDAO = (DefaultSubjectDAO) securityManager.getSubjectDAO();
         DefaultWebSessionStorageEvaluator webSessionStorageEvaluator = (DefaultWebSessionStorageEvaluator) subjectDAO.getSessionStorageEvaluator();
-        webSessionStorageEvaluator.setSessionStorageEnabled(false);
+//        webSessionStorageEvaluator.setSessionStorageEnabled(false);
         return securityManager;
     }
     
@@ -173,14 +175,14 @@ public class ShiroSpringWebConfig {
     @Bean
     public CustomRealm$1 customRealm$1() {
         CustomRealm$1 customRealm$1 = new CustomRealm$1();
-        customRealm$1.setCachingEnabled(false);
+//        customRealm$1.setCachingEnabled(false);
         return customRealm$1;
     }
     
     @Bean
-    public DefaultSessionManager defaultSessionManager() {
-        DefaultSessionManager defaultSessionManager = new DefaultSessionManager();
-        defaultSessionManager.setSessionValidationSchedulerEnabled(false);
+    public ServletContainerSessionManager defaultSessionManager() {
+        ServletContainerSessionManager defaultSessionManager = new ServletContainerSessionManager();
+//        defaultSessionManager.se(false);
         return defaultSessionManager;
     }
     
@@ -230,7 +232,7 @@ public class ShiroSpringWebConfig {
     public class StatelessDefaultSubjectFactory extends DefaultWebSubjectFactory {
         public Subject createSubject(SubjectContext context) {
             //不创建 session
-            context.setSessionCreationEnabled(false);
+//            context.setSessionCreationEnabled(false);
             return super.createSubject(context);
         }
     }

@@ -1,7 +1,9 @@
 channel
 
-对象模型
+##对象模型
+![](/Users/chris/workspace/xsource/linux/src/main/java/file/images/netty_object_model.jpg)
 
+##实现模型
 ChannelHandler，ChannelInboundHandlerAdapter，ChannelOutboundHandlerAdapter
 方法对应的原型?
 
@@ -50,4 +52,9 @@ future实现原理,netty异步原理,channel共享
 
 
 netty源码回顾,share模式,childHandler##channelRead##msg总结,sync,ChannelPipeline
-##
+##netty io和应用层关联
+###serverbootstrap 可以bind端口号多个？bind后在哪些线程?
+2个bootstrap对应一个boss组,work组
+###多个bootstrap使用一个boss,work组会有问题吗?
+###handler和socket的关系?
+
