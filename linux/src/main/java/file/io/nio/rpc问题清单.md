@@ -30,3 +30,14 @@ FutureTask
 ##service mesh(服务网)
 [](https://www.cnblogs.com/tianyamoon/p/10106587.html)
 ![](https://img2018.cnblogs.com/blog/21899/201812/21899-20181212092501971-882456460.png)
+##rpc请求接收模型
+请求:异步,串行
+异步发起请求,串行传输数据
+
+request,response：异步请求，返回时不一定时按顺序返回，需要状态位标记mapping
+此方式是有状态通信
+![](/Users/chris/workspace/xsource/linux/src/main/java/file/images/netty_rpc_modle.jpg)
+##rpc模型
+netty
+redis
+tomcat

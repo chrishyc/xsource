@@ -1,11 +1,9 @@
-package file.io.nio.rpc.refactor.packmode;
-
+package file.io.nio.rpc.rpcdemo.rpc.protocol;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
- * @author: 马士兵教育
- * @create: 2020-07-18 11:29
  */
 public class Myheader implements Serializable {
     //通信上的协议
@@ -17,8 +15,20 @@ public class Myheader implements Serializable {
      */
     int flag;  //32bit可以设置很多信息。。。
     long requestID;
-    int dataLen;
+    long dataLen;
 
+
+    public static Myheader createHeader(byte[] msg){
+        Myheader header = new Myheader();
+        int size = msg.length;
+        int f = 0x14141414;
+        long requestID =  Math.abs(UUID.randomUUID().getLeastSignificantBits());
+        //0x14  0001 0100
+        header.setFlag(f);
+        header.setDataLen(size);
+        header.setRequestID(requestID);
+        return header;
+    }
 
     public int getFlag() {
         return flag;
@@ -36,11 +46,11 @@ public class Myheader implements Serializable {
         this.requestID = requestID;
     }
 
-    public int getDataLen() {
+    public long getDataLen() {
         return dataLen;
     }
 
-    public void setDataLen(int dataLen) {
+    public void setDataLen(long dataLen) {
         this.dataLen = dataLen;
     }
 }
