@@ -27,9 +27,6 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author: 马士兵教育
- * @create: 2020-07-12 20:08
- * <p>
  * 12号的课开始手写RPC ，把前边的IO的课程都看看
  * http://mashibing.com/vip.html#%E5%91%A8%E8%80%81%E5%B8%88%E5%86%85%E5%AD%98%E4%B8%8Eio%E7%A3%81%E7%9B%98io%E7%BD%91%E7%BB%9Cio
  */
