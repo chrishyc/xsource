@@ -29,6 +29,7 @@ public class MyProxy {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
+                
                 Object res=null;
                 Object o = dis.get(interfaceInfo.getName());
                 if(o== null){

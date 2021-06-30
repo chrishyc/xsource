@@ -14,8 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * @author: 马士兵教育
- * @create: 2020-08-16 21:13
  */
 public class ServerRequestHandler extends ChannelInboundHandlerAdapter {
 
