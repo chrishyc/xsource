@@ -76,7 +76,7 @@ public class ShiroSpringWebConfig {
         bean.setSecurityManager(securityManager);
         Map<String, String> filterMap1 = new LinkedHashMap<>();
         filterMap1.put("/springboot", "myAnon");
-        filterMap1.put("/**", "myBasic");
+        filterMap1.put("/list", "myBasic");
 //        filterMap1.put("/**", "myBasic");
         
         bean.setFilterChainDefinitionMap(filterMap1);
@@ -153,6 +153,7 @@ public class ShiroSpringWebConfig {
     public DefaultWebSecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(customRealm());
+        securityManager.setSessionManager(defaultSessionManager());
         return securityManager;
     }
     
@@ -175,13 +176,26 @@ public class ShiroSpringWebConfig {
     @Bean
     public CustomRealm$1 customRealm$1() {
         CustomRealm$1 customRealm$1 = new CustomRealm$1();
+        customRealm$1.setAuthenticationTokenClass(MyToken.class);
 //        customRealm$1.setCachingEnabled(false);
         return customRealm$1;
     }
     
+    static public class MyToken implements AuthenticationToken{
+    
+        @Override
+        public Object getPrincipal() {
+            return null;
+        }
+    
+        @Override
+        public Object getCredentials() {
+            return null;
+        }
+    }
     @Bean
-    public ServletContainerSessionManager defaultSessionManager() {
-        ServletContainerSessionManager defaultSessionManager = new ServletContainerSessionManager();
+    public DefaultWebSessionManager defaultSessionManager() {
+        DefaultWebSessionManager defaultSessionManager = new DefaultWebSessionManager();
 //        defaultSessionManager.se(false);
         return defaultSessionManager;
     }
@@ -191,7 +205,7 @@ public class ShiroSpringWebConfig {
         
         @Override
         protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-            return false;
+            return super.isAccessAllowed(request, response,mappedValue);
         }
         
         
@@ -212,7 +226,7 @@ public class ShiroSpringWebConfig {
         
         @Override
         protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-            return false;
+            return super.isAccessAllowed(request,response,mappedValue);
         }
         
         
