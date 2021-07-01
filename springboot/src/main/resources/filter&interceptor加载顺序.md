@@ -1,6 +1,7 @@
 ##顺序
 filter链路执行完,然后调用servlet,DispatcherServlet中的HandlerInterceptor链路执行
 ![](https://upload-images.jianshu.io/upload_images/1704592-93aadaf76ab4746b.jpg)
+![](/Users/chris/workspace/xsource/springboot/src/main/resources/images/filter&interceptor.png)
 ##
 interceptor
 ```

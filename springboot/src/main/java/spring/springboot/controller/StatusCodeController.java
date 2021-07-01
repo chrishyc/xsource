@@ -17,7 +17,7 @@ public class StatusCodeController {
     public String getBooks(HttpServletRequest request, HttpServletResponse response) throws ServerException {
         HttpSession session = request.getSession();
         Subject subject = SecurityUtils.getSubject();
-        subject.login(new ShiroSpringWebConfig.MyToken());
+//        subject.login(new ShiroSpringWebConfig.MyToken());
         return "hello";
     }
 }

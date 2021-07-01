@@ -135,3 +135,70 @@ Register a @Bean with FilterRegistrationBean type in Spring @Configuration
 
 ##springboot filter添加servletcontext源码
 [](https://www.cnblogs.com/youzhibing/p/9866690.html)
+
+
+##shiro filter认证流程
+![](/Users/chris/workspace/xsource/auth/src/main/java/kerberos/shiro_filter_auth.png)
+1.session获取
+2.session存储
+
+
+subject session关系
+threadcontext绑定解绑
+session在哪?
+securty线程
+获取当前线程subject
+
+shiro
+
+https://blog.csdn.net/lblblblblzdx/article/details/87001023
+
+https://juejin.cn/post/6844903493480906766
+
+0.shirofilter创建 final Subject subject = createSubject(request, response);解析session是否auth，
+，subjectcontext创建，上下文工具类，负责从resolvePrincipals()中获取用户身份,从resolveAuthenticated获取用户身份认证
+，获取session放入subjectcontext，null为空时设置为空,获取sessionid,从retrieveSessionFromDataSource中获取
+
+1.subject.execute绑定 subject注入线程
+2.call,执行链路
+
+3.
+
+
+4.subject被后面的subject顶替,同一个线程
+
+
+5.身份认证，子filter,subject.login,验证token
+
+6.验证通过，在当前线程subjectcontext记录auth=true，subjectcontext有map记录
+
+7.创建subject,拷贝subjectcontext到subject，把subject的信息回写session,createSubject#save
+
+
+
+filter 
+url关系
+
+filter和requst关系
+
+
+外部filter 
+
+内部filter
+
+session
+
+
+session subjuct关系更新在内部filter中，外部filter不处理
+
+
+get url
+
+
+
+session不存在？
+
+shiro自己的session ，http的session
+
+session生成和使用时机，业务url请求
+session加密?session管理

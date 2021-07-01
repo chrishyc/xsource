@@ -4,7 +4,6 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
@@ -15,7 +14,6 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
-import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,14 +45,12 @@ import java.util.Map;
  * cache是原型模型，每个securitymanager一个
  * 7.session是否同一个?
  * 每个securitymanager一个
- *
+ * <p>
  * 8.
  * 其他不影响我,其他排除我,我直接被其他人通过，因此我也没有在其他人那里留下缓存
  * 不影响其他，加入指定路径和拦截器，不加缓存，不缓存其他人
- *
+ * <p>
  * 9.如果其他系统先缓存session然后再验证,会有系统漏洞
- *
- *
  */
 @Configuration
 public class ShiroSpringWebConfig {
@@ -103,9 +99,9 @@ public class ShiroSpringWebConfig {
         bean.setFilters(filterMap);
         bean.setSecurityManager(securityManager$1());
         Map<String, String> filterMap1 = new LinkedHashMap<>();
-
+        
         filterMap1.put("/springboot", "helloFilter");
-
+        
         bean.setFilterChainDefinitionMap(filterMap1);
         return bean;
     }
@@ -161,7 +157,7 @@ public class ShiroSpringWebConfig {
     public DefaultWebSecurityManager securityManager$1() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(customRealm$1());
-        securityManager.setSessionManager(defaultSessionManager());
+        securityManager.setSessionManager(new DefaultWebSessionManager());
         DefaultSubjectDAO subjectDAO = (DefaultSubjectDAO) securityManager.getSubjectDAO();
         DefaultWebSessionStorageEvaluator webSessionStorageEvaluator = (DefaultWebSessionStorageEvaluator) subjectDAO.getSessionStorageEvaluator();
 //        webSessionStorageEvaluator.setSessionStorageEnabled(false);
@@ -170,29 +166,31 @@ public class ShiroSpringWebConfig {
     
     @Bean
     public CustomRealm customRealm() {
+        CustomRealm customRealm = new CustomRealm();
+//        customRealm.setAuthenticationTokenClass(MyToken.class);
         return new CustomRealm();
     }
     
     @Bean
     public CustomRealm$1 customRealm$1() {
         CustomRealm$1 customRealm$1 = new CustomRealm$1();
-        customRealm$1.setAuthenticationTokenClass(MyToken.class);
 //        customRealm$1.setCachingEnabled(false);
         return customRealm$1;
     }
     
-    static public class MyToken implements AuthenticationToken{
-    
+    static public class MyToken implements AuthenticationToken {
+        
         @Override
         public Object getPrincipal() {
             return null;
         }
-    
+        
         @Override
         public Object getCredentials() {
             return null;
         }
     }
+    
     @Bean
     public DefaultWebSessionManager defaultSessionManager() {
         DefaultWebSessionManager defaultSessionManager = new DefaultWebSessionManager();
@@ -205,7 +203,7 @@ public class ShiroSpringWebConfig {
         
         @Override
         protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-            return super.isAccessAllowed(request, response,mappedValue);
+            return super.isAccessAllowed(request, response, mappedValue);
         }
         
         
@@ -226,7 +224,7 @@ public class ShiroSpringWebConfig {
         
         @Override
         protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-            return super.isAccessAllowed(request,response,mappedValue);
+            return super.isAccessAllowed(request, response, mappedValue);
         }
         
         
