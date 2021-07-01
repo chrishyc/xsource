@@ -5,5 +5,4 @@ Kerberos
 user :
 账号,密码认证,双方认证,kerberos认证user,user认证kerberos
 权限认证
-
 service:账号,密码
