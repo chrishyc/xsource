@@ -23,3 +23,23 @@ dubbo原理分析
 
 字节码exception
 异常栈含义分析
+##dubbo io对象模型
+##dubbo异步调用
+ProtocolFilterWrapper.buildInvokerChain
+```
+ asyncResult.whenCompleteWithContext((r, t) -> {
+                            if (filter instanceof ListenableFilter) {
+                                ListenableFilter listenableFilter = ((ListenableFilter) filter);
+                                Filter.Listener listener = listenableFilter.listener(invocation);
+                                try {
+                                    if (listener != null) {
+                                        if (t == null) {
+                                            listener.onResponse(r, invoker, invocation);
+                                        } else {
+                                            listener.onError(t, invoker, invocation);
+                                        }
+                                    }
+                                } finally {
+                                    listenableFilter.removeListener(invocation);
+                                }
+```

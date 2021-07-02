@@ -11,3 +11,6 @@ executor执行task
 5.spark集群类型
 单机,yarn,master/slave
 6.
+##spark对象模型
+![](/Users/chris/workspace/xsource/bigdata/src/main/resources/images/spark对象模型.jpg)
+[](https://zhuanlan.zhihu.com/p/54192454)
