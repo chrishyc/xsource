@@ -9,6 +9,7 @@
     <url>http://maven.apache.org</url>
     <properties>
         <mypackage>com.xsource</mypackage>
+        <chris.name>chrishu</chris.name>
     </properties>
     <dependencies>
         <dependency>
@@ -28,18 +29,14 @@
             <version>3.5.2</version>
         </dependency>
     </dependencies>
-    <build>
-        <resources>
-            <resource>
-                <directory>${project.basedir}/src/main/java/com/xsource</directory>
-                <includes>
-                    <include>**/*.txt</include>
-                </includes>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-    </build>
+
     <profiles>
+        <profile>
+            <id>local</id>
+            <properties>
+                <chris.age>chrishaha</chris.age>
+            </properties>
+        </profile>
         <profile>
             <id>global</id>
             <activation>
@@ -117,4 +114,62 @@
             </build>
         </profile>
     </profiles>
+    <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/java/com/xsource</directory>
+                <includes>
+                    <include>**/*.txt</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.xsource.Main</mainClass> <!-- 此处为主入口-->
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <configurationSourceDirectory>src/main/resources</configurationSourceDirectory>
+                    <configurationDirectory>configuration</configurationDirectory>
+                    <filterConfigurationDirectory>true</filterConfigurationDirectory>
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                    <includeConfigurationDirectoryInClasspath>true
+                    </includeConfigurationDirectoryInClasspath>
+                    <extraJvmArguments>
+                        -Dcommon.name=${chris.name}
+                        -Dchris.age=${chris.age}
+                    </extraJvmArguments>
+                    <programs>
+                        <program>
+                            <mainClass>com.xsource.Main</mainClass>
+                            <name>main.sh</name>
+                        </program>
+                    </programs>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 </project>
