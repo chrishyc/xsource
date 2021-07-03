@@ -38,6 +38,12 @@ todo:
 
 ###为什么是三级缓存?
 实验测试得到的数据,时间和空间的平衡
+1.CPU核心的运行频率远高于内存的运行频率，存储器成为瓶颈
+2.使用运行频率和cpu相近的缓存，但是要考虑成本和缓存搜索时间，搜索时间不能超过上百个核心时钟周期
+缓存不能做的太大,在此限制下要提高搜索速度
+3.时间局部性，上次访问这次访问可能性很大，空间局部性，访问这个周边的也很有可能访问，所以采用分级
+[参考大话计算机]
+
 
 ###缓存行cache line
 ![](/Users/chris/workspace/xsource/linux/src/main/resources/images/缓存行.jpg)
@@ -63,15 +69,36 @@ cache line伪共享问题,两个cpu从l3缓存操作同一份数据的两个不�
 cache line 64B,64字节
 ###cache line参数
 块号+块内地址+状态(2位)
+
+内存1024*1024*1024B,cacheline 64B
+则块号=1024*1024*16
+块内地址=64/8=8
+
+###cachel line格式
+
+tag=块号+块内地址+状态(dirty,invalid)
+
+###缓存与cpu数据交换如何实现
+是什么总线?
+
+##cacheline与主存映射策略
+组关联
+###cacheline替换策略
+LRU
+FIFO
+
 ###缓存一致性协议MESI(缓存锁)
 ![](/Users/chris/workspace/xsource/linux/src/main/resources/images/缓存一致性协议.jpg)
 
 使用状态号MESI
-https://www.cnblogs.com/z00377750/p/9180644.html
+[](https://www.cnblogs.com/z00377750/p/9180644.html)
 ###多于一个cache line的数据共享问题
 总线锁
 
 ###缓存行对齐编程
+
+
+
 
 ###volatile和cpu缓存的关系?
 [volatitle与lock信号](https://blog.csdn.net/qq_26222859/article/details/52235930)  
