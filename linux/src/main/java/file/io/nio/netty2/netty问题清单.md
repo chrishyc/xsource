@@ -58,3 +58,21 @@ netty源码回顾,share模式,childHandler##channelRead##msg总结,sync,ChannelP
 ###多个bootstrap使用一个boss,work组会有问题吗?
 ###handler和socket的关系?
 
+
+##netty面试题
+[](https://xiaozhuanlan.com/topic/4028536971)
+##那些开源项目用到了Netty?
+dubbo,RocketMQ,Spring Cloud Gateway
+##Netty是什么
+1.基于nio
+2.支持各种协议
+3.简化网络编程编解码,粘包拆包等编码
+
+##为啥不直接用NIO呢?
+基于reactor模式,是基于事件驱动的设计模式，拥有一个或多个并发输入源，有一个服务处理器和多个请求处理器，服务处理器会同步的将输入的请求事件以多路复用的方式分发给相应的请求处理器
+数据粘包拆包
+##为啥使用netty?
+
+##netty做什么
+
+
