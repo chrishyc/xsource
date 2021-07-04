@@ -92,6 +92,7 @@ FIFO
 
 使用状态号MESI
 [](https://www.cnblogs.com/z00377750/p/9180644.html)
+![](https://images2018.cnblogs.com/blog/1014100/201806/1014100-20180613224959895-380715655.gif)
 ###多于一个cache line的数据共享问题
 总线锁
 
@@ -102,6 +103,25 @@ FIFO
 
 ###volatile和cpu缓存的关系?
 [volatitle与lock信号](https://blog.csdn.net/qq_26222859/article/details/52235930)  
+当一个CPU修改缓存中的字节时，服务器中其他CPU会被通知，它们的缓存将视为无效。于是，在上面的情况下，核3发现自己的缓存中数据已无效，核0将立即把自己的数据写回主存，然后核3重新读取该数据
+```
+0x0000000002931351
+        : lock add dword ptr [rsp],0h ;*putstatic instance
+       
+
+        ; - org.xrq.test.design.singleton.LazySingleton::getInstance
+        @13 
+        (line 
+        14
+        )
+```
+
+在lock前缀指令执行期间已经在处理器内部的缓存中被锁定（即包含该内存区域的缓存行当前处于独占或以修改状态），
+并且该内存区域被完全包含在单个缓存行（cache line）中，那么处理器将直接执行该指令。
+由于在指令执行期间该缓存行会一直被锁定，其它处理器无法读/写该指令要访问的内存区域，
+因此能保证指令执行的原子性。这个操作过程叫做缓存锁定（cache locking），
+缓存锁定将大大降低lock前缀指令的执行开销，但是当多处理器之间的竞争程度很高或者指令访问的内存地址未对齐时，
+仍然会锁住总线
 [volatiel与一致性协议关系](https://blog.csdn.net/zsxcomputer/article/details/113249953)
 [一致性协议详解](https://wudaijun.com/2019/04/cpu-cache-and-memory-model/#valine-comments)
 
