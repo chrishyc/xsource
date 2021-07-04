@@ -61,6 +61,7 @@ netty源码回顾,share模式,childHandler##channelRead##msg总结,sync,ChannelP
 
 ##netty面试题
 [](https://xiaozhuanlan.com/topic/4028536971)
+[](https://blog.csdn.net/weixin_39864373/article/details/110886072)
 ##那些开源项目用到了Netty?
 dubbo,RocketMQ,Spring Cloud Gateway
 ##Netty是什么
@@ -75,4 +76,20 @@ dubbo,RocketMQ,Spring Cloud Gateway
 
 ##netty做什么
 
+##netty线程模型
 
+##tcp粘包拆包
+[](https://juejin.cn/post/6844904197712789518#heading-0)
+
+##netty长连接
+
+##Netty零拷贝
+
+##直接内存和堆内存区别
+
+直接内存的读写操作比普通Buffer快，但它的创建、销毁比普通Buffer慢（猜测原因是DirectBuffer需向OS申请内存涉及到用户态内核态切换，而后者则直接从堆内存划内存即可）。
+
+因此直接内存使用于需要大内存空间且频繁访问的场合，不适用于频繁申请释放内存的场合。
+[](https://www.zhihu.com/question/60892134)
+
+##netty+tomcat有状态通信
