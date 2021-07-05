@@ -1,6 +1,9 @@
 package pattern.visitor;
 
 
+/**
+ * https://refactoringguru.cn/design-patterns/visitor
+ */
 public class Demo {
     public static void main(String[] args) {
         Dot dot = new Dot(1, 10, 55);
