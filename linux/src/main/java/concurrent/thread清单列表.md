@@ -71,6 +71,7 @@ parking to wait for <地址> 目标
 ###大量锁等待
 
 ##线程状态
+[等待队列](https://blog.csdn.net/weixin_44537992/article/details/105990158)
 ![](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_status.jpg)
 ##sleep && join && yield
 sleep
