@@ -72,3 +72,10 @@ parking to wait for <地址> 目标
 
 ##线程状态
 ![](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_status.jpg)
+##sleep && join && yield
+sleep
+![sleep](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_sleep.jpg)
+join
+![join](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_join.jpg)
+yield
+![yield](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_yield.jpg)
