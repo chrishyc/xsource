@@ -129,3 +129,12 @@ lsof -op $$查看进程文件
 ##查看页缓存
 echo $$
 pcstat -pid $$: 查看页缓存
+
+##inode信息
+[](https://www.ruanyifeng.com/blog/2011/12/inode.html)
+df -i
+ls -i example.txt
+ls -i /etc
+stat example.txt
+
+
