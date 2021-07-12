@@ -14,6 +14,8 @@ https://cloud.tencent.com/developer/article/1082708
 
 
 ##synchronized对象模型
+![](https://juejin.cn/post/6844903735265771527)
+
 ![](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/synchronized对象模型.jpg)
 
 
