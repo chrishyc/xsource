@@ -4,11 +4,23 @@
 
 package concurrent;
 
+import org.openjdk.jol.info.ClassLayout;
+
 import java.util.concurrent.TimeUnit;
 
 /**
  * javac /Users/chris/workspace/xsource/linux/src/main/java/concurrent/T05_Synchronized.java
- * javap -v /Users/chris/workspace/xsource/linux/src/main/java/concurrent/T05_Synchronized.class
+ * 查看字节码指令:javap -v /Users/chris/workspace/xsource/linux/src/main/java/concurrent/T05_Synchronized.class
+ *
+ * 查看对象布局:java -jar /Users/chris/workspace/xsource/linux/src/main/resources/jol-cli.jar    internals java.util.HashMap
+ * 锁偏移:https://www.cnblogs.com/LemonFive/p/11246086.html
+ *
+ * OFFSET  SIZE               TYPE DESCRIPTION                               VALUE
+ *       0     4                    (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
+ * 输出的第一行内容和锁状态内容对应
+ * unused:1 | age:4 | biased_lock:1 | lock:2
+ *      0           0000             0                01     代表A对象正处于无锁状态
+ *
  */
 public class T05_Synchronized {
     String name;
@@ -20,6 +32,8 @@ public class T05_Synchronized {
      * @param balance
      */
     public synchronized void set(String name, double balance) {
+        System.out.println(ClassLayout.parseInstance(this).toPrintable());
+        System.out.println("=========================================");
         this.name = name;
         
         try {
@@ -106,7 +120,10 @@ public class T05_Synchronized {
     
     public static void main(String[] args) {
         T05_Synchronized a = new T05_Synchronized();
+        System.out.println(ClassLayout.parseInstance(a).toPrintable());
+        System.out.println("=========================================");
         new Thread(() -> a.set("zhangsan", 100.0)).start();
+//        new Thread(() -> a.set("zhangsan", 100.0)).start();
         
         try {
             TimeUnit.SECONDS.sleep(1);

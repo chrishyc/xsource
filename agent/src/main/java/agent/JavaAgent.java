@@ -15,6 +15,7 @@ public class JavaAgent {
     public static final String INSTRUTED_CLASS = "client.Bar";
 
     public static void premain(String arguments, Instrumentation instrumentation) {
+        System.out.println("i am JavaAgent");
         new AgentBuilder.Default()
                 .type(named(INSTRUTED_CLASS))
                 .transform(new AgentBuilder.Transformer() {
