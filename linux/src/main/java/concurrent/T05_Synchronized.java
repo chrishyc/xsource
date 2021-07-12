@@ -15,11 +15,20 @@ import java.util.concurrent.TimeUnit;
  * 查看对象布局:java -jar /Users/chris/workspace/xsource/linux/src/main/resources/jol-cli.jar    internals java.util.HashMap
  * 锁偏移:https://www.cnblogs.com/LemonFive/p/11246086.html
  *
+ *
+ *
  * OFFSET  SIZE               TYPE DESCRIPTION                               VALUE
  *       0     4                    (object header)                           01 00 00 00 (00000001 00000000 00000000 00000000) (1)
  * 输出的第一行内容和锁状态内容对应
  * unused:1 | age:4 | biased_lock:1 | lock:2
  *      0           0000             0                01     代表A对象正处于无锁状态
+ *
+ *
+ * 0 01 无锁
+ * 1 01 偏向锁
+ * 0 00 轻量级锁
+ * 0 10 重量级锁
+ * 0 11 GC标记
  *
  */
 public class T05_Synchronized {
@@ -32,15 +41,15 @@ public class T05_Synchronized {
      * @param balance
      */
     public synchronized void set(String name, double balance) {
-        System.out.println(ClassLayout.parseInstance(this).toPrintable());
+        System.out.println(ClassLayout.parseInstance(this).toPrintable() + "\n" + "thread id:" + Thread.currentThread().getId());
         System.out.println("=========================================");
         this.name = name;
-        
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         this.balance = balance;
     }
     
@@ -120,10 +129,11 @@ public class T05_Synchronized {
     
     public static void main(String[] args) {
         T05_Synchronized a = new T05_Synchronized();
-        System.out.println(ClassLayout.parseInstance(a).toPrintable());
+        System.out.println(ClassLayout.parseInstance(a).toPrintable() + "\n" + "thread id:" + Thread.currentThread().getId());
         System.out.println("=========================================");
         new Thread(() -> a.set("zhangsan", 100.0)).start();
-//        new Thread(() -> a.set("zhangsan", 100.0)).start();
+        new Thread(() -> a.set("zhangsan", 100.0)).start();
+//        a.set("zhangsan", 100.0);
         
         try {
             TimeUnit.SECONDS.sleep(1);
