@@ -163,3 +163,11 @@ cache line2个状态位
 [原子操作](https://www.bilibili.com/video/BV1Sp4y1h7bu?from=search&seid=1126417998132914696)
 ###cache line性能测试
 ![](/Users/chris/workspace/xsource/linux/src/main/resources/images/缓存padding.jpg)
+
+##cpu一致性模型
+![](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/cacheline.jpg)
+[](https://www.zhihu.com/question/65372648)
+CAS的特性使得他称为实现任何高层“锁”的必要的构建。
+几乎所有的“锁”，如Mutex，ReentrantLock等都得用CAS让线程先原子性的抢到一个东西
+（比如一个队列的头部），然后才能维护其他锁相关的数据。并且很有意思的是，
+如果一个竞争算法只用到了CAS，却没有让线程“等待”，就会被称为“无锁算法”。
