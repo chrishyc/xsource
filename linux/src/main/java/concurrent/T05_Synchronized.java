@@ -133,7 +133,10 @@ public class T05_Synchronized {
         System.out.println("=========================================");
         new Thread(() -> a.set("zhangsan", 100.0)).start();
         new Thread(() -> a.set("zhangsan", 100.0)).start();
-//        a.set("zhangsan", 100.0);
+        new Thread(() -> a.set("zhangsan", 100.0)).start();
+        new Thread(() -> a.set("zhangsan", 100.0)).start();
+        new Thread(() -> a.set("zhangsan", 100.0)).start();
+        a.set("zhangsan", 100.0);
         
         try {
             TimeUnit.SECONDS.sleep(1);

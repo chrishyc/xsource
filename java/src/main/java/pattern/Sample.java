@@ -14,6 +14,11 @@ public class Sample {
     }
     
     @Test
+    public void testReplace(){
+        System.out.println("hello.world.i.am.chris".replaceAll("\\.","\\/"));
+    }
+    
+    @Test
     public void testOr() {
         System.out.println(".a/b".replaceAll("[./]", "_"));
     }
