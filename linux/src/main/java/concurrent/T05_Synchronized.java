@@ -4,6 +4,7 @@
 
 package concurrent;
 
+import org.junit.Test;
 import org.openjdk.jol.info.ClassLayout;
 
 import java.util.concurrent.TimeUnit;
@@ -208,5 +209,13 @@ public class T05_Synchronized {
         a.synString("");
         a.synInteger1("");
         a.synNull1("");
+        
+    }
+    
+    @Test
+    public void testStringRef(){
+        String s1 = "hello";
+        String s2 = "hello";
+        System.out.println(s1 == s2);
     }
 }
