@@ -67,3 +67,4 @@ safepoint就是一个安全点，所有的线程执行到安全点的时候就�
 string可能值相等但不是同一个对象,如果是同一个对象，范围是整个jvm，其他库也可能使用了string
 integer,long包装类，-128~127,全局唯一,但是128是不同对象，如果每个线程都是128，其实是锁住不同线程
 syn锁使用null会空指针,找不到引用的对象，monitor锁需要操作对象头
+[](https://stackoverflow.com/questions/10195054/synchronized-object-set-to-null)
