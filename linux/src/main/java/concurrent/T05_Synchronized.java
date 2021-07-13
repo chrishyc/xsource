@@ -30,6 +30,12 @@ import java.util.concurrent.TimeUnit;
  * 0 10 重量级锁
  * 0 11 GC标记
  *
+ *
+ * 查看safepoint:
+ * -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly
+ *
+ * 0x0000000114caeee5: test   %eax,-0x6cb6deb(%rip)        # 0x000000010dff8100
+ *                                                 ;   {poll_return}
  */
 public class T05_Synchronized {
     String name;
@@ -127,6 +133,51 @@ public class T05_Synchronized {
     }
     
     
+    public /*synchronized*/ double synString(String name) {
+        synchronized ("hello") {
+            return this.balance;
+        }
+    }
+    
+    public /*synchronized*/ double synString1(String name) {
+        synchronized ("hello") {
+            return this.balance;
+        }
+    }
+    
+    public /*synchronized*/ double synString2(String name) {
+        synchronized (new String("hello")) {
+            return this.balance;
+        }
+    }
+    
+    public /*synchronized*/ double synString3(String name) {
+        synchronized (new String("hello").intern()) {
+            return this.balance;
+        }
+    }
+    
+    public /*synchronized*/ double synInteger1(String name) {
+        synchronized (new Integer(1)) {
+            return this.balance;
+        }
+    }
+    
+    public /*synchronized*/ double synInteger2(String name) {
+        synchronized (new Integer(129)) {
+            return this.balance;
+        }
+    }
+    
+    private Object o = null;
+    
+    public /*synchronized*/ double synNull1(String name) {
+        synchronized (o) {
+            return this.balance;
+        }
+    }
+    
+    
     public static void main(String[] args) {
         T05_Synchronized a = new T05_Synchronized();
         System.out.println(ClassLayout.parseInstance(a).toPrintable() + "\n" + "thread id:" + Thread.currentThread().getId());
@@ -153,5 +204,9 @@ public class T05_Synchronized {
         }
         
         System.out.println(a.getBalance("zhangsan"));
+        
+        a.synString("");
+        a.synInteger1("");
+        a.synNull1("");
     }
 }
