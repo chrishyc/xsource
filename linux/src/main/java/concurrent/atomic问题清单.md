@@ -19,6 +19,7 @@ atomicStampReference
 
 
 ##longAddr
+![](images/longadder原理.jpg)
 [longAddr原理](https://juejin.cn/post/6844904155061075975)
 atomic cas ++失败会自旋,如果100个线程都cas ++,太多线程失败，导致大量线程自旋,浪费cpu
 1.如何优化效率:将目标value分成几份，每份分别cas ++,
