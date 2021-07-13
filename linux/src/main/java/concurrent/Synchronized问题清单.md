@@ -43,5 +43,7 @@ signalAll()方法，相当于对等待队列中的每个节点均执行一次sig
 ##safepoint
 [安全点排查](https://blog.csdn.net/superfjj/article/details/107855767)
 [安全点实战](https://www.pianshen.com/article/36071068168/)
--XX:+PrintSafepointStatistics –XX:PrintSafepointStatisticsCount=1 
+-XX:+PrintSafepointStatistics
 ##stop the world
+
+##逃逸分析
