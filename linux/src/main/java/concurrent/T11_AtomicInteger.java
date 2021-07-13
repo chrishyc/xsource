@@ -18,6 +18,16 @@ public class T11_AtomicInteger {
     
     AtomicInteger count = new AtomicInteger(0);
     
+    /**
+     * public final int getAndAddInt(Object var1, long var2, int var4) {
+     *     int var5;
+     *     do {
+     *       var5 = this.getIntVolatile(var1, var2);
+     *     } while(!this.compareAndSwapInt(var1, var2, var5, var5 + var4));
+     *
+     *     return var5;
+     *   }
+     */
     /*synchronized*/ void m() {
         for (int i = 0; i < 10000; i++)
             //if count1.get() < 1000
