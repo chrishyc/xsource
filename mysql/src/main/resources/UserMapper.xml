@@ -1,0 +1,106 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.start.dao.IUserDao">
+    <!--    <cache type="org.mybatis.caches.redis.RedisCache"/>-->
+
+    <!--默认为PerpetualCache-->
+    <cache/>
+
+    <select id="select" parameterType="java.lang.Integer" resultType="mybatis.start.pojo.User">
+        select *
+        from user_test
+        where id = #{id}
+    </select>
+
+    <select id="findAll" resultType="mybatis.start.pojo.User">
+        select *
+        from user_test
+    </select>
+    <insert id="insert" parameterType="mybatis.start.pojo.User">
+        insert into user_test
+        values (#{id}, #{username}, #{password})
+    </insert>
+    <update id="update" parameterType="mybatis.start.pojo.User">
+        update user_test
+        set username=#{username},
+            password=#{password}
+        where id = #{id}
+    </update>
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete
+        from user_test
+        where id = #{id}
+    </delete>
+
+    <!--where 元素只会在子元素返回任何内容的情况下才插入 “WHERE” 子句。
+    而且，若子句的开头为 “AND” 或 “OR”，where 元素也会将它们去除 -->
+    <select id="findByCondition" resultType="mybatis.start.pojo.User">
+        select *
+        from user_test
+        <where>
+            <if test="id!=null">
+                and id=#{id}
+            </if>
+            <if test="username!=null">
+                and username=#{username}
+            </if>
+        </where>
+    </select>
+
+    <!-- 1. 如果传入的是单参数且参数类型是一个List的时候，collection属性值为list
+    2. 如果传入的是单参数且参数类型是一个array数组的时候，collection的属性值为array
+    3. 如果传入的参数是多个的时候，我们就需要把它们封装成一个Map了，当然单参-->
+    <select id="findByIds" resultType="mybatis.start.pojo.User">
+        select *
+        from user_test
+        <where>
+            <foreach collection="array" open="id in(" close=")" item="id"
+                     separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="findByIdsAndName" resultType="mybatis.start.pojo.User">
+        select *
+        from user_test
+        <where>
+            <if test="chris!=null">
+                and username=#{chris}
+            </if>
+            <if test="ids!=null">
+                and
+                <foreach collection="ids" item="id" open="id in (" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+
+        </where>
+    </select>
+
+    <sql id="selectUser"> select *
+                          from user_test</sql>
+    <!--    <select id="findAll" resultType="start.pojo.User">-->
+    <!--        <include refid="selectUser"/>-->
+    <!--    </select>-->
+
+    <resultMap id="userMap" type="mybatis.start.pojo.User">
+        <result column="id" property="id"></result>
+        <result column="username" property="username"></result>
+        <result column="password" property="password"></result>
+        <result column="birthday" property="birthday"></result>
+        <collection property="orderList" ofType="mybatis.start.pojo.Order">
+            <result column="cid" property="uid"/>
+            <result column="timestamp" property="ordertime"/>
+            <result column="totalcount" property="total"/>
+        </collection>
+    </resultMap>
+    <select id="findAllWithOrders" resultMap="userMap">
+        select *, o.uid cid, o.ordertime timestamp, o.total totalcount
+        from user_test u
+                 left join
+             order_test o
+             on u.id = o.uid;
+    </select>
+</mapper>
