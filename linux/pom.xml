@@ -59,6 +59,12 @@
             <artifactId>jmh-generator-annprocess</artifactId>
             <version>1.19</version>
         </dependency>
+        <dependency>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>quasar-core</artifactId>
+            <version>0.8.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 
