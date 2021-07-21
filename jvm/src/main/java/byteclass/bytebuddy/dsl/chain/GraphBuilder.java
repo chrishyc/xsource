@@ -1,6 +1,7 @@
 package byteclass.bytebuddy.dsl.chain;
 
-import bytebuddy.dsl.origin.Graph;
+
+import byteclass.bytebuddy.dsl.origin.Graph;
 
 public class GraphBuilder {
     private Graph graph;

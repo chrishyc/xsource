@@ -16,13 +16,30 @@ import java.util.concurrent.*;
 public class T27_Threadpool implements Executor {
     
     @Test
-    public void testCallable() throws ExecutionException, InterruptedException {
-        Callable<String> c = () -> "Hello Callable";
-        
-        ExecutorService service = Executors.newCachedThreadPool();
+    public void testCallable() throws ExecutionException, InterruptedException, IOException {
+        Callable<String> c = () -> {
+            Thread.sleep(10000);
+            return "Hello Callable";
+        };
+        ExecutorService service = new ThreadPoolExecutor(2, 3,
+                10L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>(2), Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
         Future<String> future = service.submit(c);
+        Future<String> future1 = service.submit(c);
+        Future<String> future2 = service.submit(c);
+        Future<String> future3 = service.submit(c);
+        Future<String> future4 = service.submit(c);
+        Thread.sleep(5000);
+//        Future<String> future5 = service.submit(c);
+//        Future<String> future5 = service.submit(c);
         System.out.println(future.get());
-        service.shutdown();
+        System.out.println(future1.get());
+        System.out.println(future2.get());
+        System.out.println(future3.get());
+        System.out.println(future4.get());
+//        System.out.println(future5.get());
+//        service.shutdown();
+        System.in.read();
     }
     
     @Test
@@ -79,7 +96,7 @@ public class T27_Threadpool implements Executor {
     }
     
     @Test
-    public void testListenableFuture(){
+    public void testListenableFuture() {
         ListeningExecutorService service =
                 MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(2));
         ListenableFuture<Integer> future = service.submit(new Callable<Integer>() {
@@ -88,19 +105,19 @@ public class T27_Threadpool implements Executor {
                 return 8;
             }
         });
-    
+        
         Futures.addCallback(future, new FutureCallback<Integer>() {
             @Override
             public void onSuccess(@Nullable Integer integer) {
                 System.out.println(integer);
             }
-        
+            
             @Override
             public void onFailure(Throwable throwable) {
                 throwable.printStackTrace();
             }
         }, service);
-    
+        
         service.shutdown();
     }
     
@@ -168,12 +185,13 @@ public class T27_Threadpool implements Executor {
     }
     
     @Test
-    public void testRejectedExecutionHandler(){
+    public void testRejectedExecutionHandler() {
         ExecutorService service = new ThreadPoolExecutor(4, 4,
                 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(6),
                 Executors.defaultThreadFactory(),
                 new MyHandler());
     }
+    
     @Test
     public void testScheduledExecutorService() {
         ScheduledExecutorService service = Executors.newScheduledThreadPool(4);
@@ -263,7 +281,7 @@ public class T27_Threadpool implements Executor {
             //log("r rejected")
             //save r kafka mysql redis
             //try 3 times
-            if(executor.getQueue().size() < 10000) {
+            if (executor.getQueue().size() < 10000) {
                 //try put again();
             }
         }

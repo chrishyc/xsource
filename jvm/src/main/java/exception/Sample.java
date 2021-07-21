@@ -21,8 +21,16 @@ public class Sample {
                 System.out.println(message);
                 System.out.println("==================getMessage=======================");
                 System.out.println(e.getMessage());
-                System.out.println("====================toString=======================");
+                System.out.println("====================e.toString=======================");
                 System.out.println(e.toString());
+                System.out.println("====================printStackTrace=======================");
+                e.printStackTrace();
+                System.out.println("====================e.getMessage()=======================");
+                System.out.println(e.getMessage());
+                System.out.println("====================e.getStackTrace()=======================");
+                System.out.println(e.getStackTrace());
+                System.out.println("====================e=======================");
+                System.out.println(e);
             }
             long end = System.currentTimeMillis();
             System.out.println(end - start);

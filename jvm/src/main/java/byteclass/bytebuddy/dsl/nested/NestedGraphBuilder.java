@@ -1,7 +1,8 @@
 package byteclass.bytebuddy.dsl.nested;
 
-import bytebuddy.dsl.origin.Edge;
-import bytebuddy.dsl.origin.Graph;
+
+import byteclass.bytebuddy.dsl.origin.Edge;
+import byteclass.bytebuddy.dsl.origin.Graph;
 
 public class NestedGraphBuilder {
     public static Graph Graph(Edge... edges) {

@@ -1,7 +1,8 @@
 package byteclass.bytebuddy.dsl.nested;
 
-import bytebuddy.dsl.origin.Edge;
-import bytebuddy.dsl.origin.Vertex;
+
+import byteclass.bytebuddy.dsl.origin.Edge;
+import byteclass.bytebuddy.dsl.origin.Vertex;
 
 public class NestedEdgeBuilder {
 

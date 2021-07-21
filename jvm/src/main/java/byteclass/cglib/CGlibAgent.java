@@ -1,6 +1,6 @@
 package byteclass.cglib;
 
-import jdk.Apple;
+import byteclass.jdk.Apple;
 import net.sf.cglib.core.DebuggingClassWriter;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
