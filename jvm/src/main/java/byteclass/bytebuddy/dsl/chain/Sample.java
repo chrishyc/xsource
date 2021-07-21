@@ -1,6 +1,7 @@
 package byteclass.bytebuddy.dsl.chain;
 
-import static bytebuddy.dsl.chain.GraphBuilder.Graph;
+
+import static byteclass.bytebuddy.dsl.chain.GraphBuilder.Graph;
 
 public class Sample {
     public static void main(String[] args) {

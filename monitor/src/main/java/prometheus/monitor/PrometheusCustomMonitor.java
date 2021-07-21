@@ -58,7 +58,7 @@ public class PrometheusCustomMonitor {
 //        orderCount = registry.counter("order_request_count", "order", "test-svc");
 //        orderCount1 = registry.counter("order_request_count", "order", "test-svc", "name", "1111");
 //        amountSum = registry.summary("order_request_count", "orderAmount", "test-svc");
-        Metrics.counter("order_request_count","2","1").increment(1);
+        Metrics.counter("order_request_count/hello","2","1").increment(1);
 //        Timer.builder("order_request_count")
 //                .publishPercentileHistogram()
 //                .register(Metrics.globalRegistry)

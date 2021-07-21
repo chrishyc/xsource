@@ -80,3 +80,26 @@ join
 ![join](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_join.jpg)
 yield
 ![yield](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_yield.jpg)
+
+##reference回收线程
+```
+"Reference Handler" #2 daemon prio=10 os_prio=31 tid=0x00007fc65b029800 nid=0x5103 in Object.wait() [0x0000700006bb9000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(Native Method)
+	- waiting on <0x0000000795586bf8> (a java.lang.ref.Reference$Lock)
+	at java.lang.Object.wait(Object.java:502)
+	at java.lang.ref.Reference.tryHandlePending(Reference.java:191)
+	- locked <0x0000000795586bf8> (a java.lang.ref.Reference$Lock)
+	at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:153)
+```
+
+```
+"Finalizer" #3 daemon prio=8 os_prio=31 tid=0x00007fc65b02a800 nid=0x4f03 in Object.wait() [0x0000700006cbc000]
+   java.lang.Thread.State: WAITING (on object monitor)
+	at java.lang.Object.wait(Native Method)
+	- waiting on <0x0000000795588ed0> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:144)
+	- locked <0x0000000795588ed0> (a java.lang.ref.ReferenceQueue$Lock)
+	at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:165)
+	at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:216)
+```

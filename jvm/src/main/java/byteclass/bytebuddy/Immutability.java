@@ -1,5 +1,6 @@
 package byteclass.bytebuddy;
 
+
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.NamingStrategy;
 import net.bytebuddy.dynamic.DynamicType;

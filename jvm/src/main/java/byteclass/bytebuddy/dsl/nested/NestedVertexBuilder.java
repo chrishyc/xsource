@@ -1,6 +1,7 @@
 package byteclass.bytebuddy.dsl.nested;
 
-import bytebuddy.dsl.origin.Vertex;
+
+import byteclass.bytebuddy.dsl.origin.Vertex;
 
 public class NestedVertexBuilder {
     public static Vertex from(String lbl) {
