@@ -12,13 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.LockSupport;
 
 public class T27_Threadpool implements Executor {
     
     @Test
     public void testCallable() throws ExecutionException, InterruptedException, IOException {
         Callable<String> c = () -> {
-            Thread.sleep(10000);
+            try{
+//                Thread.sleep(2000);
+//                LockSupport.park();
+            }catch (Exception e){
+                System.out.print(e);
+            }
             return "Hello Callable";
         };
         ExecutorService service = new ThreadPoolExecutor(2, 3,
@@ -29,7 +35,9 @@ public class T27_Threadpool implements Executor {
         Future<String> future2 = service.submit(c);
         Future<String> future3 = service.submit(c);
         Future<String> future4 = service.submit(c);
-        Thread.sleep(5000);
+        Thread.sleep(3000);
+        service.shutdown();
+//        Thread.sleep(5000);
 //        Future<String> future5 = service.submit(c);
 //        Future<String> future5 = service.submit(c);
         System.out.println(future.get());
@@ -38,7 +46,7 @@ public class T27_Threadpool implements Executor {
         System.out.println(future3.get());
         System.out.println(future4.get());
 //        System.out.println(future5.get());
-//        service.shutdown();
+        
         System.in.read();
     }
     

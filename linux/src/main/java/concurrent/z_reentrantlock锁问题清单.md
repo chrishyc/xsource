@@ -19,6 +19,37 @@
 ![](images/reentrantlock源码/unlock_5.jpg)
 ###锁中断过程
 锁中断:t1阻塞过程中被t2中断,抛异常还是继续阻塞
+```
+private void doAcquireInterruptibly(int arg)
+        throws InterruptedException {
+        final Node node = addWaiter(Node.EXCLUSIVE);
+        boolean failed = true;
+        try {
+            for (;;) {
+                final Node p = node.predecessor();
+                if (p == head && tryAcquire(arg)) {
+                    setHead(node);
+                    p.next = null; // help GC
+                    failed = false;
+                    return;
+                }
+                if (shouldParkAfterFailedAcquire(p, node) &&
+                    parkAndCheckInterrupt())
+                    throw new InterruptedException();
+            }
+        } finally {
+            if (failed)
+                cancelAcquire(node);
+        }
+    }
+```
+```
+private final boolean parkAndCheckInterrupt() {
+        LockSupport.park(this);
+        return Thread.interrupted();
+    }
+
+```
 ###非公平过程
 锁释放时(state 1->0),t1唤醒阻塞队列后继节点t2时,t3 cas获得了锁,导致t2唤醒后继续阻塞
 ###可重入过程

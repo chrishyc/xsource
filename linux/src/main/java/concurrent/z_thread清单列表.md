@@ -73,13 +73,46 @@ parking to wait for <地址> 目标
 ##线程状态
 [等待队列](https://blog.csdn.net/weixin_44537992/article/details/105990158)
 ![](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_status.jpg)
-##sleep && join && yield
+##sleep && join && yield && interrupt
 sleep
 ![sleep](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_sleep.jpg)
 join
 ![join](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_join.jpg)
 yield
 ![yield](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_yield.jpg)
+
+###sleep&&join&&yield&&park
+本质是park线程
+[hotspot源码](https://blog.csdn.net/qq_26222859/article/details/81112446)
+[park本质](https://www.jb51.net/article/216231.htm)
+###interrupt
+本质是通过unpark唤醒阻塞线程并设置interrupt标志位，不会中断一个正在运行的线程
+```
+void os::interrupt(Thread* thread) {
+  assert(Thread::current() == thread || Threads_lock->owned_by_self(),
+    "possibility of dangling Thread pointer");
+ 
+  //获取系统native线程对象
+  OSThread* osthread = thread->osthread();
+ 
+  if (!osthread->interrupted()) {
+    osthread->set_interrupted(true); //设置中断状态为true
+   //内存屏障，使osthread的interrupted状态对其它线程立即可见
+    OrderAccess::fence();
+    //前文说过，_SleepEvent用于Thread.sleep,线程调用了sleep方法，则通过unpark唤醒
+    ParkEvent * const slp = thread->_SleepEvent ;
+    if (slp != NULL) slp->unpark() ;
+  }
+ 
+  //_parker用于concurrent相关的锁，此处同样通过unpark唤醒
+  if (thread->is_Java_thread())
+    ((JavaThread*)thread)->parker()->unpark();
+  //Object.wait()唤醒
+  ParkEvent * ev = thread->_ParkEvent ;
+  if (ev != NULL) ev->unpark() ;
+ 
+}
+```
 
 ##reference回收线程
 ```

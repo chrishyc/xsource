@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * PrometheusScrapeEndpoint#scrape
+ */
 @Component
 public class PrometheusCustomMonitor {
     /**
@@ -30,42 +33,39 @@ public class PrometheusCustomMonitor {
     
     /**
      * id相同但打点type不同异常
-     * @Override
-     *         public String toString() {
-     *             return "MeterId{" +
-     *                     "name='" + name + '\'' +
-     *                     ", tags=" + tags +
-     *                     '}';
-     *         }
      *
-     *         @Override
-     *         public boolean equals(@Nullable Object o) {
-     *             if (this == o) return true;
-     *             if (o == null || getClass() != o.getClass()) return false;
-     *             Meter.Id meterId = (Meter.Id) o;
-     *             return Objects.equals(name, meterId.name) && Objects.equals(tags, meterId.tags);
-     *         }
-     *
-     *         @Override
-     *         public int hashCode() {
-     *             int result = name.hashCode();
-     *             result = 31 * result + tags.hashCode();
-     *             return result;
-     *         }
+     * @Override public String toString() {
+     * return "MeterId{" +
+     * "name='" + name + '\'' +
+     * ", tags=" + tags +
+     * '}';
+     * }
+     * @Override public boolean equals(@Nullable Object o) {
+     * if (this == o) return true;
+     * if (o == null || getClass() != o.getClass()) return false;
+     * Meter.Id meterId = (Meter.Id) o;
+     * return Objects.equals(name, meterId.name) && Objects.equals(tags, meterId.tags);
+     * }
+     * @Override public int hashCode() {
+     * int result = name.hashCode();
+     * result = 31 * result + tags.hashCode();
+     * return result;
+     * }
      */
     @PostConstruct
     private void init() {
 //        orderCount = registry.counter("order_request_count", "order", "test-svc");
 //        orderCount1 = registry.counter("order_request_count", "order", "test-svc", "name", "1111");
 //        amountSum = registry.summary("order_request_count", "orderAmount", "test-svc");
-        Metrics.counter("order_request_count/hello","2","1").increment(1);
+        Metrics.counter("order_request_count/hello", "2", "1", "hello", "4").increment(1);
+        Metrics.counter("order_request_count/hello", "2", "1").increment(1);
 //        Timer.builder("order_request_count")
 //                .publishPercentileHistogram()
 //                .register(Metrics.globalRegistry)
 //                .record(1, TimeUnit.MILLISECONDS);
         Timer.builder("order_request_count")
                 .publishPercentileHistogram()
-                .tags("2","1")
+                .tags("2", "1")
                 .register(Metrics.globalRegistry)
                 .record(1, TimeUnit.MILLISECONDS);
     }
