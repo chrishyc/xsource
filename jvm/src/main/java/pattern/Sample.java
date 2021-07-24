@@ -21,6 +21,7 @@ public class Sample {
     @Test
     public void testOr() {
         System.out.println(".a/b".replaceAll("[./]", "_"));
+        System.out.println("t1hello".matches("tj|c3|c4"));
     }
     
     @Test

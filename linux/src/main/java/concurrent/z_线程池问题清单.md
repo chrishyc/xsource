@@ -54,4 +54,5 @@ private Runnable getTask() {
     }
 ```
 ##线程池销毁
-
+shutdown
+shutdownNow
