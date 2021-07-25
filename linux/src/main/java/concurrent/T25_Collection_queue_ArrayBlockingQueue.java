@@ -16,7 +16,7 @@ public class T25_Collection_queue_ArrayBlockingQueue {
 			strs.put("a" + i);
 		}
 		
-		//strs.put("aaa"); //���˾ͻ�ȴ�����������
+		//strs.put("aaa"); //
 		//strs.add("aaa");
 		//strs.offer("aaa");
 		strs.offer("aaa", 1, TimeUnit.SECONDS);

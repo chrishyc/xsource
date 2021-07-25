@@ -7,7 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * add=lock+volatile
- * get=volatile,保证整个读的过程一致
+ * get=volatile,保证整个读的数据一致性，丢失一定的实时性
  */
 public class T25_Collection_list_CopyOnWriteList {
     public static void main(String[] args) {
