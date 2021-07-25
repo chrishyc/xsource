@@ -5,7 +5,9 @@ import jdk.internal.org.objectweb.asm.MethodVisitor;
 import jdk.internal.org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClassLoaderOOMOps extends ClassLoader implements Opcodes {
     public static void main(final String args[]) throws Exception {
@@ -20,9 +22,35 @@ public class ClassLoaderOOMOps extends ClassLoader implements Opcodes {
             ClassLoaderOOMOps loader = new ClassLoaderOOMOps();
             Class<?> exampleClass = loader.defineClass(className, code, 0, code.length); //将二进制流加载到内存中
             classLoaders.add(loader);
-             exampleClass.getMethods()[0].invoke(null, new Object[]{null});  // 执行自动加载类的方法，通过反射调用main
+            exampleClass.getMethods()[0].invoke(null, new Object[]{null});  // 执行自动加载类的方法，通过反射调用main
         }
     }
+    
+    public List<List<String>> deleteDuplicateFolder(List<List<String>> paths) {
+        while (true) {
+            Map<String, List<Integer>> map = new HashMap<>();
+            for (int i = 0; i < paths.size(); i++) {
+                List<String> cur = paths.get(i);
+                String last = cur.get(cur.size() - 1);
+                if (!map.containsKey(last)) map.put(last, new ArrayList<>());
+                map.get(last).add(i);
+            }
+            final boolean[] found = {false};
+            map.forEach((k, v) -> {
+                if (v.size() > 1) {
+                    found[0] = true;
+                    for (int i = 0; i < v.size(); i++) {
+                        List<String> curList = paths.get(v.get(i));
+                        curList.remove(curList.size() - 1);
+                        curList.remove(curList.size() - 1);
+                        paths.set(v.get(i), curList);
+                    }
+                }
+            });
+            if (!found[0]) return paths;
+        }
+    }
+    
     
     private static byte[] geneDynamicClassBytes(String className) throws Exception {
         ClassWriter cw = new ClassWriter(0);
