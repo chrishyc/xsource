@@ -1,11 +1,11 @@
-version: "2.4"
-volumes:
-  helloapp:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ~/Downloads/mifi_hello/
+#version: "2.4"
+#volumes:
+#  helloapp:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      o: bind
+#      device: ~/Downloads/mifi_hello/
 
 services:
   mifi-prometheus:
@@ -15,6 +15,7 @@ services:
     networks:
       - chris_net
     volumes:
+#      - helloapp:/home/work/helloapp/
       - ~/Downloads/mifi_hello/:/home/work/helloapp/
     restart: always
 
