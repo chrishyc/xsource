@@ -1,0 +1,23 @@
+version: "2.4"
+volumes:
+  helloapp:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ~/Downloads/mifi_hello/
+
+services:
+  mifi-prometheus:
+    image: helloapp:v1
+    ports:
+      - "8080:8080"
+    networks:
+      - chris_net
+    volumes:
+      - ~/Downloads/mifi_hello/:/home/work/helloapp/
+    restart: always
+
+networks:
+  chris_net:
+    driver: bridge

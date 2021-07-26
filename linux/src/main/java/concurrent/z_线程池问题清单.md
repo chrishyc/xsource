@@ -53,6 +53,6 @@ private Runnable getTask() {
         }
     }
 ```
-##线程池销毁
+##线程池停止
 shutdown
 shutdownNow

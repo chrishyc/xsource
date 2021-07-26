@@ -136,3 +136,7 @@ void os::interrupt(Thread* thread) {
 	at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:165)
 	at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:216)
 ```
+
+##线程主动停止
+两阶段终止模式:其他线程发送信号，目标线程响应信号,(linux信号处理的模式)
+![](.z_thread清单列表_images/thread_stop.png)
