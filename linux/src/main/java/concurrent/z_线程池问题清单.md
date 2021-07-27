@@ -56,3 +56,6 @@ private Runnable getTask() {
 ##线程池停止
 shutdown
 shutdownNow
+![](.z_线程池问题清单_images/shutdown8shutdownNow.png)
+![](https://time.geekbang.org/column/article/95847)
+
