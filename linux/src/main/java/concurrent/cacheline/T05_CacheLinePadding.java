@@ -4,6 +4,7 @@ import sun.misc.Contended;
 
 /**
  * jvm增加参数-XX:-RestrictContended
+ * –XX:+PrintFieldLayout
  * 字段不能为static字段
  */
 public class T05_CacheLinePadding {
