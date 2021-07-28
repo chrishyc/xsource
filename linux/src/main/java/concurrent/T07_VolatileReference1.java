@@ -3,8 +3,6 @@
  */
 package concurrent;
 
-import java.util.concurrent.TimeUnit;
-
 public class T07_VolatileReference1 {
 
     boolean running = true;
@@ -26,15 +24,15 @@ public class T07_VolatileReference1 {
     }
 
     public static void main(String[] args) {
-        new Thread(T::m, "t1").start();
-
-        //lambda表达式 new Thread(new Runnable( run() {m()}
-
-        try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        new Thread(T::m, "t1").start();
+//
+//        //lambda表达式 new Thread(new Runnable( run() {m()}
+//
+//        try {
+//            TimeUnit.SECONDS.sleep(1);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         T.running = false;
     }

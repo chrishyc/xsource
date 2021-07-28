@@ -1,4 +1,4 @@
-#version: "2.4"
+version: "2.4"
 #volumes:
 #  helloapp:
 #    driver: local
@@ -6,7 +6,8 @@
 #      type: none
 #      o: bind
 #      device: ~/Downloads/mifi_hello/
-
+volumes:
+  grafana-storage:
 services:
   mifi-prometheus:
     image: helloapp:v1
@@ -15,10 +16,31 @@ services:
     networks:
       - chris_net
     volumes:
-#      - helloapp:/home/work/helloapp/
+      #      - helloapp:/home/work/helloapp/
       - ~/Downloads/mifi_hello/:/home/work/helloapp/
     restart: always
-
+  mifi-grafana:
+    image: grafana/grafana
+    environment:
+      - TZ=PRC
+    ports:
+      - "3000:3000"
+    networks:
+      - chris_net
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    restart: always
+  mifi-alermanager:
+    image: prom/alertmanager
+    environment:
+      - TZ=PRC
+    ports:
+      - "9093:9093"
+    networks:
+      - chris_net
+    volumes:
+      - /Users/chris/workspace/xsource/sre/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    restart: always
 networks:
   chris_net:
     driver: bridge
