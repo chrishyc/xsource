@@ -21,8 +21,6 @@ jvm将其转化为本地计算机机器码
 4.数据读写:cu,Control Unit 控制单元
 5.寻址:mmu,Memory Management Unit 内存管理单元
 6.缓存.
-##8.jvm的组成部分?
-todo:
 ##9.线程切换在cpu中的过程?
 ![](/Users/chris/workspace/xsource/linux/src/main/resources/images/多核cpu.jpg)
 需要保存当前线程的寄存器数据,pc数据并记录在缓存中
@@ -74,7 +72,7 @@ cache line 64B,64字节
 则块号=1024*1024*16
 块内地址=64/8=8
 
-###cachel line格式
+###cache line格式
 
 tag=块号+块内地址+状态(dirty,invalid)
 
