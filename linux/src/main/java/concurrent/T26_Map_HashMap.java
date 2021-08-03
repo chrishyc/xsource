@@ -1,66 +1,37 @@
 package concurrent;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import java.util.HashMap;
-import java.util.UUID;
+import java.util.Map;
 
 public class T26_Map_HashMap {
-
-    static HashMap<UUID, UUID> m = new HashMap<>();
-
-    static int count = T26_Map_ConcurrentHashMap.COUNT;
-    static UUID[] keys = new UUID[count];
-    static UUID[] values = new UUID[count];
-    static final int THREAD_COUNT = T26_Map_ConcurrentHashMap.THREAD_COUNT;
-
-    static {
-        for (int i = 0; i < count; i++) {
-            keys[i] = UUID.randomUUID();
-            values[i] = UUID.randomUUID();
-        }
+    
+    private Map<String, String> map;
+    
+    @Before
+    public void init() {
+        map = new HashMap<>();
     }
-
-    static class MyThread extends Thread {
-        int start;
-        int gap = count/THREAD_COUNT;
-
-        public MyThread(int start) {
-            this.start = start;
-        }
-
-        @Override
-        public void run() {
-            for(int i=start; i<start+gap; i++) {
-                m.put(keys[i], values[i]);
-            }
-        }
+    
+    /**
+     * 为了加快取模运算,使用二进制运算,例如h&1111
+     * 也是因为使用了二进制运算,因此需要以2为倍数扩容
+     *
+     * $A:二进制取模运算加快了取模速度
+     * $D:但导致hash冲突增加,二进制取模主要是截取二进制后几位,未考虑高位,因此即使高位不同也会hash冲突
+     *
+     * 方案:增加hash 扰动,将高位也考虑进来
+     */
+    @Test
+    public void testHashMod() {
+        String k = "chris";
+        int h = 0;
+        h ^= k.hashCode();
+        h ^= (h >>> 20) ^ (h >>> 12);
+        h ^= h ^ (h >>> 7) ^ (h >>> 4);
+        int ret = h & (16 - 1);
     }
-
-    public static void main(String[] args) {
-
-        long start = System.currentTimeMillis();
-
-        Thread[] threads = new Thread[THREAD_COUNT];
-
-        for(int i=0; i<threads.length; i++) {
-            threads[i] =
-            new MyThread(i * (count/THREAD_COUNT));
-        }
-
-        for(Thread t : threads) {
-            t.start();
-        }
-
-        for(Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        long end = System.currentTimeMillis();
-        System.out.println(end - start);
-
-        System.out.println(m.size());
-    }
+    
 }

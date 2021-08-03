@@ -1,94 +1,55 @@
 package concurrent;
 
+import org.junit.Test;
+
+import java.io.IOException;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class T26_Map_ConcurrentHashMap {
-    public static final int COUNT = 1000000;
-    public static final int THREAD_COUNT = 100;
-
-    static Map<UUID, UUID> m = new ConcurrentHashMap<>();
-
-    static int count = COUNT;
-    static UUID[] keys = new UUID[count];
-    static UUID[] values = new UUID[count];
-
-    static {
-        for (int i = 0; i < count; i++) {
-            keys[i] = UUID.randomUUID();
-            values[i] = UUID.randomUUID();
-        }
-    }
-
-    static class MyThread extends Thread {
-        int start;
-        int gap = count/THREAD_COUNT;
-
-        public MyThread(int start) {
-            this.start = start;
-        }
-
-        @Override
-        public void run() {
-            for(int i=start; i<start+gap; i++) {
-                m.put(keys[i], values[i]);
-            }
-        }
-    }
-
     public static void main(String[] args) {
-
-        long start = System.currentTimeMillis();
-
-        Thread[] threads = new Thread[THREAD_COUNT];
-
-        for(int i=0; i<threads.length; i++) {
-            threads[i] =
-            new MyThread(i * (count/THREAD_COUNT));
+        Map<String, String> m = new java.util.concurrent.ConcurrentHashMap<>();
+    }
+    
+    @Test
+    public void testConstructor() throws IOException {
+        Map<String, String> m = new java.util.concurrent.ConcurrentHashMap<>();
+        System.in.read();
+    }
+    
+    @Test
+    public void testHashMod() {
+        String k = "chris";
+        int h = 0;
+        h ^= k.hashCode();
+        h += (h << 15) ^ 0xffffcd7d;
+        h ^= (h >>> 10);
+        h += (h << 3);
+        h ^= (h >>> 6);
+        h += (h << 2) + (h << 14);
+        System.out.println(h ^ (h >>> 16));
+    }
+    
+    @Test
+    public void testPut() {
+        Map<String, String> m = new java.util.concurrent.ConcurrentHashMap<>();
+        m.put("name", "chris");
+    }
+    
+    /**
+     * table = {ConcurrentHashMap$HashEntry[128]@797}
+     * count = 86
+     * modCount = 86
+     * threshold = 96
+     * loadFactor = 0.75
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testCapacityExpand() throws IOException {
+        Map<String, String> m = new java.util.concurrent.ConcurrentHashMap<>();
+        for (int i = 0; i < 1500; i++) {
+            m.put("name" + i, "chris");
         }
-
-        for(Thread t : threads) {
-            t.start();
-        }
-
-        for(Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        long end = System.currentTimeMillis();
-        System.out.println(end - start);
-
-        System.out.println(m.size());
-
-        //-----------------------------------
-
-        start = System.currentTimeMillis();
-        for (int i = 0; i < threads.length; i++) {
-            threads[i] = new Thread(()->{
-                for (int j = 0; j < 10000000; j++) {
-                    m.get(keys[10]);
-                }
-            });
-        }
-
-        for(Thread t : threads) {
-            t.start();
-        }
-
-        for(Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        end = System.currentTimeMillis();
-        System.out.println(end - start);
+        System.in.read();
     }
 }

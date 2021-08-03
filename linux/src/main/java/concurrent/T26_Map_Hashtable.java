@@ -1,92 +1,42 @@
 package concurrent;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
 import java.util.Hashtable;
-import java.util.UUID;
 
 public class T26_Map_Hashtable {
-
-    static Hashtable<UUID, UUID> m = new Hashtable<>();
-
-    static int count = T26_Map_ConcurrentHashMap.COUNT;
-    static UUID[] keys = new UUID[count];
-    static UUID[] values = new UUID[count];
-    static final int THREAD_COUNT = T26_Map_ConcurrentHashMap.THREAD_COUNT;
-
-    static {
-        for (int i = 0; i < count; i++) {
-            keys[i] = UUID.randomUUID();
-            values[i] = UUID.randomUUID();
-        }
+    
+    private Hashtable<String, String> table;
+    
+    
+    @Before
+    public void init() {
+        table = new Hashtable<>();
     }
-
-    static class MyThread extends Thread {
-        int start;
-        int gap = count/THREAD_COUNT;
-
-        public MyThread(int start) {
-            this.start = start;
+    
+    /**
+     * HashTable默认的初始大小为11，之后每次扩充为原来的2n+1
+     * $A:质数,hash结果分散
+     * $D:取模%运算是10进制运算,耗时
+     */
+    @Test
+    public void testHashMod() throws IOException {
+        String k = "chris";
+        int hash = k.hashCode();
+        int tableLen = 11;
+        int h = (hash & 0x7FFFFFFF) % tableLen;
+        tableLen = tableLen << 1 + 1;
+        h = (hash & 0x7FFFFFFF) % tableLen;
+        tableLen = tableLen << 1 + 1;
+        h = (hash & 0x7FFFFFFF) % tableLen;
+        tableLen = tableLen << 1 + 1;
+        h = (hash & 0x7FFFFFFF) % tableLen;
+        
+        for (int i = 0; i < 1500; i++) {
+            table.put("chris" + i, "chris");
         }
-
-        @Override
-        public void run() {
-            for(int i=start; i<start+gap; i++) {
-                m.put(keys[i], values[i]);
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-
-        long start = System.currentTimeMillis();
-
-        Thread[] threads = new Thread[THREAD_COUNT];
-
-        for(int i=0; i<threads.length; i++) {
-            threads[i] =
-            new MyThread(i * (count/THREAD_COUNT));
-        }
-
-        for(Thread t : threads) {
-            t.start();
-        }
-
-        for(Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        long end = System.currentTimeMillis();
-        System.out.println(end - start);
-
-        System.out.println(m.size());
-
-        //-----------------------------------
-
-        start = System.currentTimeMillis();
-        for (int i = 0; i < threads.length; i++) {
-            threads[i] = new Thread(()->{
-                for (int j = 0; j < 10000000; j++) {
-                    m.get(keys[10]);
-                }
-            });
-        }
-
-        for(Thread t : threads) {
-            t.start();
-        }
-
-        for(Thread t : threads) {
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        end = System.currentTimeMillis();
-        System.out.println(end - start);
+        System.in.read();
     }
 }
