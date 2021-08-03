@@ -147,5 +147,6 @@
     <orderEntry type="library" name="Maven: net.bytebuddy:byte-buddy:1.10.14" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm:5.0.4" level="project" />
     <orderEntry type="library" name="Maven: cglib:cglib:3.3.0" level="project" />
+    <orderEntry type="library" name="Maven: net.bytebuddy:byte-buddy-agent:1.10.14" level="project" />
   </component>
 </module>
