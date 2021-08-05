@@ -17,9 +17,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 public class Sample {
+  /**
+   * -Dspring.profiles.active=CHRIS
+   */
   @Test
   public void testClassPathXml() {
-    ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+    ApplicationContext ac = new ClassPathXmlApplicationContext("cycleBeans.xml");
     TestBean testBean = ac.getBean(TestBean.class);
     System.out.println(testBean);
   }

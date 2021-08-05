@@ -6,7 +6,7 @@
        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx">
     <!--开启注解扫描，base-package指定扫描的包路径-->
 <!--    <context:component-scan base-package="ioc,tx.annotation"/>-->
-
+    <context:annotation-config/>
     <!--开启自定义属性导入-->
     <context:property-placeholder location="classpath:jdbc.properties,classpath:redis.properties"/>
 
