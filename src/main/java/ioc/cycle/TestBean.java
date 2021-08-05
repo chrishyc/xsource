@@ -2,11 +2,9 @@ package ioc.cycle;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -37,12 +35,15 @@ public class TestBean implements InitializingBean, ApplicationContextAware {
    */
   @PostConstruct
   public void init() {
-    if(name.equalsIgnoreCase("CHRIS")) System.out.println("mifi_namespace:" + mifi_namespace);
+    if (name.equalsIgnoreCase("CHRIS")) {
+      mifi_namespace = "chris:";
+    }
+    System.out.println("mifi_namespace:" + mifi_namespace);
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if(name.contains("CHRIS")) System.out.println("mifi_namespace:" + mifi_namespace);
+    if (name.contains("CHRIS")) System.out.println("mifi_namespace:" + mifi_namespace);
     System.out.println("TestBean afterPropertiesSet...");
   }
 
