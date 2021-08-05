@@ -10,19 +10,19 @@ import org.springframework.core.PriorityOrdered;
 public class PBeanPostProcessor implements BeanPostProcessor, PriorityOrdered {
     @Autowired
     private NBeanPostProcessor n;
-    
+
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         System.out.println("PBeanPostProcessor,postProcessBeforeInitialization");
-        return null;
+        return bean;
     }
-    
+
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         System.out.println("PBeanPostProcessor,postProcessAfterInitialization" + n);
         return null;
     }
-    
+
     @Override
     public int getOrder() {
         return 0;
