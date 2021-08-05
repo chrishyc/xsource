@@ -1,34 +1,53 @@
 package ioc.cycle;
 
-import demo.spring.annotation.Autowired;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 //@Data
 //@Lazy
-@Component
+@Service
 public class TestBean implements InitializingBean, ApplicationContextAware {
-    @Autowired
-    private CycleBean cycleBean;
+//    @Autowired
+//    private CycleBean cycleBean;
 
-    public void setCycleBean(CycleBean cycleBean) {
-        this.cycleBean = cycleBean;
-    }
+  @Value("${spring.profiles.active}")
+  private String name;
 
-    public TestBean() {
-        System.out.println("TestBean construct finish");
-    }
+  private String mifi_namespace = "mifi:";
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        System.out.println("TestBean afterPropertiesSet...");
-    }
+//  public void setCycleBean(CycleBean cycleBean) {
+//    this.cycleBean = cycleBean;
+//  }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        System.out.println("TestBean setApplicationContext...");
-    }
+  public TestBean() {
+    System.out.println("TestBean construct finish");
+  }
+
+  /**
+   * 之前PostConstruct未生效,PBeanPostProcessor.postProcessBeforeInitialization返回Null
+   * 导致InitDestroyAnnotationBeanPostProcessor未处理
+   */
+  @PostConstruct
+  public void init() {
+    if(name.equalsIgnoreCase("CHRIS")) System.out.println("mifi_namespace:" + mifi_namespace);
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    if(name.contains("CHRIS")) System.out.println("mifi_namespace:" + mifi_namespace);
+    System.out.println("TestBean afterPropertiesSet...");
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    System.out.println("TestBean setApplicationContext...");
+  }
 }

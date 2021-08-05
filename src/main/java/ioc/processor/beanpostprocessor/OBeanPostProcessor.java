@@ -10,15 +10,15 @@ public class OBeanPostProcessor implements BeanPostProcessor, Ordered {
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         System.out.println("OBeanPostProcessor,postProcessBeforeInitialization");
-        return null;
+        return bean;
     }
-    
+
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         System.out.println("OBeanPostProcessor,postProcessAfterInitialization");
         return null;
     }
-    
+
     @Override
     public int getOrder() {
         return 0;
