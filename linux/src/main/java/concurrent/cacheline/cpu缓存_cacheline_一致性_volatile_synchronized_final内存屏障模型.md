@@ -70,8 +70,11 @@ void bar() {
 ![](.cpu缓存_cacheline_一致性_volatile_synchronized模型_images/缓存行结构图.png)
 ![](.cpu缓存_cacheline_一致性_volatile_synchronized模型_images/cacheline结构图.png)
 
-##内存屏障vs lock指令
-jvm内存屏障是抽象的概念,lock指令是底层cpu实现方式
+## 四种抽象内存屏障
+smp_wmb(StoreStore)：执行后需等待 Store Buffer 中的写入变更 flush 完全到缓存后，后续的写操作才能继续执行，保证执行前后的写操作对其他 CPU 而言是顺序执行的；
+
+smp_rmb(LoadLoad)：执行后需等待 Invalidate Queue 完全应用到缓存后，后续的读操作才能继续执行，保证执行前后的读操作对其他 CPU 而言是顺序执行的；
+
 ```
 LoadLoad屏障：对于这样的语句Load1; LoadLoad; Load2，在Load2及后续读取操作要读取的数据被访问前，保证Load1要读取的数据被读取完毕。
 StoreStore屏障：对于这样的语句Store1; StoreStore; Store2，在Store2及后续写入操作执行前，保证Store1的写入操作对其它处理器可见。
@@ -79,13 +82,35 @@ LoadStore屏障：对于这样的语句Load1; LoadStore; Store2，在Store2及�
 StoreLoad屏障：对于这样的语句Store1; StoreLoad; Load2，在Load2及后续所有读取操作执行前，保证Store1的写入对所有处理器可见。它的开销是四种屏障中最大的。        
 在大多数处理器的实现中，这个屏障是个万能屏障，兼具其它三种内存屏障的功能
 ```
+[](https://shipilev.net/blog/2014/on-the-fence-with-dependencies/)
+[](http://gee.cs.oswego.edu/dl/jmm/cookbook.html)
+
+## 内存一致性模式TSO
+store和load的组合有4种。分别是store-store，store-load，load-load和load-store。TSO模型中，只存在store-load存在乱序，另外3种内存操作不存在乱序。
+X86使用TSO模式
+[](https://zhuanlan.zhihu.com/p/141655129)
+```
+Hardware
+These barriers are treated by compilers as the intentions to break the harmful re-orderings. When it comes to hardware, it turns out some hardware already guarantees quite a lot. For example, one could open Intel Software Developer Manual, and read that in most x86 implementations:
+
+Reads are not reordered with other reads. [Translation: LoadLoad can be no-op]
+
+Writes are not reordered with older reads. [Translation: LoadStore can be no-op]
+
+Writes to memory are not reordered with other writes…​ [Translation: StoreStore can be no-op]
+
+— Intel Software Development Manual; Vol 3A; 8.2.1
+Therefore, it turns out, after we are done treating the barriers in compilers, the only barrier we need to communicate to x86 hardware (= emit in the machine code) is StoreLoad. And this is where it starts to get funny. x86 declares the handy rules:
+```
+jvm内存屏障是抽象的概念,lock指令是底层cpu实现方式
+
 lock前缀指令为实现内存屏障的一种方式
 
-## StoreStore/LoadLoad屏障空操作含义
 x86 的 store buffer 被设计成了 FIFO，纵然在同一个线程中执行多次写入 buffer 的操作，最终依旧是严格按照 FIFO 顺序 dequeue 并写回到内存里
 x86-TSO 模型下是没有 invalidate queue 的，因此也不需要读屏障（LoadLoad）
+
+##几种内存屏障实现
 ![几种内存屏障指令](https://zhuanlan.zhihu.com/p/81555436)
-##几种内存屏障指令
 ```
 1. lfence，是一种Load Barrier 读屏障。在读指令前插入读屏障，可以让高速缓存中的数据失效，重新从主内存加载数据
 
@@ -118,3 +143,12 @@ enum Membar_mask_bits {
 ```
 ![几种内存屏障指令](https://zhuanlan.zhihu.com/p/81555436)
 ![mfence vs lock指令](https://stackoverflow.com/questions/40409297/does-lock-xchg-have-the-same-behavior-as-mfence)
+##为啥StoreLoad 开销是这四种屏障中最大的？
+storestore 使用FIFO方式在store buffer中执行
+storeload 需要将store buffer中缓存全部刷入内存
+
+loadload，loadstore无需内存屏障,x86默认支持
+
+
+##编译器指令优化
+[](https://www.zhihu.com/question/23572082)
