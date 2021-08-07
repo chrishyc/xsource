@@ -152,3 +152,74 @@ loadload，loadstore无需内存屏障,x86默认支持
 
 ##编译器指令优化
 [](https://www.zhihu.com/question/23572082)
+
+##volatile与内存屏障
+
+```
+int t = x; // volatile load
+[LoadLoad]
+[LoadStore]
+<other ops>
+```
+```
+<other ops>
+[StoreStore]
+[LoadStore]
+x = 1; // volatile store
+```
+
+Linux内核使用lock; addl $0x0(%%esp)作为全屏障，表示将数值0加到esp寄存器中，而该寄存器指向栈顶的内存单元。加上一个0，esp寄存器的数值依然不变。即这是一条无用的汇编指令。
+在此利用这条无价值的汇编指令来配合lock指令，在__asm__,__volatile__,memory的作用下，用作cpu的内存屏障。
+
+指令“lock; addl $0,0(%%esp)”表示加锁，把0加到栈顶的内存单元，该指令操作本身无意义，但这些指令起到内存屏障的作用，让前面的指令执行完成。
+
+```
+lock addl $0x0,(%rsp
+```
+
+###volatile i++
+
+![](.cpu缓存_cacheline_一致性_volatile_synchronized_final内存屏障模型_images/volatile i++.png)
+```
+k++;
+
+8 getstatic #9 <concurrent/T07_Volatile_i_add_const.k>
+11 iconst_1
+12 iadd
+13 putstatic #9 <concurrent/T07_Volatile_i_add_const.k>
+```
+i++实际为load、Increment、store、Memory Barriers 四个操作
+寄存器A中保存的是中间值，没有直接修改i，因此其他线程并不会获取到这个自增1的值
+
+volatile i++ 不能保证原子性:在寄存器赋值cpu缓存=2时，缓存行状态变成E,并将store buffer回写,
+但i++前面的load指令并不是E状态,其他cpu也可以访问,而原子指令xadd就是在load时就已经是E状态了
+[](https://www.zhihu.com/question/329746124)
+
+## 原子指令原理
+lock指令前缀
+read-modify-write
+
+On modern CPUs, the LOCK prefix locks the cache line so that the read-modify-write operation is logically atomic. These are oversimplified, but hopefully they'll give you the idea.
+```
+Unlocked increment:
+
+Acquire cache line, shareable is fine. Read the value.
+Add one to the read value.
+Acquire cache line exclusive (if not already E or M) and lock it.
+Write the new value to the cache line.
+Change the cache line to modified and unlock it.
+```
+```
+Locked increment:
+
+Acquire cache line exclusive (if not already E or M) and lock it.
+Read value.
+Add one to it.
+Write the new value to the cache line.
+Change the cache line to modified and unlock it.
+
+Notice the difference? In the unlocked increment, the cache line is only locked during the write memory operation, just like all writes. In the locked increment, the cache line is held across the entire instruction, 
+all the way from the read operation to the write operation and including during the increment itself.
+```
+[](https://stackoverflow.com/questions/29880015/lock-prefix-vs-mesi-protocol)
+[](https://zhuanlan.zhihu.com/p/115355303)
