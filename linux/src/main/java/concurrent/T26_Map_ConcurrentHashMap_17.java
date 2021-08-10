@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Map;
 
-public class T26_Map_ConcurrentHashMap {
+public class T26_Map_ConcurrentHashMap_17 {
   public static void main(String[] args) {
     Map<String, String> m = new java.util.concurrent.ConcurrentHashMap<>();
   }
@@ -103,6 +103,11 @@ public class T26_Map_ConcurrentHashMap {
 
   @Test
   public void testCapacityExpandCopyOpt() {
+
+  }
+
+  @Test
+  public void testSize() {
 
   }
 }
