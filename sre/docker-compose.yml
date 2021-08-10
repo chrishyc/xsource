@@ -1,45 +1,22 @@
+#docker-compose命令使用root用户创建目录
 version: "2.4"
-#volumes:
-#  helloapp:
-#    driver: local
-#    driver_opts:
-#      type: none
-#      o: bind
-#      device: ~/Downloads/mifi_hello/
 volumes:
-  grafana-storage:
+  helloapp:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ~/Downloads/mifi_hello/
 services:
-  mifi-prometheus:
-    image: helloapp:v1
+  hello-demo:
+    image: hello-demo:1.0.0
     ports:
       - "8080:8080"
     networks:
       - chris_net
     volumes:
       #      - helloapp:/home/work/helloapp/
-      - ~/Downloads/mifi_hello/:/home/work/helloapp/
-    restart: always
-  mifi-grafana:
-    image: grafana/grafana
-    environment:
-      - TZ=PRC
-    ports:
-      - "3000:3000"
-    networks:
-      - chris_net
-    volumes:
-      - grafana-storage:/var/lib/grafana
-    restart: always
-  mifi-alermanager:
-    image: prom/alertmanager
-    environment:
-      - TZ=PRC
-    ports:
-      - "9093:9093"
-    networks:
-      - chris_net
-    volumes:
-      - /Users/chris/workspace/xsource/sre/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - helloapp:/home/work/helloapp/
     restart: always
 networks:
   chris_net:
