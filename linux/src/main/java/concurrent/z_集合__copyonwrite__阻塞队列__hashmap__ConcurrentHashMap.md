@@ -27,3 +27,4 @@
 优化过程:[%运算]->[性能差,使用二进制运算]->[二进制运算只考虑低位,冲突大]->[优化增加扰动,高位也考虑进来,]
 ###1.8扩容
 ![](.z_集合__copyonwrite__阻塞队列__hashmap__ConcurrentHashMap_images/多线程步长处理.png)
+![](.z_集合__copyonwrite__阻塞队列__hashmap__ConcurrentHashMap_images/concurrenthashmap1.8.png)
