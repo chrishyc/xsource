@@ -32,6 +32,7 @@ public class T26_Map_ConcurrentHashMap_18 {
   /**
    * table初始化
    * initTable()
+   * 自旋初始化数组
    * U.compareAndSwapInt(this, SIZECTL, sc, -1)
    */
   @Test
@@ -44,6 +45,7 @@ public class T26_Map_ConcurrentHashMap_18 {
    * table[i]初始化
    * U.getObjectVolatile(tab, ((long)i << ASHIFT) + ABASE)
    * <p>
+   * 自旋初始化数组元素
    * U.compareAndSwapObject(tab, ((long)i << ASHIFT) + ABASE, c, v)
    */
   @Test
@@ -67,10 +69,13 @@ public class T26_Map_ConcurrentHashMap_18 {
   }
 
   /**
-   * table[i]链表超过阈值>=8,进行扩容
+   * table[i]链表超过阈值>=8,进入treeifyBin:
+   * <p>
+   * 总数超过<64 直接扩容数组为2倍
+   * >=64 将数组中该链表转红黑树,不扩容
+   * <p>
+   * 数组扩容两倍,复制到新数组使用多线程+步长,扩容时有新线程调用put时,让新线程也处理步长
    *
-   * <64 直接扩容数组
-   * >=64
    * @throws IOException
    */
   @Test
@@ -79,8 +84,9 @@ public class T26_Map_ConcurrentHashMap_18 {
     hashConflict(0, m, new char[32]);
     System.in.read();
   }
+
   /**
-   * table[i]链表超过阈值,转化为红黑树
+   * table[i]链表超过阈值>=8,且总数>=64则转化为红黑树
    *
    * @throws IOException
    */
@@ -91,6 +97,10 @@ public class T26_Map_ConcurrentHashMap_18 {
     System.in.read();
   }
 
+  /**
+   * 扩容过程中,访问旧hashmap中已复制到新hashmap中的node,
+   * ForwardingNode会转发到新hashmap
+   */
   @Test
   public void testGet() {
     Map<String, String> m = new java.util.concurrent.ConcurrentHashMap<>();
