@@ -25,6 +25,7 @@ atomicStampReference
 atomic cas ++失败会自旋,如果100个线程都cas ++,太多线程失败，导致大量线程自旋,浪费cpu
 1.如何优化效率:创建几个bucket,每个线程都hash到其中一个bucket,然后这个线程对这个bucket(cell)的值进行cas加
 2.中途求和sum值会不准确,但确保最终一致性
+3.cell使用contened注解,避免伪共享
 
 
 ##基准测试BenchMark
