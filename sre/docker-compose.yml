@@ -18,6 +18,14 @@ services:
       #      - helloapp:/home/work/helloapp/
       - helloapp:/home/work/helloapp/
     restart: always
+  hello-grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+  hello-prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
 networks:
   chris_net:
     driver: bridge
