@@ -126,8 +126,15 @@ public class T26_Map_ConcurrentHashMap_18 {
 
   }
 
+  /**
+   * A padded cell for distributing counts.  Adapted from LongAdder
+   * and Striped64.  See their internal docs for explanation.
+   *
+   * 确保最终一致性
+   */
   @Test
   public void testSize() {
-
+    Map<String, String> m = new java.util.concurrent.ConcurrentHashMap<>();
+    m.size();
   }
 }

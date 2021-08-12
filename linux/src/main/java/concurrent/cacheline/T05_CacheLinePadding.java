@@ -1,6 +1,7 @@
 package concurrent.cacheline;
 
 import sun.misc.Contended;
+import org.openjdk.jol.info.ClassLayout;
 
 /**
  * jvm增加参数-XX:-RestrictContended
@@ -10,12 +11,13 @@ import sun.misc.Contended;
 public class T05_CacheLinePadding {
     @Contended
      volatile long a;
-    
+
     @Contended
      volatile long b;
-    
+
     public static void main(String[] args) throws Exception {
         T05_CacheLinePadding t = new T05_CacheLinePadding();
+        System.out.println(ClassLayout.parseInstance(t).toPrintable() + "\n" + "thread id:" + Thread.currentThread().getId());
         Thread t1 = new Thread(() -> {
             for (int i = 0; i < 10_0000_0000; i++) {
                 t.a = i;
