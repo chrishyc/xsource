@@ -81,40 +81,18 @@ join
 yield
 ![yield](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_yield.jpg)
 
-###sleep&&join&&yield&&park
+###sleep&&join&&yield&&park&&interrupt
 本质是park线程
 [hotspot源码](https://blog.csdn.net/qq_26222859/article/details/81112446)
 [park本质](https://www.jb51.net/article/216231.htm)
 [源码分析](https://juejin.cn/post/6844903971463626766#heading-1)
 sleep、wait和park最终都是借助于pthread_cond_timedwait实现阻塞，其中wait比较特殊的是，需要结合ObjectMonitor使用
-###interrupt
-本质是通过unpark唤醒阻塞线程并设置interrupt标志位，不会中断一个正在运行的线程
-```
-void os::interrupt(Thread* thread) {
-  assert(Thread::current() == thread || Threads_lock->owned_by_self(),
-    "possibility of dangling Thread pointer");
- 
-  //获取系统native线程对象
-  OSThread* osthread = thread->osthread();
- 
-  if (!osthread->interrupted()) {
-    osthread->set_interrupted(true); //设置中断状态为true
-   //内存屏障，使osthread的interrupted状态对其它线程立即可见
-    OrderAccess::fence();
-    //前文说过，_SleepEvent用于Thread.sleep,线程调用了sleep方法，则通过unpark唤醒
-    ParkEvent * const slp = thread->_SleepEvent ;
-    if (slp != NULL) slp->unpark() ;
-  }
- 
-  //_parker用于concurrent相关的锁，此处同样通过unpark唤醒
-  if (thread->is_Java_thread())
-    ((JavaThread*)thread)->parker()->unpark();
-  //Object.wait()唤醒
-  ParkEvent * ev = thread->_ParkEvent ;
-  if (ev != NULL) ev->unpark() ;
- 
-}
-```
+
+[hotspot Parker 和 ParkEvent源码分析](https://blog.csdn.net/qq_31865983/article/details/105184585)
+Parker是Unsafe类的park和unpark方法的核心，ParkEvent是Thread的sleep方法，synchronized关键字中让线程休眠的核心
+[LockSupport park unpark源码](https://juejin.cn/post/6844903729380982797#heading-6)
+###park和interrupt
+
 
 ##reference回收线程
 ```
