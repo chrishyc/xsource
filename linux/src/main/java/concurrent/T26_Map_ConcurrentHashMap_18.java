@@ -129,8 +129,8 @@ public class T26_Map_ConcurrentHashMap_18 {
   /**
    * A padded cell for distributing counts.  Adapted from LongAdder
    * and Striped64.  See their internal docs for explanation.
-   *
-   * 确保最终一致性
+   * <p>
+   * 确保最终一致性,见[z_atomic问题清单.md]
    */
   @Test
   public void testSize() {
