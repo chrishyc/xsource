@@ -85,6 +85,8 @@ yield
 本质是park线程
 [hotspot源码](https://blog.csdn.net/qq_26222859/article/details/81112446)
 [park本质](https://www.jb51.net/article/216231.htm)
+[源码分析](https://juejin.cn/post/6844903971463626766#heading-1)
+sleep、wait和park最终都是借助于pthread_cond_timedwait实现阻塞，其中wait比较特殊的是，需要结合ObjectMonitor使用
 ###interrupt
 本质是通过unpark唤醒阻塞线程并设置interrupt标志位，不会中断一个正在运行的线程
 ```
