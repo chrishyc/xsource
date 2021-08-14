@@ -65,6 +65,22 @@ parking to wait for <地址> 目标
 [](https://www.javatang.com/archives/2017/10/25/36441958.html#waiting_on_condition)
 [](https://blog.csdn.net/liwenxia626/article/details/80791704)
 
+##linux线程状态 vs jvm线程状态
+[](https://zhuanlan.zhihu.com/p/133275094)
+linux线程状态
+![](.z_thread清单列表_images/linux线程状态.png)
+```
+操作系统中的线程除去new和terminated状态，一个线程真实存在的状态，只有：
+
+ready ：表示线程已经被创建，正在等待系统调度分配CPU使用权。
+running：表示线程获得了CPU使用权，正在进行运算
+waiting：表示线程等待（或者说挂起），让出CPU资源给其他线程使用
+
+无论是Timed Waiting ，Waiting还是Blocked，对应的都是操作系统线程的waiting（等待）状态
+
+```
+jvm线程状态
+![jvm线程状态](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/thread_status.jpg)
 ## 线程常见问题
 ###runnable状态有io
 ###死锁
@@ -89,9 +105,15 @@ yield
 sleep、wait和park最终都是借助于pthread_cond_timedwait实现阻塞，其中wait比较特殊的是，需要结合ObjectMonitor使用
 
 [hotspot Parker 和 ParkEvent源码分析](https://blog.csdn.net/qq_31865983/article/details/105184585)
-Parker是Unsafe类的park和unpark方法的核心，ParkEvent是Thread的sleep方法，synchronized关键字中让线程休眠的核心
+Parker是Unsafe类的park和unpark方法的核心，ParkEvent是Thread的sleep/wait方法，synchronized关键字中让线程休眠的核心
+
+
 [LockSupport park unpark源码](https://juejin.cn/post/6844903729380982797#heading-6)
 ###park和interrupt
+底层都使用parker.park,parker.unpark
+[概念架构](https://blog.csdn.net/anlian523/article/details/106752414)
+###sleep&&join&&wait
+底层都是ParkEvent.park, ParkEvent.unpark
 
 
 ##reference回收线程

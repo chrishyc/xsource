@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
-public class T20_TestLockSupport {
+/**
+ * 实验:https://blog.csdn.net/anlian523/article/details/106752414
+ */
+public class T03_LockSupport {
 
   @Test
   public void testParkBeforeUnPark() throws InterruptedException, IOException {
@@ -74,7 +77,7 @@ public class T20_TestLockSupport {
   public void testBlockerOnObject() throws IOException {
     Thread t = new Thread(() -> {
       // UNSAFE.putObject(t, parkBlockerOffset, arg);x
-      LockSupport.park(new T20_TestLockSupport());
+      LockSupport.park(new T03_LockSupport());
     });
     t.start();
     System.in.read();
@@ -101,7 +104,34 @@ public class T20_TestLockSupport {
   }
 
   @Test
-  public void testInterrupt() {
+  public void testInterrupt() throws IOException {
+    Thread.currentThread().interrupt();
+    LockSupport.park();  //消耗掉permit后，直接返回了
+    System.out.println(" unpark as comsume permit");
+    System.in.read();
+  }
 
+  @Test
+  public void testInterrupt1() throws IOException {
+    Thread.currentThread().interrupt();
+    LockSupport.park();  //消耗掉permit后，直接返回了
+    System.out.println(" unpark  as comsume permit");
+    LockSupport.park();  //因为中断状态 == true，直接返回了
+    System.out.println(" unpark as interrupt=true");
+    LockSupport.park();  //同上
+    System.out.println(" unpark as interrupt=true");
+    System.in.read();
+  }
+
+  @Test
+  public void testSleepInterrupt() throws IOException {
+    Thread.currentThread().interrupt();
+    try {
+      Thread.sleep(1000);//消耗掉中断状态
+    } catch (InterruptedException e) {
+      System.out.println(e);
+    }
+    LockSupport.park();  //消耗掉permit
+    LockSupport.park();  //因为此时permit为0且中断状态为false，所以阻塞
   }
 }
