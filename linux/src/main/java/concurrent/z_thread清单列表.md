@@ -110,6 +110,7 @@ Parker是Unsafe类的park和unpark方法的核心，ParkEvent是Thread的sleep/w
 
 [LockSupport park unpark源码](https://juejin.cn/post/6844903729380982797#heading-6)
 ###park和interrupt
+![](.z_thread清单列表_images/park interrupt.png)
 底层都使用parker.park,parker.unpark
 [概念架构](https://blog.csdn.net/anlian523/article/details/106752414)
 ###sleep&&join&&wait
