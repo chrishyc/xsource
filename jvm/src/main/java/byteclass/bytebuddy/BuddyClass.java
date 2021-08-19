@@ -2,7 +2,6 @@ package byteclass.bytebuddy;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.NamingStrategy;
-import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.ClassFileLocator;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -18,85 +17,84 @@ public class BuddyClass {
 
     public void unloaded() throws IOException {
         new ByteBuddy()
-                .subclass(Foo.class)
-                .name("MyFoo")
-                .make()
-                .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
+            .subclass(Foo.class)
+            .name("MyFoo")
+            .make()
+            .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
     }
 
     public void subClass() throws Exception {
         new ByteBuddy()
-                .subclass(Foo.class)
-                .method(ElementMatchers.returns(String.class))
-                .intercept(FixedValue.value("Hello World!"))
-                .make()
-                .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
+            .subclass(Foo.class)
+            .method(ElementMatchers.returns(String.class))
+            .intercept(FixedValue.value("Hello World!"))
+            .make()
+            .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
 
     }
 
     public void redefine() throws Exception {
         new ByteBuddy()
-                .redefine(Foo.class)
-                .method(ElementMatchers.returns(String.class))
-                .intercept(FixedValue.value("Hello World!"))
-                .make()
-                .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
+            .redefine(Foo.class)
+            .method(ElementMatchers.returns(String.class))
+            .intercept(FixedValue.value("Hello World!"))
+            .make()
+            .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
 
     }
 
     public void rebase() throws Exception {
         new ByteBuddy()
-                .rebase(Foo.class)
+            .rebase(Foo.class)
 //                .method(ElementMatchers.returns(String.class))
 //                .intercept(FixedValue.value("Hello World!"))
-                .make()
-                .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
+            .make()
+            .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
 
     }
 
     public void namingStrategy() throws IOException {
         new ByteBuddy()
-                .with(new NamingStrategy.AbstractBase() {
-                    @Override
-                    protected String name(TypeDescription superClass) {
-                        return "Chris";
-                    }
-                })
-                .subclass(Foo.class)
+            .with(new NamingStrategy.AbstractBase() {
+                @Override
+                protected String name(TypeDescription superClass) {
+                    return "Chris";
+                }
+            })
+            .subclass(Foo.class)
 //                .name("HelloObject")
-                .make()
-                .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
+            .make()
+            .saveIn(new File("/Users/chris/byteclass/bytebuddy"));
     }
 
 
 
     public void loading() {
         Class<?> type = new ByteBuddy()
-                .subclass(Object.class)
-                .make()
-                .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
-                .getLoaded();
+            .subclass(Object.class)
+            .make()
+            .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
+            .getLoaded();
     }
 
     public void agent() {
-        ByteBuddyAgent.install();
         Foo foo = new Foo();
         new ByteBuddy()
-                .redefine(Bar.class)
-                .name(Foo.class.getName())
-                .make()
-                .load(Foo.class.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+            .redefine(Bar.class)
+            .name(Foo.class.getName())
+            .make()
+            .load(Foo.class.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
         System.out.println(foo.method());
     }
 
     public void unload() throws NoSuchFieldException {
         TypePool typePool = TypePool.Default.ofSystemLoader();
         new ByteBuddy()
-                .redefine(typePool.describe("bytebuddy.Bar").resolve(), // do not use 'Bar.class'
-                        ClassFileLocator.ForClassLoader.ofSystemLoader())
-                .defineField("qux", String.class) // we learn more about defining fields later
-                .make()
-                .load(ClassLoader.getSystemClassLoader());
+            .redefine(typePool.describe("bytebuddy.Bar").resolve(), // do not use 'Bar.class'
+                ClassFileLocator.ForClassLoader.ofSystemLoader())
+            .defineField("qux", String.class) // we learn more about defining fields later
+            .make()
+            .load(ClassLoader.getSystemClassLoader());
     }
 
 
