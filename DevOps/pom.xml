@@ -11,7 +11,7 @@
     <groupId>com.springfox</groupId>
     <artifactId>sre</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>swagger</name>
+    <name>DevOps</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
