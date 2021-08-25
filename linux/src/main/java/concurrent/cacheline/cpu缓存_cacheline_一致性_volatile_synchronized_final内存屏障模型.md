@@ -223,3 +223,6 @@ all the way from the read operation to the write operation and including during 
 ```
 [](https://stackoverflow.com/questions/29880015/lock-prefix-vs-mesi-protocol)
 [](https://zhuanlan.zhihu.com/p/115355303)
+##合并写技术
+![](.cpu缓存_cacheline_一致性_volatile_synchronized_final内存屏障模型_images/合并写技术.png)
+[](http://ifeve.com/writecombining/)
