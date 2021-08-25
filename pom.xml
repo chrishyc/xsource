@@ -12,6 +12,7 @@
         <module>bigdata</module>
       <module>ut</module>
       <module>dataProcess</module>
+      <module>CLRS</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->
