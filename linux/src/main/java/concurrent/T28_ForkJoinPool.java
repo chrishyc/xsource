@@ -3,75 +3,124 @@
  */
 package concurrent;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
 public class T28_ForkJoinPool {
 
-  public static void main(String[] args) throws Exception {
-    // 创建2000个随机数组成的数组:
-    long[] array = new long[2000];
-    long expectedSum = 0;
-    for (int i = 0; i < array.length; i++) {
-      array[i] = random();
-      expectedSum += array[i];
+  //初始化一个ForkJoinPool
+  static ForkJoinPool pool = new ForkJoinPool(4,
+      ForkJoinPool.defaultForkJoinWorkerThreadFactory,
+      null,
+      true);
+
+  //一个集合，模拟网站
+  static ArrayList<String> list = new ArrayList<>();
+
+  //集合中的数据
+  static void addList() {
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+    list.add("www.baidu.com");
+    list.add("www.blog.csdn.net");
+  }
+
+
+  public static void main(String[] args) throws ExecutionException, InterruptedException {
+    addList();
+    //提交任务
+    ForkJoinTask<String> task = pool.submit(new Work(list, 0, list.size()));
+    System.out.println(task.get());
+  }
+
+  //模拟请求
+  public static String doRequest(String url, int index) {
+    return index + "--》请求测试：" + url + "\n";
+  }
+
+  //需要继承RecursiveTask，来实现自己的拆分逻辑
+  static class Work extends RecursiveTask<String> {
+    List<String> list;
+    int start;
+    int end;
+
+    public Work(List<String> list, int start, int end) {
+      this.list = list;
+      this.start = start;
+      this.end = end;
     }
-    System.out.println("Expected sum: " + expectedSum);
-    // fork/join:
-    ForkJoinTask<Long> task = new SumTask(array, 0, array.length);
-    long startTime = System.currentTimeMillis();
-    Long result = ForkJoinPool.commonPool().invoke(task);
-    long endTime = System.currentTimeMillis();
-    System.out.println("Fork/join sum: " + result + " in " + (endTime - startTime) + " ms.");
-  }
 
-  static Random random = new Random(0);
-
-  static long random() {
-    return random.nextInt(10000);
-  }
-}
-
-class SumTask extends RecursiveTask<Long> {
-  static final int THRESHOLD = 500;
-  long[] array;
-  int start;
-  int end;
-
-  SumTask(long[] array, int start, int end) {
-    this.array = array;
-    this.start = start;
-    this.end = end;
-  }
-
-  @Override
-  protected Long compute() {
-    if (end - start <= THRESHOLD) {
-      // 如果任务足够小,直接计算:
-      long sum = 0;
-      for (int i = start; i < end; i++) {
-        sum += this.array[i];
-        // 故意放慢计算速度:
-        try {
-          Thread.sleep(1);
-        } catch (InterruptedException e) {
+    @Override
+    protected String compute() {
+      int count = end - start;
+      String result = "";
+      //当任务小于10个时直接执行，否则就拆分
+      if (count <= 5) {
+        for (int i = 0; i < list.size(); i++) {
+          result += doRequest(list.get(i), i);
         }
+        return result;
+      } else {
+        //获取任务数量索引的中间值
+        int x = (start + end) / 2;
+        //拆分任务
+        Work work1 = new Work(list, start, x);
+        work1.fork();
+        //拆分任务
+        Work work2 = new Work(list, x, end);
+        work2.fork();
+        //获取任务执行结果
+        result += work1.join();
+        result += work2.join();
+        return result;
       }
-      return sum;
     }
-    // 任务太大,一分为二:
-    int middle = (end + start) / 2;
-    System.out.println(String.format("split %d~%d ==> %d~%d, %d~%d", start, end, start, middle, middle, end));
-    SumTask subtask1 = new SumTask(this.array, start, middle);
-    SumTask subtask2 = new SumTask(this.array, middle, end);
-    invokeAll(subtask1, subtask2);
-    Long subresult1 = subtask1.join();
-    Long subresult2 = subtask2.join();
-    Long result = subresult1 + subresult2;
-    System.out.println("result = " + subresult1 + " + " + subresult2 + " ==> " + result);
-    return result;
   }
 }
 
