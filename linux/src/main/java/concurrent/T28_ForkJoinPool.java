@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
+import java.util.stream.IntStream;
 
 public class T28_ForkJoinPool {
 
@@ -23,52 +24,7 @@ public class T28_ForkJoinPool {
 
   //集合中的数据
   static void addList() {
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
-    list.add("www.baidu.com");
-    list.add("www.blog.csdn.net");
+    IntStream.rangeClosed(1, 100).forEach(i -> list.add("www.baidu.com" + "/" + i));
   }
 
 
