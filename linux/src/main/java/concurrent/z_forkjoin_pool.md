@@ -18,6 +18,7 @@ invokeAll:把传入的任务的第一个交给当前线程来执行，其他的�
 ##4.invokeAll vs fork fork vs fork compute
 
 ###fork fork
+[](https://www.liaoxuefeng.com/article/1146802219354112)
 ![](.z_forkjoin_pool_images/fork&fork.png)
 fork1   
 fork2   
@@ -29,7 +30,7 @@ fork1,fork2将任务加入当前线程工作队列,唤醒其他线程窃取任�
 ###fork compute
 唤醒一个线程,留一个任务自己处理
 ![](.z_forkjoin_pool_images/fork&compute.png)
-
+[](https://time.geekbang.org/column/article/92524)
 ###invokeAll
 invokeAll会把传入的任务的第一个交给当前线程来执行，其他的任务都fork加入工作队列
 [](https://juejin.cn/post/6844903834087587848)
