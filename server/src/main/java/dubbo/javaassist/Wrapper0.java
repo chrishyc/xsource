@@ -5,7 +5,7 @@
 
 package dubbo.javaassist;
 
-import demo.HelloService;
+import web.HelloService;
 import javassist.CtClass;
 import org.apache.dubbo.common.bytecode.ClassGenerator.DC;
 import org.apache.dubbo.common.bytecode.NoSuchPropertyException;
@@ -23,32 +23,32 @@ public class Wrapper0 extends Wrapper implements DC {
     public static String[] mns;
     public static String[] dmns;
     public static Class[] mts0;
-    
+
     @Override
     public String[] getPropertyNames() {
         return pns;
     }
-    
+
     @Override
     public boolean hasProperty(String var1) {
         return pts.containsKey(var1);
     }
-    
+
     @Override
     public Class getPropertyType(String var1) {
         return (Class) pts.get(var1);
     }
-    
+
     @Override
     public String[] getMethodNames() {
         return mns;
     }
-    
+
     @Override
     public String[] getDeclaredMethodNames() {
         return dmns;
     }
-    
+
     @Override
     public void setPropertyValue(Object var1, String var2, Object var3) {
         try {
@@ -56,10 +56,10 @@ public class Wrapper0 extends Wrapper implements DC {
         } catch (Throwable var6) {
             throw new IllegalArgumentException(var6);
         }
-        
+
         throw new NoSuchPropertyException("Not found property \"" + var2 + "\" field or setter method in class demo.HelloService.");
     }
-    
+
     @Override
     public Object getPropertyValue(Object var1, String var2) {
         try {
@@ -67,10 +67,10 @@ public class Wrapper0 extends Wrapper implements DC {
         } catch (Throwable var5) {
             throw new IllegalArgumentException(var5);
         }
-        
+
         throw new NoSuchPropertyException("Not found property \"" + var2 + "\" field or setter method in class demo.HelloService.");
     }
-    
+
     @Override
     public Object invokeMethod(Object var1, String var2, Class[] var3, Object[] var4) throws InvocationTargetException {
         HelloService var5;
@@ -79,7 +79,7 @@ public class Wrapper0 extends Wrapper implements DC {
         } catch (Throwable var8) {
             throw new IllegalArgumentException(var8);
         }
-        
+
         try {
             if ("sayHi".equals(var2) && var3.length == 1) {
                 return var5.sayHi((String) var4[0]);
@@ -89,7 +89,7 @@ public class Wrapper0 extends Wrapper implements DC {
         }
         throw new NoSuchMethodException("Not found method \"" + var2 + "\" in class demo.HelloService.");
     }
-    
+
     public Wrapper0() {
     }
 }

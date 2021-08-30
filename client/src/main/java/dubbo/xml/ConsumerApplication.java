@@ -1,6 +1,6 @@
 package dubbo.xml;
 
-import demo.HelloService;
+import web.HelloService;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ConsumerApplication {

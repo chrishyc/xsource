@@ -1,7 +1,7 @@
 package dubbo.xml;
 
 
-import demo.HelloService;
+import web.HelloService;
 
 import java.util.concurrent.TimeUnit;
 

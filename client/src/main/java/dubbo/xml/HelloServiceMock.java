@@ -1,6 +1,6 @@
 package dubbo.xml;
 
-import demo.HelloService;
+import web.HelloService;
 
 public class HelloServiceMock implements HelloService {
     @Override

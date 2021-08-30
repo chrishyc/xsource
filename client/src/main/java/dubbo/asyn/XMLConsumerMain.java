@@ -1,7 +1,7 @@
 package dubbo.asyn;
 
 
-import demo.HelloService;
+import web.HelloService;
 import org.apache.dubbo.rpc.RpcContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

@@ -13,6 +13,7 @@
       <module>ut</module>
       <module>dataProcess</module>
       <module>CLRS</module>
+        <module>task</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->

@@ -12,26 +12,26 @@
 
 
     <!--默认情况下，它会通过反射调用无参构造函数来创建对象。如果类中没有无参构造函数，将创建失败-->
-    <bean id="connectionUtils" class="demo.spring.utils.ConnectionUtils" scope="prototype" lazy-init="false"/>
-    <bean id="transactionManager" class="demo.spring.utils.TransactionManager" scope="singleton">
+    <bean id="connectionUtils" class="web.spring.mine.utils.ConnectionUtils" scope="prototype" lazy-init="false"/>
+    <bean id="transactionManager" class="web.spring.mine.utils.TransactionManager" scope="singleton">
         <property name="ConnectionUtils" ref="connectionUtils"/>
     </bean>
 
     <!--使用静态方法创建对象的配置方式-->
-    <bean id="userService" class="demo.spring.factory.BeanFactory" factory-method="createTransferService$static"/>
+    <bean id="userService" class="web.spring.mine.factory.BeanFactory" factory-method="createTransferService$static"/>
 
 
     <!--使用实例方法创建对象的配置方式-->
-    <bean id="beanFactory" class="demo.spring.factory.BeanFactory"/>
+    <bean id="beanFactory" class="web.spring.mine.factory.BeanFactory"/>
     <bean id="transferService" factory-bean="beanFactory" factory-method="createTransferService$1"/>
 
     <!--使用构造函数注入-->
-    <bean id="accountDao" class="demo.spring.dao.impl.JdbcAccountDaoImpl" init-method="init" destroy-method="destory">
+    <bean id="accountDao" class="web.spring.mine.dao.impl.JdbcAccountDaoImpl" init-method="init" destroy-method="destory">
         <constructor-arg name="connectionUtils" ref="connectionUtils"/>
     </bean>
 
     <!--使用set函数注入-->
-    <bean id="accountDao$set" class="demo.spring.dao.impl.JdbcAccountDaoImpl" init-method="init"
+    <bean id="accountDao$set" class="web.spring.mine.dao.impl.JdbcAccountDaoImpl" init-method="init"
           destroy-method="destory">
         <!--        <property name="connectionUtils" ref="connectionUtils"/>-->
         <property name="list">
@@ -52,7 +52,7 @@
         <property name="password" value="${jdbc.password}"/>
     </bean>
 
-    <bean id="transferServiceImpl" class="demo.spring.service.impl.TransferServiceImpl"/>
+    <bean id="transferServiceImpl" class="web.spring.mine.service.impl.TransferServiceImpl"/>
 
 
     <bean id="companyBean" class="ioc.factorybean.CompanyFactoryBean">

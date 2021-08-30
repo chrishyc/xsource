@@ -21,5 +21,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="Maven: com.google.guava:guava:30.1-jre" level="project" />
+    <orderEntry type="library" name="Maven: redis.clients:jedis:2.8.0" level="project" />
   </component>
 </module>
