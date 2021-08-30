@@ -9,19 +9,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Component
+//@Component
 public class BasicFilter implements Filter {
-    
-    
+
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        int resultStatusCode = checkHTTPBasicAuthorize(request);
-        if (resultStatusCode != 0) {
-        } else {
-            chain.doFilter(request, response);
-        }
+//        int resultStatusCode = checkHTTPBasicAuthorize(request);
+//        if (resultStatusCode != 0) {
+//        } else {
+//            chain.doFilter(request, response);
+//        }
     }
-    
+
     private int checkHTTPBasicAuthorize(ServletRequest request) {
         try {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -33,7 +33,7 @@ public class BasicFilter implements Filter {
                     String decodedAuth = getFromBASE64(auth);
                     if (decodedAuth != null) {
                         String[] UserArray = decodedAuth.split(":");
-                        
+
                         if (UserArray != null && UserArray.length == 2) {
                             if (UserArray[0].compareTo("chris") == 0
                                     && UserArray[1].compareTo("123") == 0) {
@@ -47,9 +47,9 @@ public class BasicFilter implements Filter {
         } catch (Exception ex) {
             return -2;
         }
-        
+
     }
-    
+
     private String getFromBASE64(String s) {
         if (s == null)
             return null;

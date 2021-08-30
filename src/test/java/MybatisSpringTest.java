@@ -1,11 +1,11 @@
-import mvc.pojo.Account;
-import mvc.service.AccountService;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import web.springmvc.open.pojo.Account;
+import web.springmvc.open.service.AccountService;
 
 import java.util.List;
 

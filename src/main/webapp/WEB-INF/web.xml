@@ -76,7 +76,7 @@
     <!--    mvc demo -->
     <servlet>
         <servlet-name>MVCdemo</servlet-name>
-        <servlet-class>demo.springmvc.controller.MVCDispatchServlet</servlet-class>
+        <servlet-class>web.springmvc.mine.controller.MVCDispatchServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>classpath:springmvc.properties</param-value>

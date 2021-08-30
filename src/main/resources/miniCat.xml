@@ -2,7 +2,7 @@
 <web-app>
     <servlet>
         <servlet-name>minicat</servlet-name>
-        <servlet-class>tomcat.servlet.ServletImpl</servlet-class>
+        <servlet-class>tomcat.mine.servlet.ServletImpl</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>minicat</servlet-name>

@@ -1,6 +1,6 @@
 package dubbo.asyn;
 
-import demo.HelloService;
+import web.HelloService;
 import org.apache.dubbo.config.annotation.DubboService;
 
 @DubboService

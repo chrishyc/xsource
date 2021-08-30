@@ -52,14 +52,14 @@ import java.util.Map;
  * <p>
  * 9.如果其他系统先缓存session然后再验证,会有系统漏洞
  */
-@Configuration
+//@Configuration
 public class ShiroSpringWebConfig {
 
 //    @Bean
 //    public Filter myFilter() {
 //        return (request, response, chain) -> System.out.println("hello filter, import by bean");
 //    }
-    
+
     @Bean(name = "shiroFilter")
     public ShiroFilterFactoryBean shiroFilter() {
         System.out.println("shiroFilter=============");
@@ -74,11 +74,11 @@ public class ShiroSpringWebConfig {
         filterMap1.put("/springboot", "myAnon");
         filterMap1.put("/list", "myBasic");
 //        filterMap1.put("/**", "myBasic");
-        
+
         bean.setFilterChainDefinitionMap(filterMap1);
         return bean;
     }
-    
+
     /**
      * org.apache.catalina.core.ApplicationFilterChain#internalDoFilter递归时
      * ShiroFilterFactoryBean中的filter不会调用递归方法,因此ShiroFilterFactoryBean
@@ -99,13 +99,13 @@ public class ShiroSpringWebConfig {
         bean.setFilters(filterMap);
         bean.setSecurityManager(securityManager$1());
         Map<String, String> filterMap1 = new LinkedHashMap<>();
-        
+
         filterMap1.put("/springboot", "helloFilter");
-        
+
         bean.setFilterChainDefinitionMap(filterMap1);
         return bean;
     }
-    
+
     /**
      * 此方案无效,ShiroFilterFactoryBean中filter逻辑已结束，再次添加并没有添加到对应filter中
      *
@@ -121,7 +121,7 @@ public class ShiroSpringWebConfig {
 //        shiroFilterFactoryBean.getFilterChainDefinitionMap().put("/list", "helloFilter");
 //        return new Object();
 //    }
-    
+
     /**
      * 此方案有效
      *
@@ -152,7 +152,7 @@ public class ShiroSpringWebConfig {
         securityManager.setSessionManager(defaultSessionManager());
         return securityManager;
     }
-    
+
     @Bean
     public DefaultWebSecurityManager securityManager$1() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
@@ -163,84 +163,84 @@ public class ShiroSpringWebConfig {
 //        webSessionStorageEvaluator.setSessionStorageEnabled(false);
         return securityManager;
     }
-    
+
     @Bean
     public CustomRealm customRealm() {
         CustomRealm customRealm = new CustomRealm();
 //        customRealm.setAuthenticationTokenClass(MyToken.class);
         return new CustomRealm();
     }
-    
+
     @Bean
     public CustomRealm$1 customRealm$1() {
         CustomRealm$1 customRealm$1 = new CustomRealm$1();
 //        customRealm$1.setCachingEnabled(false);
         return customRealm$1;
     }
-    
+
     static public class MyToken implements AuthenticationToken {
-        
+
         @Override
         public Object getPrincipal() {
             return null;
         }
-        
+
         @Override
         public Object getCredentials() {
             return null;
         }
     }
-    
+
     @Bean
     public DefaultWebSessionManager defaultSessionManager() {
         DefaultWebSessionManager defaultSessionManager = new DefaultWebSessionManager();
 //        defaultSessionManager.se(false);
         return defaultSessionManager;
     }
-    
-    
+
+
     class MyFilter extends BasicHttpAuthenticationFilter {
-        
+
         @Override
         protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
             return super.isAccessAllowed(request, response, mappedValue);
         }
-        
-        
+
+
         @Override
         protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
             System.out.println("==========MyFilter==========");
             return super.onAccessDenied(request, response);
         }
-        
+
         @Override
         protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
             subject.getSession().stop();
             return super.onLoginSuccess(token, subject, request, response);
         }
     }
-    
+
     class MyFilter$1 extends BasicHttpAuthenticationFilter {
-        
+
         @Override
         protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
             return super.isAccessAllowed(request, response, mappedValue);
         }
-        
-        
+
+
         @Override
         protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
             System.out.println("==========MyFilter111111==========");
             return super.onAccessDenied(request, response);
         }
-        
+
         @Override
         protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
             subject.getSession().stop();
             return super.onLoginSuccess(token, subject, request, response);
         }
     }
-    
+
     public class StatelessDefaultSubjectFactory extends DefaultWebSubjectFactory {
         public Subject createSubject(SubjectContext context) {
             //不创建 session
@@ -248,15 +248,15 @@ public class ShiroSpringWebConfig {
             return super.createSubject(context);
         }
     }
-    
-    
+
+
     public class CustomRealm extends AuthorizingRealm {
-        
+
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             return null;
         }
-        
+
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             String username = (String) token.getPrincipal();
@@ -266,14 +266,14 @@ public class ShiroSpringWebConfig {
             return new SimpleAuthenticationInfo(username, "123", getName());
         }
     }
-    
+
     public class CustomRealm$1 extends AuthorizingRealm {
-        
+
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             return null;
         }
-        
+
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             String username = (String) token.getPrincipal();
@@ -283,9 +283,9 @@ public class ShiroSpringWebConfig {
             return new SimpleAuthenticationInfo(username, "123", getName());
         }
     }
-    
+
     public class AuthProxyFilter implements Filter {
-        
+
         @Override
         public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
             HttpServletRequest servletRequest = (HttpServletRequest) request;
@@ -298,5 +298,5 @@ public class ShiroSpringWebConfig {
             }
         }
     }
-    
+
 }
