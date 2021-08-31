@@ -113,3 +113,7 @@ spring Boot Actuator[安全漏洞](https://github.com/LandGrey/SpringBootVulExpl
 [macos端口禁用](https://www.cnblogs.com/easonjim/p/7819478.html)
 
 ##11.k8s学习
+
+##prometheus docker热加载
+[](https://stackoverflow.com/questions/56585607/live-reload-prometheus-configuration-in-docker-compose)
+docker exec <prometheus_container_name> sudo killall -HUP prometheus
