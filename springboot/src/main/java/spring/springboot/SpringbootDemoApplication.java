@@ -69,7 +69,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 //@EnableCaching
 //@EnableRedisHttpSession
 @SpringBootApplication
-public class SpringbootDemoApplication {
+public class SpringbootDemoApplication /*extends SpringBootServletInitializer*/ {
     
     public static void main(String[] args) {
         SpringApplication.run(SpringbootDemoApplication.class, args);
