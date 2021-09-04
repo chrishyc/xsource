@@ -1,6 +1,8 @@
 package prometheus.monitor;
 
 import io.micrometer.core.instrument.*;
+import io.micrometer.prometheus.PrometheusConfig;
+import io.micrometer.prometheus.PrometheusMeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -81,4 +83,11 @@ public class PrometheusCustomMonitor {
     public DistributionSummary getAmountSum() {
         return amountSum;
     }
+    
+    public static PrometheusMeterRegistry myRegistry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT) {
+        @Override
+        public MeterRegistry.Config config() {
+            return super.config().commonTags("application", "mifi-api-v2");
+        }
+    };
 }
