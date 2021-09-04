@@ -1,13 +1,15 @@
 package prometheus.controller;
 
 import io.micrometer.core.instrument.Metrics;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import io.prometheus.client.exporter.common.TextFormat;
+import org.springframework.web.bind.annotation.*;
 import prometheus.monitor.PrometheusCustomMonitor;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Random;
 
 @RestController
@@ -28,7 +30,7 @@ public class TestController {
         Metrics.counter("dubbo.invoke", "method", "dubbo.hello.fail").increment(1);
         // 统计金额
 //    monitor.getAmountSum().record(amount);
-        
+        PrometheusCustomMonitor.myRegistry.counter("test.write", "hello", "chris");
         return "下单成功, 金额: " + amount;
     }
     
@@ -38,5 +40,15 @@ public class TestController {
         System.out.println(json);
         Metrics.counter("dubbo.hello.fail", "2", "1", "hello", "4").increment(1);
         return "";
+    }
+    
+    @GetMapping("/scrape")
+    public void scrape(HttpServletResponse response) throws IOException {
+        Writer writer = new StringWriter();
+        TextFormat.write004(writer, PrometheusCustomMonitor.myRegistry.getPrometheusRegistry().metricFamilySamples());
+        response.setContentType(TextFormat.CONTENT_TYPE_004);
+        response.getWriter().write(writer.toString());
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().flush();
     }
 }
