@@ -63,4 +63,17 @@ public class Sample {
             throw unknownHostException;
         }
     }
+    
+    @Test
+    public void test() {
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            try {
+                Runtime.getRuntime().exec("/Users/chris/Downloads/request.sh");
+                Runtime.getRuntime().exec("curl http://localhost:8080/scrape");
+                Thread.sleep(5000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
