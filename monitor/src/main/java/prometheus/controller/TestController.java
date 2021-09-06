@@ -1,12 +1,18 @@
 package prometheus.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.util.IOUtils;
 import io.prometheus.client.exporter.common.TextFormat;
 import org.springframework.web.bind.annotation.*;
+import prometheus.model.LattencySample;
 import prometheus.monitor.PrometheusCustomMonitor;
+import prometheus.service.PrometheusMeter;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -15,7 +21,7 @@ import java.util.Random;
 @RestController
 public class TestController {
     
-    
+    public static ObjectMapper objectMapper = new ObjectMapper();
     @Resource
     private PrometheusCustomMonitor monitor;
     
@@ -45,10 +51,25 @@ public class TestController {
     @GetMapping("/scrape")
     public void scrape(HttpServletResponse response) throws IOException {
         Writer writer = new StringWriter();
-        TextFormat.write004(writer, PrometheusCustomMonitor.myRegistry.getPrometheusRegistry().metricFamilySamples());
+        TextFormat.write004(writer, PrometheusMeter.registry.getPrometheusRegistry().metricFamilySamples());
         response.setContentType(TextFormat.CONTENT_TYPE_004);
         response.getWriter().write(writer.toString());
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().flush();
+    }
+    
+    @PostMapping("/sample")
+    public String sample(HttpServletRequest request) {
+        try {
+            String req = IOUtils.toString(request.getInputStream());
+            LattencySample sample = objectMapper.readValue(req, LattencySample.class);
+            sample.getData().stream()
+                    .forEach(item -> {
+                        PrometheusMeter.histogram(item.getMetricName(), item.getValue(), item.getLabels());
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "success";
     }
 }
