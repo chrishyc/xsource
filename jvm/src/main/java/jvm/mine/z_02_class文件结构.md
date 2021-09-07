@@ -1,3 +1,4 @@
+[参考](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html)
 ##class文件来源形式
 Java虚拟机 实现可以从文件系统读取和从JAR(或ZIP)压缩包中提取class文 件。  
 除此之外，也可以通过网络下载、从数据库加载，甚至是在运 行中直接生成class文件。  
@@ -68,9 +69,48 @@ CONSTANT_InterfaceMethodref_info表示接口方法符号引用
 ###字段表
 和类一样，字段和方法也有自己的访问标志。访问标志之后是 一个常量池索引，给出字段名或方法名，然后又是一个常量池索 引，
 给出字段或方法的描述符，最后是属性表
+####属性表
 ![](.z_02_class文件结构_images/字段表.png)
 ###方法表
-类似字段表
+![](.z_02_class文件结构_images/方法.png)
+####属性表
+readAttribute()先读取属性名索引，根据它从常量池中找到属 性名，然后读取属性长度，接着调用newAttributeInfo()函数创建具 体的属性实例。  
+Java虚拟机规范预定义了23种属性
+第一组属性是实现 Java虚拟机所必需的，共有5种;  
+第二组属性是Java类库所必需的， 共有12种;  
+第三组属性主要提供给工具使用，共有6种。第三组属性 是可选的，也就是说可以不出现在class文件中。如果class文件中存  
+在第三组属性，Java虚拟机实现或者Java类库也是可以利用它们 的，比如使用LineNumberTable属性在异常堆栈中显示行号  
+![](.z_02_class文件结构_images/属性表.png)
+
+![](.z_02_class文件结构_images/属性表.png)
+![](.z_02_class文件结构_images/属性表.png)
+#####常量值属性
+ConstantValue是定长属性，只会出现在field_info结构中，用于 表示常量表达式的值
+final字段
+![](.z_02_class文件结构_images/常量值.png)
+#####code
+Code是变长属性，只存在于method_info结构中。Code属性中存 放字节码等方法相关信息
+![](.z_02_class文件结构_images/code表.png)
+max_stack给出操作数栈的最大深度，max_locals给出局部变量 表大小。  
+接着是字节码，存在u1表中。  
+最后是异常处理表和属性 表。  
+在第4章讨论运行时数据区，并且实现操作数栈和局部变量表 时，max_stack和max_locals就会派上用场。  
+在第5章讨论指令集和解 释器时，会用到字节码。  
+在第10章讨论异常处理时，会使用异常处 理表。    
+#####StackMapTable表 
+类型检查
+#####Exceptions属性
+![](.z_02_class文件结构_images/异常属性.png)
+Exceptions是变长属性，记录方法抛出的异常表  
+#####LineNumberTable属性表
+LineNumberTable属性表存放方法的行号信息  
+![](.z_02_class文件结构_images/行号表.png)
+#####LocalVariableTable属性表
+存放方法的局部变量信息,这两种属性 和前面介绍的SourceFile属性都属于调试信息，都不是运行时必需 的
+#####RuntimeVisibleAnnotations
+类、方法表、字段表注解
+#####RuntimeVisibleParameterAnnotations
+方法参数表
 ##class文件字节流读取
 ![](.z_02_class文件结构_images/字节流实体类.png)
 ![](.z_02_class文件结构_images/字节流操作类.png)
