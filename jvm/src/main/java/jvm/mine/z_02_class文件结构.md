@@ -71,6 +71,7 @@ CONSTANT_InterfaceMethodref_info表示接口方法符号引用
 给出字段或方法的描述符，最后是属性表
 ####属性表
 ![](.z_02_class文件结构_images/字段表.png)
+
 ###方法表
 ![](.z_02_class文件结构_images/方法.png)
 ####属性表
@@ -79,11 +80,11 @@ Java虚拟机规范预定义了23种属性
 第一组属性是实现 Java虚拟机所必需的，共有5种;  
 第二组属性是Java类库所必需的， 共有12种;  
 第三组属性主要提供给工具使用，共有6种。第三组属性 是可选的，也就是说可以不出现在class文件中。如果class文件中存  
-在第三组属性，Java虚拟机实现或者Java类库也是可以利用它们 的，比如使用LineNumberTable属性在异常堆栈中显示行号  
-![](.z_02_class文件结构_images/属性表.png)
-
-![](.z_02_class文件结构_images/属性表.png)
-![](.z_02_class文件结构_images/属性表.png)
+在第三组属性，Java虚拟机实现或者Java类库也是可以利用它们 的，比如使用LineNumberTable属性在异常堆栈中显示行号 
+![](.z_02_class文件结构_images/48fa4f54.png)
+![](.z_02_class文件结构_images/5ec81d5d.png)
+![](.z_02_class文件结构_images/961c4ee8.png)
+![](.z_02_class文件结构_images/bad1c52f.png)
 #####常量值属性
 ConstantValue是定长属性，只会出现在field_info结构中，用于 表示常量表达式的值
 final字段
