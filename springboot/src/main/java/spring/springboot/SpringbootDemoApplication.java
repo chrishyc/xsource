@@ -7,6 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.io.support.SpringFactoriesLoader;
+import spring.springboot.pojo.CreditResult;
 
 //import org.springframework.context.annotation.ConfigurationClassParser;
 
@@ -72,6 +73,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 public class SpringbootDemoApplication /*extends SpringBootServletInitializer*/ {
     
     public static void main(String[] args) {
+        CreditResult creditResult = new CreditResult();
         SpringApplication.run(SpringbootDemoApplication.class, args);
     }
 }

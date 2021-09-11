@@ -4,8 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.Callable;
 
+
 @Slf4j
-public abstract class T_02_class_structure extends Thread implements Callable<String> {
+public abstract class T_02_class_structure_01_constant_pool extends Thread implements Callable<String> {
     
     public void T_01_U4_magicNum() {
     }
