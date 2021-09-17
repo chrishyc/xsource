@@ -1,4 +1,4 @@
-package log.jdk;
+package log.a_jdk;
 
 import org.junit.Test;
 
