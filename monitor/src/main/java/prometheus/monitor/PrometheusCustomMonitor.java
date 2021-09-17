@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -65,11 +66,13 @@ public class PrometheusCustomMonitor {
 //                .publishPercentileHistogram()
 //                .register(Metrics.globalRegistry)
 //                .record(1, TimeUnit.MILLISECONDS);
-        Timer.builder("order_request_count")
+        Timer timer = Timer.builder("order_request_count")
                 .publishPercentileHistogram()
+                .minimumExpectedValue(Duration.ofNanos(1000))
+                .maximumExpectedValue(Duration.ofSeconds(5))
                 .tags("2", "1")
-                .register(Metrics.globalRegistry)
-                .record(1, TimeUnit.MILLISECONDS);
+                .register(Metrics.globalRegistry);
+        timer.record(1, TimeUnit.MILLISECONDS);
     }
     
     public Counter getOrderCount() {
