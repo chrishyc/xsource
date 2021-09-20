@@ -14,12 +14,11 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class PrometheusMeter {
-    public static PrometheusMeterRegistry registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT) {
-        @Override
-        public Config config() {
-            return super.config().commonTags("application", "mifi-api-v2");
-        }
-    };
+    public static PrometheusMeterRegistry registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+    
+    static {
+        registry.config().commonTags("application", "mifi-api-v2");
+    }
     
     public static void count(String name, long count) {
         try {

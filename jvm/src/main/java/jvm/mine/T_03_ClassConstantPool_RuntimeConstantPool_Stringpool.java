@@ -38,6 +38,12 @@ public class T_03_ClassConstantPool_RuntimeConstantPool_Stringpool {
         
     }
     
+    @Test
+    public void testStringCharArrByteArr() {
+    
+    
+    }
+    
     /**
      * 1.GBK的文字编码是双字节,不论中、英文字符均使用双字节来表示，只不过为区分中文，将其最高位都定成1
      * <p>
