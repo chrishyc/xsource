@@ -16,12 +16,13 @@ public class T_03_ClassConstantPool_RuntimeConstantPool_Stringpool {
      */
     @Test
     public void testStringCreate() {
-        String charStr = new String(new char[]{'a', 'b', 'c'});//+1
-        String byteStr = new String(new byte[]{97, 98, 99});//+1
-        String intStr = new String(new int[]{0x1F602}, 0, 1);//+1
-        String objStr = new String("abc");//+2
-        String literalStr = "abc";//+0
-        String internStr = literalStr.intern();//+0
+        String charStr = new String(new char[]{'a', 'b', 'c'});//+1,string pool中没有缓存
+        String byteStr = new String(new byte[]{97, 98, 99});//+1,string pool中没有缓存
+        String intStr = new String(new int[]{0x1F602}, 0, 1);//+1,string pool中没有缓存
+        String objStr = new String("abc");//+2,string pool中有缓存abc
+        String literalStr = "abc";//+0,string pool中有缓存abc
+        String internStr = literalStr.intern();//+0,string pool中有缓存则引用string pool中缓存,无则在
+        // string pool中创建一份缓存,并返回该引用`
     }
     
     @Test
@@ -57,17 +58,23 @@ public class T_03_ClassConstantPool_RuntimeConstantPool_Stringpool {
      */
     @Test
     public void testStringEncodeDecode() {
+        // 解码
         String charStr = new String(new char[]{'a', 'b', 'c'});
+        // 编码
         byte[] utf8Bytes = charStr.getBytes(Charset.defaultCharset());
         byte[] uniCodeBytes = charStr.getBytes(Charset.forName("Unicode"));
         byte[] gbkBytes = charStr.getBytes(Charset.forName("gbk"));
         
+        // 解码
         String gbkStr = new String(new byte[]{(byte) 0xD5, (byte) 0xC5}, Charset.forName("gbk"));
+        // 编码
         byte[] utf8Bytes1 = gbkStr.getBytes(Charset.defaultCharset());
         byte[] uniCodeBytes1 = gbkStr.getBytes(Charset.forName("Unicode"));
         byte[] gbkBytes1 = gbkStr.getBytes(Charset.forName("gbk"));
         
+        // 解码
         String utf8Str = new String(new byte[]{(byte) 0xE5, (byte) 0xBC, (byte) 0xA0}, Charset.forName("utf-8"));
+        // 编码
         byte[] utf8Bytes2 = utf8Str.getBytes(Charset.defaultCharset());
         byte[] uniCodeBytes2 = utf8Str.getBytes(Charset.forName("Unicode"));
         byte[] gbkBytes2 = utf8Str.getBytes(Charset.forName("gbk"));
