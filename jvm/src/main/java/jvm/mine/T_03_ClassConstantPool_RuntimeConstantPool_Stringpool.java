@@ -11,18 +11,16 @@ import java.nio.charset.Charset;
 public class T_03_ClassConstantPool_RuntimeConstantPool_Stringpool {
     
     /**
-     * -XX:+PrintStringTableStatistics
      * 参考:https://zhuanlan.zhihu.com/p/110307661
      */
     @Test
     public void testStringCreate() {
-        String charStr = new String(new char[]{'a', 'b', 'c'});//+1,string pool中没有缓存
-        String byteStr = new String(new byte[]{97, 98, 99});//+1,string pool中没有缓存
-        String intStr = new String(new int[]{0x1F602}, 0, 1);//+1,string pool中没有缓存
-        String objStr = new String("abc");//+2,string pool中有缓存abc
-        String literalStr = "abc";//+0,string pool中有缓存abc
-        String internStr = literalStr.intern();//+0,string pool中有缓存则引用string pool中缓存,无则在
-        // string pool中创建一份缓存,并返回该引用`
+        String charStr = new String(new char[]{'a', 'b', 'c'});
+        String byteStr = new String(new byte[]{98, 99, 100});
+        String intStr = new String(new int[]{0x1F602}, 0, 1);
+        String objStr = new String("abc");
+        String literalStr = "abc";
+        String internStr = literalStr.intern();
     }
     
     @Test
@@ -43,6 +41,34 @@ public class T_03_ClassConstantPool_RuntimeConstantPool_Stringpool {
     public void testStringCharArrByteArr() {
     
     
+    }
+    
+    /**
+     * -XX:+PrintStringTableStatistics
+     * https://stackoverflow.com/questions/49522422/why-intern-does-not-work-with-literal-java
+     */
+    @Test
+    public void test_String_pool_table() {
+        //intern与string pool
+        String charStr = new String(new char[]{'a', 'b', 'c'});//+1,string pool中没有缓存
+        String charStrIntern = charStr.intern();//+0,charStr.intern会将charStr的引用放入string pool中
+        
+        // 字面量与string pool
+        String objStr = new String("bcd");//+2,创建字符串bcd并放入string pool中,然后创建objStr
+        String literalStr = "abc";//+0,string pool中有缓存abc
+        String internStr = literalStr.intern();//+0,string pool中有缓存则引用string pool中缓存,无则在string pool中持有该引用,并返回该引用
+    }
+    
+    /**
+     * -XX:+PrintStringTableStatistics
+     */
+    @Test
+    public void test_symbol_table() {
+        String charStr = new String(new char[]{'t', 'e', 's', 't', '_', 's', 'y', 'm', 'b', 'o', 'l', '_', 't', 'a', 'b', 'l'});//+1,string pool中没有缓存
+        String charStr_string_pool = "test_symbol_tabl";//+1,string pool中有缓存
+        
+        String charStr1 = new String(new char[]{'t', 'e', 's', 't', '_', 's', 'y', 'm', 'b', 'o', 'l', '_', 't', 'a', 'b', 'l', 'e'});//+1,string pool中没有缓存
+        String charStr_string_pool1 = "test_symbol_table";//+0,string pool中有缓存,缓存来源方法字面量test_symbol_table
     }
     
     /**
