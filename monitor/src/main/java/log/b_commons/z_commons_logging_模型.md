@@ -1,8 +1,9 @@
 ##对象模型
 ##临界知识
-###适配器模式
+###classpath扫描机制
 Log
 LogFactoryImpl.discoverLogImplementation
+在classpath中寻找log实现类的class
 ###配置机制
 ```
 public static LogFactory getFactory()
