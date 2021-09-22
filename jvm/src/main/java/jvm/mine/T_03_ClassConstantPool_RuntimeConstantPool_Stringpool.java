@@ -2,11 +2,14 @@ package jvm.mine;
 
 
 import org.junit.Test;
+import org.openjdk.jol.vm.VM;
 
 import java.nio.charset.Charset;
 
 /**
- *
+ * HSDB  字符串实战
+ * sudo java -cp ,:/Library/Java/JavaVirtualMachines/jdk1.8.0_212.jdk/Contents/Home/lib/sa-jdi.jar sun.jvm.hotspot.HSDB
+ * https://zzcoder.cn/2019/12/06/HSDB%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E5%AE%9E%E6%88%98/
  */
 public class T_03_ClassConstantPool_RuntimeConstantPool_Stringpool {
     
@@ -23,16 +26,49 @@ public class T_03_ClassConstantPool_RuntimeConstantPool_Stringpool {
         String internStr = literalStr.intern();
     }
     
+    /**
+     * https://zhuanlan.zhihu.com/p/110307661
+     */
     @Test
     public void testStringContact() {
+        /**
+         *  0 ldc #10 <ab>
+         *  2 astore_1
+         */
         String s = "a" + "b";
         
+        /**
+         *   3 ldc #11 <b>
+         *  5 astore_2
+         *  6 ldc #10 <ab>
+         *  8 astore_3
+         */
         final String x = "b";
         String sfinal = "a" + x;
         
+        /**
+         *  (new StringBuilder()).append("a").append(x1).toString();
+         *
+         *
+         *  9 ldc #11 <b>
+         * 11 astore 4
+         * 13 new #12 <java/lang/StringBuilder>
+         * 16 dup
+         * 17 invokespecial #13 <java/lang/StringBuilder.<init>>
+         * 20 ldc #14 <a>
+         * 22 invokevirtual #15 <java/lang/StringBuilder.append>
+         * 25 aload 4
+         * 27 invokevirtual #15 <java/lang/StringBuilder.append>
+         * 30 invokevirtual #16 <java/lang/StringBuilder.toString>
+         * 33 astore 5
+         */
         String x1 = "b";
         String sVariabl = "a" + x1;
         
+        /**
+         * 35 ldc #17 <a1>
+         * 37 astore 6
+         */
         String sConst = "a" + 1;
         
     }
@@ -46,12 +82,15 @@ public class T_03_ClassConstantPool_RuntimeConstantPool_Stringpool {
     /**
      * -XX:+PrintStringTableStatistics
      * https://stackoverflow.com/questions/49522422/why-intern-does-not-work-with-literal-java
+     * https://tech.meituan.com/2014/03/06/in-depth-understanding-string-intern.html
      */
     @Test
     public void test_String_pool_table() {
         //intern与string pool
         String charStr = new String(new char[]{'a', 'b', 'c'});//+1,string pool中没有缓存
+        System.out.println(VM.current().addressOf(charStr));
         String charStrIntern = charStr.intern();//+0,charStr.intern会将charStr的引用放入string pool中
+        System.out.println(VM.current().addressOf(charStrIntern));
         
         // 字面量与string pool
         String objStr = new String("bcd");//+2,创建字符串bcd并放入string pool中,然后创建objStr
@@ -68,7 +107,15 @@ public class T_03_ClassConstantPool_RuntimeConstantPool_Stringpool {
         String charStr_string_pool = "test_symbol_tabl";//+1,string pool中有缓存
         
         String charStr1 = new String(new char[]{'t', 'e', 's', 't', '_', 's', 'y', 'm', 'b', 'o', 'l', '_', 't', 'a', 'b', 'l', 'e'});//+1,string pool中没有缓存
-        String charStr_string_pool1 = "test_symbol_table";//+0,string pool中有缓存,缓存来源方法字面量test_symbol_table
+        System.out.println(VM.current().addressOf(charStr1));
+        
+        String charStr_string_pool2 = charStr1.intern();
+        System.out.println(VM.current().addressOf(charStr_string_pool2));
+        //charStr_string_pool2地址和charStr1地址不一样,说明符号引用已经被string pool缓存
+        
+        String charStr_string_pool1 = "test_symbol_table";//从string pool中获取
+        System.out.println(VM.current().addressOf(charStr_string_pool1));
+        //+0,string pool中有缓存,缓存来源方法字面量test_symbol_table
     }
     
     /**
@@ -105,6 +152,5 @@ public class T_03_ClassConstantPool_RuntimeConstantPool_Stringpool {
         byte[] uniCodeBytes2 = utf8Str.getBytes(Charset.forName("Unicode"));
         byte[] gbkBytes2 = utf8Str.getBytes(Charset.forName("gbk"));
     }
-    
     
 }

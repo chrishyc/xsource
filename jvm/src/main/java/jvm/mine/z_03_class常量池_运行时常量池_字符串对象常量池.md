@@ -1,7 +1,16 @@
 ##字符串与字符数组
 ![](.z_03_class常量池_运行时常量池_字符串对象常量池_images/9c9344c6.png)
-##class常量池/运行时常量池
+##class常量池/运行时常量池symbol table
+每个class file中的常量池constant_pool_info区域在内存中都对应一个自己的数据结构(运行时常量池symbol table)
 ##符号引用与字面量与字符串
+
+字面量  
+![](.z_03_class常量池_运行时常量池_字符串对象常量池_images/01257258.png)
+字面量也会缓存在string pool中
+
+符号引用  
+![](.z_03_class常量池_运行时常量池_字符串对象常量池_images/1ba2d2dd.png)
+
 ##字符串常量池string pool
 ![](.z_03_class常量池_运行时常量池_字符串对象常量池_images/4a3f604a.png)
 ![](.z_03_class常量池_运行时常量池_字符串对象常量池_images/b7315e4c.png)
@@ -9,6 +18,7 @@
 
 ![](.z_03_class常量池_运行时常量池_字符串对象常量池_images/af6baebf.png)
 ![](.z_03_class常量池_运行时常量池_字符串对象常量池_images/412620aa.png)
+
 ##字符编码
 [](https://zhuanlan.zhihu.com/p/110307661)
 ![](.z_03_class常量池_运行时常量池_字符串对象常量池_images/9ebc9d4a.png)  
