@@ -3,7 +3,8 @@
 ![](.z_jdk_logging_模型_images/dff104db.png)
 [](https://docs.oracle.com/javase/10/core/java-logging-overview.htm#JSCOR-GUID-B83B652C-17EA-48D9-93D2-563AE1FF8EDA)
 ###logger
-日志输出单元,一个logger和一个handler(输出处理器)搭配,logger类似门面,handler是日志输出执行者
+日志输出单元,一个logger和一个handler(输出处理器)搭配,一个looger也可以和多个handler搭配,
+logger类似门面,handler是日志输出执行者
 logger有树状层次模型,孩子节点的输出会传给父亲节点
 ###handler
 日志输出执行者,StreamHandler,ConsoleHandler,FileHandler
