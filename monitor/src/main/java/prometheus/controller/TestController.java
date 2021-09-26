@@ -7,6 +7,7 @@ import io.prometheus.client.exporter.common.TextFormat;
 import org.springframework.web.bind.annotation.*;
 import prometheus.model.LattencySample;
 import prometheus.monitor.PrometheusCustomMonitor;
+import prometheus.service.Cleanable;
 import prometheus.service.PrometheusMeter;
 
 import javax.annotation.Resource;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Random;
+import java.util.*;
 
 @RestController
 public class TestController {
@@ -66,6 +67,7 @@ public class TestController {
                     .forEach(item -> {
                         PrometheusMeter.histogram(item.getMetricName(), item.getValue(), item.getLabels());
                     });
+            System.gc();
         } catch (IOException e) {
             e.printStackTrace();
         }
