@@ -49,6 +49,7 @@ public class PrometheusMeter {
     
     public static void histogram(String name, long value, Map<String, String> tags) {
         try {
+            Cleanable.mark();
             List<Tag> tagsList = new ArrayList<>();
             tags.forEach((k, v) -> {
                 tagsList.add(Tag.of(k, v));
@@ -58,6 +59,7 @@ public class PrometheusMeter {
                     .tags(tagsList)
                     .register(registry)
                     .record(value, TimeUnit.MILLISECONDS);
+            Cleanable.clean();
         } catch (Exception e) {
             log.error("PrometheusMeter error,type:{}.name:{},tags:{},error:{}", "histogram", name, tags, Throwables.getStackTraceAsString(e));
         }

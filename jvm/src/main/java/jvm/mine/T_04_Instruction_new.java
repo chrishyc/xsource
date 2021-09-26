@@ -38,4 +38,9 @@ public class T_04_Instruction_new {
     public void testNew_have_param() {
         Integer i = new Integer(1);
     }
+    
+    @Test
+    public void testNeg(){
+        System.out.println(Integer.toBinaryString(-3).length());
+    }
 }
