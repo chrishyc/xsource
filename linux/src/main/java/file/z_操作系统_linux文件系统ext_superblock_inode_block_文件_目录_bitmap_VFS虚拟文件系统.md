@@ -1,3 +1,7 @@
+##临界知识
+1.磁盘越来越大,文件系统需要适应
+2.不同场景使用不同文件系统
+3.
 ##linux文件系统ext架构
 ![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_images/d10c0e31.png)
 linux文件系统ext基于inode索引
@@ -34,6 +38,7 @@ FAT文件(U盘)系统基于链表
 既然大的 block 可能会产生较严重的磁盘容量浪费，那么我们是否就将 block 大小订为 1K 即可? 这也不妥，因为如果 block 较小的话，那么大型文件将会占用数量更多的 block ，  
  而 inode 也要记录更多的 block 号码，此时将可能导致文件系统不良的读写性能
 ###block多级索引
+![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_images/4d4605af.png)
 系统内部打开文件的步骤：
 ①系统找到这个文件名对应的inode号码
 ②通过inode号码,获取inode信息
@@ -80,8 +85,27 @@ inode 对照表时，Linux 会给予 该目录多一个 block 来继续记录相
 ![](.z_操作系统_linux文件系统ext_images/8fdae347.png)
 ![](.z_操作系统_linux文件系统ext_images/ecd94fd0.png)
 ###文件新建流程
-
+![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_VFS虚拟文件系统_images/148ccb51.png)
+![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_VFS虚拟文件系统_images/bf580f45.png)
 ##格式化
 如果文件真的太过离散，确实还是会发生读取效率低落的问题。 因 为磁头还是得要在整个文件系统中来来去去的频繁读取! 果真如此，  
 那么可以将整个 filesystme 内的数据全部复制出来，将该 filesystem 重新格式化， 再将数据给他复制回去即 可解决这个问题。
 将superblock, inode表,block表初始化,block data区没有改变但无法通过inode表索引到
+
+##文件系统类型
+###windows 98 文件系统 FAT/U盘文件系统
+![](.z_磁盘_1_磁盘分区_磁盘格式化_文件系统_images/7347d93e.png)
+windows 2000 NTFS 文件系统,
+###Linux 文件系统 Ext2   
+![](.z_磁盘_1_磁盘分区_磁盘格式化_文件系统_images/1f535367.png)
+###centos xfs
+磁盘容量越来越大，连传统的 MBR 都已 经被 GPT 所取代  
+你的 TB 以上等级的传统 ext 家族文件 系统在格式化的时候，光是系统要预先分配 inode 与 block 就消耗你好多好多的人类时间
+##VFS虚拟文件系统
+![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_VFS虚拟文件系统_images/bcc5270a.png)
+
+##日志系统Journaling filesystem
+###数据不一致
+所以写入的数据仅有 inode table 及 data block 而已， 最后一个同步更新中介数据的步骤并没有做完，  
+此时就会发生 metadata 的内容与实际数据存 放区产生不一致 (Inconsistent) 的情况了
+![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_VFS虚拟文件系统_images/98d7702c.png)
