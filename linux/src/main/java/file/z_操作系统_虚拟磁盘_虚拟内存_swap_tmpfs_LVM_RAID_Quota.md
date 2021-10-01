@@ -1,4 +1,11 @@
 ##临界知识
+物理硬件-虚拟(软件)硬件
+磁盘容量不断增大-文件系统更迭
+分区容量动态扩容(磁盘/分区虚拟化)-lvm
+不同用户磁盘容量管理-quota
+数据安全性策略-磁盘阵列
+访问效率优化-文件系统
+数据版本管理-lvm快照
 ##虚拟磁盘
 ##tmpfs
 tmpfs=(Real Memory)+(swap)
@@ -45,3 +52,34 @@ RAID-0 的性能佳但是数据不安全，RAID-1 的数据安全但是性能不
 ###软件磁盘阵列
 硬件磁盘阵列在 Linux 下面看起来就是一颗实际的大磁盘，因此硬 件磁盘阵列的设备文件名为 /dev/sd[a-p] ，因为使用到 SCSI 的模块之故。至于软件磁盘阵列 则是系统仿真的，  
 因此使用的设备文件名是系统的设备文件， 文件名为 /dev/md0, /dev/md1...，两者的设备文件名并不相
+
+##LVM逻辑卷轴管理
+![](.z_操作系统_虚拟磁盘_虚拟内存_swap_tmpfs_LVM_RAID_Quota_images/10e016ec.png)
+###临界知识
+分区容量动态扩容
+PV(Physical Volume, PV, 实体卷轴)    
+![](.z_操作系统_虚拟磁盘_虚拟内存_swap_tmpfs_LVM_RAID_Quota_images/73dca471.png)  
+VG(Volume Group,  卷轴群组)  
+![](.z_操作系统_虚拟磁盘_虚拟内存_swap_tmpfs_LVM_RAID_Quota_images/17eeb198.png)  
+LV,(Logical Volume, LV, 逻辑卷轴)  
+![](.z_操作系统_虚拟磁盘_虚拟内存_swap_tmpfs_LVM_RAID_Quota_images/94584344.png)
+PE(Physical Extent, PE, 实体范围区块)
+
+![](.z_操作系统_虚拟磁盘_虚拟内存_swap_tmpfs_LVM_RAID_Quota_images/850964e4.png)
+![](.z_操作系统_虚拟磁盘_虚拟内存_swap_tmpfs_LVM_RAID_Quota_images/b45d0b5e.png)
+###需求上下文
+可以弹性的调整 filesystem 的容量,LVM 最主要的用处是在实现一个可以弹性调整容量的文件系统上
+###方案
+
+###输出
+![](.z_操作系统_虚拟磁盘_虚拟内存_swap_tmpfs_LVM_RAID_Quota_images/39d5362f.png)
+查看lvm
+![](.z_操作系统_虚拟磁盘_虚拟内存_swap_tmpfs_LVM_RAID_Quota_images/0ad939bb.png)
+##磁盘快照
+###临界知识
+快照就是将当时的系统 信息记录下来，就好像照相记录一般! 未来若有任何数据更动了，则原始数据会被搬移到快 照区，没有被更动的区域则由快照区与文件系统共享
+![](.z_操作系统_虚拟磁盘_虚拟内存_swap_tmpfs_LVM_RAID_Quota_images/941aa350.png)
+###需求上下文
+磁盘数据版本管理
+###方案
+###输出
