@@ -36,3 +36,13 @@ repquota -v /home
 mount
 ![](.z_操作系统_linux文件系统_常用命令_images/48653ebe.png)
 ##磁盘阵列
+##lvm
+查看lvm  
+fdisk -l /dev/sda
+![](.z_操作系统_linux文件系统_常用命令_images/79040306.png)
+###PV操作/Physical Volume, PV, 实体卷轴(磁盘虚拟化)
+pvdisplay
+###VG阶段(查看虚拟磁盘)
+vgdisplay
+###LV阶段(查看虚拟磁盘的分区)
+lvdisplay
