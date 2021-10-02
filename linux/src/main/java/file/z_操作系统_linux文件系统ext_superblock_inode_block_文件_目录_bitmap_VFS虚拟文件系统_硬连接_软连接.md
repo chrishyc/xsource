@@ -1,7 +1,7 @@
 ##临界知识
 1.磁盘越来越大,文件系统需要适应
 2.不同场景使用不同文件系统
-3.
+3.数据一致性保证
 ##linux文件系统ext架构
 ![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_images/d10c0e31.png)
 linux文件系统ext基于inode索引
@@ -92,6 +92,16 @@ inode 对照表时，Linux 会给予 该目录多一个 block 来继续记录相
 那么可以将整个 filesystme 内的数据全部复制出来，将该 filesystem 重新格式化， 再将数据给他复制回去即 可解决这个问题。
 将superblock, inode表,block表初始化,block data区没有改变但无法通过inode表索引到
 
+##硬连接
+![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_VFS虚拟文件系统_硬连接_软连接_images/448dc034.png)
+![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_VFS虚拟文件系统_硬连接_软连接_images/f30fb683.png)  
+不能跨 Filesystem; 不能 link 目录
+###/. 和 /..的含义
+![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_VFS虚拟文件系统_硬连接_软连接_images/ce25999f.png) 
+##符号连接
+![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_VFS虚拟文件系统_硬连接_软连接_images/86343cd4.png)
+![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_VFS虚拟文件系统_硬连接_软连接_images/605988fd.png)
+
 ##文件系统类型
 ###windows 98 文件系统 FAT/U盘文件系统
 ![](.z_磁盘_1_磁盘分区_磁盘格式化_文件系统_images/7347d93e.png)
@@ -109,3 +119,4 @@ windows 2000 NTFS 文件系统,
 所以写入的数据仅有 inode table 及 data block 而已， 最后一个同步更新中介数据的步骤并没有做完，  
 此时就会发生 metadata 的内容与实际数据存 放区产生不一致 (Inconsistent) 的情况了
 ![](.z_操作系统_linux文件系统ext_superblock_inode_block_文件_目录_bitmap_VFS虚拟文件系统_images/98d7702c.png)
+

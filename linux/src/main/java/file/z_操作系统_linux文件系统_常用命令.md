@@ -7,6 +7,12 @@ parted -l
 ![](.z_操作系统_linux文件系统_常用命令_images/36fe113e.png)
 ![](.z_操作系统_linux文件系统_常用命令_images/e8427041.png)
 ##文件系统命令
+###查看载入内存的文件系统
+cat /proc/filesystems
+![](.z_操作系统_linux文件系统_常用命令_images/a2db1046.png)
+###查看系统支持的文件系统
+ls -l /lib/modules/3.18.6-2.el7.centos.x86_64/kernel/fs/
+![](.z_操作系统_linux文件系统_常用命令_images/8137d0a4.png)
 ###查看superblock
 dumpe2fs
 
@@ -24,11 +30,17 @@ dumpe2fs
 tmpfs是最好的基于RAM的文件系统
 通过内存仿真出来的磁盘，因此你在这个目录下面创建任何数据文件时，存取速度是 非常快速的!
 ![](.z_操作系统_linux文件系统_常用命令_images/fda9793e.png)
+###swap
+free
+swapon -s
 ##目录
 ###查看当前目录磁盘占用
 du -sm -h  /home/work/log/*
 ###查看目录的文件系统
 df -hT /home
+##文件硬连接/符号连接
+ln [-sf] 来源文件 目标文件
+ 
 ##查看配额
 repquota -v /home
 
