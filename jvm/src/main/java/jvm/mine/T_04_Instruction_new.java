@@ -3,8 +3,6 @@ package jvm.mine;
 
 import org.junit.Test;
 
-import java.util.List;
-
 /**
  * 属性表
  * Signature,记录泛型签名信息<String>
@@ -46,4 +44,26 @@ public class T_04_Instruction_new {
         System.out.println(Integer.toBinaryString(-3).length());
     }
     
+    public int maxConsecutiveAnswers(String answerKey, int k) {
+        int[][] dp = new int[answerKey.length()][k + 1];
+        int num = 0;
+        char pre = ' ';
+        for (int i = 0; i < answerKey.length(); i++) {
+            if (i == answerKey.length() - 1) {
+                dp[i][0] = num + 1;
+            } else if (answerKey.charAt(i) != pre) {
+                dp[i][0] = num + 1;
+                pre = answerKey.charAt(i);
+                num = 0;
+            } else if (answerKey.charAt(i) == pre) {
+                num++;
+            }
+        }
+        for (int i = 0; i < answerKey.length(); i++) {
+            for (int j = 1; j <= k; j++) {
+                dp[i][j] = Math.max(dp[i - 1][j - 1] + 1, dp[i - 1][j]);
+            }
+        }
+        return dp[answerKey.length() - 1][k];
+    }
 }
