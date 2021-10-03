@@ -26,3 +26,4 @@ MBR->GPT:MBR(主要开机记录区(Master Boot Record, MBR)),GPT(GUID partition 
 ##设备I/O地址与IRQ中断
 设备I/O地址:CPU与设备通信
 IRQ中断线路:设备与CPU通信
+##io总线
