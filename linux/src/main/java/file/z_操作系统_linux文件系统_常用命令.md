@@ -1,3 +1,5 @@
+##临界知识
+/proc目录有所有运行时系统信息:包括设备,中断,鼠标键盘,
 ##查看块设备
 lsblk
 lshw -class disk
@@ -58,3 +60,14 @@ pvdisplay
 vgdisplay
 ###LV阶段(查看虚拟磁盘的分区)
 lvdisplay
+
+##列出pci设备(符合pci标准的io设备)
+
+lspci -tv,列出所有PCI设备
+lsusb -tv,列出所有USB设备
+lsmod,列出加载的内核模块
+cat /proc/bus/pci/devices
+cat /proc/softirqs
+cat /proc/swaps
+cat /proc/filesystems
+cat /proc/diskstats
