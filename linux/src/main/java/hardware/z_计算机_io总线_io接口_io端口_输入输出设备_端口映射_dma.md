@@ -4,6 +4,7 @@
 [](https://www.coursera.org/lecture/jisuanji-zucheng/901-shu-ru-shu-chu-jie-kou-de-ji-ben-gong-neng-EU9VB)
 ![](.z_计算机_io总线_images/414a6ec5.png)
 接口-适配器
+两种交互方式:轮训,中断
 ##总线体系
 ![](.z_计算机_io总线_images/bf19e032.png)
 人的大脑和其他的器官、四肢，大部分靠脊髓相连。PCI/PCIe 总线 ，就相当于x86架构机器的脊髓。
@@ -110,15 +111,38 @@ I/O地址空间通常都比较小，如x86 CPU的I/O空间就只有64KB（0－0x
 ```
 ##io三种控制方式
 ![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/0a4686b5.png)
-###程序控制方式
+###程序控制方式(直接执行,嵌入式设备)
 ![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/55b014e4.png)
 ![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/beaebbc3.png)
-###程序查询传送方式
+###程序查询传送方式(轮训)
 ![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/f43727d9.png)
 ![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/c44744c6.png)
 ![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/5d22092b.png)
+###中断控制方式(中断)
+####中断程序指令
+输入  
+![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/beee4f24.png)
+![](.z_z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma.md计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/1217639a.png)  
+输出  
+输出中断是因为cpu不确定输出缓冲是否为空,需要设备来通知
+![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/4b83ccbc.png)
+![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/bc150a09.png)
+缺点  
+![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/58136045.png)
+
+###DMA直接存储访问
+中断访问时,如果cpu io时接收数据过多,会占用过多cpu
+![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/b9c0d499.png)
+![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/c20608ca.png)
+##中断类型
+###硬中断
+![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/20785c09.png)
+####可屏蔽中断
+####非屏蔽中断
+###软中断
 ##PCI 设备
 [](https://zhuanlan.zhihu.com/p/26172972)
 ![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/0b3466f8.png)
 符合 PCI 总线标准的设备就被称为 PCI 设备，PCI 总线架构中可以包含多个 PCI 设备。图中的 Audio、LAN 都是一个 PCI 设备。  
 PCI 设备同时也分为主设备和目标设备两种，主设备是一次访问操作的发起者，而目标设备则是被访问者
+
