@@ -134,6 +134,7 @@ I/O地址空间通常都比较小，如x86 CPU的I/O空间就只有64KB（0－0x
 中断访问时,如果cpu io时接收数据过多,会占用过多cpu
 ![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/b9c0d499.png)
 ![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/c20608ca.png)
+![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/553cc65a.png)
 ##中断类型
 ###硬中断
 ![](.z_计算机_io总线_io接口_io端口_输入输出设备_端口映射_dma_images/20785c09.png)
