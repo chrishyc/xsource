@@ -10,15 +10,15 @@ import java.io.InputStream;
 public class T02_ClassReloading {
     public static void main(String[] args) throws ClassNotFoundException {
         T02_MyClassLoader msbClassLoader = new T02_MyClassLoader();
-        Class clazz = msbClassLoader.loadClass("jvm.T02_classloaderLevel");
-        
+        Class clazz = msbClassLoader.loadClass("jvm.T01_class_instruction_i_add_add");
+        System.out.println(clazz.getClassLoader());
         msbClassLoader = null;
         System.out.println(clazz.hashCode());
         
         msbClassLoader = null;
         
         msbClassLoader = new T02_MyClassLoader();
-        Class clazz1 = msbClassLoader.loadClass("jvm.T02_classloaderLevel");
+        Class clazz1 = msbClassLoader.loadClass("jvm.T01_class_instruction_i_add_add");
         System.out.println(clazz1.hashCode());
         
         System.out.println(clazz == clazz1);
