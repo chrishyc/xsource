@@ -92,5 +92,13 @@ CPU的中断系统可以处理256种中断。每种中断都有对应的中断�
 ![](.z_操作系统_中断系统_硬中断_软中断_异常_images/7f88cbc9.png)
 ![](.z_操作系统_中断系统_硬中断_软中断_异常_images/0b0e1559.png)
 ![](.z_cpu_中断系统_硬中断_软中断_异常_images/adf6bde1.png)
+##中断指令INT n
+![](.z_cpu_中断系统_硬中断_软中断_异常_images/a3fc7282.png)
+###调用BIOS功能
+![](.z_cpu_中断系统_硬中断_软中断_异常_images/17a27ba8.png)
+![](.z_cpu_中断系统_硬中断_软中断_异常_images/5fba137a.png)
+![](.z_cpu_中断系统_硬中断_软中断_异常_images/6fe9abb9.png)
+###调用DOS功能
+![](.z_cpu_中断系统_硬中断_软中断_异常_images/6fa99a25.png)
 ##内部外部中断优先级
 ![](.z_cpu_中断系统_硬中断_软中断_异常_images/3cbd7a29.png)
