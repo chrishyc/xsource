@@ -7,7 +7,7 @@ import java.io.FileInputStream;
 public class T02_MyClassLoader extends ClassLoader{
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        File f = new File("c:/test/", name.replace(".", "/").concat(".class"));
+        File f = new File("/Users/chris/workspace/xsource/jvm/target/classes", name.replace(".", "/").concat(".class"));
         try {
             FileInputStream fis = new FileInputStream(f);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
