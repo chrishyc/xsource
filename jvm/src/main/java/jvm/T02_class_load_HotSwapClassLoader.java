@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 
-public class T02_HotSwapClassLoader extends ClassLoader {
+public class T02_class_load_HotSwapClassLoader extends ClassLoader {
     private String basedir; // 需要该类加载器直接加载的类文件的基目录
     private HashSet dynaclazns; // 需要由该类加载器直接加载的类名
     
@@ -18,7 +18,7 @@ public class T02_HotSwapClassLoader extends ClassLoader {
      * @param clazns  需要被热加载类的class文件名称数组
      * @throws IOException
      */
-    public T02_HotSwapClassLoader(String basedir, String[] clazns) throws IOException {
+    public T02_class_load_HotSwapClassLoader(String basedir, String[] clazns) throws IOException {
         super(null); // 指定父类加载器为 null
         this.basedir = basedir;
         dynaclazns = new HashSet();
@@ -66,7 +66,7 @@ public class T02_HotSwapClassLoader extends ClassLoader {
         while (true) {
             try {
                 // 每次都创建出一个新的类加载器
-                T02_HotSwapClassLoader cl = new T02_HotSwapClassLoader("/Users/chris/workspace/xsource/jvm/target/classes/jvm", new String[]{"T02_classloaderLevel"});
+                T02_class_load_HotSwapClassLoader cl = new T02_class_load_HotSwapClassLoader("/Users/chris/workspace/xsource/jvm/target/classes/jvm", new String[]{"T02_classloaderLevel"});
                 Class cls = cl.loadClass("jvm.T02_classloaderLevel");
                 Object helloWorld = cls.newInstance();
                 

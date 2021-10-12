@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-public class T01_class_instruction_i_add_add {
+public class T04_instruction_i_add_add {
 
   /**
    * 0 bipush -98

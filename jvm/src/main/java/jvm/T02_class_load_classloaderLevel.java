@@ -6,7 +6,7 @@ import org.junit.Test;
  * 查看内存布局HSDB工具
  * sudo java -cp ,:/Library/Java/JavaVirtualMachines/jdk1.8.0_212.jdk/Contents/Home/lib/sa-jdi.jar sun.jvm.hotspot.HSDB
  */
-public class T02_classloaderLevel {
+public class T02_class_load_classloaderLevel {
     public static void main(String[] args) {
         Foo foo = new Foo();
     }
@@ -20,12 +20,12 @@ public class T02_classloaderLevel {
         System.out.println(String.class.getClassLoader());
         System.out.println(sun.awt.HKSCS.class.getClassLoader());
         System.out.println(sun.net.spi.nameservice.dns.DNSNameService.class.getClassLoader());
-        System.out.println(T02_classloaderLevel.class.getClassLoader());
+        System.out.println(T02_class_load_classloaderLevel.class.getClassLoader());
         
         System.out.println(sun.net.spi.nameservice.dns.DNSNameService.class.getClassLoader().getClass().getClassLoader());
-        System.out.println(T02_classloaderLevel.class.getClassLoader().getClass().getClassLoader());
+        System.out.println(T02_class_load_classloaderLevel.class.getClassLoader().getClass().getClassLoader());
         
-        System.out.println(new T02_MyClassLoader().getParent());
+        System.out.println(new T02_class_load_MyClassLoader().getParent());
         System.out.println(ClassLoader.getSystemClassLoader());
     }
     
