@@ -7,9 +7,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class T02_ClassReloading {
+public class T02_class_load_ClassReloading {
     public static void main(String[] args) throws ClassNotFoundException {
-        T02_MyClassLoader msbClassLoader = new T02_MyClassLoader();
+        T02_class_load_MyClassLoader msbClassLoader = new T02_class_load_MyClassLoader();
         Class clazz = msbClassLoader.loadClass("jvm.T01_class_instruction_i_add_add");
         System.out.println(clazz.getClassLoader());
         msbClassLoader = null;
@@ -17,7 +17,7 @@ public class T02_ClassReloading {
         
         msbClassLoader = null;
         
-        msbClassLoader = new T02_MyClassLoader();
+        msbClassLoader = new T02_class_load_MyClassLoader();
         Class clazz1 = msbClassLoader.loadClass("jvm.T01_class_instruction_i_add_add");
         System.out.println(clazz1.hashCode());
         
