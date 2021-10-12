@@ -1,4 +1,5 @@
 [参考](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html)
+![](.z_02_class文件结构_images/d7aa6631.png)
 ##class文件来源形式
 Java虚拟机 实现可以从文件系统读取和从JAR(或ZIP)压缩包中提取class文 件。  
 除此之外，也可以通过网络下载、从数据库加载，甚至是在运 行中直接生成class文件。  
