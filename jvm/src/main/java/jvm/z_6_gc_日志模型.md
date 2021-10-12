@@ -8,3 +8,5 @@
 ```
 ![](.z_gc_日志模型_images/372bad5c.png)
 ###
+![](.z_6_gc_日志模型_images/2c19cc1b.png)
+![](.z_6_gc_日志模型_images/52e474cc.png)
