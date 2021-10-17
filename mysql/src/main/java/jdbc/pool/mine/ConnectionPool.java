@@ -1,4 +1,4 @@
-package jdbc.pool;
+package jdbc.pool.mine;
 
 import java.sql.*;
 import java.util.Enumeration;
