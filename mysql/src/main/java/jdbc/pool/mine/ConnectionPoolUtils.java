@@ -1,4 +1,4 @@
-package jdbc.pool;
+package jdbc.pool.mine;
 
 public class ConnectionPoolUtils {
     private ConnectionPoolUtils() {
