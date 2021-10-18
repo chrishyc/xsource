@@ -25,4 +25,18 @@ mysql> show variables like "%timeout%";
 ```
 mysql 8小时闲置后超时
 空闲回收时间,DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS
+客户端不知道服务端已断开连接
+###服务端超时
+wait_timeout
+###客户端超时
+[](https://blog.csdn.net/github_39083395/article/details/105405468)
+```asp
+1）connectionTimeout：等待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException， 缺省:30秒 
+
+    2）idleTimeout：此属性控制允许连接在池中闲置的最长时间,此设置仅适用于minimumIdle设置为小于maximumPoolSize的情况 默认:600000(10minutes)
+
+   2）maxLifetime：一个连接的生命时长（毫秒），超时而且没被使用则被释放（retired），缺省:30分钟，建议设置比数据库超时时长少30秒
+
+3）maximumPoolSize：连接池中允许的最大连接数(包括空闲和正在使用的连接)。缺省值：10
+```
 ##超时重连
