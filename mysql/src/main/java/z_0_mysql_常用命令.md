@@ -77,6 +77,7 @@ SWAPS 显示SWAP的次数
 ###慢查询
 show variables like 'slow%';
 show variables like 'long%';
+###预编译
 ##数据库连接相关
 ###连接超时
 show variables like "%timeout%";

@@ -6,11 +6,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class MysqlJDBC {
+public class T_01_MysqlJDBC_SPI {
     public static void main(String[] args) throws SQLException {
         
         DriverManager.setLogWriter(new PrintWriter(System.out));
-        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mysql", "root", "00000000");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mysql?logger=com.mysql.cj.log.StandardLogger&profileSQL=true", "root", "00000000");
         
         //4、定义sql语句
         String sql = "update test set q4 = 13 where id = 2 ";

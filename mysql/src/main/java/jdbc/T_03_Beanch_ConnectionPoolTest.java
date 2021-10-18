@@ -1,5 +1,7 @@
-package jdbc.pool.mine;
+package jdbc;
 
+import jdbc.pool.mine.ConnectionPool;
+import jdbc.pool.mine.ConnectionPoolUtils;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
@@ -24,14 +26,14 @@ import java.util.concurrent.TimeUnit;
  * Benchmark result is saved to result.json
  */
 @State(value = Scope.Benchmark)
-public class ConnectionPoolTest {
+public class T_03_Beanch_ConnectionPoolTest {
     
     @Param(value = {"10"})
     private int thread;
     
     public static void main(String[] args) throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(ConnectionPoolTest.class.getSimpleName())
+                .include(T_03_Beanch_ConnectionPoolTest.class.getSimpleName())
                 .warmupIterations(3)// 预热3轮
                 .measurementTime(TimeValue.seconds(1))
                 .measurementIterations(5)// 度量5轮，总共测试5轮来度量性能
