@@ -75,6 +75,8 @@ public final <T extends Resultset> T sendQueryPacket(Query callingQuery, NativeP
 }
 ```
 ##jdbc安全问题
-##PreparedStatement
+##PreparedStatement vs Statement 
+Statement 接口
+用于执行静态 SQL 语句并返回它所生成结果的对象
 ##mysql连接池
 ##为啥使用BIO,而不是NIO
