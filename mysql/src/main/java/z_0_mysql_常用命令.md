@@ -1,7 +1,9 @@
 ##临界知识
 应用监控都可以查看线程,tcp连接,缓存
-
+mysql官网索引预习
 ##性能分析
+###执行延时profile
+[](https://dev.mysql.com/doc/refman/8.0/en/show-profile.html)
 SET profiling = 1;
 SHOW PROFILES
 ```asp
@@ -74,6 +76,14 @@ PAGE FAULTS 显示页错误数量
 SOURCE 显示源码中的函数名称与位置
 SWAPS 显示SWAP的次数
 ```
+###性能分析performance
+[](https://dev.mysql.com/doc/refman/8.0/en/performance-schema-quick-start.html)
+SHOW VARIABLES LIKE 'performance_schema';
+use performance_schema;
+show tables like '%wait%';
+####当前所有线程状态
+select * from events_waits_current\G
+###所有sql语句执行排名
 ###慢查询
 show variables like 'slow%';
 show variables like 'long%';
