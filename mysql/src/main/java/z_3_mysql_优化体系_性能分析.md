@@ -1,0 +1,7 @@
+##日志分析
+###执行延时
+SET profiling = 1;
+SHOW PROFILES
+SHOW PROFILE
+show profile for query 1;
+![](.z_3_mysql_优化体系_性能分析_images/1eac9e9d.png)
