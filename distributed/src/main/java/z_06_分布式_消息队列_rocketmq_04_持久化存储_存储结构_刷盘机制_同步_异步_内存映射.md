@@ -28,6 +28,12 @@ commitlog与Consumerqueue数据同步
 ###Consumerqueue(逻辑队列)
 消费者通过broker保存的offset（offsetTable.offset json文件中保存的ConsumerQueue的下标）可以在ConsumeQueue中获取消息，
 从而快速的定位到commitLog的消息位置，由于每个消息的大小是不一样的，也可以通过size获取到消息的大小，从而读取完整的消息
+####queue offerset
+每个broker中的queue在收到消息时会记录offset，初始值为0,每记录一条消息offset会递增+1
+#####minOffset
+#####maxOffset
+#####consumerOffset
+#####diffTotal
 ####写时机
 在Broker中，构建ComsummerQueue不是存储完CommitLog就马上同步构建的，而是通过一个线程任务异步的去做这个事情。  
 而每个topic下的queue队列都会对应一个Consumerqueue文件，例如Topic中有三个队列，每个队列中的消息索引都会有一个编号，编号从0开始，往上递增。
