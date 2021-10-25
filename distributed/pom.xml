@@ -12,5 +12,12 @@
     <groupId>com.xsource</groupId>
     <artifactId>distributed</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+    </dependencies>
 
 </project>

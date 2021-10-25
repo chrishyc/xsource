@@ -1,0 +1,25 @@
+##rocketmq中的CAP
+###nameserver(AP)
+rocketmq使用的nameserver感觉就是无状态的服务注册中心，没有用任何共识算法。而dubbo用的zookeeper是leader型共识算法。
+[](http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/RocketMQ%20%E5%AE%9E%E6%88%98%E4%B8%8E%E8%BF%9B%E9%98%B6%EF%BC%88%E5%AE%8C%EF%BC%89/25%20RocketMQ%20Nameserver%20%E8%83%8C%E5%90%8E%E7%9A%84%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5.md)
+是一个几乎无状态节点，可集群部署，节点之间无任何信息同步
+###broker集群(CP,leader,raft)
+[](https://segmentfault.com/a/1190000038318572)
+```asp
+Broker部署相对复杂，Broker分为Master与Slave，一个Master可以对应多个Slave，但是一 个Slave只能对应一个Master，Master与Slave 的对应
+关系通过指定相同的BrokerName，不 同的BrokerId来定义，BrokerId为0表示Master，非0表示Slave。Master也可以部署多个。 
+每个Broker与NameServer集群中的所有节点建立长连接，定时注册Topic信息到所有 NameServer。 注意:当前RocketMQ版本在部署架构上支持一Master多Slave，
+但只有 BrokerId=1的从服务器才会参与消息的读负载
+```
+###Producer集群
+```asp
+Producer与NameServer集群中的其中一个节点(随机选择)建立长连接，定期从 NameServer获取Topic路由信息，并向提供Topic 服务的Master建立长连接，
+且定时向 Master发送心跳。Producer完全无状态，可集群部署
+```
+###Consumer集群
+```asp
+Consumer与NameServer集群中的其中一个节点(随机选择)建立长连接，定期从 NameServer获取Topic路由信息，并向提供Topic服务的Master、Slave建立长连接，
+且定时 向Master、Slave发送心跳。Consumer既可以从Master订阅消息，也可以从Slave订阅消 息，消费者在向Master拉取消息时，Master服务器会根据拉取偏移量
+与最大偏移量的距离 (判断是否读老消息，产生读I/O)，以及从服务器是否可读等因素建议下一次是从Master还 是Slave拉取。
+```
+##
