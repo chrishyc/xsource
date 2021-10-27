@@ -41,3 +41,12 @@ RaftNode00
 ###查看borker信息
 ./mqadmin brokerStatus -n localhost:9876 -b localhost:30931
 ./mqadmin getBrokerConfig -n localhost:9876 -b localhost:30931
+
+##性能监控
+RocketMQ	<10ms	3w+,1s 300W+
+![](.z_06_分布式_消息队列_rocketmq_01_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_images/41711785.png)
+![](.z_06_分布式_消息队列_rocketmq_01_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_images/9402dfde.png)
+![](.z_06_分布式_消息队列_rocketmq_01_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_images/e9d48b88.png)
+![](.z_06_分布式_消息队列_rocketmq_01_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_images/d161a905.png)
+![](.z_06_分布式_消息队列_rocketmq_01_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_images/01af1226.png)
+![](http://www.mstacks.com/133/1402.html#content1402)
