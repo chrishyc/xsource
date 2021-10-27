@@ -116,3 +116,8 @@ RocketMQ 选择了 mmap + write 这种零拷贝方式，适用于业务级消息
 Kafka 的索引文件使用的是 mmap + write 方式，数据文件使用的是 sendfile 方式
 ```
 ![](.z_操作系统_磁盘io流程_磁盘读写优化_内存映射_顺序读写_直接IO_零拷贝_预分配_避免swap写_用户进程缓存_内核缓存_images/673c5421.png)
+
+#顺序读vs随机读
+节约磁盘寻址时间
+[](https://time.geekbang.org/column/article/79368)
+[](https://blog.csdn.net/weixin_30537231/article/details/114507875)

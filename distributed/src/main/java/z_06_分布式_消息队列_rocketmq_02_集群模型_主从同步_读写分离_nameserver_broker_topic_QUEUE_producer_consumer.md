@@ -3,6 +3,7 @@
 rocketmq使用的nameserver感觉就是无状态的服务注册中心，没有用任何共识算法。而dubbo用的zookeeper是leader型共识算法。
 [](http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/RocketMQ%20%E5%AE%9E%E6%88%98%E4%B8%8E%E8%BF%9B%E9%98%B6%EF%BC%88%E5%AE%8C%EF%BC%89/25%20RocketMQ%20Nameserver%20%E8%83%8C%E5%90%8E%E7%9A%84%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5.md)
 是一个几乎无状态节点，可集群部署，节点之间无任何信息同步
+NameServer每隔 IOs扫描一次 Broker， 移除处于不激活状态的 Broker
 ###broker集群(CP,leader,raft)
 [](https://segmentfault.com/a/1190000038318572)
 ```asp
@@ -28,5 +29,8 @@ Consumer与NameServer集群中的其中一个节点(随机选择)建立长连接
 消息的消费者，通过NameServer集群获得Topic的路由信息，连接到对应的Broker上消费消息。
 注意，由于Master和Slave都可以读取消息，因此Consumer会与Master和Slave都建立连接
 ```
+###为啥没用ZOOKEEPER做注册中心
+
 ##TOPIC&QUEUE
 ![](.z_06_分布式_消息队列_rocketmq_02_集群模型_主从同步_读写分离_nameserver_broker_topic_QUEUE_producer_consumer_images/51d0b4ae.png)
+##消息同步

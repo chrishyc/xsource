@@ -44,6 +44,7 @@ commitlog与Consumerqueue数据同步
 
 #####集群模式进度
 Consumeroffset.json
+delayOffset.json
 #####广播模式进度
 
 ###indexfile
@@ -80,3 +81,12 @@ RocketMQ的存储是基于JDK NIO的内存映射机制(MappedByteBuffer)的，�
 该堆外内存将使用内存锁定，确 保不会被置换到虚拟内存中去，消息首先追加到堆外内存，然后提交到物理文件的内存映射中，然后刷 写到磁盘。
 如果未开启transientStorePoolEnable，消息直接追加到物理文件直接映射文件中，然后刷 写到磁盘中。
 ####transientStorePoolEnable
+###内存映射MappedByteBuffer
+
+##消息删除时机
+每条消息都会持久化到CommitLog中，每个consumer连接到broker后会维持消费进度信息，当有消息消费后只是当前consumer的消费进度（CommitLog的offset）更新了
+4.6版本默认48小时后会删除不再使用的CommitLog文件
+
+- 检查这个文件最后访问时间
+- 判断是否大于过期时间
+- 指定时间删除，默认凌晨4点
