@@ -131,3 +131,41 @@ show status like  'Threads%';
 ###连接详情
 SHOW FULL PROCESSLIST;
 
+##表信息行格式
+show table status like "test"\G
+公司mysql版本为5.7.25,使用行格式Compact
+![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/a249d27e.png)
+自己的mysql版本为8.0.21,使用行格式Dynamic
+![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/5f262cfa.png)
+##表空间可视化innodb_space
+show variables like 'datadir';//数据目录
+
+##其他
+###存储引擎
+show engines;
+show variables like '%storage_engine%';
+show table status like "test" ;
+
+###编码相关/字符集
+SHOW VARIABLES LIKE 'character_set_server';
+SHOW VARIABLES LIKE 'character_set_database';
+show create table test;
+SHOW VARIABLES LIKE 'character_set_client';
+SHOW VARIABLES LIKE 'character_set_connection';
+SHOW VARIABLES LIKE 'character_set_results';
+![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_images/52934d73.png)
+```$xslt
+MySQL中的utf8和utf8mb4
+我们上边说 utf8 字符集表示一个字符需要使用1~4个字节，但是我们常用的一些字符使用1~3个字节就可以表 示了。而在 MySQL 中字符集表示一个字符所用最大字节长度在某些方面会影响系统的存储和性能，所以设计
+MySQL 的大叔偷偷的定义了两个概念:
+utf8mb3 :阉割过的 utf8 字符集，只使用1~3个字节表示字符。
+utf8mb4 :正宗的 utf8 字符集，使用1~4个字节表示字符。
+有一点需要大家十分的注意，在 MySQL 中 utf8 是 utf8mb3 的别名，所以之后在 MySQL 中提到 utf8 就意味着使 用1~3个字节来表示一个字符，
+如果大家有使用4字节编码一个字符的情况，比如存储一些emoji表情啥的，那请 使用 utf8mb4 。
+```
+
+###mysql版本
+show variables like '%version%'
+![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/4e2c8d92.png)
+[](https://www.jianshu.com/p/052402a18c7c)
+
