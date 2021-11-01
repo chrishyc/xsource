@@ -1,0 +1,13 @@
+##临界知识
+##关系图
+![](.z_01_分布式_临界知识_负载均衡_三层负载均衡LVS_七层负载均衡nginx_DNS_网关_images/b3825a50.png)
+##DNS负载均衡
+客户端域名转ip解析
+##LVS
+二三四层负载均衡
+[](https://www.codenong.com/cs106065946/)
+![](.z_01_分布式_临界知识_负载均衡_三层负载均衡LVS_七层负载均衡nginx_DNS_网关_images/1f35ef46.png)
+![](.z_01_分布式_临界知识_负载均衡_二三四层负载均衡LVS_七层负载均衡nginx_DNS_网关_images/fa520a6a.png)
+C3故障后
+![](.z_01_分布式_临界知识_负载均衡_二三四层负载均衡LVS_七层负载均衡nginx_DNS_网关_images/c6a8f33f.png)
+![](.z_01_分布式_临界知识_负载均衡_二三四层负载均衡LVS_七层负载均衡nginx_DNS_网关_images/0ff6112f.png)
