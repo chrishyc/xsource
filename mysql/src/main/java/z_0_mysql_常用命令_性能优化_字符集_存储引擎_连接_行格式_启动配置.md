@@ -205,17 +205,15 @@ show status like  'Threads%';
 ###连接详情
 SHOW FULL PROCESSLIST;
 
-##表物理信息
-###表信息行格式
-show create table setup_consumers; 
-show table status like "test"\G
-公司mysql版本为5.7.25,使用行格式Compact
-![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/a249d27e.png)
-自己的mysql版本为8.0.21,使用行格式Dynamic
-![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/5f262cfa.png)
-###表空间可视化innodb_space
-show variables like 'datadir';//数据目录
+##表物理信息分析innodb_space
+[innodb_ruby官方](https://github.com/jeremycole/innodb_ruby/wiki#space-page-type-summary)
 
+###表空间可视化
+```asp
+show variables like 'datadir';//数据目录
+innodb_space -s /Users/chris/Library/Application\ Support/com.tinyapp.DBngin/Engines/mysql/10249D8A-1975-4E97-9DDD-2085652161E7/ibdata1 -T mysql/varchar_size_demo -p 3 page-illustrate
+```
+![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_启动配置_images/565fb8c2.png)
 ##系统变量
 SHOW VARIABLES [LIKE 匹配的模式];
 SHOW [GLOBAL|SESSION] VARIABLES [LIKE 匹配的模式];
@@ -225,6 +223,13 @@ SHOW VARIABLES like 'max_connections';
 SET GLOBAL default_storage_engine = MyISAM;
 SET @@GLOBAL.default_storage_engine = MyISAM;
 
+###表信息行格式
+show create table setup_consumers; 
+show table status like "test"\G
+公司mysql版本为5.7.25,使用行格式Compact
+![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/a249d27e.png)
+自己的mysql版本为8.0.21,使用行格式Dynamic
+![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/5f262cfa.png)
 ###设置系统变量
 SET [GLOBAL|SESSION] 系统变量名 = 值;
 SET [@@(GLOBAL|SESSION).]var_name = XXX;
