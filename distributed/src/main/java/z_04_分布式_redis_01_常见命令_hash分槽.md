@@ -6,3 +6,5 @@ redis-cli -h 127.0.0.1 -p 6379
 redis-benchmark -q -n 100000
 ![](.z_04_分布式_redis_常见命令_images/d7c37f6f.png)
 edis-benchmark -t set -P 2 -q,管道可以发送的命令数为2
+##redis切片集群
+[](https://www.cnblogs.com/zackku/p/10094940.html)

@@ -1,19 +1,24 @@
 ##临界知识
 应用监控都可以查看线程,tcp连接,缓存
 mysql官网索引预习
+应用启动可进行参数配置(约定大于配置)
+命令自助--help
 ##性能分析
 ###执行延时profile
-[](https://dev.mysql.com/doc/refman/8.0/en/show-profile.html)
 SET profiling = 1;
-SHOW PROFILES
+SHOW PROFILES//概述
+SHOW PROFILE;//详情,MySQL提供可以用来分析当前会话中语句执行的资源消耗情况，可以用于SQL的调优的测量
+
+[](https://dev.mysql.com/doc/refman/8.0/en/show-profile.html)
+
 ```asp
+mysql> SHOW PROFILES;
 +----------+------------+-----------------------------+
 | Query_ID | Duration   | Query                       |
 +----------+------------+-----------------------------+
 |        1 | 0.00237600 | select * from global_grants |
 +----------+------------+-----------------------------+
 ```
-SHOW PROFILE;
 ```asp
 mysql> SHOW PROFILE;
 +--------------------------------+----------+
@@ -76,19 +81,88 @@ PAGE FAULTS 显示页错误数量
 SOURCE 显示源码中的函数名称与位置
 SWAPS 显示SWAP的次数
 ```
-###性能分析performance
+###性能分析performance_schema
+```asp
+performance_schema通过监视server的事件来实现监视server内部运行情况， “事件”就是server内部活动中所做的任何事情以及对应的时间消耗，
+利用这些信息来判断server中的相关资源消耗在了哪里？一般来说，事件可以是函数调用、操作系统的等待、SQL语句执行的阶段
+（如sql语句执行过程中的parsing 或 sorting阶段）或者整个SQL语句与SQL语句集合。事件的采集可以方便的提供server中的相关存储引擎对磁盘文件、表I/O、表锁等资源的同步调用信息
+
+performance_schema的表中的数据不会持久化存储在磁盘中，而是保存在内存中，一旦服务器重启，这些数据会丢失（包括配置表在内的整个performance_schema下的所有数据）
+```
+运行过程中的性能相关的数据
 [](https://dev.mysql.com/doc/refman/8.0/en/performance-schema-quick-start.html)
 SHOW VARIABLES LIKE 'performance_schema';
 use performance_schema;
 show tables like '%wait%';
 ####当前所有线程状态
 select * from events_waits_current\G
+```asp
+--当配置完成之后可以查看当前server正在做什么，可以通过查询events_waits_current表来得知，该表中每个线程只包含一行数据，用于显示每个线程的最新监视事件
+
+/*该信息表示线程id为11的线程正在等待buf_dblwr_mutex锁，等待事件为30880
+属性说明：
+	id:事件来自哪个线程，事件编号是多少
+	event_name:表示检测到的具体的内容
+	source:表示这个检测代码在哪个源文件中以及行号
+	timer_start:表示该事件的开始时间
+	timer_end:表示该事件的结束时间
+	timer_wait:表示该事件总的花费时间
+注意：_current表中每个线程只保留一条记录，一旦线程完成工作，该表中不会再记录该线程的事件信息
+*/
+```
+####线程历史事件
+/*
+_history表中记录每个线程应该执行完成的事件信息，但每个线程的事件信息只会记录10条，再多就会被覆盖，*_history_long表中记录所有线程的事件信息，但总记录数量是10000，超过就会被覆盖掉
+*/
+select thread_id,event_id,event_name,timer_wait from events_waits_history order by thread_id limit 21;
+####线程事件汇总
+/*
+summary表提供所有事件的汇总信息，该组中的表以不同的方式汇总事件数据（如：按用户，按主机，按线程等等）。例如：要查看哪些instruments占用最多的时间，可以通过对events_waits_summary_global_by_event_name表的COUNT_STAR或SUM_TIMER_WAIT列进行查询（这两列是对事件的记录数执行COUNT（*）、事件记录的TIMER_WAIT列执行SUM（TIMER_WAIT）统计而来）
+*/
+SELECT EVENT_NAME,COUNT_STAR FROM events_waits_summary_global_by_event_name  ORDER BY COUNT_STAR DESC LIMIT 10;
+####事件生产者/消费者
+show create table performance_schema.setup_consumers;
+```
+instruments: 生产者，用于采集mysql中各种各样的操作产生的事件信息，对应配置表中的配置项我们可以称为监控采集配置项。
+consumers:消费者，对应的消费者表用于存储来自instruments采集的数据，对应配置表中的配置项我们可以称为消费存储配置项。
+
+--打开等待事件的采集器配置项开关，需要修改setup_instruments配置表中对应的采集器配置项
+UPDATE setup_instruments SET ENABLED = 'YES', TIMED = 'YES'where name like 'wait%';
+
+--打开等待事件的保存表配置开关，修改setup_consumers配置表中对应的配置项
+UPDATE setup_consumers SET ENABLED = 'YES'where name like '%wait%';
+```
+
+####语句事件记录表
+```asp
+语句事件记录表，这些表记录了语句事件信息，当前语句事件表events_statements_current、历史语句事件表events_statements_history和长语句历史
+事件表events_statements_history_long、以及聚合后的摘要表summary，其中，summary表还可以根据帐号(account)，主机(host)，程序(program)，
+线程(thread)，用户(user)和全局(global)再进行细分)
+```
+show tables like '%statement%';
+####等待事件记录表
+show tables like '%wait%';
+####阶段事件记录表
+show tables like '%stage%';
+####事务事件记录表
+show tables like '%transaction%';
+####监控文件系统层调用的表
+show tables like '%file%';
+/*
+instance表记录了哪些类型的对象会被检测。这些对象在被server使用时，在该表中将会产生一条事件记录，例如，file_instances表列出了文件I/O操作及其关联文件名
+*/
+select * from file_instances limit 20; 
+####监视内存使用的表
+show tables like '%memory%';
+###元数据information_schema
 ###所有sql语句执行排名
+SELECT DIGEST_TEXT,COUNT_STAR,FIRST_SEEN,LAST_SEEN FROM events_statements_summary_by_digest ORDER BY COUNT_STAR DESC
 ###慢查询
 show variables like 'slow%';
 show variables like 'long%';
 ###预编译
 ##数据库连接相关
+SHOW FULL PROCESSLIST;
 ###连接超时
 show variables like "%timeout%";
 ```asp
@@ -131,16 +205,29 @@ show status like  'Threads%';
 ###连接详情
 SHOW FULL PROCESSLIST;
 
-##表信息行格式
+##表物理信息
+###表信息行格式
+show create table setup_consumers; 
 show table status like "test"\G
 公司mysql版本为5.7.25,使用行格式Compact
 ![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/a249d27e.png)
 自己的mysql版本为8.0.21,使用行格式Dynamic
 ![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/5f262cfa.png)
-##表空间可视化innodb_space
+###表空间可视化innodb_space
 show variables like 'datadir';//数据目录
 
-##其他
+##系统变量
+SHOW VARIABLES [LIKE 匹配的模式];
+SHOW [GLOBAL|SESSION] VARIABLES [LIKE 匹配的模式];
+
+SHOW VARIABLES LIKE 'default_storage_engine';
+SHOW VARIABLES like 'max_connections';
+SET GLOBAL default_storage_engine = MyISAM;
+SET @@GLOBAL.default_storage_engine = MyISAM;
+
+###设置系统变量
+SET [GLOBAL|SESSION] 系统变量名 = 值;
+SET [@@(GLOBAL|SESSION).]var_name = XXX;
 ###存储引擎
 show engines;
 show variables like '%storage_engine%';
@@ -169,3 +256,43 @@ show variables like '%version%'
 ![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/4e2c8d92.png)
 [](https://www.jianshu.com/p/052402a18c7c)
 
+##状态变量
+SHOW [GLOBAL|SESSION] STATUS [LIKE 匹配的模式];
+SHOW STATUS LIKE 'thread%';
+##mysql启动配置(连接/tmp/socket失败,连接127.0.0.1失败)
+DBngin:mysql -uroot --socket=/tmp/mysql_3306.sock
+```asp
+MySQL 程序在启动时会寻找多个路径下的配置文件，这些路径有的是固定的，有的是可以在命令行指定的。根据 操作系统的不同，
+配置文件的路径也有所不同，
+```
+![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_启动配置_images/6ee5df7e.png)
+mysql -h127.0.0.1 -uroot -p
+```asp
+ERROR 2003 (HY000): Can't connect to MySQL server on '127.0.0.1' (61)
+```
+mysqld --skip-networking
+```asp
+--启动选项1[=值1] --启动选项2[=值2] ... --启动选项n[=值n]
+```
+###常用启动项
+mysql -uroot --socket=/tmp/mysql_3306.sock
+mysqld -P3307/mysqld -P 3307
+
+###mysql vs mysqld vs mysqld_safe
+mysqld_safe->mysqld->mysql
+
+###my.conf
+```asp
+defaults-extra- file 启动选项来指定额外的配置文件路径
+mysqld --defaults-file=/tmp/myconfig.txt
+注意`defaults-extra-file`和`defaults-file`的区别，使用`defaults-extra-file`可以指定额外的 配置文件搜索路径(也就是说那些固定的配置文件路径也会被搜索)
+```
+```asp
+[server] (具体的启动选项...)
+[mysqld] (具体的启动选项...)
+[mysqld_safe] (具体的启动选项...)
+[client] (具体的启动选项...)
+[mysql] (具体的启动选项...)
+[mysqladmin] (具体的启动选项...)
+```
+![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_启动配置_images/b5b640a1.png)
