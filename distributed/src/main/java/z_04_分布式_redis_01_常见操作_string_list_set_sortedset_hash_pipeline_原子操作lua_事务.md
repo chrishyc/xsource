@@ -10,8 +10,12 @@ DELETE
 范围查询SCAN
 存在EXISTS
 ##数据类型
-String  
-List  
+###String 
+字符串类型的值实际可以 是字符串(简单的字符串、复杂的字符串(例如JSON、XML))、数字 (整数、浮点数)，甚至是二进制(图片、音频、视频)，但是值最大不能 超过512MB。
+![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_事务_images/be185d51.png) 
+mset
+![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_事务_images/f564f428.png)
+###List,双向链表 ,lpush,lpop,rpush,rpop,lrange 
 Hash  
 Set  
 Sorted Set
