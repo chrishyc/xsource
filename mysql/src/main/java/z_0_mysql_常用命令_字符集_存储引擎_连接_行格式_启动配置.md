@@ -260,7 +260,13 @@ utf8mb4 :正宗的 utf8 字符集，使用1~4个字节表示字符。
 show variables like '%version%'
 ![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/4e2c8d92.png)
 [](https://www.jianshu.com/p/052402a18c7c)
-
+###buffer pool
+SHOW VARIABLES LIKE 'innodb_old_blocks_pct';//冷热分区比例
+show variables like 'innodb_read_ahead_threshold';//区域预读阈值
+ SHOW VARIABLES LIKE 'innodb_old_blocks_time';//冷区到热区的时间间隔
+ SHOW VARIABLES LIKE 'innodb_buffer_pool_instances';//buffer pool实例个数,公司8个
+ SHOW VARIABLES LIKE '%buffer_pool%';//查看buffer pool大小,公司一个128G,chunk大小,公司一个128m
+ SHOW ENGINE INNODB STATUS\G//查看buffer pool状态
 ##状态变量
 SHOW [GLOBAL|SESSION] STATUS [LIKE 匹配的模式];
 SHOW STATUS LIKE 'thread%';
