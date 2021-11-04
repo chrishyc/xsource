@@ -7,3 +7,4 @@ show profile for query 1;
 ![](.z_3_mysql_优化体系_性能分析_images/1eac9e9d.png)
 ##explain
 type = NULL，MYSQL不用访问表或者索引就直接能到结果
+##count(*) vs count(name)
