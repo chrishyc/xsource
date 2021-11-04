@@ -134,6 +134,10 @@ old 区域逐出，而不会影响 young 区域中被使用比较频繁的缓存
 这是极其耗时的。所以设计 MySQL 的大叔们决定不再一次性为某个 Buffer Pool 实例向操作系统申请 一大片连续的内存空间，而是以一个所谓的 chunk 为单位向操作系统申请空间。也就是说一个 Buffer Pool 
 实例 其实是由若干个 chunk 组成的，一个 chunk 就代表一片连续的内存空间，里边儿包含了若干缓存页与其对应的控 制块
 ![](.z_7_mysql_物理存储_行格式_compact_dynamic_页_内存缓存_零拷贝_磁盘性能_images/e21d6e42.png)
+###unzip LRU链表 
+用于管理解压页
+##zip clean链表
+用于管理没有被解压的压缩页
 ##零拷贝
 [](https://spongecaptain.cool/post/mysql/zerocopyofmysql/)
 [](https://zhuanlan.zhihu.com/p/330515575)

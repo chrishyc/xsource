@@ -267,6 +267,8 @@ show variables like 'innodb_read_ahead_threshold';//区域预读阈值
  SHOW VARIABLES LIKE 'innodb_buffer_pool_instances';//buffer pool实例个数,公司8个
  SHOW VARIABLES LIKE '%buffer_pool%';//查看buffer pool大小,公司一个128G,chunk大小,公司一个128m
  SHOW ENGINE INNODB STATUS\G//查看buffer pool状态
+ ![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_buffer_pool_images/9fb95da0.png)
+ ![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_buffer_pool_images/2762d375.png)
 ##状态变量
 SHOW [GLOBAL|SESSION] STATUS [LIKE 匹配的模式];
 SHOW STATUS LIKE 'thread%';
