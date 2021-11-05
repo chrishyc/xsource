@@ -136,8 +136,9 @@ old 区域逐出，而不会影响 young 区域中被使用比较频繁的缓存
 ![](.z_7_mysql_物理存储_行格式_compact_dynamic_页_内存缓存_零拷贝_磁盘性能_images/e21d6e42.png)
 ###unzip LRU链表 
 用于管理解压页
-##zip clean链表
-用于管理没有被解压的压缩页
+###zip clean链表
+用于管理没有被解压的压缩页表
+##frm表结构
 ##零拷贝
 [](https://spongecaptain.cool/post/mysql/zerocopyofmysql/)
 [](https://zhuanlan.zhihu.com/p/330515575)
