@@ -11,6 +11,10 @@
 ![](.z_linux_01_NIO_accept_select_poll_epoll_images/8fd9c927.png)
 ##poll
 ##epoll
-![](.z_linux_01_NIO_accept_select_poll_epoll_images/44b84af3.png)
-
-
+![](.z_linux_01_NIO_accept_select_poll_epoll_images/261637d2.png)
+###对象
+eventpoll结构体（fd）
+###数据结构
+红黑树,管理所有的eventpoll,时间复杂度O(logN)
+双向链表,事件发生时事件对应的epitem结点加入rdlist中
+[](https://www.cnblogs.com/zhilong233/p/13410719.html)
