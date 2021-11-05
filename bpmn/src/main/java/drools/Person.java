@@ -1,4 +1,4 @@
-package kie;
+package drools;
 
 public class Person {
     private String name;
