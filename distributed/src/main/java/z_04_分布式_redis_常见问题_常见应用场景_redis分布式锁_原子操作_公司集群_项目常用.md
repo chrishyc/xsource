@@ -15,7 +15,7 @@ MySQL 这类的数据库的 QPS 大概都在 1w 左右（4 核 8g） ，但是�
 
 
 ##自己在项目中使用场景
-redis缓存,活动推广短连接
+redis缓存,活动推广短连接:setExpire
 redis分布式锁,多个客户端去服务端拿token并缓存token,token拿到会使老的token过期,需要避免同时拿token
 ```$xslt
 2个客户端
@@ -25,6 +25,8 @@ redis分布式锁,多个客户端去服务端拿token并缓存token,token拿到�
 过期则请求刷新token
 请求token失败,释放锁重试三次(避免网络延时)，三次仍失败打点
 ```
+缓存常用的用户规则,saddExpire
+服务冷启动时,从redis中获取所有已加载的规则(smembers)
 
 ##redis原子操作
 ##redis分布式锁
