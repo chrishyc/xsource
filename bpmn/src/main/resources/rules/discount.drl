@@ -1,7 +1,7 @@
 package rules
 
-import com.kie.pojo.Car;
-import com.kie.pojo.Person;
+import drools.Car;
+import drools.Person;
 
 rule "car-discount>30"
 when

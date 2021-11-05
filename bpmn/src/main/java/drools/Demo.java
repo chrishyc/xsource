@@ -1,4 +1,4 @@
-package kie;
+package drools;
 
 
 import org.junit.jupiter.api.Test;

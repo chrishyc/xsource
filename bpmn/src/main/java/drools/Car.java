@@ -1,4 +1,4 @@
-package kie;
+package drools;
 
 public class Car {
     private int discount = 100;
