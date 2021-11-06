@@ -20,8 +20,17 @@ struct RedisObject {
 为了记录对象的 LRU 信息，使用了 24 个 bit 来记录 LRU 信息。每个对 象都有个引用计数，当引用计数为零时，
 对象就会被销毁，内存被回收。ptr 指针将指向对 象内容 (body) 的具体存储位置。这样一个 RedisObject 对象头需要占据 16 字节的存储空 间。
 ```
+#string
 ##String 数据结构
 [redis深度历险][源码1]
+[redis开发与运维]
+```asp
+字符串类型的内部编码有3种:
+·int:8个字节的长整型。 
+·embstr:小于等于39个字节的字符串。 
+·raw:大于39个字节的字符串。
+```
+![](.z_04_分布式_redis_01_核心功能_源码分析_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/c522db7c.png)
 字符串类型的值实际可以 是字符串(简单的字符串、复杂的字符串(例如JSON、XML))、数字 (整数、浮点数)，甚至是二进制(图片、音频、视频)，但是值最大不能 超过512MB。
 ![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_事务_images/be185d51.png) 
 ![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/99135f6b.png)
@@ -53,12 +62,16 @@ capacity+3，至少是 3。意味着分配一个字符串的最小空间占用�
 ```
 ![](.z_04_分布式_redis_01_核心功能_源码分析_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/d81414ae.png)
 ![](.z_04_分布式_redis_01_核心功能_源码分析_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/ae7ba9b9.png)
-##List,双向链表 ,lpush,lpop,rpush,rpop,lrange 
+##string计数
+##string bitmap
+#List,双向链表 ,lpush,lpop,rpush,rpop,lrange 
 Hash  
 Set  
 Sorted Set
 
-##常见操作时间复杂度
+#常见操作时间复杂度
+##string
+![](.z_04_分布式_redis_01_核心功能_源码分析_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/b8d1b878.png)
 ###单元素操作HGET,HSET,HDEL
 O(1)
 ###范围操作SCAN
@@ -70,10 +83,10 @@ O(1)
 ###首尾操作
 指某些数据结构的特殊记录，例如压缩列表和双向链表都会记录表头和表尾的偏移量。这样一来，对于 List 类型的 LPOP、RPOP、LPUSH、RPUSH 这四个操作来说，它们是在列表的头尾增删元素，这就可以通过偏移量直接定位，所以它们的复杂度也只有 O(1)，可以实现快速操作
 
-##查看redis持久化信息
+#查看redis持久化信息
 AOF
 
-##pipeline vs 批量
+#pipeline vs 批量
 ```$xslt
 需要实现Pipeline 功能，需要客户端和服务器端的支持。
 Redis 服务器端支持处理一个客户端通过同一个 TCP 连接发来的多个命令。可以理解为，这里将多个命令切分，和处理单个命令一样，处理完成后会将处理结果缓存起来，所有命令执行完毕后统一打包返回。
@@ -123,7 +136,7 @@ evalsha
 
 ##pipeline vs lua
 lua原子执行,pipeline不会原子执行
-##数据库
+#数据库
 Redis只是用数 字作为多个数据库的实现。Redis默认配置中是有16个数据库
 ![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/a488bfa3.png)
 ###数据库废弃
