@@ -27,7 +27,8 @@ redis分布式锁,多个客户端去服务端拿token并缓存token,token拿到�
 ```
 缓存常用的用户规则,saddExpire
 服务冷启动时,从redis中获取所有已加载的规则(smembers)
-
+##string应用场景
+数值:播放量,点赞数,评论数
 ##redis原子操作
 ##redis分布式锁
 
