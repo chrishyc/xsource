@@ -1,21 +1,59 @@
 ##临界知识
+redis对象结构体
+redis字符串emdstr&raw
+字符串由动态数组组成,并分配冗余空 间
 pipeline批量发送命令
 非重点知识非重点了解
 ##参考
 [](https://time.geekbang.org/column/article/299806)
-##增删改查
-PUT
-GET
-DELETE
-范围查询SCAN
-存在EXISTS
-##数据类型
-###String 
+##Redis对象头结构体
+```asp
+所有的 Redis 对象都有 下面的这个结构头:
+struct RedisObject {
+    int4 type; // 4bits
+    int4 encoding; // 4bits
+    int24 lru; // 24bits
+    int32 refcount; // 4bytes
+    void *ptr; // 8bytes，64-bit system
+} robj;
+不同的对象具有不同的类型 type(4bit)，同一个类型的 type 会有不同的存储形式 encoding(4bit)，
+为了记录对象的 LRU 信息，使用了 24 个 bit 来记录 LRU 信息。每个对 象都有个引用计数，当引用计数为零时，
+对象就会被销毁，内存被回收。ptr 指针将指向对 象内容 (body) 的具体存储位置。这样一个 RedisObject 对象头需要占据 16 字节的存储空 间。
+```
+##String 数据结构
+[redis深度历险][源码1]
 字符串类型的值实际可以 是字符串(简单的字符串、复杂的字符串(例如JSON、XML))、数字 (整数、浮点数)，甚至是二进制(图片、音频、视频)，但是值最大不能 超过512MB。
 ![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_事务_images/be185d51.png) 
-mset
-![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_事务_images/f564f428.png)
-###List,双向链表 ,lpush,lpop,rpush,rpop,lrange 
+![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/99135f6b.png)
+```asp
+struct SDS<T> {
+    T capacity; // 数组容量
+    T len; // 数组长度
+    byte flags; // 特殊标识位，不理睬它 byte[] content; // 数组内容
+}
+Redis 的字符串叫着「SDS」，也就是 Simple Dynamic String。它的结构是一个带长度信 息的字节数组
+SDS 结构使用了范型 T，为什么不直接用 int 呢，这是因为当字符串比较短 时，len 和 capacity 可以使用 byte 和 short 来表示，
+Redis 为了对内存做极致的优化，不同 长度的字符串使用不同的结构体来表示
+```
+```asp
+底层是字节,Redis 的字符串是动态字符串，是可以修改的字符串，内部结构实现上类似于 Java 的 ArrayList，采用预分配冗余空间的方式来减少内存的频繁分配，
+如图中所示，内部为当前字 符串实际分配的空间 capacity 一般要高于实际字符串长度 len。当字符串长度小于 1M 时， 扩容都是加倍现有的空间，
+如果超过 1M，扩容时一次只会多扩 1M 的空间。需要注意的是 字符串最大长度为 512M
+```
+```asp
+struct SDS {
+    int8 capacity; // 1byte
+    int8 len; // 1byte
+    int8 flags; // 1byte
+    byte[] content; // 内联数组，长度为 capacity
+}
+在字符串比较小时，SDS 对象头的大小是
+capacity+3，至少是 3。意味着分配一个字符串的最小空间占用为 19 字节 (16+3)
+
+```
+![](.z_04_分布式_redis_01_核心功能_源码分析_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/d81414ae.png)
+![](.z_04_分布式_redis_01_核心功能_源码分析_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/ae7ba9b9.png)
+##List,双向链表 ,lpush,lpop,rpush,rpop,lrange 
 Hash  
 Set  
 Sorted Set
@@ -85,3 +123,8 @@ evalsha
 
 ##pipeline vs lua
 lua原子执行,pipeline不会原子执行
+##数据库
+Redis只是用数 字作为多个数据库的实现。Redis默认配置中是有16个数据库
+![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/a488bfa3.png)
+###数据库废弃
+Redis是单线程的。如果使用多个数据库，那么这些数据库仍然是使用 一个CPU，彼此之间还是会受到影响的
