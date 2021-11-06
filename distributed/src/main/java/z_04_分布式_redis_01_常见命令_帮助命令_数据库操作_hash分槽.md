@@ -4,7 +4,7 @@
 127.0.0.1:6379> redis help
 help @generic
 help @string
-#当前对象编码&类型
+#当前对象类型&编码存储方式
 type key
 object encoding key
 #字符串操作
