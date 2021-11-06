@@ -208,12 +208,17 @@ SHOW FULL PROCESSLIST;
 ##表物理信息分析innodb_space
 [innodb_ruby官方](https://github.com/jeremycole/innodb_ruby/wiki#space-page-type-summary)
 
-###表空间可视化
+###表空间可视化(数据页)
 ```asp
 show variables like 'datadir';//数据目录
 innodb_space -s /Users/chris/Library/Application\ Support/com.tinyapp.DBngin/Engines/mysql/10249D8A-1975-4E97-9DDD-2085652161E7/ibdata1 -T mysql/varchar_size_demo -p 3 page-illustrate
 ```
 ![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_启动配置_images/565fb8c2.png)
+###表空间
+```asp
+innodb_space -s /Users/chris/Library/Application\ Support/com.tinyapp.DBngin/Engines/mysql/10249D8A-1975-4E97-9DDD-2085652161E7/ibdata1 -T sakila/s1 space-extents-illustrate
+```
+![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_buffer_pool_images/0e7d21fa.png)
 ##系统变量
 SHOW VARIABLES [LIKE 匹配的模式];
 SHOW [GLOBAL|SESSION] VARIABLES [LIKE 匹配的模式];

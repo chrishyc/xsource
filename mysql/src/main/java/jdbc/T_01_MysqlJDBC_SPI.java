@@ -1,28 +1,30 @@
 package jdbc;
 
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class T_01_MysqlJDBC_SPI {
     public static void main(String[] args) throws SQLException {
         
         DriverManager.setLogWriter(new PrintWriter(System.out));
-        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/mysql?logger=com.mysql.cj.log.StandardLogger&profileSQL=true", "root", "00000000");
-        
-        //4、定义sql语句
-        String sql = "update test set q4 = 13 where id = 2 ";
-        
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sakila?logger=com.mysql.cj.log.StandardLogger&profileSQL=true", "root", "");
         //5、获取执行sql语句的对象
         Statement stat = con.createStatement();
+        for (int i = 0; i < 10000; i++) {
+            //4、定义sql语句
+            String sql = "insert IGNORE into  s2(key1,key2,key3,key_part1,key_part2,key_part3,common_field) " +
+                    "values(substring(md5(rand()), 1, 10)," +
+                    "rand()* 100000," +
+                    "substring(md5(rand()), 1, 10)," +
+                    "substring(md5(rand()), 1, 10)," +
+                    "substring(md5(rand()), 1, 10)," +
+                    "substring(md5(rand()), 1, 10)," +
+                    "substring(md5(rand()), 1, 10))";
+            
+            //6、执行sql并接收返回结果
+            int count = stat.executeUpdate(sql);
+        }
         
-        //6、执行sql并接收返回结果
-        int count = stat.executeUpdate(sql);
-        
-        //7、处理结果
-        System.out.println(count);
         
         //8、释放资源
         stat.close();
