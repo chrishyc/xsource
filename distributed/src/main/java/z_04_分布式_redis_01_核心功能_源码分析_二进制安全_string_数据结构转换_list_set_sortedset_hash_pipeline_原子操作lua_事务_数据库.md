@@ -87,6 +87,7 @@ int->append->raw
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/676405fc.png)
 #List
 ##数据结构
+![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/c97b3731.png)
 ##时间复杂度
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/5a63e98c.png)
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/e73cfc69.png)
@@ -162,7 +163,63 @@ quicklist 的首尾两个 ziplist 不压 缩，此时深度就是 1。如果深�
 ```
 ###LZF 算法
 #Hash  
+##ziplist
+##hashtable
+```asp
+整个 Redis 数据库的所有 key 和 value 也组成了一个全局字典，还有带过期时间
+的 key 集合也是一个字典。zset 集合中存储 value 和 score 值的映射关系也是通过 dict 结
+构实现的。
+struct RedisDb {
+    dict* dict; // all keys key=>value
+    dict* expires; // all expired keys key=>long(timestamp) ...
+}
+struct zset {
+    dict *dict; // all values zskiplist *zsl;
+}
 
+```
+```asp
+struct dict { ...
+    dictht ht[2]; 
+}
+dict 结构内部包含两个 hashtable，通常情况下只有一个 hashtable 是有值的。但是在
+dict 扩容缩容时，需要分配新的 hashtable，然后进行渐进式搬迁，这时候两个 hashtable 存
+储的分别是旧的 hashtable 和新的 hashtable。待搬迁结束后，旧的 hashtable 被删除，新的
+hashtable 取而代之。
+struct dictEntry { void* key;
+    void* val;
+    dictEntry* next; // 链接下一个 entry 
+}
+struct dictht {
+    dictEntry** table; // 二维
+    long size; // 第一维数组的长度 long used; // hash 表中的元素个数 ...
+}
+```
+![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/56026354.png)
+
+##扩容
+```asp
+当 hash 表中元素的个数等于第一维数组的长度时，就会开始扩容，扩容 的新数组是原数组大小的 2 倍。不过如果 Redis 正在做 bgsave，
+为了减少内存页的过多分 离 (Copy On Write)，Redis 尽量不去扩容 (dict_can_resize)，但是如果 hash 表已经非常满 了，
+元素的个数已经达到了第一维数组长度的 5 倍 (dict_force_resize_ratio)，说明 hash 表 已经过于拥挤了，这个时候就会强制扩容
+```
+##渐进式 rehash
+```
+搬迁操作埋伏在当前字典的后续指令中(来自客户端的 hset/hdel 指令等)，但是有可能客
+户端闲下来了，没有了后续指令来触发这个搬迁，那么 Redis 就置之不理了么?当然不会，
+优雅的 Redis 怎么可能设计的这样潦草。Redis 还会在定时任务中对字典进行主动搬迁
+```
+##hash 函数
+```asp
+Redis 的字典默认的 hash 函数是 siphash。siphash 算法即使在输入 key 很小的情况下，也可以产生随机性特别好的输出，
+而 且它的性能也非常突出。对于 Redis 这样的单线程来说，字典数据结构如此普遍，字典操作 也会非常频繁，hash 函数自然也是越快越好。
+```
+##hash攻击
+```asp
+如果 hash 函数存在偏向性，黑客就可能利用这种偏向性对服务器进行攻击。存在偏向 性的 hash 函数在特定模式下的输入会导致 hash 第二维链表长度极为不均匀，
+甚至所有的 元素都集中到个别链表中，直接导致查找效率急剧下降，从 O(1)退化到 O(n)。有限的服务器 计算能力将会被 hashtable 的查找效率彻底拖垮。
+这就是所谓 hash 攻击
+```
 #Set  
 #Sorted Set
 
