@@ -1,7 +1,12 @@
 package jdbc;
 
 import java.io.PrintWriter;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
 
 public class T_01_MysqlJDBC_SPI {
     public static void main(String[] args) throws SQLException {
@@ -29,6 +34,29 @@ public class T_01_MysqlJDBC_SPI {
         //8、释放资源
         stat.close();
         con.close();
+    }
+    
+    public long countVowels(String word) {
+        int[] dp = new int[word.length()];
+        Set<Character> set = new HashSet<>();
+        set.add('a');
+        set.add('e');
+        set.add('i');
+        set.add('u');
+        set.add('o');
+        long count = 0;
+        for (int i = 0; i < word.length(); i++) {
+            dp[i] = set.contains(word.charAt(i)) ? 1 : 0;
+            count += dp[i];
+        }
+        
+        for (int i = 2; i <= word.length(); i++) {
+            for (int j = word.length() - i; j >= 0; j--) {
+                dp[j + i - 1] = dp[j + i - 2] + (set.contains(word.charAt(j + i - 1)) ? 1 : 0);
+                count += dp[j + i - 1];
+            }
+        }
+        return count;
     }
     
 }

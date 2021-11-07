@@ -2,6 +2,7 @@
 redis对象结构体,type配置数据类型,encoding配套每个数据类型下的多种存储方式
 字符串由动态数组组成,每次扩容*2
 字符串embstr不可变,int(append)->raw,embstr(append)->raw
+bitmap应用场景
 pipeline批量发送命令
 非重点知识非重点了解
 二进制编码解码

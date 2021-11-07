@@ -34,6 +34,8 @@ redis分布式锁,多个客户端去服务端拿token并缓存token,token拿到�
 bitmap:统计用户登录天数,统计某时间段活跃用户数,用户签到次数
 ![](.z_04_分布式_redis_01_常见问题_常见应用场景_redis分布式锁_原子操作_公司集群_项目常用_images/a918b1a0.png)
 ![](.z_04_分布式_redis_01_常见问题_常见应用场景_redis分布式锁_原子操作_公司集群_项目常用_images/a7ea7ded.png)
+###bitmap如何保证签到事务性?
+
 ##redis原子操作
 ##redis分布式锁
 
