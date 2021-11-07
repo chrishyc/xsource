@@ -85,10 +85,86 @@ int->append->raw
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/00098344.png)
 ###局限
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/676405fc.png)
-#List,双向链表 ,lpush,lpop,rpush,rpop,lrange 
-Hash  
-Set  
-Sorted Set
+#List
+##数据结构
+##时间复杂度
+![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/5a63e98c.png)
+![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/e73cfc69.png)
+##ziplist
+```asp
+为了节约内存空间使用，list,zset 和 hash 容器对象在元素个数较少的时候，采用压
+缩列表 (ziplist) 进行存储。压缩列表是一块连续的内存空间，元素之间紧挨着存储，没有任
+何冗余空隙
+struct ziplist<T> {
+    int32 zlbytes; // 整个压缩列表占用字节数
+    int32 zltail_offset; // 最后一个元素距离压缩列表起始位置的偏移量，用于快速定位到最后一个
+    节点
+    int16 zllength; // 元素个数
+    T[] entries; // 元素内容列表，挨个挨个紧凑存储 int8 zlend; // 标志压缩列表的结束，值恒为 0xFF
+}
+```
+```asp
+entry 块随着容纳的元素类型不同，也会有不一样的结构。
+struct entry {
+    int<var> prevlen; // 前一个 entry 的字节长度 int<var> encoding; // 元素类型编码
+    optional byte[] content; // 元素内容
+}
+```
+![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/90f350cb.png)
+##linkedlist
+```asp
+// 链表的节点
+struct listNode<T> {
+    listNode* prev; listNode* next; T value;
+}
+// 链表
+struct list {
+    listNode *head;
+    listNode *tail;
+    long length; 
+}
+考虑到链表的附加空间相对太高，prev 和 next 指针就要占去 16 个字节 (64bit 系统的
+指针是 8 个字节)，另外每个节点的内存都是单独分配，会加剧内存的碎片化，影响内存管
+理效率。后续版本对列表数据结构进行了改造，使用 quicklist 代替了 ziplist 和 linkedlist。
+```
+##quicklist
+```asp
+struct ziplist { ...
+}
+struct ziplist_compressed {
+    int32 size;
+    byte[] compressed_data; 
+}
+struct quicklistNode {
+    quicklistNode* prev;
+    quicklistNode* next;
+    ziplist* zl; // 指向压缩列表
+    int32 size; // ziplist 的字节总数
+    int16 count; // ziplist 中的元素数量
+    int2 encoding; // 存储形式 2bit，原生字节数组还是 LZF 压缩存储 ...
+}
+struct quicklist {
+    quicklistNode* head;
+    quicklistNode* tail;
+    long count; // 元素总数
+    int nodes; // ziplist 节点的个数
+    int compressDepth; // LZF 算法压缩深度 ...
+}
+
+quicklist 是 ziplist 和 linkedlist 的混合体，它 将 linkedlist 按段切分，每一段使用 ziplist 来紧凑存储，多个 ziplist 之间使用双向指针串 接起来。
+quicklist 内部默认单个 ziplist 长度为 8k 字节，超出了这个字节数，就会新起一个 ziplist。ziplist 的长度由配置参数 list-max-ziplist-size 决定
+```
+![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/b5355918.png)
+###压缩深度
+```asp
+quicklist 默认的压缩深度是 0，也就是不压缩。压缩的实际深度由配置参数 list- compress-depth决定。为了支持快速的 push/pop 操作，
+quicklist 的首尾两个 ziplist 不压 缩，此时深度就是 1。如果深度为 2，就表示 quicklist 的首尾第一个 ziplist 以及首尾第二 个 ziplist 都不压缩
+```
+###LZF 算法
+#Hash  
+
+#Set  
+#Sorted Set
 
 #常见操作时间复杂度
 ##string
