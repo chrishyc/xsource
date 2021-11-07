@@ -7,6 +7,7 @@ help @string
 #当前对象类型&编码存储方式
 type key
 object encoding key
+debug object programmings
 #字符串操作
 [redis开发与运维][2.2.1]
 set key value
@@ -36,6 +37,8 @@ LREM key count value,
 BLPOP key [key ...] timeout，阻塞队列FIFO
 BLPOP mylist 30//阻塞30s
 BLPOP mylist 0//一直阻塞直到有数据
+![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/ab3d20cf.png)
+![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/2da2620e.png)
 #集群操作
 ##redis服务端
 redis-server start
