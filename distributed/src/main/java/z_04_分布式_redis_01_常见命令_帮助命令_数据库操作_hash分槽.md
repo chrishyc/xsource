@@ -27,6 +27,15 @@ set key h,//批量设置位图值,h为自己计算出来对应的ascii
 
 bitfield w get u3 2 (integer) 5//# 从第一个位开始取 4 个位，结果是无符号数 (u)
 bitfield w set u8 8 97 # 从第 8 个位开始，将接下来的 8 个位用无符号数 97 替换
+#list操作
+栈:lpush,lpop; rpush,rpop
+队列:lpush,rpop; rpush,lpop
+LRANGE key start end
+LINDEX key index单播
+LREM key count value,
+BLPOP key [key ...] timeout，阻塞队列FIFO
+BLPOP mylist 30//阻塞30s
+BLPOP mylist 0//一直阻塞直到有数据
 #集群操作
 ##redis服务端
 redis-server start
