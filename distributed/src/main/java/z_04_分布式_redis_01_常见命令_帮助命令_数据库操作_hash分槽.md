@@ -18,6 +18,15 @@ GETRANGE
 APPEND
 strlen
 incr key//计数
+setbit key offset 1,//offset位设置为1
+bitcount key,//key中bit=1的个数
+bitpos key bit start end,//start到end的字节范围中中,第一个bit的位置
+bitop operation destkey key [key ...]//位运算
+set key h,//批量设置位图值,h为自己计算出来对应的ascii 
+
+
+bitfield w get u3 2 (integer) 5//# 从第一个位开始取 4 个位，结果是无符号数 (u)
+bitfield w set u8 8 97 # 从第 8 个位开始，将接下来的 8 个位用无符号数 97 替换
 #集群操作
 ##redis服务端
 redis-server start
