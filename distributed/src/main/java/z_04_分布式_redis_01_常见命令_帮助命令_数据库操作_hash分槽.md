@@ -1,5 +1,6 @@
 ##临界知识
 帮助文档
+redis组合命令减少网络传输,计算向数据移动(sinter vs sinterstore)
 #redis help
 127.0.0.1:6379> redis help
 help @generic
@@ -46,6 +47,19 @@ hdel key field [field ...]
 hexists key field
 hgetall key
 ![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/30a9204f.png) 
+#set
+![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/5d8f7524.png)
+SRANDMEMBER set 8//随机选择8个
+SPOP set//随机移除一个
+![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/d3ef1f09.png)
+sadd key element [element ...]
+srem key element [element ...]
+sismember key element
+sinter key [key ...]
+sdiff key [key ...]
+sinterstore destination key [key ...] 
+suionstore destination key [key ...] 
+sdiffstore destination key [key ...]
 #集群操作
 ##redis服务端
 redis-server start
