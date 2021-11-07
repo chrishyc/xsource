@@ -4,7 +4,7 @@ redis对象结构体,type配置数据类型,encoding配套每个数据类型下�
 字符串embstr不可变,int(append)->raw,embstr(append)->raw
 bitmap应用场景
 pipeline批量发送命令,减少网络数据传输
-redis组合操作减少网络传输,计算向数据移动
+redis组合操作减少网络传输,计算向数据移动(sinter vs sinterstore)
 非重点知识非重点了解
 二进制编码解码
 ##参考
