@@ -161,6 +161,18 @@ SELECT DIGEST_TEXT,COUNT_STAR,FIRST_SEEN,LAST_SEEN FROM events_statements_summar
 show variables like 'slow%';
 show variables like 'long%';
 ###预编译
+##buffer相关
+###sort buffer
+mysql> show variables like '%sort_buffer_size%';
+```asp
++-------------------------+---------+
+| Variable_name           | Value   |
++-------------------------+---------+
+| innodb_sort_buffer_size | 1048576 |
+| myisam_sort_buffer_size | 8388608 |
+| sort_buffer_size        | 262144  |
++-------------------------+---------+
+```
 ##数据库连接相关
 SHOW FULL PROCESSLIST;
 ###连接超时

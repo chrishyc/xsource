@@ -253,9 +253,56 @@ struct intset<T> {
 当有序集合的元素个数小于zset-max-ziplist- entries配置(默认128个)，同时每个元素的值都小于zset-max-ziplist-value配 置(默认64字节)时，
 Redis会用ziplist来作为有序集合的内部实现，ziplist 可以有效减少内存的使用
 ```
-##skiplist
+##skiplist+hash
+[](https://zhuanlan.zhihu.com/p/101143158/)
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/5803b743.png)
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/461e716c.png)
+![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/fb58bd71.png)
+```asp
+一方面它需要一个 hash 结构来存储 value 和 score 的 对应关系，
+另一方面需要提供按照 score 来排序的功能，还需要能够指定 score 的范围来获 取 value 列表的功能，这就需要另外一个结构「跳跃列表」
+zset 的内部实现是一个 hash 字典加一个跳跃列表 (skiplist)。hash 结构在讲字典结构时 已经详细分析过了，它很类似于 Java 语言中的 HashMap 结构。
+```
+```asp
+struct zslforward { 
+    zslnode* item;
+    long span; // 跨度
+}
+
+struct zsl {
+    String value;
+    double score;
+    zslforward*[] forwards;
+    zslnode* backward; // 回溯指针
+}
+
+struct zsl {
+    zslnode* header;
+    int maxLevel;
+    map<string, zslnode*> ht; // hash 结构的所有键值对
+}
+```
+![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/75104e62.png)
+##随机层数
+```asp
+每一个新插入的节点，都需要调用一个随机算法给它分配一个合理的层数。直观上
+期望的目标是 50% 的 Level1，25% 的 Level2，12.5% 的 Level3，一直到最顶层 2^-63，
+因为这里每一层的晋升概率是 50%
+
+不过 Redis 标准源码中的晋升概率只有 25%，也就是代码中的 ZSKIPLIST_P 的值。所 以官方的跳跃列表更加的扁平化，层高相对较低，在单个层上需要遍历的节点数量会稍多一 点。
+```
+##如果 score 值都一样呢?
+```asp
+zset 的排序元素不只看 score 值，如果 score 值相同还需要再比较 value 值 (字符串比较)。
+```
+##为啥redis sorted set选择跳表?
+[](https://zhuanlan.zhihu.com/p/101143158/)
+```asp
+There are a few reasons:
+1.They are not very memory intensive. It’s up to you basically. Changing parameters about the probability of a node to have a given number of levels will make then less memory intensive than btrees.
+2.A sorted set is often target of many ZRANGE or ZREVRANGE operations, that is, traversing the skip list as a linked list. With this operation the cache locality of skip lists is at least as good as with other kind of balanced trees.
+3.They are simpler to implement, debug, and so forth. For instance thanks to the skip list simplicity I received a patch (already in Redis master) with augmented skip lists implementing ZRANK in O(log(N)). It required little changes to the code.
+```
 #查看redis持久化信息
 AOF
 
