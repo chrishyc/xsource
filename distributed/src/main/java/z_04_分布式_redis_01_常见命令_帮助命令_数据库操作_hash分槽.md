@@ -9,7 +9,7 @@ help @string
 type key
 object encoding key
 debug object programmings
-#字符串操作
+#string操作
 [redis开发与运维][2.2.1]
 set key value
 setnx key value//不存在则创建
@@ -60,6 +60,16 @@ sdiff key [key ...]
 sinterstore destination key [key ...] 
 suionstore destination key [key ...] 
 sdiffstore destination key [key ...]
+#sorted_set
+zadd key score member [score member ...]
+zrank key member
+zincrby key increment member
+zrange key start end [withscores]
+zrevrange key start end [withscores]
+zinterstore destination numkeys key [key ...] [weights weight [weight ...]][aggregate sum|min|max]
+zunionstore destination numkeys key [key ...] [weights weight [weight ...]] [aggregate sum|min|max]
+zinterstore destset 2 sortedset sortedset weights 1 0.5 aggregate min
+![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/e0dcd3af.png)
 #集群操作
 ##redis服务端
 redis-server start

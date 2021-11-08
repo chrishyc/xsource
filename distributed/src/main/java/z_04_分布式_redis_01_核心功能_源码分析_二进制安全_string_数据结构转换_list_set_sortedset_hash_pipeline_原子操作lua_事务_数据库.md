@@ -7,6 +7,7 @@ pipeline批量发送命令,减少网络数据传输
 redis组合操作减少网络传输,计算向数据移动(sinter vs sinterstore)
 非重点知识非重点了解
 二进制编码解码
+每个数据结构都有两种切换模式:数据少时使用结构紧凑型减少空间占用,数据多时使用数据结构加快增删改查效率
 ##参考
 [](https://time.geekbang.org/column/article/299806)
 ##二进制安全问题
@@ -246,21 +247,15 @@ struct intset<T> {
 1.ziplist支持字符串类型,ziplist通过遍历方式查找,o(n)
 2.set支持交集并集等操作,这些操作使用ziplist耗时长
 #Sorted Set
-
-#常见操作时间复杂度
-##string
-![](.z_04_分布式_redis_01_核心功能_源码分析_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/b8d1b878.png)
-###单元素操作HGET,HSET,HDEL
-O(1)
-###范围操作SCAN
-O(n)
-Redis 从 2.8 版本开始提供了 SCAN 系列操作（包括 HSCAN，SSCAN 和 ZSCAN），这类操作实现了渐进式遍历，每次只返回有限数量的数据。这样一来，相比于 HGETALL、SMEMBERS 这类操作来说，就避免了一次性返回所有元素而导致的 Redis 阻塞。
-###统计操作
-O(1)
-是指集合类型对集合中所有元素个数的记录，例如 LLEN 和 SCARD。这类操作复杂度只有 O(1)，这是因为当集合类型采用压缩列表、双向链表、整数数组这些数据结构时，这些结构中专门记录了元素的个数统计
-###首尾操作
-指某些数据结构的特殊记录，例如压缩列表和双向链表都会记录表头和表尾的偏移量。这样一来，对于 List 类型的 LPOP、RPOP、LPUSH、RPUSH 这四个操作来说，它们是在列表的头尾增删元素，这就可以通过偏移量直接定位，所以它们的复杂度也只有 O(1)，可以实现快速操作
-
+按score分数排序
+##ziplist
+```asp
+当有序集合的元素个数小于zset-max-ziplist- entries配置(默认128个)，同时每个元素的值都小于zset-max-ziplist-value配 置(默认64字节)时，
+Redis会用ziplist来作为有序集合的内部实现，ziplist 可以有效减少内存的使用
+```
+##skiplist
+![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/5803b743.png)
+![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/461e716c.png)
 #查看redis持久化信息
 AOF
 
