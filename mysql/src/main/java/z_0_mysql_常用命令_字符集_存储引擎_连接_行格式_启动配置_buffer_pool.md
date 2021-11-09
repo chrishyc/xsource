@@ -4,6 +4,8 @@ mysql官网索引预习
 应用启动可进行参数配置(约定大于配置)
 命令自助--help
 ##性能分析
+###查询计划explain
+explain sql;
 ###执行延时profile
 SET profiling = 1;
 SHOW PROFILES//概述
@@ -162,7 +164,17 @@ show variables like 'slow%';
 show variables like 'long%';
 ###预编译
 ##buffer相关
+###buffer pool
+SHOW VARIABLES LIKE 'innodb_old_blocks_pct';//冷热分区比例
+show variables like 'innodb_read_ahead_threshold';//区域预读阈值
+ SHOW VARIABLES LIKE 'innodb_old_blocks_time';//冷区到热区的时间间隔
+ SHOW VARIABLES LIKE 'innodb_buffer_pool_instances';//buffer pool实例个数,公司8个
+ SHOW VARIABLES LIKE '%buffer_pool%';//查看buffer pool大小,公司一个128G,chunk大小,公司一个128m
+ SHOW ENGINE INNODB STATUS\G//查看buffer pool状态
+ ![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_buffer_pool_images/9fb95da0.png)
+ ![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_buffer_pool_images/2762d375.png)
 ###sort buffer
+[](https://time.geekbang.org/column/article/73479)
 mysql> show variables like '%sort_buffer_size%';
 ```asp
 +-------------------------+---------+
@@ -172,6 +184,41 @@ mysql> show variables like '%sort_buffer_size%';
 | myisam_sort_buffer_size | 8388608 |
 | sort_buffer_size        | 262144  |
 +-------------------------+---------+
+```
+```asp
+1.是否使用临时表,使用了多少个临时表;
+2.参与排序的行数
+3.排序方式:全字段排序vs rowid排序
+
+/* 打开optimizer_trace，只对本线程有效 */
+SET optimizer_trace='enabled=on'; 
+
+/* @a保存Innodb_rows_read的初始值 */
+select VARIABLE_VALUE into @a from performance_schema.session_status where variable_name = 'Innodb_rows_read';
+
+/* 执行语句 */
+select city, name,age from t where city='杭州' order by name limit 1000; 
+
+/* 查看 OPTIMIZER_TRACE 输出 */
+SELECT * FROM `information_schema`.`OPTIMIZER_TRACE`\G
+
+/* @b保存Innodb_rows_read的当前值 */
+select VARIABLE_VALUE into @b from performance_schema.session_status where variable_name = 'Innodb_rows_read';
+
+/* 计算Innodb_rows_read差值 */
+select @b-@a;
+```
+![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_buffer_pool_images/35c826b6.png)
+###join_buffer
+Block Nested-Loop Join缓存驱动表条目,加速join过程
+join_buffer_size
+```asp
+mysql> show variables like 'join_buffer_size';
++------------------+--------+
+| Variable_name    | Value  |
++------------------+--------+
+| join_buffer_size | 262144 |
++------------------+--------+
 ```
 ##数据库连接相关
 SHOW FULL PROCESSLIST;
@@ -277,16 +324,7 @@ utf8mb4 :正宗的 utf8 字符集，使用1~4个字节表示字符。
 show variables like '%version%'
 ![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_images/4e2c8d92.png)
 [](https://www.jianshu.com/p/052402a18c7c)
-###buffer pool
-SHOW VARIABLES LIKE 'innodb_old_blocks_pct';//冷热分区比例
-show variables like 'innodb_read_ahead_threshold';//区域预读阈值
- SHOW VARIABLES LIKE 'innodb_old_blocks_time';//冷区到热区的时间间隔
- SHOW VARIABLES LIKE 'innodb_buffer_pool_instances';//buffer pool实例个数,公司8个
- SHOW VARIABLES LIKE '%buffer_pool%';//查看buffer pool大小,公司一个128G,chunk大小,公司一个128m
- SHOW ENGINE INNODB STATUS\G//查看buffer pool状态
- ![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_buffer_pool_images/9fb95da0.png)
- ![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_buffer_pool_images/2762d375.png)
-##状态变量
+##线程状态变量
 SHOW [GLOBAL|SESSION] STATUS [LIKE 匹配的模式];
 SHOW STATUS LIKE 'thread%';
 ##mysql启动配置(连接/tmp/socket失败,连接127.0.0.1失败)
