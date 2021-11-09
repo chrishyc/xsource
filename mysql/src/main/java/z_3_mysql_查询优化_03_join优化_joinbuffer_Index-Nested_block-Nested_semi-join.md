@@ -43,3 +43,12 @@ N+λ*N*M(驱动表扫描N次,被驱动表全表扫描的次数λ*N),join_buffer_
 ##join优化
 Extra中出现Block Nested Loop需要警惕
 使用小表作为驱动表
+
+##semi-join半连接
+[](http://mysql.taobao.org/monthly/2020/07/04/)
+```asp
+SELECT ... From Outer_tables WHERE expr in (SELECT ... From Inner_tables ...) And ...
+
+SELECT ... From Outer_tables WHERE expr in (SELECT ... From Inner_tables ...) And ...
+```
+![](.z_3_mysql_查询优化_03_join优化_joinbuffer_Index-Nested_block-Nested_semi-join_images/d46a5722.png)

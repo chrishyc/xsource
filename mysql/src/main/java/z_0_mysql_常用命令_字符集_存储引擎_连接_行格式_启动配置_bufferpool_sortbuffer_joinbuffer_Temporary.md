@@ -220,6 +220,9 @@ mysql> show variables like 'join_buffer_size';
 | join_buffer_size | 262144 |
 +------------------+--------+
 ```
+##临时表
+show variables like "max_heap_table_size";
+show variables like 'tmpdir';
 ##数据库连接相关
 SHOW FULL PROCESSLIST;
 ###连接超时
