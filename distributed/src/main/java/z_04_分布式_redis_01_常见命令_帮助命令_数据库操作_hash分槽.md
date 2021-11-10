@@ -6,7 +6,7 @@ redis组合命令减少网络传输,计算向数据移动(sinter vs sinterstore)
 127.0.0.1:6379> redis help
 help @generic
 help @string
-
+cat /usr/local/etc/redis.conf
 #当前对象类型&编码存储方式
 type key
 object encoding key
@@ -81,6 +81,8 @@ zinterstore destset 2 sortedset sortedset weights 1 0.5 aggregate min
 需要注意，慢查询只统计步骤3)的时间，所以没有慢查询并不代表客 户端没有超时问题。
 
 ```
+#redis内存淘汰配置
+maxmemory
 ##获取慢查询配置
 ```asp
 127.0.0.1:6379> CONFIG get slowlog-log-slower-than
