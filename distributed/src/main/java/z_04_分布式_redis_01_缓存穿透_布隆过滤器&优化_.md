@@ -10,3 +10,7 @@ redis做缓存,但是可能出现大量请求穿透redis,直接到达mysql，导
 ![](.z_04_分布式_redis_01_缓存穿透_布隆过滤器&优化__images/c0c18252.png)
 ![](.z_04_分布式_redis_01_缓存穿透_布隆过滤器&优化__images/1fa664cd.png)
 [](https://github.com/RedisBloom/RedisBloom#use-redisbloom-with-redis-cli)
+##布隆过滤器无法删除
+计数布隆过滤器
+##计数布隆过滤器太大
+布谷鸟过滤器
