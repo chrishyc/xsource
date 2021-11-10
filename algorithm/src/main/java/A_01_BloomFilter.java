@@ -1,11 +1,6 @@
 import com.google.common.base.Preconditions;
-import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
-import com.google.common.hash.Funnels;
 import com.google.common.hash.Hashing;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * https://llimllib.github.io/bloomfilter-tutorial/
@@ -14,14 +9,14 @@ import java.util.List;
  * 2.hash位数选择/hash函数个数选择
  * 3.假阳性计算
  */
-public class MyBloomFilter<T> {
+public class A_01_BloomFilter<T> {
     private int numHashFunctions;
     
     private int bitSize;
     
     private Funnel<T> funnel;
     
-    public MyBloomFilter(Funnel<T> funnel, int expectedInsertions, double fpp) {
+    public A_01_BloomFilter(Funnel<T> funnel, int expectedInsertions, double fpp) {
         Preconditions.checkArgument(funnel != null, "funnel不能为空");
         this.funnel = funnel;
         bitSize = optimalNumOfBits(expectedInsertions, fpp);

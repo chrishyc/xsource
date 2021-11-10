@@ -1,5 +1,6 @@
 #布隆过滤器
 [](https://cloud.tencent.com/developer/article/1006122)
+[](https://www.jasondavies.com/bloomfilter/)
 ##原理
 ```
 1.初始化一个长度为m的位数组，并将所有元素置为0；
@@ -23,5 +24,8 @@
 不能对元素计数，也无法删除元素
 #计数过滤器
 [](https://cloud.tencent.com/developer/article/1136056)
+![](.T_02_BloomFilter布隆过滤器_CountingFilter_CukcooFilter布谷鸟过滤器_images/2bfa94a3.png)
 #布谷鸟过滤器
+[](http://www.lkozma.net/cuckoo_hashing_visualization/)
 [](https://blog.csdn.net/wumenglu1018/article/details/78823696)
+[](https://segmentfault.com/a/1190000039156246)

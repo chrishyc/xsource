@@ -11,11 +11,9 @@
     <modules>
         <module>bigdata</module>
       <module>ut</module>
-      <module>dataProcess</module>
       <module>CLRS</module>
         <module>task</module>
         <module>distributed</module>
-        <module>algorithm1</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->
