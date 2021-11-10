@@ -79,6 +79,8 @@ redis-cli -h 127.0.0.1 -p 6379
 redis-benchmark -q -n 100000
 ![](.z_04_分布式_redis_常见命令_images/d7c37f6f.png)
 redis-benchmark -t set -P 2 -q,管道可以发送的命令数为2
+不通过网卡请求数15w/s
+通过网卡请求数6w/s
 ##redis切片集群
 [](https://www.cnblogs.com/zackku/p/10094940.html)
 [redis开发与运维10.2.3]
