@@ -15,6 +15,7 @@
       <module>CLRS</module>
         <module>task</module>
         <module>distributed</module>
+        <module>algorithm1</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->
