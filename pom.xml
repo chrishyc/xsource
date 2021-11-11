@@ -14,10 +14,12 @@
       <module>CLRS</module>
         <module>task</module>
         <module>distributed</module>
+        <module>project</module>
+        <module>monitor</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->
-<!--        <module>monitor</module>-->
+
 <!--        <module>springcloud</module>-->
 <!--        &lt;!&ndash;        <module>bpmn</module>&ndash;&gt;-->
 <!--    </modules>-->
