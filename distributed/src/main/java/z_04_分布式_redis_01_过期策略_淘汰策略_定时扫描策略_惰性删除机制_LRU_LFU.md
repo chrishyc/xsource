@@ -1,6 +1,7 @@
 ##临界知识
-redis过期清理策略,性能至上
+redis过期清理策略(主动,被动),性能至上
 Redis过期清理线程,支持异步线程(大对象清理慢)
+redis淘汰策略(maxmemory,maxmemory-policy,LFU,LRU)
 c语言free函数释放对象详情
 淘汰机制性能至上的处理方案,随机采样出 5(可以配置) 个 key淘汰最旧的key
 ![](.z_04_分布式_redis_01_过期策略_淘汰策略_定时扫描策略_惰性删除机制_LRU_LFU_images/49f9d827.png)
