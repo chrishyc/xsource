@@ -127,6 +127,8 @@ AOF重写时，主进程有写操作,主进程和子进程会发生文件竞争�
 就是把某一时刻的状态以文件的形式写到磁盘上，也就是快照。这样一来，即使宕机，快照文件也不会丢失，数据的可靠性也就得到了保证。这个快照文件就称为 RDB 文件
 和 AOF 相比，RDB 记录的是某一时刻的数据，并不是操作，所以，在做数据恢复时，我们可以直接把 RDB 文件读入内存，很快地完成恢复
 ###fork写时复制
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/e8dafc25.png)
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/15c16ab9.png)
 ![](.z_04_分布式_redis_03_持久化_AOF_RBD(fork)_可用性_images/2b9c9c2b.png)
 ![](.z_04_分布式_redis_03_持久化_AOF_RBD(fork)_可用性_images/d4275c29.png)
 ![](.z_04_分布式_redis_03_持久化_AOF_RBD(fork)_可用性_images/c61c7c98.png)
@@ -143,7 +145,12 @@ Redis 就会借助操作系统提供的写时复制技术（Copy-On-Write, COW�
 ![](https://static001.geekbang.org/resource/image/a2/58/a2e5a3571e200cb771ed8a1cd14d5558.jpg)
 这个操作是子进程在后台完成的，这就允许主线程同时可以修改数据。
 ![](.z_04_分布式_redis_03_持久化_images/a99e216e.png)
-
+###压缩算法
+```
+压缩:Redis默认采用LZF算法对生成的RDB文件做压缩处理，压缩后的 文件远远小于内存大小，
+默认开启，可以通过参数config set rdbcompression{yes|no}动态修改
+虽然压缩RDB会消耗CPU，但可大幅降低文件的体积，方便保存到硬盘 或通过网络发送给从节点，因此线上建议开启
+```
 ##AOF与RDB混搭
 ```asp
 数据不能丢失时，内存快照和 AOF 的混合使用是一个很好的选择；

@@ -11,6 +11,10 @@ cat /usr/local/etc/redis.conf
 type key
 object encoding key
 debug object programmings
+#系统状态
+info all
+![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/7e910cd3.png)
+[redis开发与维护]
 #数据类型操作
 ##string操作
 [redis开发与运维][2.2.1]
@@ -81,8 +85,7 @@ zinterstore destset 2 sortedset sortedset weights 1 0.5 aggregate min
 需要注意，慢查询只统计步骤3)的时间，所以没有慢查询并不代表客 户端没有超时问题。
 
 ```
-#redis内存淘汰配置
-maxmemory
+
 ##获取慢查询配置
 ```asp
 127.0.0.1:6379> CONFIG get slowlog-log-slower-than
@@ -93,6 +96,12 @@ maxmemory
 slowlog get
 ![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/e3601790.png)
 分别是慢查询日志的标识 id、发生时间戳、命令耗时、执行命令和参数
+#redis内存淘汰配置
+maxmemory
+#持久化(RDB/AOF)
+info Persistence
+bgsave,查看cat /usr/local/etc/redis.conf
+显然bgsave命令是针对save阻塞问题做的优化。因此Redis内部所有的涉 及RDB的操作都采用bgsave的方式，而save命令已经废弃
 #集群操作
 ##redis服务端
 redis-server start
