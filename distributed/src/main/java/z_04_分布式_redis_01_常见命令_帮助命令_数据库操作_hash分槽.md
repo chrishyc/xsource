@@ -109,6 +109,39 @@ pip3 install rdbtools python-lzf
 rdb --command json /var/redis/6379/dump.rdb
 rdb -c protocol /var/redis/6379/dump.rdb
 ```
+##aof
+```asp
+rdb -c protocol appendonly.aof
+bgrewriteaof
+```asp
+
+```asp
+# Master-Replica replication. Use replicaof to make a Redis instance a copy of
+# replicaof <masterip> <masterport>
+#       At the date of writing these commands are: set setnx setex append
+appendonly yes
+```
+```asp
+# The name of the append only file (default: "appendonly.aof")
+appendfilename "appendonly.aof"
+# always: fsync after every write to the append only log. Slow, Safest.
+# appendfsync always
+appendfsync everysec
+# appendfsync no
+```
+```asp
+# the same as "appendfsync none". In practical terms, this means that it is
+no-appendfsync-on-rewrite no
+# Automatic rewrite of the append only file.
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+
+aof-use-rdb-preamble yes
+
+# You can pin the server/IO threads, bio threads, aof rewrite child process, and
+# Set aof rewrite child process to cpu affinity 8,9,10,11:
+# aof_rewrite_cpulist 8-11
+```
 #集群操作
 ##redis服务端
 redis-server start
