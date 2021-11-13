@@ -136,6 +136,15 @@ AOF重写时，主进程有写操作,主进程和子进程会发生文件竞争�
 ##如何确定AOF的同步进度diff?RDB的同步进度
 子进程重写时需要知道重写过程中AOF的变化,AOF变化用子进程的重写缓存保存
 RDB是快照,不需要考虑变化量
+##重启redis立马执行BGREWRITEAOF命令导致aof文件数据丢失
+3559:M 13 Nov 2021 17:18:37.962 * Background append only file rewriting started by pid 3646
+3559:M 13 Nov 2021 17:18:38.086 * AOF rewrite child asks to stop sending diffs.
+###redis如何避免重启时重写导致的数据丢失
+```asp
+1.redis aof重写会根据lastsize和当前size比较,lastsize是仅在内存中的变量吗?没看到aof文件有这个参数.
+2.AOF文件重写最小的文件大小为64M,如果启动时为65M，此时lastsize=65M，auto-aof-rewrite-percentage =0,所以重启时不会进行重写吗？
+```
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/58de6341.png)
 ##RDB(redis database,内存快照，全量备份)
 快速恢复
 就是把某一时刻的状态以文件的形式写到磁盘上，也就是快照。这样一来，即使宕机，快照文件也不会丢失，数据的可靠性也就得到了保证。这个快照文件就称为 RDB 文件
@@ -171,6 +180,7 @@ Redis 就会借助操作系统提供的写时复制技术（Copy-On-Write, COW�
 ##AOF与RDB混搭
 ![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/843aa3c0.png)
 ![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/da1e699f.png)
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/a77430a1.png)
 ```asp
 数据不能丢失时，内存快照和 AOF 的混合使用是一个很好的选择；
 如果允许分钟级别的数据丢失，可以只使用 RDB；

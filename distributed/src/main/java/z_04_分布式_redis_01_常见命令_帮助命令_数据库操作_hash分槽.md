@@ -100,6 +100,7 @@ slowlog get
 maxmemory
 #持久化(RDB/AOF)
 info Persistence
+/usr/local/var/db/redis,//aof,rdb路径
 ##rdb
 [](https://github.com/sripathikrishnan/redis-rdb-tools )
 bgsave,查看cat /usr/local/etc/redis.conf
