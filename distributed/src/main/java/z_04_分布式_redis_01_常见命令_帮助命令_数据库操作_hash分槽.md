@@ -100,8 +100,15 @@ slowlog get
 maxmemory
 #持久化(RDB/AOF)
 info Persistence
+##rdb
+[](https://github.com/sripathikrishnan/redis-rdb-tools )
 bgsave,查看cat /usr/local/etc/redis.conf
 显然bgsave命令是针对save阻塞问题做的优化。因此Redis内部所有的涉 及RDB的操作都采用bgsave的方式，而save命令已经废弃
+```asp
+pip3 install rdbtools python-lzf
+rdb --command json /var/redis/6379/dump.rdb
+rdb -c protocol /var/redis/6379/dump.rdb
+```
 #集群操作
 ##redis服务端
 redis-server start
