@@ -5,7 +5,7 @@ redis主线程避免阻塞,主线程需要响应客户端请求
 持久化文件内容AOF,记录操作,将操作持久化,重放速度慢
 内存快照RDB,将结果持久化,重放速度快
 持久化文件结构,追加写,索引写的区别
-持久化文件定期压缩--重写机制
+持久化文件定期压缩--重写机制(hdfs顺序写,重写合并)
 fork进程机制,写时复制机制
 多进程操作同一个文件,锁竞争
 全量(RDB快照,重放速度快)和增量(AOF,增量回写),实现增量与快速回放
@@ -15,7 +15,12 @@ redis中的cpu绑核影响
 AOF缓冲和AOF重写缓冲临时缓存会被清除
 可变字节编码优化内存占用
 RDB压缩算法减少数据传输
+学习查看redis配置文件readme.md&自助命令查看
+AOF和RDB混搭重写
 ##AOF
+AOF文件重写是把Redis进程内的数据转 化为写命令同步到新AOF文件的过程
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/80334d78.png)
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/8feda45e.png)
 ###写入时机
 先执行命令再记日志
 ![](.z_04_分布式_redis_03_持久化_images/3d3f7a60.png)
@@ -36,6 +41,7 @@ No，操作系统控制的写回：每个写命令执行完，只是先把日志
 ```
 ![](.z_04_分布式_redis_03_持久化_images/261a2885.png)
 ###AOF重写机制,避免AOF文件过大
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/07949210.png)
 随着接收的写命令越来越多，AOF 文件会越来越大
 ```asp
 一是，文件系统本身对文件大小有限制，无法保存过大的文件；
@@ -79,10 +85,13 @@ AOF重写时，主进程有写操作,主进程和子进程会发生文件竞争�
 ```
 ```asp
 主进程
-1.子线程重新AOF日志完成时会向主线程发送信号处理函数，会完成 （1）将AOF重写缓冲区的内容写入到新的AOF文件中。（2）将新的AOF文件改名，原子地替换现有的AOF文件。完成以后才会重新处理客户端请求。
+1.子线程重新AOF日志完成时会向主线程发送信号处理函数，会完成 （1）将AOF重写缓冲区的内容写入到新的AOF文件中。
+（2）将新的AOF文件改名，原子地替换现有的AOF文件。完成以后才会重新处理客户端请求。
 2.不共享AOF本身的日志是防止锁竞争，类似于redis rehash。
 ```
-####AOF重写问题
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/c0d4d23e.png)
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/0d93c7e3.png)
+####AOF重写性能问题
 ```asp
 1.AOF 日志重写的时候，是由 bgrewriteaof 子进程来完成的，不用主线程参与，
 我们今天说的非阻塞也是指子进程的执行不阻塞主线程。但是，
@@ -124,10 +133,14 @@ AOF重写时，主进程有写操作,主进程和子进程会发生文件竞争�
 ```
 ![](.z_04_分布式_redis_03_持久化_images/81dea9c8.png)
 ###AOF重放
+##如何确定AOF的同步进度diff?RDB的同步进度
+子进程重写时需要知道重写过程中AOF的变化,AOF变化用子进程的重写缓存保存
+RDB是快照,不需要考虑变化量
 ##RDB(redis database,内存快照，全量备份)
 快速恢复
 就是把某一时刻的状态以文件的形式写到磁盘上，也就是快照。这样一来，即使宕机，快照文件也不会丢失，数据的可靠性也就得到了保证。这个快照文件就称为 RDB 文件
 和 AOF 相比，RDB 记录的是某一时刻的数据，并不是操作，所以，在做数据恢复时，我们可以直接把 RDB 文件读入内存，很快地完成恢复
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/7736c04e.png)
 ###fork写时复制
 ![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/e8dafc25.png)
 ![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/15c16ab9.png)
@@ -156,13 +169,28 @@ Redis 就会借助操作系统提供的写时复制技术（Copy-On-Write, COW�
 [](https://zhuanlan.zhihu.com/p/311523487)
 ![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/5e956d0a.png)
 ##AOF与RDB混搭
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/843aa3c0.png)
+![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/da1e699f.png)
 ```asp
 数据不能丢失时，内存快照和 AOF 的混合使用是一个很好的选择；
 如果允许分钟级别的数据丢失，可以只使用 RDB；
 如果只用 AOF，优先使用 everysec 的配置选项，因为它在可靠性和性能之间取了一个平衡。
+
+4.0以后AOF会和RDB混搭
+
+When rewriting the AOF file, Redis is able to use an RDB preamble in the
+AOF file for faster rewrites and recoveries. When this option is turned
+on the rewritten AOF file is composed of two different stanzas:
+
+[RDB file][AOF tail]
+
+When loading Redis recognizes that the AOF file starts with the "REDIS"
+string and loads the prefixed RDB file, and continues loading the AOF
+tail.
+aof-use-rdb-preamble yes
 ```
 
-##AOF和RDB越来越大问题
+##AOF和RDB会一直变大吗
 不会，有过期机制，定期淘汰机制
 ##RDB中cpu密集型操作和io密集型操作
 ```asp
@@ -178,4 +206,26 @@ b、CPU资源风险：虽然子进程在做RDB持久化，但生成RDB快照过�
 
 c、另外，可以再延伸一下，老师的问题没有提到Redis进程是否绑定了CPU，如果绑定了CPU，那么子进程会继承父进程的CPU亲和性属性，子进程必然会与父进程争夺同一个CPU资源，
 整个Redis Server的性能必然会受到影响！所以如果Redis需要开启定时RDB和AOF重写，进程一定不要绑定CPU。
+```
+##fork性能问题
+```asp
+对于高流量的Redis实例OPS可达5万以上，如果fork 操作耗时在秒级别将拖慢Redis几万条命令执行，对线上应用延迟影响非常 明显。
+正常情况下fork耗时应该是每GB消耗20毫秒左右。可以在info stats统 计中查latest_fork_usec指标获取最近一次fork操作耗时，单位微秒。
+```
+##子进程开销CPU/内存/磁盘
+[redis开发与运维]
+```
+1.CPU
+·CPU开销分析。子进程负责把进程内的数据分批写入文件，这个过程 属于CPU密集操作，通常子进程对单核CPU利用率接近90%.
+·CPU消耗优化。Redis是CPU密集型服务，不要做绑定单核CPU操作。 由于子进程非常消耗CPU，会和父进程产生单核资源竞争。
+不要和其他CPU密集型服务部署在一起，造成CPU过度竞争
+
+2.内存
+内存消耗分析。子进程通过fork操作产生，占用内存大小等同于父进 程，理论上需要两倍的内存来完成持久化操作，
+但Linux有写时复制机制 (copy-on-write)。父子进程会共享相同的物理内存页，当父进程处理写请 求时会把要修改的页创建副本，
+而子进程在fork操作过程中共享整个父进程 内存快照。
+
+3.磁盘
+·硬盘开销分析。子进程主要职责是把AOF或者RDB文件写入硬盘持久 化。势必造成硬盘写入压力。根据Redis重写AOF/RDB的数据量，
+结合系统 工具如sar、iostat、iotop等，可分析出重写期间硬盘负载情况
 ```
