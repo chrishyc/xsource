@@ -34,18 +34,6 @@ AOF和RBD的优缺点
 FULLRESYNC
 CONTINUE
 
-
-###主从从模式分压主库
-```asp
-主库需要扫描内存生成RDB,然后传输RDB
-主库忙于 fork 子进程生成 RDB 文件，进行数据全量同步。fork 这个操作会阻塞主线程处理正常请求，从而导致主库响应应用程序的请求速度变慢。
-此外，传输 RDB 文件也会占用主库的网络带宽，同样会给主库的资源使用带来压力。
-
-```
-可以手动选择一个从库（比如选择内存资源配置较高的从库），用于级联其他的从库。然后，我们可以再选择一些从库（例如三分之一的从库），
-在这些从库上执行如下命令，让它们和刚才所选的从库，建立起主从关系
-![](.z_04_分布式_redis_04_分布式_可用性_扩展性_images/0020740d.png)
-
 ###主从增量同步过程
 一旦主从库完成了全量复制，它们之间就会一直维护一个网络连接，主库会通过这个连接将后续陆续收到的命令操作再同步给从库，
 这个过程也称为基于长连接的命令传播，可以避免频繁建立连接的开销
@@ -74,6 +62,54 @@ repl_backlog_buffer 是一个环形缓冲区，所以在缓冲区写满后，主
 方案2：使用切片集群减少数据
 
 ```
+##复制buffer
+[](http://mdba.cn/2015/03/17/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%882%EF%BC%89-replication-buffer%E4%B8%8Ereplication-backlog/)
+###replication buffer
+```asp
+redis的slave buffer（replication buffer，master端上）存放的数据是下面三个时间内所有的master数据更新操作。
+
+1）master执行rdb bgsave产生snapshot的时间
+
+2）master发送rdb到slave网络传输时间
+
+3）slave load rdb文件把数据恢复到内存的时间
+
+replication buffer太小会引发的问题：
+
+replication buffer由client-output-buffer-limit slave设置，当这个值太小会导致主从复制链接断开。
+
+1）当master-slave复制连接断开，server端会释放连接相关的数据结构。replication buffer中的数据也就丢失了，此时主从之间重新开始复制过程。
+
+2）还有个更严重的问题，主从复制连接断开，导致主从上出现rdb bgsave和rdb重传操作无限循环
+```
+###replication backlog
+```asp
+maser不仅将所有的数据更新命令发送到所有slave的replication buffer，还会写入replication backlog。当断开的slave重新连接上master的时候，
+slave将会发送psync命令（包含复制的偏移量offset），请求partial resync。
+如果请求的offset不存在，那么执行全量的sync操作，相当于重新建立主从复制
+```
+##重要概念
+###单机rdb快照和主从同步的rdb的关联?每个从节点进来都会进行一次rdb bgsave?
+```asp
+单机redis定期使用rdb快照持久化,主从redis也会使用rdb全量复制，
+主从产生的rdb也会作为最新的rdb快照吧，但是rdb快照不会用来作为主从的复制
+```
+![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_无盘复制_images/d7b50b50.png)
+```asp
+看起来每个从节点进来，master节点都会进行一次rdb bgsave，不会发送之前生产的rdb
+```
+###主从从模式分压主库
+```asp
+主库需要扫描内存生成RDB,然后传输RDB
+主库忙于 fork 子进程生成 RDB 文件，进行数据全量同步。fork 这个操作会阻塞主线程处理正常请求，从而导致主库响应应用程序的请求速度变慢。
+此外，传输 RDB 文件也会占用主库的网络带宽，同样会给主库的资源使用带来压力。
+
+```
+可以手动选择一个从库（比如选择内存资源配置较高的从库），用于级联其他的从库。然后，我们可以再选择一些从库（例如三分之一的从库），
+在这些从库上执行如下命令，让它们和刚才所选的从库，建立起主从关系
+![](.z_04_分布式_redis_04_分布式_可用性_扩展性_images/0020740d.png)
+
+
 
 ###同步为啥使用RDB不使用AOF
 RDB记录快照,并且进行数据压缩,扫描快,io传输效率高
