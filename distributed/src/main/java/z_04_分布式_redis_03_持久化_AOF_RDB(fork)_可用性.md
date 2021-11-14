@@ -151,6 +151,7 @@ RDB是快照,不需要考虑变化量
 和 AOF 相比，RDB 记录的是某一时刻的数据，并不是操作，所以，在做数据恢复时，我们可以直接把 RDB 文件读入内存，很快地完成恢复
 ![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/7736c04e.png)
 ###fork写时复制
+写时复制指page cache,和文件共享没关系，父进程对文件的更改对子进程可见
 ![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/e8dafc25.png)
 ![](.z_04_分布式_redis_03_持久化_AOF_RDB(fork)_可用性_images/15c16ab9.png)
 ![](.z_04_分布式_redis_03_持久化_AOF_RBD(fork)_可用性_images/2b9c9c2b.png)

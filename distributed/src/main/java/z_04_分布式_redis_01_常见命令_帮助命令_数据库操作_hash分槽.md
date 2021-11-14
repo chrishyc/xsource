@@ -143,6 +143,8 @@ aof-use-rdb-preamble yes
 # Set aof rewrite child process to cpu affinity 8,9,10,11:
 # aof_rewrite_cpulist 8-11
 ```
+##rdb&aof混搭
+aof-use-rdb-preamble yes
 #集群操作
 ##redis服务端
 redis-server start
