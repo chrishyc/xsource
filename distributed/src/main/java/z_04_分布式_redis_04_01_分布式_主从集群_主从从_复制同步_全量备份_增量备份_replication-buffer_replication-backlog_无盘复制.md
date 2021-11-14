@@ -30,11 +30,24 @@ AOF和RBD的优缺点
 而主从库模式一旦采用了读写分离，所有数据的修改只会在主库上进行，不用协调三个实例。主库有了最新的数据后，会同步给从库，这样，主从库的数据就是一致的
 ```
 ###主从全量同步过程
+![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/2810941b.png)
 ![](.z_04_分布式_redis_04_分布式_可用性_扩展性_images/f483efa8.png)
 FULLRESYNC
 CONTINUE
-
+![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/2e55d996.png)
+![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/c1d4a9cf.png)
+![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/0bef303c.png)
+从节点会保存主节点的run id,用于下次增量同步验证主run id是否为同一个
 ###主从增量同步过程
+![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/64636f4b.png)
+####增量同步机制
+```asp
+服务器运行Run ID(redis启动后内存中产生)
+复制偏移量offset(master节点和从节点)
+复制积压缓冲区:repl_backlog_buffer
+```
+![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/672cd915.png)
+![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/aa2c2d4f.png)
 一旦主从库完成了全量复制，它们之间就会一直维护一个网络连接，主库会通过这个连接将后续陆续收到的命令操作再同步给从库，
 这个过程也称为基于长连接的命令传播，可以避免频繁建立连接的开销
 ####网络断连或阻塞
@@ -64,7 +77,7 @@ repl_backlog_buffer 是一个环形缓冲区，所以在缓冲区写满后，主
 ```
 ##复制buffer
 [](http://mdba.cn/2015/03/17/redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%EF%BC%882%EF%BC%89-replication-buffer%E4%B8%8Ereplication-backlog/)
-###replication buffer
+###replication buffer(master节点,每个slave一个缓冲,全量复制补全diff)
 ```asp
 redis的slave buffer（replication buffer，master端上）存放的数据是下面三个时间内所有的master数据更新操作。
 
@@ -82,13 +95,14 @@ replication buffer由client-output-buffer-limit slave设置，当这个值太小
 
 2）还有个更严重的问题，主从复制连接断开，导致主从上出现rdb bgsave和rdb重传操作无限循环
 ```
-###replication backlog
+###replication backlog(master节点全局唯一缓冲,用于增量机制)
 ```asp
 maser不仅将所有的数据更新命令发送到所有slave的replication buffer，还会写入replication backlog。当断开的slave重新连接上master的时候，
 slave将会发送psync命令（包含复制的偏移量offset），请求partial resync。
 如果请求的offset不存在，那么执行全量的sync操作，相当于重新建立主从复制
 ```
-##重要概念
+![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/b86d4dbe.png)
+##重要思考
 ###单机rdb快照和主从同步的rdb的关联?每个从节点进来都会进行一次rdb bgsave?
 ```asp
 单机redis定期使用rdb快照持久化,主从redis也会使用rdb全量复制，
