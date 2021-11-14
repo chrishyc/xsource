@@ -150,6 +150,8 @@ aof-use-rdb-preamble yes
 redis-server start
 ##redis客户端
 redis-cli -h 127.0.0.1 -p 6379
+##主从复制
+![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/e6feb9f3.png)
 ##redis压测
 redis-benchmark -q -n 100000
 ![](.z_04_分布式_redis_常见命令_images/d7c37f6f.png)
