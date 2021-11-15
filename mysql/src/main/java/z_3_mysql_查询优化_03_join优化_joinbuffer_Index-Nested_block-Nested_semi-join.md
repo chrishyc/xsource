@@ -31,6 +31,16 @@ N*M(驱动表行数,被驱动表不是索引,需要全表扫描,全表行数为M
 M*N
 ```
 ##Block Nested-Loop Join(join buffer)
+```asp
+mysql> EXPLAIN SELECT * FROM s1 INNER JOIN s2;
++----+-------------+-------+------------+------+---------------+------+---------+------+-------+----------+---------------------------------------+
+| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows  | filtered | Extra                                 |
++----+-------------+-------+------------+------+---------------+------+---------+------+-------+----------+---------------------------------------+
+|  1 | SIMPLE      | s2    | NULL       | ALL  | NULL          | NULL | NULL    | NULL |  9333 |   100.00 | NULL                                  |
+|  1 | SIMPLE      | s1    | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 18128 |   100.00 | Using join buffer (Block Nested Loop) |
++----+-------------+-------+------------+------+---------------+------+---------+------+-------+----------+---------------------------------------+
+2 rows in set, 1 warning (0.00 sec)
+```
 被驱动表不是索引,或者是索引但使用全表扫描,则被驱动表使用全表扫描,为了减少磁盘扫描
 时间复杂度,将驱动表的多条记录缓存在join_buffer中
 ![](.z_3_mysql_查询优化_03_join优化_joinbuffer_Index-Nested_block-Nested_images/57824f2e.png)
