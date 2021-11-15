@@ -169,13 +169,67 @@ EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s2.key1 = UPPER(s1.key1);
 如果查询优化器决定使用全表扫描的方式对某个表执行查询时，执行计划的 rows 列就代表预计需要扫描的行 数，
 如果使用索引来执行查询时，执行计划的 rows 列就代表预计扫描的索引记录行数
 ##filtered
+###全表扫描扇出
 ```asp
 如果使用的是全表扫描的方式执行的单表查询，那么计算驱动表扇出时需要估计出满足搜索条件的记录到底
 有多少条
 EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s1.key1 = s2.key1 WHERE s1.common_field ='a';
-
+```
+###索引扇出
+```
 如果使用的是索引执行的单表扫描，那么计算驱动表扇出的时候需要估计出满足除使用到对应索引的搜索条
 件外的其他搜索条件的记录有多少条
 EXPLAIN SELECT * FROM s1 WHERE key1 > 'z' AND common_field = 'a';
 ```
-#count(*) vs count(name)
+##extra
+Extra 列是用来说明一些额外信息的，我们可以通过这些额外信息来更准确的理解 MySQL 到底将如何 执行给定的查询语句。
+###Using index
+EXPLAIN SELECT key1 FROM s1 WHERE key1 = 'a';
+当我们的查询列表以及搜索条件中只包含属于某个索引的列，也就是在可以使用索引覆盖的情况下
+###Using index condition(索引条件下推)
+EXPLAIN SELECT * FROM s1 WHERE key1 > 'z' AND key1 LIKE '%a';
+![](.z_3_mysql_查询优化_00_explain_profile_查询优化_查询成本_优化后详情_images/24f9671a.png)
+###Using where
+当我们使用全表扫描来执行对某个表的查询，并且该语句的 WHERE 子句中有针对该表的搜索条件时，在
+Extra 列中会提示上述额外信息
+EXPLAIN SELECT * FROM s1 WHERE common_field = 'a';
+
+当使用索引访问来执行对某个表的查询，并且该语句的 WHERE 子句中有除了该索引包含的列之外的其他搜索 条件时，在 Extra 列中也会提示上述额外信息
+EXPLAIN SELECT * FROM s1 WHERE key1 = 'a' AND common_field = 'a';
+###Using join buffer (Block Nested Loop)
+join buffer 的内存块来加快查询速度，也就是我们所讲的 基于块的嵌套循环算法
+EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s1.common_field = s2.common_field;
+```asp
+Using join buffer (Block Nested Loop) :这是因为对表 s2 的访问不能有效利用索引，只好退而求
+其次，使用 join buffer 来减少对 s2 表的访问次数，从而提高性能。
+
+Using where :可以看到查询语句中有一个 s1.common_field = s2.common_field 条件，因为 s1 是驱
+动表， s2 是被驱动表，所以在访问 s2 表时， s1.common_field 的值已经确定下来了，所以实际上查
+询 s2 表的条件就是 s2.common_field = 一个常数 ，所以提示了 Using where 额外信息
+```
+###Using temporary
+EXPLAIN SELECT DISTINCT common_field FROM s1;
+###Using filesort
+EXPLAIN SELECT * FROM s1 ORDER BY common_field LIMIT 10;
+只能在内存中(记录较少的时候)或者磁盘中(记录较多的时候)进行 排序，设计 MySQL 的大叔把这种在内存中或者磁盘上进行排序的方式统称为文件排序
+###Start temporary, End temporary
+DuplicateWeedout
+###LooseScan
+###FirstMatch
+###Using intersect(...) 、 Using union(...) 和 Using sort_union(...)
+###Not exists
+当我们使用左(外)连接时，如果 WHERE 子句中包含要求被驱动表的某个列等于 NULL 值的搜索条件，而且 那个列又是不允许存储 NULL 值的，
+那么在该表的执行计划的 Extra 列就会提示 Not exists 额外信息
+###Impossible WHERE
+EXPLAIN SELECT * FROM s1 WHERE 1 != 1;//查询语句的 WHERE 子句永远为 FALSE 时将会提示该额外信息
+###No tables used
+EXPLAIN SELECT 1;//当查询语句的没有 FROM 子句时将会提示该额外信息
+###No matching min/max row
+EXPLAIN SELECT MIN(key1) FROM s1 WHERE key1 = 'abcdefg';
+当查询列表处有 MIN 或者 MAX 聚集函数，但是并没有符合 WHERE 子句中的搜索条件的记录时，将会提示该 额外信息，
+#成本
+在 EXPLAIN 单词和真正的查询语句中间加上 FORMAT=JSON 
+EXPLAIN FORMAT=JSON SELECT * FROM s1 INNER JOIN s2 ON s1.key1 = s2.key2 WHERE s1.co
+#重写详情
+Extented EXPLAIN
+SHOW WARNINGS\G
