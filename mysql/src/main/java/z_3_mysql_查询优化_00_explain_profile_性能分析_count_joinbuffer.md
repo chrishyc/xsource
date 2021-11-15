@@ -32,7 +32,8 @@ mysql> EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT key1 FROM s2) ;
 +----+--------------+-------------+------------+--------+---------------+------------+---------+----------------+-------+----------+-------------+
 ```
 ##select_type
-设计 MySQL 的大叔为每一个 SELECT 关键字代表的小查询都定义了一个称之为 select_type 的属性，意思是我们 只要知道了某个小查询的 select_type 属性，就知道了这个小查询在整个大查询中扮演了一个什么角色
+设计 MySQL 的大叔为每一个 SELECT 关键字代表的小查询都定义了一个称之为 select_type 的属性，意思是
+我们 只要知道了某个小查询的 select_type 属性，就知道了这个小查询在整个大查询中扮演了一个什么角色
 ![](.z_3_mysql_查询优化_00_explain_profile_性能分析_count_joinbuffer_images/edfc9689.png)
 ###SIMPLE
 EXPLAIN SELECT * FROM s1;
@@ -93,10 +94,88 @@ mysql> EXPLAIN SELECT * FROM s1 INNER JOIN s2;
 |  1 | SIMPLE      | s1    | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 18128 |   100.00 | Using join buffer (Block Nested Loop) |
 +----+-------------+-------+------------+------+---------------+------+---------+------+-------+----------+---------------------------------------+
 ```
-###<subquery2>
+###<subquery2>(物化子查询)
 ###<union1,2>(union去重)
 EXPLAIN SELECT * FROM s1  UNION SELECT * FROM s2;
+###<derived2>(from驱动表)
 ##type
+我们前边说过执行计划的一条记录就代表着 MySQL 对某个表的执行查询时的访问方法，其中的 type 列就表明了 这个访问方法是个啥
+###system
+当表中只有一条记录并且该表使用的存储引擎的统计数据是精确的，比如MyISAM、Memory,那么对该表的 访问方法就是 system 
+###const
+当我们根据主键或者唯一二级索引列与常数进行等值匹配时，对单表的访问方法 就是 const
+EXPLAIN SELECT * FROM s1 WHERE id = 5;
+###eq_ref
+如果被驱动表是通过主键或者唯一二级索引列等值匹配的方式进行访问的(如果该主键或者
+唯一二级索引是联合索引的话，所有的索引列都必须进行等值比较)，则对该被驱动表的访问方法就是
+eq_ref 
+EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s1.id = s2.id;
+###ref
+EXPLAIN SELECT * FROM s1 WHERE key1 = 'ff';
+当通过普通的二级索引列与常量进行等值匹配时来查询某个表，那么对该表的访问方法就可能是 ref
+###ref_or_null
+EXPLAIN SELECT * FROM s1 WHERE key1 = 'ff' or key1 is null;
+当对普通二级索引进行等值匹配查询，该索引列的值也可以是 NULL 值时，那么对该表的访问方法就可能是 ref_or_null 
+###index_merge
+EXPLAIN SELECT * FROM s1 WHERE key1 = 'a' OR key3 = 'a';
+单表访问方法时特意强调了在某些场景下可 以使用 Intersection 、 Union 、 Sort-Union 这三种索引合并的方式来执行查询
+###unique_subquery
+EXPLAIN SELECT * FROM s1 WHERE key2 IN (SELECT id FROM s2 where s1.key1 = s2.key1) OR key3 = 'a';
+类似于两表连接中被驱动表的 eq_ref 访问方法， unique_subquery 是针对在一些包含 IN 子查询的查询语 句中，如果查询优化器决定将 IN 子查询转换为 EXISTS 子查询，
+而且子查询可以使用到主键进行等值匹配的 话，那么该子查询执行计划的 type 列的值就是 unique_subquery 
+###index_subquery
+index_subquery 与 unique_subquery 类似，只不过访问子查询中的表时使用的是普通的索引
+###range
+EXPLAIN SELECT * FROM s1 WHERE key1 IN ('a', 'b', 'c');
+如果使用索引获取某些 范围区间 的记录，那么就可能使用到 range 访问方法
+###index
+当我们可以使用索引覆盖，但需要扫描全部的索引记录时，该表的访问方法就是 index 
+EXPLAIN SELECT key_part2 FROM s1 WHERE key_part3 = 'a';
+###ALL
+###NULL
 type = NULL，MYSQL不用访问表或者索引就直接能到结果
+##possible_keys & key
+不过有一点比较特别，就是在使用 index 访问方法来查询某个表时， possible_keys 列是空的，而 key 列展示
+的是实际使用到的索引，比如这样:
+EXPLAIN SELECT key_part2 FROM s1 WHERE key_part3 = 'a';
+possible_keys列中的值并不是越多越好，可能使用的索引越多，查询优化器计算查询成 本时就得花费更长时间，所以如果可以的话，尽量删除那些用不到的索引
+##key_len
+key_len 列表示当优化器决定使用某个索引执行查询时，该索引记录的最大长度
+```asp
+对于使用固定长度类型的索引列来说，它实际占用的存储空间的最大长度就是该固定值，对于指定字符集的 变长类型的索引列来说，比如某个索引列的类型是 VARCHAR(100) ，
+使用的字符集是 utf8 ，那么该列实际占 用的最大存储空间就是 100 × 3 = 300 个字节。
 
+如果该索引列可以存储 NULL 值，则 key_len 比不可以存储 NULL 值时多1个字节。 
+
+对于变长字段来说，都会有2个字节的空间来存储该变长列的实际长度。
+
+mysql> EXPLAIN SELECT key_part2 FROM s1 WHERE key_part3 = 'a';
++----+-------------+-------+------------+-------+---------------+--------------+---------+------+-------+----------+--------------------------+
+| id | select_type | table | partitions | type  | possible_keys | key          | key_len | ref  | rows  | filtered | Extra                    |
++----+-------------+-------+------------+-------+---------------+--------------+---------+------+-------+----------+--------------------------+
+|  1 | SIMPLE      | s1    | NULL       | index | NULL          | idx_key_part | 909     | NULL | 18128 |    10.00 | Using where; Using index |
++----+-------------+-------+------------+-------+---------------+--------------+---------+------+-------+----------+--------------------------+
+```
+##ref
+当使用索引列等值匹配的条件去执行查询时，也就是在访问方法是 const 、 eq_ref 、 ref 、 ref_or_null 、 unique_subquery 、 index_subquery 其中之一时， 
+ref 列展示的就是与索引列作等值匹配的东东是个啥
+###const
+EXPLAIN SELECT * FROM s1 WHERE key1 = 'a';
+###列名
+EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s1.id = s2.id;
+###函数
+EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s2.key1 = UPPER(s1.key1);
+##rows
+如果查询优化器决定使用全表扫描的方式对某个表执行查询时，执行计划的 rows 列就代表预计需要扫描的行 数，
+如果使用索引来执行查询时，执行计划的 rows 列就代表预计扫描的索引记录行数
+##filtered
+```asp
+如果使用的是全表扫描的方式执行的单表查询，那么计算驱动表扇出时需要估计出满足搜索条件的记录到底
+有多少条
+EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s1.key1 = s2.key1 WHERE s1.common_field ='a';
+
+如果使用的是索引执行的单表扫描，那么计算驱动表扇出的时候需要估计出满足除使用到对应索引的搜索条
+件外的其他搜索条件的记录有多少条
+EXPLAIN SELECT * FROM s1 WHERE key1 > 'z' AND common_field = 'a';
+```
 #count(*) vs count(name)
