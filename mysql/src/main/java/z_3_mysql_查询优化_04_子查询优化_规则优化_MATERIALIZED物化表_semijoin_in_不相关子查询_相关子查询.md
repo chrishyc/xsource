@@ -22,8 +22,8 @@ ERROR 1242 (21000): Subquery returns more than 1 row
 mysql> SELECT (SELECT key1,key2 FROM s1 limit 1);
 ERROR 1241 (21000): Operand should contain 1 column(s)
 在 SELECT 子句中的子查询必须是标量子查询
-
 ```
+![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/9f62a241.png)
 ##from(派生表)
 ![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/82bab66a.png)
 Derived table实际上是一种特殊的subquery，它位于SQL语句中FROM子句里面，可以看做是一个单独的表
@@ -152,6 +152,16 @@ mysql> explain SELECT * from s1 where key1 in (SELECT key1 FROM s2);
 [](http://mysql.taobao.org/monthly/2016/07/08/)
 [](https://dev.mysql.com/doc/refman/5.6/en/subquery-materialization.html)
 ```asp
+mysql> EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT /*+ SEMIJOIN(Materialize) */  key3 FROM s2) ;
++----+--------------+-------------+------------+--------+---------------+------------+---------+----------------+-------+----------+-------------+
+| id | select_type  | table       | partitions | type   | possible_keys | key        | key_len | ref            | rows  | filtered | Extra       |
++----+--------------+-------------+------------+--------+---------------+------------+---------+----------------+-------+----------+-------------+
+|  1 | SIMPLE       | s1          | NULL       | ALL    | idx_key1      | NULL       | NULL    | NULL           | 18128 |   100.00 | Using where |
+|  1 | SIMPLE       | <subquery2> | NULL       | eq_ref | <auto_key>    | <auto_key> | 303     | sakila.s1.key1 |     1 |   100.00 | NULL        |
+|  2 | MATERIALIZED | s2          | NULL       | index  | idx_key3      | idx_key3   | 303     | NULL           |  9333 |   100.00 | Using index |
++----+--------------+-------------+------------+--------+---------------+------------+---------+----------------+-------+----------+-------------+
+```
+```asp
 Materialization speeds up query execution by generating a subquery result as a temporary table, normally in memory. 
 The first time MySQL needs the subquery result, it materializes that result into a temporary table
 在SQL执行过程中，第一次需要子查询结果时执行子查询并将子查询的结果保存为临时表 ，后续对子查询结果集的访问将直接通过临时表获得
@@ -165,7 +175,12 @@ Subquery materialization uses an in-memory temporary table when possible, fallin
 ![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/680fe510.png)
 其实上边的查询就相当于表 s1 和子查询物化表 materialized_table 进行内连接: SELECT s1.* FROM s1 INNER JOIN materialized_table ON key1 = m_val;
 ![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/2e3b6d74.png)
-##子查询转化为semi-join
+#子查询转化为semi-join
+[](http://mysql.taobao.org/monthly/2020/07/04/)
+Optimizer Hints 可以支持在SQL中hint方式指定semi-join使用的策略
+```asp
+EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT /*+ SEMIJOIN(DUPSWEEDOUT) */  key3 FROM s2) ;
+```
 ```asp
 虽然将子查询进行物化之后再执行查询都会有建立临时表的成本，但是不管怎么说，我们见识到了将子查询转换 为连接的强大作用，
 设计 MySQL 的大叔继续开脑洞:能不能不进行物化操作直接把子查询转换为连接呢?
@@ -176,18 +191,60 @@ SELECT s1.* FROM s1 INNER JOIN s2
         ON s1.key1 = s2.common_field
         WHERE s2.key3 = 'a';
 ```
-###Table pullout (子查询中的表上拉)
+##Table pullout (子查询中的表上拉)
 ![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/f3e2b357.png)
-###DuplicateWeedout execution strategy (重复值消除)
+##DuplicateWeedout execution strategy (重复值消除)
 ![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/addf5d86.png)
-###LooseScan execution strategy (松散索引扫描)
+```asp
+执行计划 start temporary 和 end temporary表示duplicateweedout
+mysql> EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT /*+ SEMIJOIN(DUPSWEEDOUT) */  key3 FROM s2) ;
++----+-------------+-------+------------+-------+---------------+----------+---------+----------------+------+----------+-------------------------------------------+
+| id | select_type | table | partitions | type  | possible_keys | key      | key_len | ref            | rows | filtered | Extra                                     |
++----+-------------+-------+------------+-------+---------------+----------+---------+----------------+------+----------+-------------------------------------------+
+|  1 | SIMPLE      | s2    | NULL       | index | idx_key3      | idx_key3 | 303     | NULL           | 9333 |   100.00 | Using where; Using index; Start temporary |
+|  1 | SIMPLE      | s1    | NULL       | ref   | idx_key1      | idx_key1 | 303     | sakila.s2.key3 |    1 |   100.00 | End temporary                             |
++----+-------------+-------+------------+-------+---------------+----------+---------+----------------+------+----------+-------------------------------------------+
+2 rows in set, 1 warning (0.00 sec)
+```
+![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/00874cc0.png)
+##LooseScan execution strategy (松散索引扫描)
 ![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/2abf4400.png)
-###FirstMatch execution strategy (首次匹配)
+```asp
+mysql> EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT /*+ SEMIJOIN(LooseScan) */  key3 FROM s2) ;
++----+-------------+-------+------------+-------+---------------+----------+---------+----------------+------+----------+-------------------------------------+
+| id | select_type | table | partitions | type  | possible_keys | key      | key_len | ref            | rows | filtered | Extra                               |
++----+-------------+-------+------------+-------+---------------+----------+---------+----------------+------+----------+-------------------------------------+
+|  1 | SIMPLE      | s2    | NULL       | index | idx_key3      | idx_key3 | 303     | NULL           | 9333 |   100.00 | Using where; Using index; LooseScan |
+|  1 | SIMPLE      | s1    | NULL       | ref   | idx_key1      | idx_key1 | 303     | sakila.s2.key3 |    1 |   100.00 | NULL                                |
++----+-------------+-------+------------+-------+---------------+----------+---------+----------------+------+----------+-------------------------------------+
+```
+##FirstMatch execution strategy (首次匹配)
 ```asp
 FirstMatch 是一种最原始的半连接执行方式，跟我们年少时认为的相关子查询的执行方式是一样一样的， 就是说先取一条外层查询的中的记录，
 然后到子查询的表中寻找符合匹配条件的记录，如果能找到一条，则 将该外层查询的记录放入最终的结果集并且停止查找更多匹配的记录，
 如果找不到则把该外层查询的记录丢 弃掉;然后再开始取下一条外层查询中的记录，重复上边这个过程。
 ```
+```asp
+mysql> EXPLAIN SELECT * FROM s1 WHERE key1 IN (SELECT /*+ SEMIJOIN(Firstmatch) */  key3 FROM s2) ;
++----+-------------+-------+------------+------+---------------+----------+---------+----------------+-------+----------+-----------------------------+
+| id | select_type | table | partitions | type | possible_keys | key      | key_len | ref            | rows  | filtered | Extra                       |
++----+-------------+-------+------------+------+---------------+----------+---------+----------------+-------+----------+-----------------------------+
+|  1 | SIMPLE      | s1    | NULL       | ALL  | idx_key1      | NULL     | NULL    | NULL           | 18128 |   100.00 | Using where                 |
+|  1 | SIMPLE      | s2    | NULL       | ref  | idx_key3      | idx_key3 | 303     | sakila.s1.key1 |     1 |   100.00 | Using index; FirstMatch(s1) |
++----+-------------+-------+------------+------+---------------+----------+---------+----------------+-------+----------+-----------------------------+
+```
+##semi-join适用范围(相关&不相关)
+![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/e4aca646.png)
+```asp
+SELECT * FROM s1
+        WHERE key1 IN (SELECT common_field FROM s2 WHERE s1.key3 = s2.key3);
+        
+SELECT s1.* FROM s1 SEMI JOIN s2
+        ON s1.key1 = s2.common_field AND s1.key3 = s2.key3;
+```
+##semi-join不适用范围
+![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/f5a7bcf0.png)
+
 #相关in子查询
 ```asp
 A correlated subquery is a subquery that contains a reference to a table that also appears in the outer query
@@ -200,17 +257,6 @@ SELECT * FROM t1
 ##DEPENDENT SUBQUERY(相关子查询)
 由于相关子查询并不是一个独立的查询，所以不能转换为物化表来执行查询,可以使用semi-join进行优化
 
-# semi-join适用范围(相关&不相关)
-![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/e4aca646.png)
-```asp
-SELECT * FROM s1
-        WHERE key1 IN (SELECT common_field FROM s2 WHERE s1.key3 = s2.key3);
-        
-SELECT s1.* FROM s1 SEMI JOIN s2
-        ON s1.key1 = s2.common_field AND s1.key3 = s2.key3;
-```
-##semi-join不适用范围
-![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/f5a7bcf0.png)
 
 #物化适用范围(不相关)
 不相关子查询可以保存到临时表
