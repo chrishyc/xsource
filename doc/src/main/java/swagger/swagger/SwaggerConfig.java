@@ -1,4 +1,4 @@
-package com.springfox.swagger.swagger;
+package swagger.swagger;
 
 import com.google.common.base.Predicates;
 import org.springframework.context.annotation.Bean;
@@ -26,8 +26,8 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.springfox.swagger.swagger.controller"))
-                .paths(Predicates.or(PathSelectors.ant("/user/add"),
-                        PathSelectors.ant("/user/find/*")))
+//                .paths(Predicates.or(PathSelectors.ant("/user/add"),
+//                        PathSelectors.ant("/user/find/*")))
                 .build()
                 .apiInfo(apiInfo())
                 .useDefaultResponseMessages(false)

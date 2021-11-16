@@ -16,6 +16,7 @@
         <module>distributed</module>
         <module>project</module>
         <module>monitor</module>
+        <module>doc</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->

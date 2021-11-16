@@ -1,11 +1,11 @@
-package com.springfox.swagger.swagger.controller;
+package swagger.swagger.controller;
 
-import com.springfox.swagger.swagger.model.User2;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
-import com.springfox.swagger.swagger.model.User;
 import springfox.documentation.annotations.ApiIgnore;
+import swagger.swagger.model.User;
+import swagger.swagger.model.User2;
 
 import java.util.ArrayList;
 import java.util.List;
