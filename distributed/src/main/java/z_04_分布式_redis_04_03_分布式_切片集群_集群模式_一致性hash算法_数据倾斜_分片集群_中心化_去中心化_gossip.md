@@ -75,5 +75,20 @@ GET hello:key(error)
 ASK 13320 172.16.19.5:6379
 ```
 ![](.z_04_分布式_redis_04_03_分布式_切片集群_集群模式_一致性hash算法_数据倾斜_分片集群_中心化_去中心化_gossip_images/1575a0ed.png)
-
-###集群功能限制
+##数据倾斜
+##避免数据倾斜
+##解决数据倾斜
+reshard
+##集群功能限制
+难以实现聚合操作mset,
+难以实现事务
+###方案,使用tag
+[](https://redis.io/topics/cluster-spec)
+```asp
+127.0.0.1:6380> set {xxoo2}key 111
+OK
+127.0.0.1:6380> set {xxoo2}key111 111
+OK
+127.0.0.1:6380> set {xxoo2}key3 111
+OK
+```
