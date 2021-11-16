@@ -1,4 +1,4 @@
-package com.springfox.swagger.swagger.model;
+package swagger.swagger.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

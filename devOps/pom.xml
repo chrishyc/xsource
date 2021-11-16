@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.springfox</groupId>
-    <artifactId>sre</artifactId>
+    <artifactId>devOps</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>DevOps</name>
     <description>Demo project for Spring Boot</description>
