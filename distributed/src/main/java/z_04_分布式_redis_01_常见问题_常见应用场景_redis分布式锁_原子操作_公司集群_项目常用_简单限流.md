@@ -71,6 +71,7 @@ zset 还可以用来存储学生的成绩，value 值是学生的 ID，score 是
 ```
 ##redis原子操作
 ##redis分布式锁
+[](https://github.com/redis/redis-doc/blob/master/topics/distlock.md)
 setnx,del
 ###应用挂了
 过期时间5s
