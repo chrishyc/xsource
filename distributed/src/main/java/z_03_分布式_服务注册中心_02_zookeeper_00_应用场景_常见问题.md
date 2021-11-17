@@ -1,0 +1,11 @@
+##prometheus服务发现
+服务启动自动上报ip,monitor服务监控zk变化,然后写入prometheus文件
+prometheus监听target(ip)文件的变化
+##dubbo
+zk注册中心
+##zookeeper可以用作数据库吗?
+1.所有的数据都在内存维护,znode数据为1M
+2.最终一致性,要求过半节点应答才返回,吞吐量小
+3.顺序写,无数据结构索引
+4.树状目录是逻辑结构,本质都是在map中的key
+5.zookeeper定位是分布式协调框架
