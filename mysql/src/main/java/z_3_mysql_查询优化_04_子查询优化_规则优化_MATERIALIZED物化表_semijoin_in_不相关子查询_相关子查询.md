@@ -12,6 +12,17 @@ mySQL 的查询优化器会为我们简化这些表达式
 可能通过优化表的连接顺序来降低整体的查询成本，而 外连接 却无法优 化表的连接顺序,外连接和内连接的本质区别就是:对于外连接的驱动表的记录来说，
 如果无法在被驱动表中找到 匹配ON子句中的过滤条件的记录，那么该记录仍然会被加入到结果集中，对应的被驱动表记录的各个字段使用 NULL值填充;
 而内连接的驱动表的记录如果无法在被驱动表中找到匹配ON子句中的过滤条件的记录，那么该记 录会被舍弃
+##逻辑or/and优化
+```asp
+SELECT * FROM single_table WHERE key2 > 100 OR common_field = 'abc';
+SELECT * FROM single_table WHERE key2 > 100 OR TRUE;
+SELECT * FROM single_table WHERE TRUE;
+```
+##多索引时,部分搜索条件用索引+另一部分转化为true
+```asp
+SELECT * FROM single_table WHERE key1 = 'abc' AND key2 > 1000;
+SELECT * FROM single_table WHERE key1 = 'abc';//只用一个索引,回表后过滤另一个
+```
 #子查询位置
 ##select
 ![](.z_3_mysql_查询优化_04_子查询优化_规则优化_MATERIALIZED物化表_semijoin_in_不相关子查询_相关子查询_images/91634d6f.png)
