@@ -4,6 +4,28 @@ join优化指的是mysql服务端优化而不是客户端批量请求处理
 join驱动表选择,考虑因素:磁盘扫描vs内存扫描,索引查询vs全表扫描
 buffer都用于中间结果,不能直接发往客户端
 小表概念:参与 join 的各个字段的总数据量小的那个表，就是“小表”,行数更少,记录字段数据量更少
+##where vs on
+```asp
+WHERE 子句中的过滤条件就是我们平时见的那种，不论是内连接还是外连接，凡是不符合 WHERE 子句中的过 滤条件的记录都不会被加入最后的结果集
+
+对于外连接的驱动表的记录来说，如果无法在被驱动表中找到匹配 ON 子句中的过滤条件的记录，那么该记
+录仍然会被加入到结果集中，对应的被驱动表记录的各个字段使用 NULL 值填充
+
+内连接中的WHERE子句和ON子句是等价的
+```
+##Simple Nested-Loop Join
+![](.z_3_mysql_查询优化_03_join优化_连接优化_joinbuffer_Index-Nested_block-Nested_semi-join_images/0a6c21bc.png)
+![](.z_3_mysql_查询优化_03_join优化_连接优化_joinbuffer_Index-Nested_block-Nested_semi-join_images/b546db52.png)
+join on t1.a=t2.b,如果被驱动表没有索引时,会使用全表扫描:Simple Nested-Loop Join
+###磁盘扫描时间复杂度
+```asp
+N*M(驱动表行数,被驱动表不是索引,需要全表扫描,全表行数为M,需要扫描N次,)
+```
+###内存扫描时间复杂度
+```asp
+M*N
+```
+
 ##Index Nested-Loop Join
 [](https://time.geekbang.org/column/article/79700)
 被驱动表有索引，我们称之为"Index Nested-Loop Join",可能需要回表查询
@@ -20,16 +42,7 @@ M*N
 ##使用join vs 两个单表查询
 单表查询,多了内层循环的m次网络请求,导致业务的表连接速度更慢,网络吞吐量更低
 但对mysql服务端压力更小
-##Simple Nested-Loop Join
-join on t1.a=t2.b,如果被驱动表没有索引时,会使用全表扫描:Simple Nested-Loop Join
-###磁盘扫描时间复杂度
-```asp
-N*M(驱动表行数,被驱动表不是索引,需要全表扫描,全表行数为M,需要扫描N次,)
-```
-###内存扫描时间复杂度
-```asp
-M*N
-```
+
 ##Block Nested-Loop Join(join buffer)
 ```asp
 mysql> EXPLAIN SELECT * FROM s1 INNER JOIN s2;
