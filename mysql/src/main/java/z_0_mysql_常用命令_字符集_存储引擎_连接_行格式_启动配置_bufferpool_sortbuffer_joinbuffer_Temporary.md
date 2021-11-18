@@ -6,6 +6,29 @@ mysql官网索引预习
 ##性能分析
 ###查询计划explain
 explain sql;
+###优化过程详情
+```asp
+mysql> SHOW VARIABLES LIKE 'optimizer_trace';
++-----------------+--------------------------+
+| Variable_name   | Value                    |
++-----------------+--------------------------+
+| optimizer_trace | enabled=off,one_line=off |
++-----------------+--------------------------+
+
+mysql> SET optimizer_trace="enabled=on";
+Query OK, 0 rows affected (0.00 sec)
+
+select * ....
+
+SELECT * FROM information_schema.OPTIMIZER_TRACE;
+
+QUERY :表示我们的查询语句。
+TRACE :表示优化过程的JSON格式文本。
+MISSING_BYTES_BEYOND_MAX_MEM_SIZE :由于优化过程可能会输出很多，如果超过某个限制时，多余的文本
+将不会被显示，这个字段展示了被忽略的文本字节数。
+INSUFFICIENT_PRIVILEGES :表示是否没有权限查看优化过程，默认值是0，只有某些特殊情况下才会是 1 ，我们暂时不关心这个字段的值。
+
+```
 ###执行延时profile
 SET profiling = 1;
 SHOW PROFILES//概述
@@ -269,7 +292,29 @@ SHOW FULL PROCESSLIST;
 
 ##表物理信息分析innodb_space
 [innodb_ruby官方](https://github.com/jeremycole/innodb_ruby/wiki#space-page-type-summary)
-
+SHOW TABLE STATUS LIKE 'single_table'\G
+```asp
+mysql> SHOW TABLE STATUS LIKE 'single_table'\G
+*************************** 1. row ***************************
+           Name: single_table
+         Engine: InnoDB
+        Version: 10
+     Row_format: Dynamic
+           Rows: 14399,//估算值
+ Avg_row_length: 110
+    Data_length: 1589248,//Data_length = 聚簇索引的页面数量 x 每个页面的大小
+Max_data_length: 0
+   Index_length: 3047424
+      Data_free: 4194304
+ Auto_increment: 46177
+    Create_time: 2021-11-05 18:11:33
+    Update_time: NULL
+     Check_time: NULL
+      Collation: utf8_general_ci
+       Checksum: NULL
+ Create_options:
+        Comment:
+```
 ###表空间可视化(数据页)
 ```asp
 show variables like 'datadir';//数据目录
