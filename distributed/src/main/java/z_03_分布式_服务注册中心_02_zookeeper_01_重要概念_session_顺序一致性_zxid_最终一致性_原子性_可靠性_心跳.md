@@ -14,7 +14,7 @@
 所有请求都通过master节点来处理
 #cZxid & mZxid & pZxid
 ![](.z_03_分布式_服务注册中心_02_zookeeper_01_重要概念_session_顺序一致性_zxid_最终一致性_原子性_可靠性_心跳_images/d30cb4d2.png)
-#原子性
+#原子
 过半机制,过半同意/过半拒绝
 #最终一致性
 过半机制
