@@ -5,6 +5,9 @@
 熟悉核心监控指标,加强性能理解
 ##集群配置
 /Users/chris/workspace/zookeeper-cluster
+```asp
+sh start-all.sh
+```
 [集群配置](https://blog.csdn.net/doing_now/article/details/105513236)
 客户端端口号clientport  
 事务日志目录datadir  
@@ -23,11 +26,19 @@
 ![](.z_03_分布式_服务注册中心_02_zookeeper_01_集群搭建_常用命令_监控指标_images/004bf7c5.png)
 日志清理autopurge
 ![](.z_03_分布式_服务注册中心_02_zookeeper_01_集群搭建_常用命令_监控指标_images/ea131956.png)
+##节点操作命令
+help
+ls /
+create [-s|-e] /path ""
+get /path
 ##常用四字命令
 参考[从paxso到zookeeper]8.2
 echo stat | nc ip port
 echo mntr | nc ip port(zk当前连接数)
 echo conf | nc ip port(最大连接数)
+
+Help//帮助命令
+
 ##连接监控
 ```asp
 单台机器连接过多:
@@ -41,5 +52,4 @@ too many connections
 使用单独的磁盘作为事务日志输出目录
 避免swap虚拟内存的使用,调整jvm大小
 ```
-
 
