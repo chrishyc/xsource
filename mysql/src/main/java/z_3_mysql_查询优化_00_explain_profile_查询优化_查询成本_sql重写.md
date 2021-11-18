@@ -231,5 +231,6 @@ EXPLAIN SELECT MIN(key1) FROM s1 WHERE key1 = 'abcdefg';
 在 EXPLAIN 单词和真正的查询语句中间加上 FORMAT=JSON 
 EXPLAIN FORMAT=JSON SELECT * FROM s1 INNER JOIN s2 ON s1.key1 = s2.key2 WHERE s1.co
 #重写详情
-Extented EXPLAIN
+explain extended
 SHOW WARNINGS\G
+
