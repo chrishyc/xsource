@@ -17,6 +17,7 @@
         <module>project</module>
         <module>monitor</module>
         <module>doc</module>
+        <module>es</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->

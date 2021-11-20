@@ -14,3 +14,7 @@
 [](https://segmentfault.com/a/1190000039745779)
 ###CP VS AP
 [](https://developer.51cto.com/art/201909/602506.htm)
+##zookeeper与CP
+![](.z_03_分布式_服务注册中心_02_zookeeper_01_集群模型_选举_images/e1852368.png)
+##eureka与AP
+##nacos与PC与AP
