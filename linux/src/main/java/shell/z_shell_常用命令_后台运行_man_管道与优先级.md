@@ -1,4 +1,4 @@
-#后台运行
+##后台运行
 nohup ./mqnamesrv >./log.txt  2>&1 &
 ```asp
 nohup:忽略内部的挂断信号，不挂断运行
@@ -42,3 +42,5 @@ nohup:忽略内部的挂断信号，不挂断运行
 echo $$ | more,//$$优先级高于|,$$先执行,一般都是优先级高于管道(优先于管道执行),比如查看日志ls -l | grep
 echo $BASHPID | more,//$BASHPID优先级低于|,|先执行,然后子进程$BASHPID
 ```
+##过滤
+egrep 'a|b'
