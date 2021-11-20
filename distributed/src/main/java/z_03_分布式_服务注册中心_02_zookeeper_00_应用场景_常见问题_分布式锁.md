@@ -9,5 +9,6 @@ zk注册中心
 3.顺序写,无数据结构索引
 4.树状目录是逻辑结构,本质都是在map中的key
 5.zookeeper定位是分布式协调框架
+##zookeeper
 ##分布式锁
 使用session会话
