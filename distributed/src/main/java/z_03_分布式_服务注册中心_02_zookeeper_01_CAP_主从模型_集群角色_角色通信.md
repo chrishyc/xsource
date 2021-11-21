@@ -1,8 +1,11 @@
 #临界知识
 心跳包ping,客户端ping通知状态,服务端ping监控状态
 长链接
+观察redis选举连接和leader通信连接
+只有Leader节点可以写入数据，如果是其他节点收到写入数据的请求，则会将之转发给Leader节点
+ack过半机制
 #集群角色
-![](.z_03_分布式_服务注册中心_02_zookeeper_01_CAP_主从模型_选举_集群角色_images/cc076415.png)
+![](.z_03_分布式_服务注册中心_02_zookeeper_01_CAP_主从模型_ZAB共识算法_集群角色_角色通信_images/f64581c1.png)
 ##leader
 ```asp
 1.事务请求唯一调度者和处理者,保证事务的顺序性
@@ -25,13 +28,11 @@ Observer的主要作用是提高zookeeper集群的读性能,为了在提高zooke
 
 处理非事务请求,转发事务请求给leader
 不参与任何事务投票,leader不会将事务请求投票发送给Observer
+
+这样设置的话，是为了避免太多的从节点参与过半写的过程，导致影响性能，这样Zookeeper只要使用一个几台机器的小集群就可以实现高性能了，
+如果要横向扩展的话，只需要增加Observer节点即可
 ```
-
-#选举
-ZAB算法
-![](.z_03_分布式_服务注册中心_02_zookeeper_01_集群模型_选举_images/e1852368.png)
-
-#通信
+#角色通信
 ```asp
 每个节点的配置：
 server.1=localhost:2881:3881(288*处理读/写事务,388*处理选举)
@@ -41,6 +42,7 @@ server.3=localhost:2883:3883
 zk1 up -> zk2 up -> zk3 up
 zk2选为leader
 ```
+![](.z_03_分布式_服务注册中心_02_zookeeper_01_CAP_主从模型_选举_集群角色_角色通信_images/727cf779.png)
 ##三个端口
 ```asp
 1.zookeeper服务端与客户端的连接2181
@@ -92,3 +94,5 @@ netstat -nat |egrep '2883'
 ###client与server通信
 218*
 ![](.z_03_分布式_服务注册中心_02_zookeeper_01_CAP_主从模型_选举_集群角色_角色通信_images/41d03afd.png)
+
+

@@ -39,6 +39,9 @@ stat /path
 create -s /path/name
 create -s /hhh
 ![](.z_03_分布式_服务注册中心_02_zookeeper_00_常用命令_集群搭建_监控指标_监控_运维_images/bda299c1.png)
+###临时顺序
+![](.z_03_分布式_服务注册中心_02_zookeeper_00_常用命令_集群搭建_监控指标_监控_运维_images/73f0f208.png)
+create -s -e /path/name
 ##常用四字命令
 参考[从paxso到zookeeper]8.2
 echo stat | nc ip port

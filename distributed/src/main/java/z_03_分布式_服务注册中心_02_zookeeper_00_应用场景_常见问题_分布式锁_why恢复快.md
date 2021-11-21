@@ -1,3 +1,5 @@
+##临界知识
+读写分离(leader写,follow读+选举,observer读)
 ##prometheus服务发现
 服务启动自动上报ip,monitor服务监控zk变化,然后写入prometheus文件
 prometheus监听target(ip)文件的变化
@@ -12,3 +14,5 @@ zk注册中心
 ##zookeeper
 ##分布式锁
 使用session会话
+##zookeeper为啥leader宕机恢复快?
+选举快,leader+follow节点少,observer节点抗读压力,且不参与选举减少参与选举的节点
