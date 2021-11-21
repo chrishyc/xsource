@@ -22,7 +22,7 @@ leader服务与每一个follower/observer建立tcp长链接,用于数据同步,�
 ##follower
 ```asp
 处理非事务请求,转发事务请求给leader
-参与事务请求投票
+参与事务请求投票,跟随者可以直接处理并响应来自客户端的读请求，但对于写请求，跟随者需要将它转发给领导者处理。
 参与leader选举投票
 ```
 ##Observer
