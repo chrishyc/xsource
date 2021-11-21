@@ -14,5 +14,9 @@ zk注册中心
 ##zookeeper
 ##分布式锁
 使用session会话
+[](https://blog.csdn.net/crazymakercircle/article/details/85956246)
+[](http://git.mashibing.com/bjmashibing/InternetArchitect/blob/master/10%20Zookeeper/src/main/java/com/msb/zookeeper/locks/WatchCallBack.java)
+###惊群
+###重入锁
 ##zookeeper为啥leader宕机恢复快?
 选举快,leader+follow节点少,observer节点抗读压力,且不参与选举减少参与选举的节点
