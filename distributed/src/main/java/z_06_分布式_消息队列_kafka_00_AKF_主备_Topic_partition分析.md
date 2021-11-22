@@ -1,0 +1,11 @@
+#临界知识
+无关的分散在不同分区,提高并发度,有关的按原有顺序放在一个分区
+![](.z_06_分布式_消息队列_kafka_00_AKF_主备_Topic_partition分析_images/59820b2f.png)
+#x轴
+partition主备,partition只能在主上进行读写,从不进行读
+#y轴
+topic
+#z轴
+partition
+![](.z_06_分布式_消息队列_kafka_00_AKF_主备_Topic_partition分析_images/9b5c981b.png)
+offset
