@@ -31,8 +31,9 @@ data :该条 redo 日志的具体内容。
 只要将MLOG_WRITE_STRING类型的redo日志的len字段填充上1、2、4、8这些数字，就可以分别替代MLOG _1BYTE、MLOG_2BYTE、MLOG_4BYTE、MLOG_8BYTE这些类型的redo日志，
 为啥还要多此一举设计这么多类 型呢?还不是因为省空间啊，能不写len字段就不写len字段，省一个字节算一个字节。
 ```
-#
+#redo
 redo记录二级索引的日志，需要去二级索引查找页面，加载到buffer pool中
 如果有多个二级索引，redo日志需要记录多个二级索引，需要从磁盘中读取对应二级索引的页面
 不过因为有change buffer，所以记录change buffer的redo也行
 在不在buffer pool有啥关系吗，不在就把它加载到buffer pool不就好了
+#undo

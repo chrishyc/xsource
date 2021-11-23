@@ -1,5 +1,5 @@
 #临界知识
-无关的分散在不同分区,提高并发度,有关的按原有顺序放在一个分区
+无关的分散在不同分区,提高并发度,有关的按原有顺序放在一个分区(大数据分治)
 ![](.z_06_分布式_消息队列_kafka_00_AKF_主备_Topic_partition分析_images/59820b2f.png)
 #x轴
 partition主备,partition只能在主上进行读写,从不进行读
@@ -8,4 +8,5 @@ topic
 #z轴
 partition
 ![](.z_06_分布式_消息队列_kafka_00_AKF_主备_Topic_partition分析_images/9b5c981b.png)
-offset
+offset,每个消费者对相同的partition可以有自己的offset
+分区内有序,分区外无序
