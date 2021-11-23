@@ -164,7 +164,7 @@ redis-benchmark -t set -P 2 -q,管道可以发送的命令数为2
 cluster meet 127.0.0.1 6381
 cluster nodes,集群节点
 cluster keyslot key,查看key对应的slot
-redis-cli -h 127.0.0.1 -p 6379 cluster addslots {0...5461}
+redis-cli -h 127.0.0.1 -p 6379 cluster addslots {0..5461}
 cluster replicate cfb28ef1deee4e0fa78da86abe5d24566744411e//主从设置
 #db
 CONFIG GET databases//数据库多少个

@@ -7,4 +7,5 @@ i隔离性:多个系统并发执行时,互相不影响
 d持久性:执行结果持久化
 #事务状态
 ![](.z_10_mysql_事务_隔离级别_images/bd0b7817.png)
-#
+#read view
+[](https://github.com/twitter-forks/mysql/blob/master/storage/innobase/include/read0read.h#L124)
