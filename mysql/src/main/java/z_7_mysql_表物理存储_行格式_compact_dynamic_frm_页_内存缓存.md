@@ -10,6 +10,22 @@ LRU热数据冷数据策略
 ##参考
 [mysql是怎么运行的]()
 ##行格式
+###隐藏列
+![](.z_7_mysql_物理存储_行格式_compact_dynamic_内存缓存_零拷贝_images/d771aa4a.png)
+![](.z_7_mysql_物理存储_行格式_compact_dynamic_内存缓存_零拷贝_images/3d80fc89.png)
+####row_id
+```asp
+服务器会在内存中维护一个全局变量，每当向某个包含隐藏的 row_id 列的表中插入一条记录时，就会把该 变量的值当作新记录的 row_id 列的值，并且把该变量自增1。 
+
+每当这个变量的值为256的倍数时，就会将该变量的值刷新到系统表空间的页号为 7 的页面中一个称之为Max Row ID 的属性处(我们前边介绍表空间结构时详细说过)。
+
+当系统启动时，会将上边提到的 Max Row ID 属性加载到内存中，将该值加上256之后赋值给我们前边提到的 全局变量(因为在上次关机时该全局变量的值可能大于 Max Row ID 属性值)
+
+这个 Max Row ID 属性占用的存储空间是8个字节，当某个事务向某个包含 row_id 隐藏列的表插入一条记录，并 且为该记录分配的 row_id 值为256的倍数时，
+就会向系统表空间页号为7的页面的相应偏移量处写入8个字节的 值
+```
+####trx_id
+####roll point
 ###compact
 ![](.z_7_mysql_物理存储_行格式_compact_dynamic_内存缓存_零拷贝_images/9c16d6d0.png)
 
@@ -47,9 +63,7 @@ MySQL 规定 NULL值列表 必须用整数个字节的位表示，如果使用�
 ####记录头
 ![](.z_7_mysql_物理存储_行格式_compact_dynamic_内存缓存_零拷贝_images/843ddb48.png)
 ![](.z_7_mysql_物理存储_行格式_compact_dynamic_内存缓存_零拷贝_images/fb2ecc07.png)
-####隐藏列
-![](.z_7_mysql_物理存储_行格式_compact_dynamic_内存缓存_零拷贝_images/d771aa4a.png)
-![](.z_7_mysql_物理存储_行格式_compact_dynamic_内存缓存_零拷贝_images/3d80fc89.png)
+
 
 ###行溢出
 ![](.z_7_mysql_物理存储_行格式_compact_dynamic_内存缓存_零拷贝_images/eda38fe2.png)
@@ -139,7 +153,3 @@ old 区域逐出，而不会影响 young 区域中被使用比较频繁的缓存
 ###zip clean链表
 用于管理没有被解压的压缩页表
 ##frm表结构
-##零拷贝
-[](https://spongecaptain.cool/post/mysql/zerocopyofmysql/)
-[](https://zhuanlan.zhihu.com/p/330515575)
-[](https://www.cnblogs.com/zhoujinyi/p/4270745.html)
