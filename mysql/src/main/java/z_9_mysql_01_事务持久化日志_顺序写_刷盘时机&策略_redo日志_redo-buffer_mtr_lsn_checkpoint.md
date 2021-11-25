@@ -4,6 +4,8 @@ redo物理逻辑日志(页面是物理页面,内容是物理记录,逻辑指需�
 redo是先满足持久化的核心需求,然后再异步更新逻辑
 redo日志会把事务在执行过程 中对数据库所做的所有修改都记录下来，在之后系统奔溃重启后可以把事务所做的任何修改都恢复出来
 mysql插入一条记录的时候，需要悲观插入时，buffer pool中进行了实际的插入和页分裂，redo只是记录了这个过程中页的操作。插入和分裂其实是真实发生了，只是没有回写到磁盘
+redo日志刷盘时机
+redo崩溃恢复机制
 #redo日志的作用,提高持久化速度
 ##why need?
 ```asp
@@ -141,4 +143,85 @@ checkpoint 的序号
 日志就需要被复制到 log buffer 中，也就是说不同事务的 mtr 可能是交替写入 log buffer 的
 ![](.z_9_mysql_事务持久化日志_顺序写_redo日志_undo日志_images/1c940931.png)
 ![](.z_9_mysql_事务持久化日志_顺序写_redo日志_undo日志_images/2205dc82.png)
-#undo
+#redo日志刷盘时机 & 刷盘策略
+##刷盘时机
+```asp
+1.事务提交时
+我们前边说过之所以使用 redo 日志主要是因为它占用的空间少，还是顺序写，在事务提交时可以不把修改 过的 Buffer Pool 页面刷新到磁盘，
+但是为了保证持久性，必须要把修改这些页面对应的 redo 日志刷新到 磁盘。
+
+2.后台线程不停的刷刷刷
+后台有一个线程，大约每秒都会刷新一次 log buffer 中的 redo 日志到磁盘
+
+3.log buffer 空间不足时
+log buffer 的大小是有限的(通过系统变量 innodb_log_buffer_size 指定)，如果不停的往这个有限大小 的 log buffer 里塞入日志，
+很快它就会被填满。设计 InnoDB 的大叔认为如果当前写入 log buffer 的redo 日志量已经占满了 log buffer 总容量的大约一半左右，就需要把这些日志刷新到磁盘上
+
+4.做所谓的 checkpoint 时
+```
+##innodb_flush_log_at_trx_commit
+```asp
+0 :当该系统变量值为0时，表示在事务提交时不立即向磁盘中同步 redo 日志，这个任务是交给后台线程 做的。
+这样很明显会加快请求处理速度，但是如果事务提交后服务器挂了，后台线程没有及时将 redo 日志刷新到 磁盘，那么该事务对页面的修改会丢失。
+
+1 :当该系统变量值为1时，表示在事务提交时需要将 redo 日志同步到磁盘，可以保证事务的 持久性 。 1 也是 innodb_flush_log_at_trx_commit 的默认值。
+
+2 :当该系统变量值为2时，表示在事务提交时需要将 redo 日志写到操作系统的缓冲区中，但并不需要保 证将日志真正的刷新到磁盘。
+这种情况下如果数据库挂了，操作系统没挂的话，事务的 持久性 还是可以保证的，但是操作系统也挂了的 话，那就不能保证 持久性 了
+```
+
+#redo日志文件格式
+![](.z_9_mysql_事务持久化日志_顺序写_redo日志_undo日志_images/a866a44e.png)
+将log buffer中的redo日志刷新到磁盘的本质就是把block的镜像写入日志文件中，所以 redo 日志文件其实也是由若干 个 512 字节大小的block组成。
+![](.z_9_mysql_事务持久化日志_顺序写_redo日志_undo日志_images/714e286c.png)
+##Log Sequeue Number(LSN日志序列号)
+在统计 lsn 的增长量时，是按照实际 写入的日志量加上占用的 log block header 和 log block trailer 来计算的
+![](.z_9_mysql_事务持久化日志_顺序写_redo日志_undo日志_images/a10728db.png)
+每一组由mtr生成的redo日志都有一个唯一的LSN值与其对应，LSN值越小，说明 redo日志产生的越早。
+##flushed_to_disk_lsn/buf_next_to_write
+![](.z_9_mysql_事务持久化日志_顺序写_redo日志_undo日志_images/ea0982b2.png)
+redo 日志被不断写入 log buffer ，但是并不会立即刷新到磁盘， lsn 的值就和 flushed_to_disk_lsn 的 值拉开了差距
+![](.z_9_mysql_事务持久化日志_顺序写_redo日志_undo日志_images/fbbd8f62.png)
+当有新的 redo 日志写入到 log buffer 时，首先 lsn 的值会增长，但 flushed_to_disk_lsn 不变， 随后随着不断有 log buffer 中的日志被
+刷新到磁盘上， flushed_to_disk_lsn 的值也跟着增长。如果两者的值 相同时，说明log buffer中的所有redo日志都已经刷新到磁盘中了
+##flush链表中的lsn
+flush链表中的脏页是按照页面的第 一次修改时间从大到小进行排序的
+把在mtr执行过程中可能修改过的页面加入到Buffer Pool的flush链表
+##checkpointlsn
+```asp
+redo日志只是为了系统 奔溃后恢复脏页用的，如果对应的脏页已经刷新到了磁盘，也就是说即使现在系统奔溃，那么在重启后也用不着 使用redo日志恢复
+该页面了，所以该redo日志也就没有存在的必要了，那么它占用的磁盘空间就可以被后续的 redo日志所重用。也就是说:判断某些redo日志占用的磁盘空间
+是否可以覆盖的依据就是它对应的脏页是否已经 刷新到磁盘里
+
+比方说现在 页a 被刷新到了磁盘， mtr_1 生成的 redo 日志就可以被覆盖了，所以我们可以进行一个增加 checkpoint_lsn 的操作，我们把这个过程称之为做一次 checkpoint 。
+```
+![](.z_9_mysql_事务持久化日志_顺序写_redo日志_undo日志_images/a53fb1a6.png)
+![](.z_9_mysql_事务持久化日志_顺序写_redo日志_undo日志_images/1e4b449b.png)
+##checkpoint_no
+目前系统做了多少次 checkpoint 的变量 checkpoint_no ，每做一次 checkpoint ，该变量的值就加1。我们前边说过计算一个 lsn 值对应的 redo 日志文件组偏移量是很容易
+的，所以可以计算得到该 checkpoint_lsn 在 redo 日志文件组中对应的偏移量 checkpoint_offset ，然后 把这三个值都写到 redo 日志文件组的管理信息中
+
+#崩溃恢复
+##起点
+```asp
+需要从 checkpoint_lsn 开始读取 redo 日志 来恢复页面。
+当然， redo 日志文件组的第一个文件的管理信息中有两个block都存储了 checkpoint_lsn 的信息，我们当然是 要选取最近发生的那次checkpoint的信息。
+衡量 checkpoint 发生时间早晚的信息就是所谓的 checkpoint_no ， 我们只要把 checkpoint1 和 checkpoint2 这两个block中的 checkpoint_no 值读出来比一下大小，哪个的
+checkpoint_no 值更大，说明哪个block存储的就是最近的一次 checkpoint 信息。这样我们就能拿到最近发生 的 checkpoint 对应的 checkpoint_lsn 
+值以及它在 redo 日志文件组中的偏移量 checkpoint_offset
+```
+##终点
+![](.z_9_mysql_事务持久化日志_顺序写_刷盘时机&策略_redo日志_undo日志_redo-buffer_mtr_lsn_checkpoint_images/f5c476e6.png)
+```
+redo 日志恢复的起点确定了，那终点是哪个呢?这个还得从block的结构说起。我们说在写 redo 日志的时候都
+是顺序写的，写满了一个block之后会再往下一个block中写
+普通block的 log block header 部分有一个称之为 LOG_BLOCK_HDR_DATA_LEN 的属性，该属性值记录了当前block 里使用了多少字节的空间。
+对于被填满的block来说，该值永远为 512 。如果该属性的值不为 512 ，那么就是它 了，它就是此次奔溃恢复中需要扫描的最后一个block。
+```
+##恢复过程
+根据 redo 日志的 space ID 和 page number 属性计算出散列值，把 space ID 和 page number 相同的 redo 日志放到哈希表的同一个槽里，
+如果有多个 space ID 和 page number 都相同的 redo 日志，那么它们之间 使用链表连接起来，按照生成的先后顺序链接起来的
+![](.z_9_mysql_事务持久化日志_顺序写_刷盘时机&策略_redo日志_undo日志_redo-buffer_mtr_lsn_checkpoint_images/ff3490a6.png)
+同一个 页面的 redo 日志是按照生成时间顺序进行排序的，所以恢复的时候也是按照这个顺序进行恢复，如果不按 照生成时间顺序进行排序的话，那么可能出现错误
+##跳过已经刷新到磁盘的页面
+![](.z_9_mysql_事务持久化日志_顺序写_刷盘时机&策略_redo日志_undo日志_redo-buffer_mtr_lsn_checkpoint_images/30a16a1c.png)
