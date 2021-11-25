@@ -326,6 +326,8 @@ innodb_space -s /Users/chris/Library/Application\ Support/com.tinyapp.DBngin/Eng
 innodb_space -s /Users/chris/Library/Application\ Support/com.tinyapp.DBngin/Engines/mysql/10249D8A-1975-4E97-9DDD-2085652161E7/ibdata1 -T sakila/s1 space-extents-illustrate
 ```
 ![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_buffer_pool_images/0e7d21fa.png)
+##查看系统LSN
+SHOW ENGINE INNODB STATUS
 ##系统变量
 SHOW VARIABLES [LIKE 匹配的模式];
 SHOW [GLOBAL|SESSION] VARIABLES [LIKE 匹配的模式];
