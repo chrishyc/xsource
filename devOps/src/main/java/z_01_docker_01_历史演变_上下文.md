@@ -3,9 +3,7 @@
 paas(打包应用到云环境,和本机环境差异性很大) vs docker(直接把应用和环境全部打包)
 linux沙盒机制:Cgroups,Namespace
 Devops
-阿里云
-Paas
-AWS
+
 #docker定位
 [深入剖析Kubernetes,极客时间]
 本地环境和云端环境的高度一致,这种机制直接打包了应用运行所需要的整个操作系统，
