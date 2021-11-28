@@ -10,6 +10,7 @@ devops核心:automation,自动化,
 ![](.z_00_devops_开发_运维_业务_安全合规_瀑布流_敏捷开发_images/512fd613.png)
 将测试工作从研发末端的一个独立环节注入整个开发活动中
 ##DevOps 模式
+![](.z_00_devops_开发_运维_业务_安全合规_瀑布流_敏捷开发_images/71885127.png)
 DevOps = 敏捷开发 + 持续集成 + 自动化测试 + 持续发布 
 ![](.z_00_devops_开发_运维_业务_安全合规_瀑布流_敏捷开发_images/b5cdb0f3.png)
 ![](.z_00_devops_开发_运维_业务_安全合规_瀑布流_敏捷开发_images/f007f4fe.png)
@@ -31,6 +32,8 @@ evOps是各团队(已不单指开发与运维)一起紧密协作工作，以更�
 ![](.z_00_devops_开发_运维_业务_安全合规_瀑布流_敏捷开发_images/02c9a1f1.png)
 ![](.z_00_devops_开发_运维_业务_安全合规_瀑布流_敏捷开发_images/5f3a1930.png)
 ![](.z_00_devops_开发_运维_业务_安全合规_瀑布流_敏捷开发_images/4b28b899.png)
+[devops发音](http://dict.youdao.com/search?q=devops&ue=utf8&keyfrom=chrome.extension)
+[](https://www.kubernetes.org.cn/9538.html)
 ##JIRA/TB/飞书
 项目管理
 ##gitlab
@@ -41,5 +44,11 @@ evOps是各团队(已不单指开发与运维)一起紧密协作工作，以更�
 持续交付CD
 ##Prometheus
 系统监控
-##日志管理
-ELK
+##ELK
+日志管理
+##Puppet
+编译部署
+
+#阿里devops
+![](.z_00_devops_开发_运维_业务_安全合规_瀑布流_敏捷开发_images/5bcd1660.png)
+[](https://cn.aliyun.com/solution/devops/yunxiao)
