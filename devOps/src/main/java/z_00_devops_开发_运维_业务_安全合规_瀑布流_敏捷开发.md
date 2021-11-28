@@ -2,6 +2,7 @@
 流程线性开发部署模式到网状互通模式
 开发人员,测试人员,运维人员,安全合规,业务人员,提供各自的自动化工具,互相参与协作
 devops核心:automation,自动化,
+观察工作中的devops
 #开发模式
 [](https://time.geekbang.org/column/article/144204?utm_term=zeusXCHI8&utm_source=infoq&utm_medium=web)
 ##瀑布式开发模式
