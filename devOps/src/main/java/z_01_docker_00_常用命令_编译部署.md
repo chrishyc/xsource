@@ -1,11 +1,35 @@
 #临界知识
 docker沙盒
 docker如何做到本地环境和云端环境的高度一致
+tty字符型设备
 #编译部署docker镜像
 docker build .
 #启动容器
-docker run 
-#
+// docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
+docker run -it busybox /bin/sh //运行容器grafana/grafana,并执行命令/bin/sh ，使用终端交互方式-it
+#namespace查看
+##pid进程号
+ls -l /proc/[pid]/ns
+![](.z_01_docker_00_常用命令_编译部署_images/a47d9e2f.png)
+##mount挂载
+cat /proc/$$/mounts,//挂载的文件系统
+cat /proc/$$/mountstats,//挂载文件名，位置
+![](.z_01_docker_00_常用命令_编译部署_images/dfe301ed.png)
+mount --make-shared <mount-object>
+mount --make-slave <shared-mount-object>
+```asp
+-B, --bind              mount a subtree somewhere else (same as -o bind)
+ -M, --move              move a subtree to some other place
+ -R, --rbind             mount a subtree and all submounts somewhere else
+ --make-shared           mark a subtree as shared
+ --make-slave            mark a subtree as slave
+ --make-private          mark a subtree as private
+ --make-unbindable       mark a subtree as unbindable
+ --make-rshared          recursively mark a whole subtree as shared
+ --make-rslave           recursively mark a whole subtree as slave
+ --make-rprivate         recursively mark a whole subtree as private
+ --make-runbindable      recursively mark a whole subtree as unbindable
+```
 
 swam，docker集群
 1.监控哪些?业务,中间件
@@ -82,7 +106,7 @@ netstat -tln
 
 docker logs -f
 
-docker run -it grafana/grafana /bin/sh
+
 
 grafana docker转发 404问题,https://grafana.com/docs/grafana/latest/administration/configure-docker/
 https://grafana.com/docs/grafana/latest/administration/configuration/

@@ -47,7 +47,7 @@ ln [-sf] 来源文件 目标文件
 repquota -v /home
 
 ##挂载
-mount
+mount -t auto /dev/cdrom /mnt/cdrom
 ![](.z_操作系统_linux文件系统_常用命令_images/48653ebe.png)
 ##磁盘阵列
 ##lvm
