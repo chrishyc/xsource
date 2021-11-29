@@ -377,6 +377,14 @@ show variables like '%version%'
 ##线程状态变量
 SHOW [GLOBAL|SESSION] STATUS [LIKE 匹配的模式];
 SHOW STATUS LIKE 'thread%';
+
+##事务相关
+SHOW VARIABLES LIKE 'transaction_isolation';//公司使用REPEATABLE-READ
+SELECT @@transaction_isolation;
+
+SET GLOBAL TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 ##mysql启动配置(连接/tmp/socket失败,连接127.0.0.1失败)
 DBngin:mysql -uroot --socket=/tmp/mysql_3306.sock
 ```asp
