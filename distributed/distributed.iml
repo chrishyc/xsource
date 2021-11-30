@@ -56,12 +56,15 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.typesafe.akka:akka-slf4j_2.12:2.4.20" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.clapper:grizzled-slf4j_2.12:1.3.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.scopt:scopt_2.12:3.5.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.xerial.snappy:snappy-java:1.1.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.twitter:chill_2.12:0.7.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.twitter:chill-java:0.7.6" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.flink:flink-clients_2.12:1.7.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.flink:flink-optimizer_2.12:1.7.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.flink:flink-shaded-guava:18.0-5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.kafka:kafka-clients:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.luben:zstd-jni:1.4.3-1" level="project" />
+    <orderEntry type="library" name="Maven: org.lz4:lz4-java:1.6.0" level="project" />
+    <orderEntry type="library" name="Maven: org.xerial.snappy:snappy-java:1.1.7.3" level="project" />
     <orderEntry type="library" name="Maven: org.quartz-scheduler:quartz:2.2.1" level="project" />
     <orderEntry type="library" name="Maven: c3p0:c3p0:0.9.1.1" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
