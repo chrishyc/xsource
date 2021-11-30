@@ -1,6 +1,5 @@
 package web.spring.open.ioc.cycle;
 
-import ioc.cycle.CycleABean;
 import web.spring.mine.annotation.Autowired;
 import web.spring.mine.annotation.Component;
 import org.springframework.beans.BeansException;

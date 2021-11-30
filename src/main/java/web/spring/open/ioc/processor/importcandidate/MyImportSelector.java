@@ -1,6 +1,5 @@
 package web.spring.open.ioc.processor.importcandidate;
 
-import ioc.processor.importcandidate.MyConfiguration;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
 /**

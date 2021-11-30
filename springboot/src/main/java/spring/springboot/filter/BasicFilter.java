@@ -1,18 +1,20 @@
 package spring.springboot.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Component;
 import sun.misc.BASE64Decoder;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 //@Component
 public class BasicFilter implements Filter {
-
-
+    
+    
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+    
+    }
+    
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 //        int resultStatusCode = checkHTTPBasicAuthorize(request);
@@ -21,7 +23,12 @@ public class BasicFilter implements Filter {
 //            chain.doFilter(request, response);
 //        }
     }
-
+    
+    @Override
+    public void destroy() {
+    
+    }
+    
     private int checkHTTPBasicAuthorize(ServletRequest request) {
         try {
             HttpServletRequest httpRequest = (HttpServletRequest) request;

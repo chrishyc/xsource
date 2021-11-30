@@ -1,11 +1,6 @@
 package spring.springboot.interceptor;
 
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.session.config.annotation.web.http.SpringHttpSessionConfiguration;
-import org.springframework.session.data.redis.RedisIndexedSessionRepository;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
-import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration;
-import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
