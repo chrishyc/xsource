@@ -1,6 +1,5 @@
 package web.spring.open.ioc.cycle;
 
-import ioc.cycle.TestBean;
 import web.spring.mine.annotation.Autowired;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
@@ -10,7 +9,7 @@ import org.springframework.context.ApplicationContextAware;
 //@Component
 public class CycleBean implements InitializingBean, ApplicationContextAware {
     @Autowired
-    private ioc.cycle.TestBean testBean;
+    private TestBean testBean;
 
     public void setTestBean(TestBean testBean) {
         this.testBean = testBean;

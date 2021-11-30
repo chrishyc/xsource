@@ -1,12 +1,6 @@
 package web.spring.open.ioc;
 
-import ioc.AppConfig;
-import ioc.beanwrapper.Car;
-import ioc.cycle.TestBean;
-import ioc.lazyinit.LazyInitBean;
-import ioc.life.LifeBean;
-import ioc.processor.importcandidate.MyComponent;
-import ioc.processor.importcandidate.MyImportSelector;
+
 import org.junit.Test;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -16,6 +10,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import web.spring.open.ioc.beanwrapper.Car;
+import web.spring.open.ioc.cycle.TestBean;
+import web.spring.open.ioc.lazyinit.LazyInitBean;
+import web.spring.open.ioc.life.LifeBean;
+import web.spring.open.ioc.processor.importcandidate.MyComponent;
+import web.spring.open.ioc.processor.importcandidate.MyImportSelector;
 
 public class Sample {
   /**

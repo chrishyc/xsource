@@ -11,6 +11,12 @@
 
     <groupId>com.xsource</groupId>
     <artifactId>es</artifactId>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>7.5.1</version>
+        </dependency>
+    </dependencies>
 
 </project>

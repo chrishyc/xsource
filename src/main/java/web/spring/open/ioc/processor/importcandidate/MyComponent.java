@@ -1,9 +1,9 @@
 package web.spring.open.ioc.processor.importcandidate;
 
-import ioc.cycle.TestBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Component;
+import web.spring.open.ioc.cycle.TestBean;
 
 /**
  * 会注入容器

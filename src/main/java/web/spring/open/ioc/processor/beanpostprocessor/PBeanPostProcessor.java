@@ -1,6 +1,5 @@
 package web.spring.open.ioc.processor.beanpostprocessor;
 
-import ioc.processor.beanpostprocessor.NBeanPostProcessor;
 import web.spring.mine.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.BeansException;

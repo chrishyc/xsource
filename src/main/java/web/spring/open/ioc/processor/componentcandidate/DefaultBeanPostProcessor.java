@@ -1,6 +1,5 @@
 package web.spring.open.ioc.processor.componentcandidate;
 
-import ioc.AppConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.ComponentScan;
@@ -8,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.stereotype.Component;
+import web.spring.open.ioc.AppConfig;
 
 @Configuration
 @Component

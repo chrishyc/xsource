@@ -1,6 +1,5 @@
 package web.spring.open.ioc.factorybean;
 
-import ioc.factorybean.Company;
 import lombok.Data;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -9,8 +8,8 @@ public class CompanyFactoryBean implements FactoryBean {
     private String companyInfo;
 
     @Override
-    public ioc.factorybean.Company getObject() throws Exception {
-        ioc.factorybean.Company company = new ioc.factorybean.Company();
+    public Company getObject() throws Exception {
+        Company company = new Company();
         String[] strings = companyInfo.split(",");
         company.setName(strings[0]);
         company.setAddress(strings[1]);

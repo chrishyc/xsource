@@ -2,7 +2,6 @@ package spring.springboot.controller;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 import spring.springboot.exception.ServerException;
 
@@ -22,12 +21,6 @@ public class StatusCodeController {
         return "hello";
     }
     
-    @RequestMapping(value = "/json", method = RequestMethod.POST)
-    @ResponseBody
-    public String jsonObject(@RequestBody JSONObject object) {
-        System.out.println(object.toString());
-        return object.toString();
-    }
     
     @GetMapping(value = "/boolean")
     @ResponseBody
