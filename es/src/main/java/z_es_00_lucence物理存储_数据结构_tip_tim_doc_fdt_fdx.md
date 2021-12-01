@@ -10,3 +10,4 @@
 4. 插入acg时，计算出和acf共享前缀ac，这时输入已经结束，所有数据写入磁盘。tim中写入后缀词块f、g和相对应的倒排表位置，tip中写入c和以ac为前缀的后缀词块位置。
 ```
 [](https://www.cnblogs.com/sessionbest/articles/8689030.html)
+[](https://www.cnblogs.com/bonelee/p/6394451.html)
