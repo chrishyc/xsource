@@ -425,3 +425,12 @@ mysqld --defaults-file=/tmp/myconfig.txt
 [mysqladmin] (具体的启动选项...)
 ```
 ![](.z_0_mysql_常用命令_性能优化_字符集_存储引擎_连接_行格式_启动配置_images/b5b640a1.png)
+##binlog
+show variables like '%binlog%format%';
+show binlog events in '**-bin.000001' from 6048;
+##集群状态
+show SLAVE status;
+![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_bufferpool_sortbuffer_joinbuffer_Temporary_images/d702b7ca.png)
+##主从复制
+show variables like '%slave_parallel_workers%';
+公司是16个
