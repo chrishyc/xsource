@@ -14,6 +14,8 @@
 
 ##异步复制
 ![](.z_10_mysql_集群架构_binlog_relaylog_主从复制_异步复制_半同步复制_images/aed8161d.png)
+![](.z_10_mysql_集群架构_binlog_relaylog_主从复制_异步复制_半同步复制_复制优化_images/1d918797.png)
+[](https://time.geekbang.org/column/article/76446)
 ##半同步复制
 ![](.z_10_mysql_集群架构_binlog_relaylog_主从复制_异步复制_半同步复制_images/fab19984.png)
 ![](.z_10_mysql_集群架构_binlog_relaylog_主从复制_异步复制_半同步复制_images/d88b44ae.png)
