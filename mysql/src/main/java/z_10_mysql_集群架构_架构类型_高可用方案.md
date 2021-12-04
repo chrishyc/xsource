@@ -1,0 +1,19 @@
+#架构类型
+##一主多从
+![](.z_10_mysql_集群架构_架构类型_高可用方案_images/6b9d38cd.png)
+主库异步推送
+##多级复制
+![](.z_10_mysql_集群架构_架构类型_高可用方案_images/7861d781.png)
+结合BLACKHOLE引擎
+##双主复制
+![](.z_10_mysql_集群架构_架构类型_高可用方案_images/73f28c8e.png)
+##主从切换
+手动切换
+##双主故障切换
+MHA+半同步,[深入浅出mysql 33]
+![](.z_10_mysql_集群架构_架构类型_高可用方案_images/b67b107b.png)
+![](.z_10_mysql_集群架构_架构类型_高可用方案_images/63fdfdf7.png)
+keepalive+双主被动
+[](https://www.cnblogs.com/wjxzs/p/14245019.html)
+##双主主动问题
+[](https://blog.csdn.net/weixin_32075843/article/details/113595112)
