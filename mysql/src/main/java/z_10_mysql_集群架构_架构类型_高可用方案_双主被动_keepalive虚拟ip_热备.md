@@ -9,11 +9,15 @@
 ![](.z_10_mysql_集群架构_架构类型_高可用方案_images/73f28c8e.png)
 ##主从切换
 手动切换
-##双主故障切换
+##双主被动模式故障切换
 MHA+半同步,[深入浅出mysql 33]
 ![](.z_10_mysql_集群架构_架构类型_高可用方案_images/b67b107b.png)
 ![](.z_10_mysql_集群架构_架构类型_高可用方案_images/63fdfdf7.png)
 keepalive+双主被动
 [](https://www.cnblogs.com/wjxzs/p/14245019.html)
-##双主主动问题
+![](.z_10_mysql_集群架构_架构类型_高可用方案_images/9214fe90.png)
+###双主被动与主从的区别
+双主开复制线程
+主从的从库没有开复制线程
+##双主主动问题&方案
 [](https://blog.csdn.net/weixin_32075843/article/details/113595112)
