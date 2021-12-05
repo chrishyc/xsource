@@ -1,0 +1,10 @@
+#临界知识
+存储与计算分离
+#talos
+流式数据平台
+![](.z_06_分布式_消息队列_kafka_00_流式数据_images/5e3b2486.png)
+存储计算分离
+[](https://cloud.mioffice.cn/#/product/community/article/detail?id=84&_k=67ham8)
+[](https://xiaomi.f.mioffice.cn/file/boxk4qnRto9mos6s4MnLWfZrWLd)
+[](file:///Users/chris/Downloads/79-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E9%AB%98%E6%89%8B%E8%AF%BE/03-%E8%BF%9B%E9%98%B6%E7%AF%87%20(22%E8%AE%B2)/27%E4%B8%A8Pulsar%E7%9A%84%E5%AD%98%E5%82%A8%E8%AE%A1%E7%AE%97%E5%88%86%E7%A6%BB%E8%AE%BE%E8%AE%A1%EF%BC%9A%E5%85%A8%E6%96%B0%E7%9A%84%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF.html)
+[](https://www.kancloud.cn/kancloud/log-real-time-datas-unifying/58708)

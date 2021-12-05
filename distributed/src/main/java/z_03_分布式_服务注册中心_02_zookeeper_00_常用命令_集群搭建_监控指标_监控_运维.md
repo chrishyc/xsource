@@ -7,6 +7,8 @@
 /Users/chris/workspace/zookeeper-cluster
 ```asp
 sh start-all.sh
+zkServer status
+
 ```
 [集群配置](https://blog.csdn.net/doing_now/article/details/105513236)
 客户端端口号clientport  
