@@ -88,14 +88,15 @@ rocketmq提供顺序、延迟、定时、重投、死信、事务消息、会话
 RocketMQ支持定时消息
 RocketMQ支持根据Message Id查询消息，也支持根据消息内容查询消息
 rocketmq支持事务消息
-rocketmq支持消息轨迹
+rocketmq支持消息轨迹,[消息轨迹]
 rocketmq高可用的跟踪和审计
 RocketMQ支持Broker端消息过滤方式,根据Message Tag来过滤，相当于子topic概念
 重试队列，死信队列
 ```
+[消息轨迹,官网中文文档 msg_trace](https://miludeer.github.io/2019/06/30/source-note-rocket-mq-message-trace/)
 ##吞吐
 ##事务性
-[](https://juejin.cn/post/6867040340797292558#heading-6)
+[kafka事务 VS rocketmq事务](https://juejin.cn/post/6867040340797292558#heading-6)
 ```asp
 kafka事务
 ```
@@ -105,5 +106,13 @@ rocketmq事务
 
 ##EOS恰好一次
 
+##生态
+rocketmq
+![](.z_06_分布式_消息队列_00_选型对比_kafka_rocketmq_images/328aabf9.png)
+[](https://www.cnblogs.com/arthinking/p/15590677.html?hmsr=joyk.com&utm_source=joyk.com&utm_medium=referral)
+
 ##相关技术
 dubbo,zk,tfs,nacos,euraka,
+
+
+#kafka vs pulsar对比
