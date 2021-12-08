@@ -9,3 +9,4 @@ cat /proc/irq,查看中断向量目录
 ![](.z_操作系统_cpu_常用命令_images/609aeab8.png)
 ##查看cpu型号
 uname -a
+lscpu,查看cpu信息
