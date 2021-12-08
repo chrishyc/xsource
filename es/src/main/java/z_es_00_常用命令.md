@@ -6,3 +6,6 @@
 
 ./kibana
 
+#集群启动常见问题
+[](https://www.cnblogs.com/cnsdhzzl/p/9401829.html)
+[](https://www.cnblogs.com/hellxz/p/11057234.html)

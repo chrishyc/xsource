@@ -6,6 +6,7 @@ start/stop脚本:/Users/chris/workspace/rocketmq-cluster/rocketmq-4.9.1/bin/dled
 [](https://juejin.cn/post/6844904199805730824#heading-10)
 [](https://blog.51cto.com/u_15281317/3008349#4_DlegerrokcetMQ_586)
 [四种集群模式](https://segmentfault.com/a/1190000038318572)
+
 ##常用命令
 ###查看集群选举情况
 sh bin/mqadmin clusterList -n 127.0.0.1:9876
@@ -41,6 +42,16 @@ RaftNode00
 ###查看borker信息
 ./mqadmin brokerStatus -n localhost:9876 -b localhost:30931
 ./mqadmin getBrokerConfig -n localhost:9876 -b localhost:30931
+###扩容
+
+##日志目录
+查看配置
+/Users/chris/workspace/rocketmq-cluster/rocketmq-4.9.1/conf/dledger/broker-n0.conf
+查看目录
+```asp
+storePathRootDir=/tmp/rmqstore/node00
+storePathCommitLog=/tmp/rmqstore/node00/commitlog
+```
 
 ##性能监控
 RocketMQ	<10ms	3w+,1s 300W+

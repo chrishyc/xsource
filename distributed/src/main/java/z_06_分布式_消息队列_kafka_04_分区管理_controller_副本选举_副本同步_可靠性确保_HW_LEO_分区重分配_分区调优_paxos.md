@@ -1,4 +1,6 @@
 #临界知识
+controller选举leader副本
+分区同步
 #控制器controller
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_controller_副本选举_分区重分配_分区调优_paxos_images/39b9989b.png)
 ```asp
@@ -41,11 +43,14 @@ Topic:topic-demo2	PartitionCount:3	ReplicationFactor:3	Configs:
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_副本选举_分区重分配_分区调优_paxos_images/f5815b99.png)
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_controller_副本选举_分区重分配_分区调优_paxos_images/5fd3041e.png)
 
+#分区同步
+##OSR失效副本
+![](.z_06_分布式_消息队列_kafka_04_分区管理_controller_副本选举_副本同步_HW_LEO_分区重分配_分区调优_paxos_images/354db8fd.png)
+
+#分区重分配
 ##分区不平衡率
 不平衡率=非优先副本的leader个数/分区总数
 手动重分配
-
-#分区重分配
 
 #分区性能
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_副本选举_分区重分配_分区调优_paxos_images/bb4df5ae.png)

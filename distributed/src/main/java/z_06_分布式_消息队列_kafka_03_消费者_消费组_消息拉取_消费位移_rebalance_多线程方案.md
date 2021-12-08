@@ -13,6 +13,8 @@ rebalance
 ##自动topic
 ##自动模板
 ##手动assign(不能rebalance)
+#HW
+![](.z_06_分布式_消息队列_kafka_03_消费者_消费组_消息拉取_消费位移_rebalance_多线程方案_images/c0a41856.png)
 #消息拉取(批量)
 ![](.z_06_分布式_消息队列_kafka_03_消费者_消费组_消息拉取_消费位移_rebalance_多线程方案_images/7a4f57dd.png)
 ![](.z_06_分布式_消息队列_kafka_03_消费者_消费组_消息拉取_消费位移_rebalance_多线程方案_images/454bcf6d.png)
