@@ -13,3 +13,4 @@ Kafka 系统的写性能很强
 ```
 #Kafka的优势在哪里？
 #kafka为什么是主读主写?
+[](https://time.geekbang.org/column/article/246934)

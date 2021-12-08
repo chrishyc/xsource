@@ -4,6 +4,7 @@
 ![](.z_06_分布式_消息队列_00_选型对比_kafka_rocketmq_images/ba748ea6.png)
 [](https://rocketmq.apache.org/)
 ![](.z_06_分布式_消息队列_00_选型对比_kafka_rocketmq_images/c321d836.png)
+[](https://segmentfault.com/a/1190000019547121)
 #kafka vs rocketmq对比
 ##场景定位
 ```asp
