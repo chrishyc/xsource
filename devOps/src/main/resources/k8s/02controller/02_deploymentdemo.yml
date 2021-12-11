@@ -6,6 +6,9 @@ metadata:
     app: deploymentdemo
 spec:
   replicas: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
   template:
     metadata:
       name: deploymentdemo

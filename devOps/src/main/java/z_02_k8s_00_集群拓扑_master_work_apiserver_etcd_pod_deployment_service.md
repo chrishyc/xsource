@@ -48,3 +48,7 @@ kubectl提供了大量的子命令，方便管理Kubernetes集群中的各种功
 ```
 ##pod
 ![](.z_02_k8s_00_集群拓扑_master_work_apiserver_etcd_pod_deployment_images/e1662553.png)
+
+###pod 与 controller
+pod可以被控制器管理,也可以不被控制器管理
+pod可以被service管理,也可以不被service管理

@@ -17,7 +17,8 @@ kubectl scale --replicas=3 deployment/tomcat9-test
 
 ###查看api版本
 kubectl api-versions
-
+kubectl api-resources --namespaced=true
+kubectl api-resources --namespaced=false
 ##查看命名空间资源
 kubectl get pods --all-namespaces
 kubectl create namespace lagou
@@ -79,7 +80,8 @@ my-tomcat    LoadBalancer   10.101.252.187   localhost     8000:30131/TCP   5d4h
 31335为外部访问端口
 
 
-
+##help文档
+kubectl explain rs,
 
 ##yaml命令
 kubectl apply -f tomcatpod.yml
