@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: replicasetdemo
+  labels:
+    app: replicasetdemo
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: replicasetdemo
+      labels:
+        app: replicasetdemo
+    spec:
+      containers:
+        - name: replicasetdemo
+          image: nginx:1.17.10-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: replicasetdemo

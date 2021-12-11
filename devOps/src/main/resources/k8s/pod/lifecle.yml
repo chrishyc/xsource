@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lifecle-test
+  labels:
+    app: lifecle-test
+spec:
+  containers:
+    - name: lifecle-test
+      image: busybox:1.32.0
+      imagePullPolicy: IfNotPresent
+      command: ['sh','-c','sleep 5000']
+      lifecycle:
+        postStart:
+          exec:
+            command: ['mkdir','-p','/lagou/k8s/index.html']
+  restartPolicy: Always

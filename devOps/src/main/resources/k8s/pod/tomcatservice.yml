@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomcat-deploy
+  labels:
+    app: tomcat-deploy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: tomcat-deploy
+      labels:
+        app: tomcat-pod
+    spec:
+      containers:
+        - name: tomcat-deploy
+          image: tomcat:9.0.20-jre8-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: tomcat-pod
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomcat-svc
+spec:
+  selector:
+    #标签选择必须是template.labels.app
+    app: tomcat-pod
+  ports:
+    - port: 8888 #对集群内其他服务暴露端口号
+      targetPort: 8080
+      nodePort: 30088
+  type: NodePort
