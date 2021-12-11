@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploymentdemo
+  labels:
+    app: deploymentdemo
+spec:
+  replicas: 10
+  template:
+    metadata:
+      name: deploymentdemo
+      labels:
+        app: deploymentdemo
+    spec:
+      tolerations:
+        - key: "offline"
+          value: "testtaint"
+          effect: "NoSchedule"
+          operator: "Equal"
+      containers:
+        - name: deploymentdemo
+          image: nginx:1.17.10-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: deploymentdemo

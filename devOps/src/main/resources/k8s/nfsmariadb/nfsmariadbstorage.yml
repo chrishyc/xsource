@@ -1,0 +1,54 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nfs-client-provisioner
+  labels:
+    app: nfs-client-provisioner
+spec:
+  replicas: 1
+  strategy:
+    #设置升级策略为删除再创建(默认为滚动更新)
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nfs-client-provisioner
+  template:
+    metadata:
+      labels:
+        app: nfs-client-provisioner
+    spec:
+      serviceAccountName: nfs-client-provisioner
+      containers:
+        - name: nfs-client-provisioner
+          #由于quay.io仓库部分镜像国内无法下载，所以替换为其他镜像地址
+          image: vbouchaud/nfs-client-provisioner:v3.1.1
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
+          env:
+            - name: PROVISIONER_NAME
+              value: nfs-client-mariadb  #nfs-provisioner的名称，以后设置的storageclass要和这个保持一致
+            - name: NFS_SERVER
+              value: 192.168.198.156     #NFS服务器地址，与volumes.nfs.servers保持一致
+            - name: NFS_PATH
+              value: /mariadb            #NFS服务共享目录地址，与volumes.nfs.path保持一致。使用NFS4版本进行多级目录挂载
+      volumes:
+        - name: nfs-client-root
+          nfs:
+            server: 192.168.198.156    #NFS服务器地址，与spec.containers.env.value保持一致
+            path: /mariadb             #NFS服务器目录，与spec.containers.env.value保持一致。使用NFS4版本进行多级目录挂载
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-storage-mariadb
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true" #设置为默认的storageclass
+#动态卷分配者名称，必须和创建的"provisioner"变量中设置的name一致
+provisioner: nfs-client-mariadb
+parameters:
+  archiveOnDelete: "true"                               #设置为"false"时删除PVC不会保留数据,"true"则保留数据
+mountOptions:
+  - hard                                                #指定为硬挂载方式
+  - nfsvers=4                                           #指定NFS版本，这个需要根据 NFS Server 版本号设置

@@ -1,0 +1,68 @@
+apiVersion: v1
+data:
+  my.cnf: "# MariaDB database server configuration file.\n#\n# You can copy this file
+    to one of:\n# - \"/etc/mysql/my.cnf\" to set global options,\n# - \"~/.my.cnf\"
+    to set user-specific options.\n# \n# One can use all long options that the program
+    supports.\n# Run program with --help to get a list of available options and with\n#
+    --print-defaults to see which it would actually understand and use.\n#\n# For
+    explanations see\n# http://dev.mysql.com/doc/mysql/en/server-system-variables.html\n\n#
+    This will be passed to all mysql clients\n# It has been reported that passwords
+    should be enclosed with ticks/quotes\n# escpecially if they contain \"#\" chars...\n#
+    Remember to edit /etc/mysql/debian.cnf when changing the socket location.\n[client]\nport\t\t=
+    3307\nsocket\t\t= /var/run/mysqld/mysqld.sock\n\n# Here is entries for some specific
+    programs\n# The following values assume you have at least 32M ram\n\n# This was
+    formally known as [safe_mysqld]. Both versions are currently parsed.\n[mysqld_safe]\nsocket\t\t=
+    /var/run/mysqld/mysqld.sock\nnice\t\t= 0\n\n[mysqld]\n#\n# * Basic Settings\n#\n#user\t\t=
+    mysql\npid-file\t= /var/run/mysqld/mysqld.pid\nsocket\t\t= /var/run/mysqld/mysqld.sock\nport\t\t=
+    3307\nbasedir\t\t= /usr\ndatadir\t\t= /var/lib/mysql\ntmpdir\t\t= /tmp\nlc_messages_dir\t=
+    /usr/share/mysql\nlc_messages\t= en_US\nskip-external-locking\n#\n# Instead of
+    skip-networking the default is now to listen only on\n# localhost which is more
+    compatible and is not less secure.\n#bind-address\t\t= 127.0.0.1\n#\n# * Fine
+    Tuning\n#\nmax_connections\t\t= 100\nconnect_timeout\t\t= 5\nwait_timeout\t\t=
+    600\nmax_allowed_packet\t= 16M\nthread_cache_size       = 128\nsort_buffer_size\t=
+    4M\nbulk_insert_buffer_size\t= 16M\ntmp_table_size\t\t= 32M\nmax_heap_table_size\t=
+    32M\n#\n# * MyISAM\n#\n# This replaces the startup script and checks MyISAM tables
+    if needed\n# the first time they are touched. On error, make copy and try a repair.\nmyisam_recover_options
+    = BACKUP\nkey_buffer_size\t\t= 128M\n#open-files-limit\t= 2000\ntable_open_cache\t=
+    400\nmyisam_sort_buffer_size\t= 512M\nconcurrent_insert\t= 2\nread_buffer_size\t=
+    2M\nread_rnd_buffer_size\t= 1M\n#\n# * Query Cache Configuration\n#\n# Cache only
+    tiny result sets, so we can fit more in the query cache.\nquery_cache_limit\t\t=
+    128K\nquery_cache_size\t\t= 64M\n# for more write intensive setups, set to DEMAND
+    or OFF\n#query_cache_type\t\t= DEMAND\n#\n# * Logging and Replication\n#\n# Both
+    location gets rotated by the cronjob.\n# Be aware that this log type is a performance
+    killer.\n# As of 5.1 you can enable the log at runtime!\n#general_log_file        =
+    /var/log/mysql/mysql.log\n#general_log             = 1\n#\n# Error logging goes
+    to syslog due to /etc/mysql/conf.d/mysqld_safe_syslog.cnf.\n#\n# we do want to
+    know about network errors and such\n#log_warnings\t\t= 2\n#\n# Enable the slow
+    query log to see queries with especially long duration\n#slow_query_log[={0|1}]\nslow_query_log_file\t=
+    /var/log/mysql/mariadb-slow.log\nlong_query_time = 10\n#log_slow_rate_limit\t=
+    1000\n#log_slow_verbosity\t= query_plan\n\n#log-queries-not-using-indexes\n#log_slow_admin_statements\n#\n#
+    The following can be used as easy to replay backup logs or for replication.\n#
+    note: if you are setting up a replication slave, see README.Debian about\n#       other
+    settings you may need to change.\n#server-id\t\t= 1\n#report_host\t\t= master1\n#auto_increment_increment
+    = 2\n#auto_increment_offset\t= 1\n#log_bin\t\t\t= /var/log/mysql/mariadb-bin\n#log_bin_index\t\t=
+    /var/log/mysql/mariadb-bin.index\n# not fab for performance, but safer\n#sync_binlog\t\t=
+    1\nexpire_logs_days\t= 10\nmax_binlog_size         = 100M\n# slaves\n#relay_log\t\t=
+    /var/log/mysql/relay-bin\n#relay_log_index\t= /var/log/mysql/relay-bin.index\n#relay_log_info_file\t=
+    /var/log/mysql/relay-bin.info\n#log_slave_updates\n#read_only\n#\n# If applications
+    support it, this stricter sql_mode prevents some\n# mistakes like inserting invalid
+    dates etc.\n#sql_mode\t\t= NO_ENGINE_SUBSTITUTION,TRADITIONAL\n#\n# * InnoDB\n#\n#
+    InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.\n# Read
+    the manual for more InnoDB related options. There are many!\ndefault_storage_engine\t=
+    InnoDB\ninnodb_buffer_pool_size\t= 256M\ninnodb_log_buffer_size\t= 8M\ninnodb_file_per_table\t=
+    1\ninnodb_open_files\t= 400\ninnodb_io_capacity\t= 400\ninnodb_flush_method\t=
+    O_DIRECT\n#\n# * Security Features\n#\n# Read the manual, too, if you want chroot!\n#
+    chroot = /var/lib/mysql/\n#\n# For generating SSL certificates I recommend the
+    OpenSSL GUI \"tinyca\".\n#\n# ssl-ca=/etc/mysql/cacert.pem\n# ssl-cert=/etc/mysql/server-cert.pem\n#
+    ssl-key=/etc/mysql/server-key.pem\n\n#\n# * Galera-related settings\n#\n[galera]\n#
+    Mandatory settings\n#wsrep_on=ON\n#wsrep_provider=\n#wsrep_cluster_address=\n#binlog_format=row\n#default_storage_engine=InnoDB\n#innodb_autoinc_lock_mode=2\n#\n#
+    Allow server to accept connections on all interfaces.\n#\n#bind-address=0.0.0.0\n#\n#
+    Optional setting\n#wsrep_slave_threads=1\n#innodb_flush_log_at_trx_commit=0\n\n[mysqldump]\nquick\nquote-names\nmax_allowed_packet\t=
+    16M\n\n[mysql]\n#no-auto-rehash\t# faster start of mysql but no tab completion\n\n[isamchk]\nkey_buffer\t\t=
+    16M\n\n#\n# * IMPORTANT: Additional settings that can override those from this
+    file!\n#   The files must end with '.cnf', otherwise they'll be ignored.\n#\n!include
+    /etc/mysql/mariadb.cnf\n!includedir /etc/mysql/conf.d/\n"
+kind: ConfigMap
+metadata:
+  name: mariadbconfigmap
+

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusteripdemo
+  labels:
+    app: clusteripdemo
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: clusteripdemo
+      labels:
+        app: clusteripdemo
+    spec:
+      containers:
+        - name: clusteripdemo
+          image: tomcat:9.0.20-jre8-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: clusteripdemo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clusterip-svc
+spec:
+  selector:
+    app: clusteripdemo
+  ports:
+    - port: 8080
+  type: ClusterIP

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: daemonsetdemo
+  labels:
+    app: daemonsetdemo
+spec:
+  template:
+    metadata:
+      name: daemonsetdemo
+      labels:
+        app: daemonsetdemo
+    spec:
+      containers:
+        - name: daemonsetdemo
+          image: nginx:1.17.10-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: daemonsetdemo

@@ -1,0 +1,71 @@
+
+例子
+docker tag harbor.lagou.com/k8s.gcr.io/kube-proxy:v1.17.6 k8s.gcr.io/kube-proxy:v1.17.6
+
+docker tag harbor.lagou.com/k8s.gcr.io/kube-proxy:v1.17.6 k8s.gcr.io/kube-proxy:v1.17.6
+docker tag harbor.lagou.com/k8s.gcr.io/kube-apiserver:v1.17.6 k8s.gcr.io/kube-apiserver:v1.17.6
+docker tag harbor.lagou.com/k8s.gcr.io/kube-controller-manager:v1.17.6 k8s.gcr.io/kube-controller-manager:v1.17.6
+docker tag harbor.lagou.com/k8s.gcr.io/kube-scheduler:v1.17.6 k8s.gcr.io/kube-scheduler:v1.17.6
+docker tag harbor.lagou.com/docker.io/library/nginx:1.17 docker.io/library/nginx:1.17
+docker tag harbor.lagou.com/docker.io/kubernetesui/dashboard-amd64:v2.0.0 docker.io/kubernetesui/dashboard-amd64:v2.0.0
+docker tag harbor.lagou.com/k8s.gcr.io/k8s-dns-node-cache:1.15.12 k8s.gcr.io/k8s-dns-node-cache:1.15.12
+docker tag harbor.lagou.com/docker.io/calico/kube-controllers:v3.13.2 docker.io/calico/kube-controllers:v3.13.2
+docker tag harbor.lagou.com/docker.io/kubernetesui/metrics-scraper:v1.0.4 docker.io/kubernetesui/metrics-scraper:v1.0.4
+docker tag harbor.lagou.com/quay.io/coreos/flannel:v0.12.0 quay.io/coreos/flannel:v0.12.0
+docker tag harbor.lagou.com/k8s.gcr.io/addon-resizer:1.8.8 k8s.gcr.io/addon-resizer:1.8.8
+docker tag harbor.lagou.com/docker.io/coredns/coredns:1.6.5 docker.io/coredns/coredns:1.6.5
+docker tag harbor.lagou.com/k8s.gcr.io/metrics-server-amd64:v0.3.6 k8s.gcr.io/metrics-server-amd64:v0.3.6
+docker tag harbor.lagou.com/k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.7.1 k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.7.1
+docker tag harbor.lagou.com/quay.io/coreos/etcd:v3.3.12 quay.io/coreos/etcd:v3.3.12
+docker tag harbor.lagou.com/k8s.gcr.io/pause:3.1 k8s.gcr.io/pause:3.1
+
+
+docker save \
+k8s.gcr.io/kube-proxy:v1.17.6 \
+k8s.gcr.io/kube-apiserver:v1.17.6 \
+k8s.gcr.io/kube-controller-manager:v1.17.6 \
+k8s.gcr.io/kube-scheduler:v1.17.6 \
+docker.io/library/nginx:1.17 \
+docker.io/kubernetesui/dashboard-amd64:v2.0.0 \
+k8s.gcr.io/k8s-dns-node-cache:1.15.12 \
+docker.io/calico/kube-controllers:v3.13.2 \
+docker.io/kubernetesui/metrics-scraper:v1.0.4 \
+quay.io/coreos/flannel:v0.12.0 \
+k8s.gcr.io/addon-resizer:1.8.8 \
+docker.io/coredns/coredns:1.6.5 \
+k8s.gcr.io/metrics-server-amd64:v0.3.6 \
+k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.7.1 \
+quay.io/coreos/etcd:v3.3.12 \
+k8s.gcr.io/pause:3.1 \
+-o k8sv1.17.6.tar
+
+
+
+
+docker save \
+calico/cni:v3.13.2 \
+calico/kube-controllers:v3.13.2 \
+calico/node:v3.13.2 \
+-o calico3.13.2.tar
+
+
+k8s.gcr.io/kube-proxy:v1.17.6
+k8s.gcr.io/kube-controller-manager:v1.17.6
+k8s.gcr.io/kube-apiserver:v1.17.6
+k8s.gcr.io/kube-scheduler:v1.17.6
+nginx:1.17
+kubernetesui/dashboard-amd64:v2.0.0
+k8s.gcr.io/k8s-dns-node-cache:1.15.12
+calico/cni:v3.13.2
+calico/kube-controllers:v3.13.2
+calico/node:v3.13.2
+kubernetesui/metrics-scraper:v1.0.4
+quay.io/coreos/flannel:v0.12.0
+k8s.gcr.io/addon-resizer:1.8.8
+coredns/coredns:1.6.5
+k8s.gcr.io/metrics-server-amd64:v0.3.6
+k8s.gcr.io/cluster-proportional-autoscaler-amd64:1.7.1
+quay.io/coreos/etcd:v3.3.12
+k8s.gcr.io/pause:3.1
+
+

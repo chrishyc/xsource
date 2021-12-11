@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: livenessprobepod1-test
+  labels:
+    app: livenessprobepod1-test
+spec:
+  containers:
+    - name: livenessprobepod1-test
+      image: busybox:1.32.0
+      imagePullPolicy: IfNotPresent
+      command: ['/bin/sh','-c','touch /tmp/livenesspod;sleep 30; rm -rf /tmp/livenesspod; sleep 3600']
+      livenessProbe:
+        exec:
+          command: ['test','-e','/tmp/livenesspod']
+        initialDelaySeconds: 1
+        periodSeconds: 3
+  restartPolicy: Always

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb-deploy
+  labels:
+    app: mariadb-deploy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: mariadb-deploy
+      labels:
+        app: mariadb-deploy
+    spec:
+      nodeSelector:
+        mariadb: mariadb
+      imagePullSecrets:
+        - name: lagouharbor
+      containers:
+        - name: mariadb-deploy
+          image: 192.168.198.155:5000/lagouedu/mariadb:10.5.2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3307
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              #这是mysqlroot用户的密码
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: mariadbsecret
+            - name: TZ
+              value: Asia/Shanghai
+          args:
+            - "--character-set-server=utf8mb4"
+            - "--collation-server=utf8mb4_unicode_ci"
+          volumeMounts:
+            - mountPath: /etc/mysql/mariadb.conf.d/   #容器内的挂载目录
+              name: lagoumariadb #随便给一个名字,这个名字必须与volumes.name一致
+            - mountPath: /var/lib/mysql #容器内的挂载目录
+              name: volume-mariadb
+      restartPolicy: Always
+      volumes:
+        - name: lagoumariadb
+          configMap:
+            name: mariadbconfigmap
+        - name: volume-mariadb
+          hostPath:
+            path: /data/mariadb
+            type: Directory
+
+  selector:
+    matchLabels:
+      app: mariadb-deploy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb-svc
+spec:
+  selector:
+    app: mariadb-deploy
+  ports:
+    - port: 3307
+      targetPort: 3307
+      nodePort: 30036
+  type: NodePort

@@ -5,12 +5,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 
-import java.lang.reflect.Method;
-
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
-import static org.objectweb.asm.Opcodes.ACC_INTERFACE;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 
 public class SAMifierTest {
     public static void main(String[] args) {
@@ -18,11 +13,11 @@ public class SAMifierTest {
         FieldVisitor fv;
         MethodVisitor mv;
         AnnotationVisitor av0;
-
+        
         cw.visit(52, ACC_PUBLIC + ACC_ABSTRACT + ACC_INTERFACE, "Runnable", null, "java/lang/Object", null);
-
+        
         cw.visitSource("Runnable.java", null);
-
+        
         {
             av0 = cw.visitAnnotation("Ljava/lang/FunctionalInterface;", true);
             av0.visitEnd();
@@ -34,7 +29,7 @@ public class SAMifierTest {
         cw.visitEnd();
         MyClassLoader classLoader = new MyClassLoader();
         Class runnable = classLoader.defineClass("Runnable", cw.toByteArray());
-
+        
     }
-
+    
 }

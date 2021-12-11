@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomcat-deployment
+  labels:
+    app: tomcat-deployment
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: tomcat-deployment
+      labels:
+        app: tomcat-deployment
+    spec:
+      containers:
+        - name: tomcat-deployment
+          image: tomcat:9.0.20-jre8-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: tomcat-deployment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomcat-svc
+spec:
+  selector:
+    app: tomcat-deployment
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30088
+  type: NodePort

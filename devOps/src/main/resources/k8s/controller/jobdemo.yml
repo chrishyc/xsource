@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jobdemo
+  labels:
+    app: jobdemo
+spec:
+  template:
+    metadata:
+      name: jobdemo
+      labels:
+        app: jobdemo
+    spec:
+      containers:
+        - name: jobdemo
+          image: perl:slim
+          imagePullPolicy: IfNotPresent
+          command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(6000)"]
+      restartPolicy: Never
