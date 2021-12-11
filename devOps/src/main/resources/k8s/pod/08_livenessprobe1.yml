@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
     - name: livenessprobepod1-test
-      image: busybox:1.32.0
+      image: busybox:latest
       imagePullPolicy: IfNotPresent
       command: ['/bin/sh','-c','touch /tmp/livenesspod;sleep 30; rm -rf /tmp/livenesspod; sleep 3600']
       livenessProbe:

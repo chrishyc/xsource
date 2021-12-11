@@ -42,6 +42,19 @@ kubectl get pods -A,//查看所有命名空间的pod
 ###查看pod在哪些节点运行
 kubectl get pod -A -o yaml |grep '^    n'|grep -v nodeSelector|sed 'N;N;s/\n/ /g'|grep -v kube-system
 ###查看pod对应哪些deploy
+###查看运行详情
+kubectl describe pod -A 
+kubectl describe pod livenessprobepod1-test
+###查看相位(状态)
+kubectl get pod -w
+```asp
+kubectl get pod -w
+NAME                          READY   STATUS    RESTARTS   AGE
+k8s-grafana                   1/1     Running   1          42h
+k8s-grafana-fd8f6d5bc-ps672   1/1     Running   1          42h
+```
+###执行容器命令
+kubectl exec -it container sh
 ##deployment操作
 [2]kubectl create deployment k8s-grafana --image=grafana/grafana:latest
 
