@@ -56,6 +56,7 @@ k8s-grafana-fd8f6d5bc-ps672   1/1     Running   1          42h
 ```
 ###执行容器命令
 kubectl exec -it container sh
+kubectl exec -it kube-proxy-6n7dn -n kube-system sh
 ##deployment操作
 [2]kubectl create deployment k8s-grafana --image=grafana/grafana:latest
 

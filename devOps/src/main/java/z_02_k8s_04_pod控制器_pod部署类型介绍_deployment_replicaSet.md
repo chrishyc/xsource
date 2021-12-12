@@ -20,3 +20,10 @@ Deployment控制器支持自定义控制更新过程中的滚动节奏，如“�
       maxSurge: 1
 ```
 ##回滚
+
+#Daemonset
+#StatefulSet
+```asp
+在kubernetes系统中，Pod的管理对象RC，Deployment，DaemonSet和Job都面向无状态的服务，但 现实中有很多服务时有状态的，
+比如一些集群服务，例如mysql集群，集群一般都会有这四个特点
+```
