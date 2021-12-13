@@ -18,6 +18,7 @@
         <module>monitor</module>
         <module>doc</module>
         <module>es</module>
+        <module>interview</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->
