@@ -1,7 +1,7 @@
 #bean对象的扩展点
 实例化(Instantiation): 要生成对象, 对象还未生成
 初始化(Initialization): 对象已经生成，赋值操作
-
+![](.z_spring_01_ioc_01_02_BeanPostProcessor_扩展点顺序_重要BeanPostProcessor_images/bbbea710.png)
 
 #InstantiationAwareBeanPostProcessor
 InstantiationAwareBeanPostProcessor定义的方法是在对象实例化过程中做处理

@@ -23,3 +23,6 @@ There is one quite important thing to be aware of when deploying a bean in the p
 #init方法
 @PostConstruct
 方法就是初始化后调用的方法
+![](.z_spring_01_ioc_04_bean实例化_原型_单例_init方法_destroy方法_images/0490552a.png)
+#destroy方法
+![](.z_spring_01_ioc_04_bean实例化_原型_单例_init方法_destroy方法_images/86fb62b8.png)
