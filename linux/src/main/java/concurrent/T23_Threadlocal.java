@@ -9,9 +9,11 @@ import org.junit.Test;
 /**
  * https://www.liaoxuefeng.com/wiki/1252599548343744/1306581251653666
  * <p>
- * threadlocal使用 threadlocal概念模型 threadlocal对象模型
+ * z_threadlocal_问题清单.md
  * <p>
- * 1.thread,每个thread可以持有多个threadlocal 2.threadlocal,一个threadlocal可以被多个线程持有 3.thread map
+ * 1.thread,每个thread可以持有多个threadlocal,但是一般持有一个
+ * 2.threadlocal,一个threadlocal可以被多个线程持有 ,一般是多个线程共享一个threadlocal
+ * 3.thread map
  * <p>
  * threadlocal实现模型 threadlocal注意事项 threadlocal问题
  */

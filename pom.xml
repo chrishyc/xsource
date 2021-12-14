@@ -19,6 +19,7 @@
         <module>doc</module>
         <module>es</module>
         <module>interview</module>
+        <module>spring</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->
