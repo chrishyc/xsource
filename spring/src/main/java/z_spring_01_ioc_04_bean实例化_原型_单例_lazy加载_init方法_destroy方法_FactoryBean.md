@@ -19,10 +19,20 @@ There is one quite important thing to be aware of when deploying a bean in the p
 ```
 #单例
 创建
+#懒加载lazy init
+设置 lazy-init 为 true 的 bean 将不会在 ApplicationContext 启动时提前被实例化，而是第一次向容器
+通过 getBean 索取 bean 时实例化的
 
+如果一个设置了立即加载的 bean1，引用了一个延迟加载的 bean2 ，那么 bean1 在容器启动时被实例 化，而 bean2 由于被 bean1 引用，
+所以也被实例化，这种情况也符合延时加载的 bean 在第一次调用 时才被实例化的规则
+
+如果一个 bean 的 scope 属性为 scope="pototype" 时，即使设置了 lazy-init="false"，容器启动时也不 会实例化bean，而是调用 getBean 方法实例化的
 #init方法
 @PostConstruct
 方法就是初始化后调用的方法
 ![](.z_spring_01_ioc_04_bean实例化_原型_单例_init方法_destroy方法_images/0490552a.png)
 #destroy方法
 ![](.z_spring_01_ioc_04_bean实例化_原型_单例_init方法_destroy方法_images/86fb62b8.png)
+#FactoryBean
+FactoryBean可以生成某一个类型的Bean实例(返回给我们)，也就是说我们可以借助于它自定义Bean的创建过程
+[拉钩spring.pdf 2.2]
