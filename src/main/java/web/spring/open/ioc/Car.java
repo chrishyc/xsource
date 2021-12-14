@@ -1,4 +1,4 @@
-package web.spring.open.ioc.beanwrapper;
+package web.spring.open.ioc;
 
 import lombok.Data;
 

@@ -10,7 +10,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-import web.spring.open.ioc.beanwrapper.Car;
 import web.spring.open.ioc.cycle.TestBean;
 import web.spring.open.ioc.lazyinit.LazyInitBean;
 import web.spring.open.ioc.life.LifeBean;

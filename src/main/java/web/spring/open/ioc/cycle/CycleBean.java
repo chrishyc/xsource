@@ -1,12 +1,13 @@
 package web.spring.open.ioc.cycle;
 
+import org.springframework.stereotype.Component;
 import web.spring.mine.annotation.Autowired;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-//@Component
+@Component
 public class CycleBean implements InitializingBean, ApplicationContextAware {
     @Autowired
     private TestBean testBean;
