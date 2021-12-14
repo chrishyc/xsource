@@ -21,26 +21,12 @@ BeanFactoryPostProcessor(postProcessBeanFactory)->
 
 b.触发与注册PostProcessor
 
-工具类:PostProcessorRegistrationDelegate
-
-
 2.设计模式:
 
 3.语法:
-final类
-private PostProcessorRegistrationDelegate()构造函数
-private static final类
+
 
 4.命名:
-Registration
-Delegate
-Configurable
-Listable
-Registry
-ordered
-clearMetadataCache
-register
-internal
-Checker
+
 
 
