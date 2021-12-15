@@ -1,4 +1,4 @@
-package pattern.visitor;
+package visitor;
 
 public class Dot implements Shape{
     private int id;

@@ -1,4 +1,4 @@
-package pattern.chain;
+package chain.chain01;
 
 import java.util.HashMap;
 import java.util.Map;

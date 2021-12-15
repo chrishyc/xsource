@@ -1,4 +1,4 @@
-package pattern.visitor;
+package visitor;
 
 import javafx.scene.shape.Circle;
 

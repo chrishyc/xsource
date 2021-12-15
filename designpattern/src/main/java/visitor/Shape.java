@@ -1,4 +1,4 @@
-package pattern.visitor;
+package visitor;
 
 public interface Shape {
     void move(int x, int y);

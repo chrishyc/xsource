@@ -1,4 +1,4 @@
-package pattern.chain;
+package chain.chain01;
 
 public class UserExistsMiddleware extends Middleware{
     private Server server;

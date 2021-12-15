@@ -1,4 +1,4 @@
-package pattern.chain;
+package chain.chain01;
 
 public abstract class /**/Middleware {
     private Middleware next;

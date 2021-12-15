@@ -1,4 +1,4 @@
-package pattern.chain;
+package chain.chain01;
 
 public class RoleCheckMiddleware extends Middleware {
     public boolean check(String email, String password) {
