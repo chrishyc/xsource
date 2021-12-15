@@ -20,6 +20,7 @@
         <module>es</module>
         <module>interview</module>
         <module>spring</module>
+        <module>designpattern</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->

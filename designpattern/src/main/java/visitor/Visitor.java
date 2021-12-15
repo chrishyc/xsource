@@ -1,4 +1,4 @@
-package pattern.visitor;
+package visitor;
 
 public interface Visitor {
     String visitDot(Dot dot);

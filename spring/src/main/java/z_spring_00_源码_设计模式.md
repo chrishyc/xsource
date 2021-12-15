@@ -1,0 +1,11 @@
+#单例
+#动态代理
+cglib,jdk
+#责任链
+aop
+#工厂模式
+beanfactory
+#观察者模式
+监听器
+#装饰器
+beanwrapper
