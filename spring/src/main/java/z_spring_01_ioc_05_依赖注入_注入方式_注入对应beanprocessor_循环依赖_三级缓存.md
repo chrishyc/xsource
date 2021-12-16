@@ -11,3 +11,4 @@
 2.@Resource  ->  CommonAnnotationBeanPostProcessor
 ```
 #注入时机
+post

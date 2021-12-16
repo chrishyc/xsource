@@ -9,8 +9,10 @@
 层级
 
 ##ApplicationContext
-上下文,应用环境
-
+容器:ListableBeanFactory,HierarchicalBeanFactory
+应用环境:EnvironmentCapable
+资源解析:ResourcePatternResolver
+事件通知:ApplicationEventPublisher
 ##ConfigurableApplicationContext
 可配置
 
