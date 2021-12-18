@@ -14,5 +14,15 @@ registerListeners,注册事件监听器,广播早期事件
 finishBeanFactoryInitialization,实例化初始化单例bean,包括生成AOP代理类
 finishRefresh,发送完成事件
 ```
+##核心四件套实例化流程,BeanDefinition,BeanFactoryPostProcessor,BeanPostProcessor,Bean
+![](.z_spring_01_ioc_00_bean全流程_bean生命周期_images/47be45bb.png)
+##Bean实例化前置流程GetBean
+![](.z_spring_01_ioc_00_bean全流程_bean生命周期_images/c2ec75e2.png)
+![](.z_spring_01_ioc_00_bean全流程_bean生命周期_images/c4398705.png)
+![](.z_spring_01_ioc_00_bean全流程_bean生命周期_images/945ae51e.png)
+##Bean实例化初始化全流程
+![](.z_spring_01_ioc_00_bean全流程_bean生命周期_images/07999aa4.png)
+
 ##bean初始化过程
 ![](.z_spring_01_ioc_00_bean全流程__images/34e8bc7c.png)
+![](.z_spring_01_ioc_00_bean全流程_bean生命周期_images/d22cec98.png)
