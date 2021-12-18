@@ -1,20 +1,16 @@
 package open.ioc.cycle;
 
-import org.springframework.stereotype.Component;
 import mine.annotation.Autowired;
+import mine.annotation.Component;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 @Component
-public class CycleBean implements InitializingBean, ApplicationContextAware {
+public class T_01_CycleB implements InitializingBean, ApplicationContextAware {
     @Autowired
-    private T_Prototype testBean;
-
-    public void setTestBean(T_Prototype testBean) {
-        this.testBean = testBean;
-    }
+    private T_01_CycleA cycleABean;
 
     @Override
     public void afterPropertiesSet() throws Exception {
