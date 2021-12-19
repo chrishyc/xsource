@@ -29,7 +29,6 @@ finishRefresh,发送完成事件
 
 ##bean初始化过程
 ![](.z_spring_01_ioc_00_bean全流程__images/34e8bc7c.png)
-![](.z_spring_01_ioc_00_bean全流程_bean生命周期_images/d22cec98.png)
-
+![](.z_spring_01_ioc_00_bean全流程_bean生命周期_images/202a42f0.png)
 ##populateBean流程
 ![](.z_spring_01_ioc_00_bean全流程__images/populateBean的执行流程.jpg)

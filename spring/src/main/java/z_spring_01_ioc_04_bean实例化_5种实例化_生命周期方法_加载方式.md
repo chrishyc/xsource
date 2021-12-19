@@ -90,6 +90,7 @@ public class MyFactoryBean implements FactoryBean<A> {
 
 
 #生命周期方法
+[](https://www.jianshu.com/p/c6c60ea40569)
 ##init方法
 @PostConstruct
 方法就是初始化后调用的方法
