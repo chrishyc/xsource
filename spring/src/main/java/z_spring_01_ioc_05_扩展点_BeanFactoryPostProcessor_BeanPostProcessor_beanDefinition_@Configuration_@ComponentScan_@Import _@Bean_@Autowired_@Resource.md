@@ -4,6 +4,7 @@
 ![](.z_spring_01_ioc_01_01_BeanFactoryPostProcessor_重要BeanFactoryPostProcessor_images/304607d7.png)
 ![](.z_spring_01_ioc_01_01_BeanFactoryPostProcessor_重要BeanFactoryPostProcessor_images/14954809.png)
 ![](.z_spring_01_ioc_01_01_BeanFactoryPostProcessor_重要BeanFactoryPostProcessor_images/dfd4a8fa.png)
+![](.z_spring_01_ioc_01_01_BeanFactoryPostProcessor_重要BeanFactoryPostProcessor_images/configurationClassPostProcessor解析.jpg)
 [](https://blog.csdn.net/qq_34436819/article/details/100944204)
 #PropertySourcesPlaceholderConfigurer
 ![](.z_spring_01_ioc_01_01_BeanFactoryPostProcessor_重要BeanFactoryPostProcessor_images/1d5ecc9c.png)
@@ -43,6 +44,7 @@ InstantiationAwareBeanPostProcessor定义的方法是在对象实例化过程中
 
 
 #BeanPostProcessor
+![](.z_spring_01_ioc_05_依赖注入_注入方式_注入对应beanprocessor_循环依赖_三级缓存_images/registerBeanPostProcessor的解析过程.jpg)
 BeanPostProcessor定义的方法是在对象初始化过程中做处理
 ![](.z_spring_01_ioc_01_01_BeanPostProcessor_常见类型_images/1a80724d.png)
 ![](.z_spring_01_ioc_01_01_BeanPostProcessor_接口方法顺序_images/da936537.png)

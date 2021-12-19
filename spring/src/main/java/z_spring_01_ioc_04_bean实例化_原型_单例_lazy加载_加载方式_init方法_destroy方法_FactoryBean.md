@@ -38,3 +38,7 @@ FactoryBean可以生成某一个类型的Bean实例(返回给我们)，也就是
 [拉钩spring.pdf 2.2]
 #加载方式
 ![](.z_spring_01_ioc_04_bean实例化_原型_单例_lazy加载_加载方式_init方法_destroy方法_FactoryBean_images/f61bcb9a.png)
+
+#工厂方法
+![](.z_spring_01_ioc_04_bean实例化_原型_单例_lazy加载_加载方式_init方法_destroy方法_FactoryBean_images/instantiateUsingFactoryMethod大致流程.jpg)
+
