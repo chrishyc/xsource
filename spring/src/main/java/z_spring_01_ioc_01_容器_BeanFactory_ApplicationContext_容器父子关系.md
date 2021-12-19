@@ -3,6 +3,7 @@
 getBean
 ##ApplicationContext
 ![](.z_spring_01_ioc_01_容器初始化_BeanFactory_ApplicationContext_容器父子关系_环境上下文_资源解析器_bean列表_发布定义事件_images/b6454099.png)
+##DefaultListableBeanFactory
 
 ##AbstractApplicationContext
 refresh()
