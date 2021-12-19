@@ -109,7 +109,7 @@ initializingBean
 
 3、调用aware接口相关的方法：invokeAwareMethod(完成BeanName,BeanFactory,BeanClassLoader对象的属性设置)
 
-4、调用BeanPostProcessor中的前置处理方法：使用比较多的有（ApplicationContextPostProcessor,设置ApplicationContext,Environment,ResourceLoader,EmbeddValueResolver等对象）
+4、调用BeanPostProcessor中的前置处理方法：使用比较多的有（ApplicationContextAwareProcessor,设置ApplicationContext,Environment,ResourceLoader,EmbeddValueResolver等对象）
 
 5、调用initmethod方法：invokeInitmethod(),判断是否实现了initializingBean接口，如果有，调用afterPropertiesSet方法，没有就不调用
 
