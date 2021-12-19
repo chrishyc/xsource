@@ -1,4 +1,6 @@
 #============================== beanDefinition的扩展点===========================
+#BeanFactoryPostProcessor
+![](.z_spring_01_ioc_06_依赖注入_注入方式_注入对应beanprocessor_循环依赖_三级缓存_images/执行BeanFactoryPostProcessor的流程图.jpg)
 #ConfigurationClassPostProcessor
 ![](.z_spring_01_ioc_01_01_BeanFactoryPostProcessor_重要BeanFactoryPostProcessor_images/8274b552.png)
 ![](.z_spring_01_ioc_01_01_BeanFactoryPostProcessor_重要BeanFactoryPostProcessor_images/304607d7.png)
