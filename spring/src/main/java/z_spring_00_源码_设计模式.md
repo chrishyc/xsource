@@ -15,8 +15,7 @@ jdbcTemplate,redisTemplate
 在Spring MVC中，DispatcherServlet根据请求信息调用HandlerMapping，解析请求对应的Handler，解析到对应的Handler
 （也就是我们常说的Controller控制器）后，开始由HandlerAdapter适配器处理
 #装饰器
-Spring 中配置DataSource的时候，DataSource可能是不同的数据库和数据源。我们能否根据客户的需求在少修改原有类的代码下切换不同的数据源？
-这个时候据需要用到装饰者模式。
+BeanWrapper
 #策略设计模式
 Spring 框架的资源访问接口就是基于策略设计模式实现的
 UrlResource：访问网络资源的实现类。
