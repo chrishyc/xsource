@@ -1,6 +1,7 @@
 package open.ioc;
 
 
+import open.aop.pojo.AnnotationAdvice;
 import open.aop.topology.T_01_BeforeAdvice;
 import open.aop.topology.T_01_Target;
 import open.ioc.cycle.T_Prototype;
@@ -9,6 +10,7 @@ import open.ioc.processor.importcandidate.MyComponent;
 import open.ioc.processor.importcandidate.MyImportSelector;
 import org.aopalliance.aop.Advice;
 import org.junit.Test;
+import org.springframework.aop.aspectj.annotation.AspectJProxyFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.RegexpMethodPointcutAdvisor;
 import org.springframework.beans.BeanWrapper;
@@ -52,23 +54,35 @@ public class UnitTest {
     }
     
     @Test
-    public void test_aop_01_advice_pointcut_advisor() {
+    public void test_aop_01_ProxyFactory() {
         // 创建ProxyFactory
         T_01_Target target = new T_01_Target();
         ProxyFactory pf = new ProxyFactory(target);
         
         Advice beforeAdvice = new T_01_BeforeAdvice();
-        
         // Advisor包含Pointcut和Advice，叫通知器，这里就设置了切点pointcut
         RegexpMethodPointcutAdvisor regexpAdvisor = new RegexpMethodPointcutAdvisor();
         regexpAdvisor.setPattern("open.aop.topology.T_01_Target.say()");
         regexpAdvisor.setAdvice(beforeAdvice);
-        
-        
         // 将通知器Advisor注册到ProxyFactory
         pf.addAdvisor(regexpAdvisor);
+        
+        
         // 生成代理，执行方法
         T_01_Target proxy = (T_01_Target) pf.getProxy();
+        proxy.say();
+    }
+    
+    @Test
+    public void test_aop_01_AspectJProxyFactory() {
+        // 创建ProxyFactory
+        T_01_Target target = new T_01_Target();
+        AspectJProxyFactory pf = new AspectJProxyFactory(target);
+        
+        pf.addAspect(AnnotationAdvice.class);
+        
+        // 生成代理，执行方法
+        T_01_Target proxy = pf.getProxy();
         proxy.say();
     }
     
