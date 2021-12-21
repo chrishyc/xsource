@@ -20,7 +20,7 @@ public class Target implements InitializingBean, ApplicationContextAware, Dispos
         BeanFactoryPostProcessor, InstantiationAwareBeanPostProcessor, BeanDefinitionRegistryPostProcessor {
     
     @Autowired
-    private open.aop.pojo.Target2 target2;
+    private Target2 target2;
     
     public void transfer() {
 //        throw new RuntimeException("no error");
