@@ -1,3 +1,4 @@
+![](.z_spring_01_ioc_00_常见接口_拓扑关系_images/79ba0f70.png)
 #容器类
 ![](.z_spring_01_ioc_00_常见接口_拓扑关系_images/82a8790c.png)
 ##BeanFactory

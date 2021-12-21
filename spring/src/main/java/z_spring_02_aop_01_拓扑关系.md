@@ -10,7 +10,7 @@
 advisor=advice+pointcut
 ##join point
 
-#核心实现接口
+#核心实现对象
 ##Advised
 已经织入完成的通知者集合，包含在代理对象中，代理对象已经可以直接使用
 ![](.z_spring_02_aop_01_拓扑关系_images/6bd63a21.png)
@@ -19,3 +19,10 @@ advised=list[advisor]
 5个通知器类型
 ##advisor
 具体通知器advisor=advice+pointcut
+
+##MethodInterceptor(CGLIb )
+![](.z_spring_02_aop_01_拓扑关系_images/71e3e79e.png)
+AspectJAfterAdvice
+##MethodInvocation
+责任链
+##AdvisorAdapter
