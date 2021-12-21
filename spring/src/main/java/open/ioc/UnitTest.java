@@ -1,12 +1,16 @@
 package open.ioc;
 
 
+import open.aop.topology.T_01_BeforeAdvice;
+import open.aop.topology.T_01_Target;
 import open.ioc.cycle.T_Prototype;
-import open.ioc.lazyinit.LazyInitBean;
 import open.ioc.life.LifeBean;
 import open.ioc.processor.importcandidate.MyComponent;
 import open.ioc.processor.importcandidate.MyImportSelector;
+import org.aopalliance.aop.Advice;
 import org.junit.Test;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.support.RegexpMethodPointcutAdvisor;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 import org.springframework.beans.PropertyValue;
@@ -30,21 +34,42 @@ public class UnitTest {
     }
     
     @Test
-    public void test_Instantial_01_InstantiationAwareBeanPostProcessor() {
+    public void test_ioc_01_Instantial_01_InstantiationAwareBeanPostProcessor() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("s_02_instantiat_InstantiationAwareBeanPostProcessor.xml");
         System.out.println(ac.getBean("a"));
     }
     
     @Test
-    public void test_Instantial_02_FactoryBean() {
+    public void test_ioc_01_Instantial_02_FactoryBean() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("s_02_instantiat_FactoryBean.xml");
         System.out.println(ac.getBean("T_02_FactoryBean"));
     }
     
     @Test
-    public void test_Instantial_03_Supplier() {
+    public void test_ioc_01_Instantial_03_Supplier() {
         ApplicationContext ac = new ClassPathXmlApplicationContext("s_02_instantiat_Supplier.xml");
         System.out.println(ac.getBean("T_03_Supplier"));
+    }
+    
+    @Test
+    public void test_aop_01_advice_pointcut_advisor() {
+        // 创建ProxyFactory
+        T_01_Target target = new T_01_Target();
+        ProxyFactory pf = new ProxyFactory(target);
+        
+        Advice beforeAdvice = new T_01_BeforeAdvice();
+        
+        // Advisor包含Pointcut和Advice，叫通知器，这里就设置了切点pointcut
+        RegexpMethodPointcutAdvisor regexpAdvisor = new RegexpMethodPointcutAdvisor();
+        regexpAdvisor.setPattern("open.aop.topology.T_01_Target.say()");
+        regexpAdvisor.setAdvice(beforeAdvice);
+        
+        
+        // 将通知器Advisor注册到ProxyFactory
+        pf.addAdvisor(regexpAdvisor);
+        // 生成代理，执行方法
+        T_01_Target proxy = (T_01_Target) pf.getProxy();
+        proxy.say();
     }
     
     @Test
@@ -81,12 +106,6 @@ public class UnitTest {
 //        System.out.println(testBean);
     }
     
-    @Test
-    public void testLazyInit() {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("lazyInit.xml");
-        LazyInitBean lazyInitBean = ac.getBean(LazyInitBean.class);
-        System.out.println();
-    }
     
     /**
      * 1.生成invokeBeanFactoryPostProcessors

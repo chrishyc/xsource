@@ -13,8 +13,8 @@ public class Sample {
      * 1.xsource中pom改成jar
      */
     @Test
-    public void testXmlAop() {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+    public void test_01_namespace() {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("s_aop_01_namespace.xml");
         Target target = ac.getBean(Target.class);
         target.transfer();
     }

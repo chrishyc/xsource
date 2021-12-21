@@ -12,15 +12,6 @@ import java.util.*;
 @Component
 public class Target2 implements InitializingBean {
     
-    @Value("${user.name}")
-    private Integer name;
-    
-    @Autowired
-    private Target3 target3;
-    
-    @Resource
-    private AnnotationAdvice annotationAdvice;
-    
     @PostConstruct
     public void init() {
         System.out.println("-----target2 init-----");

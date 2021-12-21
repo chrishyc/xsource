@@ -3,6 +3,7 @@
 默认的bean对象
 #工厂模式
 beanfactory,工厂方法,一个工厂生成一类对象
+ProxyFactory,工厂类
 #动态代理
 AOP代理对象,jdk(接口),cglib(非接口)
 #责任链
