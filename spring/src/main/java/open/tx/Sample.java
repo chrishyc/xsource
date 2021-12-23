@@ -1,11 +1,11 @@
-package tx;
+package open.tx;
 
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import tx.annotation.AnnotationService;
-import tx.xml.XmlService;
+import open.tx.annotation.AnnotationService;
+import open.tx.xml.XmlService;
 
 public class Sample {
     /**
@@ -47,7 +47,7 @@ public class Sample {
      */
     @Test
     public void testEnableTransactionManagement() {
-        ApplicationContext beanFactory = new AnnotationConfigApplicationContext(Config.class);
+        ApplicationContext beanFactory = new AnnotationConfigApplicationContext(TXConfig.class);
         AnnotationService annotationService = beanFactory.getBean(AnnotationService.class);
         annotationService.query();
     }
@@ -70,7 +70,7 @@ public class Sample {
      */
     @Test
     public void testAnnotationAdvisor(){
-        ApplicationContext beanFactory = new AnnotationConfigApplicationContext(Config.class);
+        ApplicationContext beanFactory = new AnnotationConfigApplicationContext(TXConfig.class);
         AnnotationService annotationService = beanFactory.getBean(AnnotationService.class);
         annotationService.query();
     }

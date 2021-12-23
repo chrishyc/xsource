@@ -37,9 +37,9 @@
     <aop:config>
         <!-- advice-ref指向增强=横切逻辑+方位-->
         <!--advisor会生成对应的eanDefinition-->
-        <aop:advisor advice-ref="txAdvice" pointcut="execution(* tx.xml.XmlService.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* open.tx.xml.XmlService.*(..))"/>
     </aop:config>
-    <bean id="service" class="tx.xml.XmlService"/>
+    <bean id="service" class="open.tx.xml.XmlService"/>
 
     <!--    <tx:annotation-driven transaction-manager="transactionManager1"/>-->
 

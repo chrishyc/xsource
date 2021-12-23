@@ -1,4 +1,4 @@
-package tx.xml;
+package open.tx.xml;
 
 public class XmlService {
     public void transfer() {

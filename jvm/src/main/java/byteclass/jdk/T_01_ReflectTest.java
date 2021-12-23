@@ -2,7 +2,7 @@ package byteclass.jdk;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class ReflectTest {
+public class T_01_ReflectTest {
     public static void main(String[] args) throws InvocationTargetException, IllegalAccessException {
         //注意一定要返回接口，不能返回实现类否则会报错
         System.getProperties().put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");

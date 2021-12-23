@@ -21,6 +21,7 @@
         <module>interview</module>
         <module>spring</module>
         <module>designpattern</module>
+        <module>serialization</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->

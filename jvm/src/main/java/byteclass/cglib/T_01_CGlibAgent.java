@@ -8,7 +8,7 @@ import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 
-public class CGlibAgent implements MethodInterceptor {
+public class T_01_CGlibAgent implements MethodInterceptor {
     private Object proxy;
 
     public Object getInstance(Object proxy) {
@@ -32,9 +32,9 @@ public class CGlibAgent implements MethodInterceptor {
     }
 
     public static void main(String[] args) {
-        System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, "/Users/chris/byteclass/");
-        CGlibAgent cGlibAgent = new CGlibAgent();
-        Apple apple = (Apple) cGlibAgent.getInstance(new Apple());
+        System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, "/Users/chris/workspace/xsource/jvm");
+        T_01_CGlibAgent t01CGlibAgent = new T_01_CGlibAgent();
+        Apple apple = (Apple) t01CGlibAgent.getInstance(new Apple());
         apple.show();
     }
 }
