@@ -1,4 +1,4 @@
-package tx.annotation;
+package open.tx.annotation;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
