@@ -42,5 +42,14 @@ nohup:忽略内部的挂断信号，不挂断运行
 echo $$ | more,//$$优先级高于|,$$先执行,一般都是优先级高于管道(优先于管道执行),比如查看日志ls -l | grep
 echo $BASHPID | more,//$BASHPID优先级低于|,|先执行,然后子进程$BASHPID
 ```
-##过滤
+##常用过滤
 egrep 'a|b'
+
+###递归查找文本
+grep -n -ri "grafana.staging.mifi.pt.com" .
+
+###批量删除某个端口号的进程
+lsof -i tcp:5601 | awk '{if(NR>1){print $2}}'| xargs -n 1 kill -9
+
+###过滤第一行
+NR>1

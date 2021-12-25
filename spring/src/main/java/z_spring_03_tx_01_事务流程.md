@@ -1,3 +1,11 @@
-![](.z_spring_02_aop_04_advice执行顺序_images/处理回滚流程图.jpg)
-![](.z_spring_02_aop_04_advice执行顺序_images/创建事务信息流程图.jpg)
+#事务开启(注解方式)
 ![](.z_spring_02_aop_04_advice执行顺序_images/注解配置的事务的初始化流程.jpg)
+@EnableTransactionManagement
+注入InfrastructureAdvisorAutoProxyCreator[](https://www.jianshu.com/p/f84d50ba6d10)
+注入advisor
+#事务创建
+![](.z_spring_02_aop_04_advice执行顺序_images/创建事务信息流程图.jpg)
+#事务回滚
+![](.z_spring_02_aop_04_advice执行顺序_images/处理回滚流程图.jpg)
+![](.z_spring_03_tx_01_事务流程_images/e201fe79.png)
+![](.z_spring_03_tx_01_事务流程_images/e25d6dae.png)
