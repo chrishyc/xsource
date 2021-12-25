@@ -22,9 +22,14 @@ public class T_01_propagation {
     @Autowired
     private T_01_propagationB propagationB;
     
-    @Transactional(propagation = Propagation.NESTED, rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRED)
     public void methodB() {
-        propagationB.methodA(); //4
+        try {
+            propagationB.methodA(); //4
+        } catch (Exception e) {
+        
+        }
+        
     }
     
     private void updateData() {

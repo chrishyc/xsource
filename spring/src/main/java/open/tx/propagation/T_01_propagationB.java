@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Component
 public class T_01_propagationB {
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void methodA() {
         insertData(); //2
         
@@ -25,7 +25,7 @@ public class T_01_propagationB {
     }
     
     private void updateData() {
-    
+        throw new RuntimeException();
     }
     
     private void insertData() {
