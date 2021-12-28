@@ -15,6 +15,11 @@ debug object programmings
 info all
 ![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/7e910cd3.png)
 [redis开发与维护]
+#事务
+multi
+incr books QUEUED
+incr books QUEUED
+exec
 #数据类型操作
 ##string操作
 [redis开发与运维][2.2.1]
