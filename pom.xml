@@ -22,6 +22,7 @@
         <module>spring</module>
         <module>designpattern</module>
         <module>serialization</module>
+        <module>thinking</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->
