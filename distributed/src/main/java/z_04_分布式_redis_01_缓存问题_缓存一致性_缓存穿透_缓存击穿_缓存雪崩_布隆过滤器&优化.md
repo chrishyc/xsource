@@ -42,7 +42,7 @@ redis缓存一致性速度:redis查询更新<1ms,mysql查询更新<100ms
 ```
 [](https://note.dolyw.com/cache/00-DataBaseConsistency.html#%E5%85%88%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE%E5%BA%93-%E5%86%8D%E5%88%A0%E9%99%A4%E7%BC%93%E5%AD%98)
 ##写数据库成功，第二步删除缓存失败
-延时策略 双删策略
+异步消息队列重试 延时策略 双删策略,mysql中间件canal
 [](https://developer.aliyun.com/article/712285)
 [](https://mp.weixin.qq.com/s/4W7vmICGx6a_WX701zxgPQ)
 ##可以做到强一致吗？
@@ -69,4 +69,4 @@ redis做缓存,但是可能出现大量请求穿透redis,直接到达mysql，导
 大量key过期
 ##随机过期时间
 ##不能随机时间
-![](.z_04_分布式_redis_01_缓存问题_缓存穿透_缓存击穿_缓存雪崩_布隆过滤器&优化_images/96b99699.png)
+sentinel限流,熔断降级
