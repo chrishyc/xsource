@@ -40,3 +40,6 @@ Sentinel线程数限流不负责创建和管理线程池，而是简单统计当
 ###链路限流
 ![](.z_01_Sentinel_01_流量控制_线程池隔离_信号量隔离_images/f1187e11.png)
 ###关联流量控制
+
+##热点数据
+[](https://sentinelguard.io/zh-cn/docs/parameter-flow-control.html)
