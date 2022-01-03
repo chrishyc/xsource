@@ -3,16 +3,19 @@ package file.io.nio;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 
 public class SocketMultiplexingSingleThreadv2 {
-
+    
     private ServerSocketChannel server = null;
     private Selector selector = null;   //linux 多路复用器（select poll epoll） nginx  event{}
     int port = 9090;
-
+    
     public void initServer() {
         try {
             server = ServerSocketChannel.open();
@@ -24,7 +27,7 @@ public class SocketMultiplexingSingleThreadv2 {
             e.printStackTrace();
         }
     }
-
+    
     public void start() {
         initServer();
         System.out.println("服务器启动了。。。。。");
@@ -45,10 +48,10 @@ public class SocketMultiplexingSingleThreadv2 {
                             key.cancel();  //现在多路复用器里把key  cancel了
                             System.out.println("in.....");
 //                            key.interestOps(key.interestOps() | ~SelectionKey.OP_READ);
-
+                            
                             readHandler(key);//还是阻塞的嘛？ 即便以抛出了线程去读取，但是在时差里，这个key的read事件会被重复触发
-
-                        } else if(key.isWritable()){  //我之前没讲过写的事件！！！！！
+                            
+                        } else if (key.isWritable()) {  //我之前没讲过写的事件！！！！！
                             //写事件<--  send-queue  只要是空的，就一定会给你返回可以写的事件，就会回调我们的写方法
                             //你真的要明白：什么时候写？不是依赖send-queue是不是有空间
                             //1，你准备好要写什么了，这是第一步
@@ -58,9 +61,8 @@ public class SocketMultiplexingSingleThreadv2 {
                             key.cancel();
                             //key.interestOps事件更改
 //                            key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
-
-
-
+                            
+                            
                             writeHandler(key);
                         }
                     }
@@ -70,16 +72,16 @@ public class SocketMultiplexingSingleThreadv2 {
             e.printStackTrace();
         }
     }
-
+    
     private void writeHandler(SelectionKey key) {
-        new Thread(()->{
+        new Thread(() -> {
             System.out.println("write handler...");
             SocketChannel client = (SocketChannel) key.channel();
             ByteBuffer buffer = (ByteBuffer) key.attachment();
             buffer.flip();
             while (buffer.hasRemaining()) {
                 try {
-
+                    
                     client.write(buffer);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -102,9 +104,10 @@ public class SocketMultiplexingSingleThreadv2 {
 //                e.printStackTrace();
 //            }
         }).start();
-
+        
     }
-
+    
+    
     public void acceptHandler(SelectionKey key) {
         try {
             ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
@@ -115,14 +118,14 @@ public class SocketMultiplexingSingleThreadv2 {
             System.out.println("-------------------------------------------");
             System.out.println("新客户端：" + client.getRemoteAddress());
             System.out.println("-------------------------------------------");
-
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
+    
     public void readHandler(SelectionKey key) {
-        new Thread(()->{
+        new Thread(() -> {
             System.out.println("read handler.....");
             SocketChannel client = (SocketChannel) key.channel();
             ByteBuffer buffer = (ByteBuffer) key.attachment();
@@ -131,13 +134,13 @@ public class SocketMultiplexingSingleThreadv2 {
             try {
                 while (true) {
                     read = client.read(buffer);
-                    System.out.println(Thread.currentThread().getName()+ " " + read);
+                    System.out.println(Thread.currentThread().getName() + " " + read);
                     if (read > 0) {
-                        key.interestOps(  SelectionKey.OP_READ);
-
-                        client.register(key.selector(),SelectionKey.OP_WRITE,buffer);
+                        key.interestOps(SelectionKey.OP_READ);
+                        
+                        client.register(key.selector(), SelectionKey.OP_WRITE, buffer);
                     } else if (read == 0) {
-
+                        
                         break;
                     } else {
                         client.close();
@@ -148,9 +151,9 @@ public class SocketMultiplexingSingleThreadv2 {
                 e.printStackTrace();
             }
         }).start();
-
+        
     }
-
+    
     public static void main(String[] args) {
         SocketMultiplexingSingleThreadv2 service = new SocketMultiplexingSingleThreadv2();
         service.start();

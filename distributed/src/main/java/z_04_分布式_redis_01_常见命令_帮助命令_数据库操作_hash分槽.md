@@ -2,6 +2,8 @@
 帮助文档
 配置文件:[](https://raw.githubusercontent.com/redis/redis/6.0/redis.conf)
 redis组合命令减少网络传输,计算向数据移动(sinter vs sinterstore)
+redis慢查询问题排查
+
 #redis help
 127.0.0.1:6379> redis help
 help @generic
@@ -82,6 +84,28 @@ zinterstore destination numkeys key [key ...] [weights weight [weight ...]][aggr
 zunionstore destination numkeys key [key ...] [weights weight [weight ...]] [aggregate sum|min|max]
 zinterstore destset 2 sortedset sortedset weights 1 0.5 aggregate min
 ![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/e0dcd3af.png)
+#过期命令
+```asp
+EXPIRE \<key> \<ttl>：命令用于将键key的过期时间设置为ttl秒之后
+PEXPIRE \<key> \<ttl>：命令用于将键key的过期时间设置为ttl毫秒之后
+EXPIREAT \<key> \<timesramp>：命令用于将key的过期时间设置为timrestamp所指定的秒数时间戳
+PEXPIREAT \<key> \<timesramp>：命令用于将key的过期时间设置为timrestamp所指定的毫秒数时间戳
+
+
+10.38.161.13:6600> HELP PEXPIRE
+
+  PEXPIRE key milliseconds
+  summary: Set a key's time to live in milliseconds
+  since: 2.6.0
+  group: generic
+
+10.38.161.13:6600> HELP EXPIRE
+
+  EXPIRE key seconds
+  summary: Set a key's time to live in seconds
+  since: 1.0.0
+  group: generic
+```
 #慢查询
 ![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/90882bfd.png)
 
