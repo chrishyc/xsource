@@ -16,7 +16,8 @@ directory that contains system cronjobs stored for different users.
 ##/var/spool/cron
 Cron searches /var/spool/cron for crontab files which are named after accounts in /etThe found crontabs are loaded into the memoryc/passwd
 ![](.T_01_crontab_images/88cadba4.png)
-#任务耗时阻塞
+#问题
+##任务耗时阻塞
 fork子进程执行
 [](https://cloud.tencent.com/developer/article/1183262)
 #源码
@@ -52,3 +53,15 @@ typedef struct CronLine {
 } CronLine;
 ```
 ![](.T_01_crontab_images/69a274f4.png)
+
+#相关
+##busybox
+[](https://busybox.net/about.html)
+```asp
+BusyBox combines tiny versions of many common UNIX utilities into a single small executable. It provides replacements for most of the utilities you usually find in GNU fileutils, shellutils,
+BusyBox: The Swiss Army Knife of Embedded Linux
+
+```
+
+##GUN
+##GPL(General Public License)
