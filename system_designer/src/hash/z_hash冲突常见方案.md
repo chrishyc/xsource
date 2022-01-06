@@ -45,3 +45,5 @@ private Entry getEntry(ThreadLocal<?> key) {
                 return getEntryAfterMiss(key, i, e);
         }
 ```
+#再哈希法
+#链地址法
