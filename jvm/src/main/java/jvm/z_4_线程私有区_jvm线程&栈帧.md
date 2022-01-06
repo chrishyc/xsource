@@ -1,7 +1,0 @@
-##
-![](.z_3_对象布局_images/5e2a718a.png)
-##对象布局问题
-![](.z_3_对象布局_images/c2929e6d.png)
-[](https://mp.weixin.qq.com/s/kKyJgNzgub4EdG7tkblbvw)
-[自己动手写java虚拟机第四章]
-[](https://zhuanlan.zhihu.com/p/332248004)
