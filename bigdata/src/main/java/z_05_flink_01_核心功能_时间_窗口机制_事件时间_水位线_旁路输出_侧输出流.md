@@ -30,6 +30,7 @@ size,slide,offset
 ##周期性
 ##间歇性
 ##为啥水印用事件最大值?
+##Idleness(空闲状态保留时间)
 
 #AllowedLateness(迟到也计算)
 ```asp

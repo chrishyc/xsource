@@ -46,8 +46,12 @@ Window等，可以将数据转换计算成你想要的数据
 写入文件、打印出来、写入 socket 、自定义的 sink 。自定义 的 sink 常⻅的有 Apache kafka、RabbitMQ、MySQL、ElasticSearch、Apache Cassandra、HDFS等
 
 
-#操作器链
-
+#执行图拓扑&算子链优化
+StreamGraph——原始逻辑执行计划
+JobGraph——优化的逻辑执行计划（Web UI中看到的就是这个）
+ExecutionGraph——物理执行计划
+[z_05_flink_02_分层api_算子_分区策略_算子链_数据倾斜.md]
+算子链接在一起,在相同的线程(slot)中执行,减少线程状态切换,
 #yarn集群
 ##container & application
 container,yarn集群最小资源,application应用任务一个main函数所在class

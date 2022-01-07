@@ -1,16 +1,3 @@
-#告警没有数据,grafana查看有数据
-flink积压,es收集不到数据,grafana报警
-##flinke为啥积压
-checkpoint执行了30分钟
-```asp
-2021-12-23 15:11:08.734 INFO  org.apache.flink.runtime.checkpoint.CheckpointCoordinator    - Completed checkpoint 51364 for job 804dfe28b17fad5d38c48f9b3761f6ed (56504274 bytes in 316593 ms).
-2021-12-23 15:11:38.748 INFO  org.apache.flink.runtime.checkpoint.CheckpointCoordinator    - Triggering checkpoint 51365 @ 1640243498733 for job 804dfe28b17fad5d38c48f9b3761f6ed.
-```
-es后端抖动,flink失败不重试,flink一直故障重启,导致消息积压
-后端opentsdb抖动的时候，是会报500这个code
-[](https://www.infoq.cn/article/hriwi6jdrsxombp4vgde)
-#flink积压太多
-
 #状态管理
 ```asp
 本地性: Flink 状态是存储在使用它的机器本地的，并且可以以内存访问速度来获取
@@ -19,7 +6,12 @@ es后端抖动,flink失败不重试,flink一直故障重启,导致消息积压
 横向可扩展性: Flink 状态可以随着集群的扩缩容重新分布
 可查询性: Flink 状态可以通过使用 状态查询 API 从外部进行查询。
 ```
-##
+##Flink State
+```asp
+Flink是一个有状态的流式计算引擎，所以会将中间计算结果(状态)进行保存，默认保存到TaskManager 的堆内存中，但是当task挂掉，
+那么这个task所对应的状态都会被清空，造成了数据丢失，无法保证结 果的正确性，哪怕想要得到正确结果，所有数据都要重新计算一遍，效率很低。
+想要保证At -least- once和Exactly-once，需要把数据状态持久化到更安全的存储介质中，Flink提供了堆内内存、堆外内 存、HDFS、RocksDB等存储介质
+```
 ##状态快照
 状态持久化与恢复
 ![](.z_05_flink_01_核心功能_有状态计算_精确一次语义_checkpoint_images/8523876f.png)
