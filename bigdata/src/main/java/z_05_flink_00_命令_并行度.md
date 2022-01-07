@@ -17,3 +17,7 @@ bin/yarn-session.sh -n 2 -tm 800 -s 1 -d
 (即便只申请了两个，因为ApplicationMaster和Job Manager有一个额外的容器。一旦将Flink 部署到YARN群集中，它就会显示Job Manager的连接详细信息)
 2 个 Container 启动 TaskManager -n 2，每个 TaskManager 拥有1个 Task Slot -s 1，并且向 每个 TaskManager 的 Container 申请 800M 的内存，以及一个ApplicationMaster--Job Manager
 ```
+#核心配置
+--checkpointing
+--event-time
+--backpressure

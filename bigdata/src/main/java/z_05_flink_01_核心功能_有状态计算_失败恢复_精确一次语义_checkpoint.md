@@ -22,7 +22,32 @@ Flink是一个有状态的流式计算引擎，所以会将中间计算结果(�
 
 ##checkpoint 快照
 Checkpoint – 一种由 Flink 自动执行的快照，其目的是能够从故障中恢复。Checkpoints 可以是增量的，并为快速恢复进行了优化。
+ --checkpointin
 ##快照工作原理
-
+##至少一次
 ##精确一次（exactly once）
 ##端到端精确一次
+
+#失败恢复
+##失败
+```asp
+由于 TaskManager 提供的 TaskSlots 资源不够用，Job 的所有任务都不能成功转为 RUNNING 状态，直到有新的 TaskManager 可用。在此之前，该 Job 将经历一个取消和重新提交 不断循环的过程。
+
+与此同时，数据生成器 (data generator) 一直不断地往 input topic 中生成 ClickEvent 事件，在生产环境中也经常出现这种 Job 挂掉但源头还在不断产生数据的情况
+```
+##恢复
+```asp
+JobManager 就会将处于 SCHEDULED 状态的所有任务调度到该 TaskManager 的可用 TaskSlots 中运行，
+此时所有的任务将会从失败前最近一次成功的 checkpoint 进行恢复， 一旦恢复成功，它们的状态将转变为 RUNNING
+由于我们使用的是 FlinkKafkaProducer “至少一次"模式，因此你可能会看到一些记录重复输出多次
+```
+##升级与扩容
+[](https://nightlies.apache.org/flink/flink-docs-release-1.14/zh/docs/try-flink/flink-operations-playground/#%E8%8E%B7%E5%8F%96%E6%89%80%E6%9C%89%E8%BF%90%E8%A1%8C%E4%B8%AD%E7%9A%84-job)
+```asp
+升级 Flink 作业一般都需要两步：第一，使用 Savepoint 优雅地停止 Flink Job。 Savepoint 是整个应用程序状态的一次快照（类似于 checkpoint ），
+该快照是在一个明确定义的、全局一致的时间点生成的。第二，从 Savepoint 恢复启动待升级的 Flink Job。 在此，“升级”包含如下几种含义：
+
+配置升级（比如 Job 并行度修改）
+Job 拓扑升级（比如添加或者删除算子）
+Job 的用户自定义函数升级
+```
