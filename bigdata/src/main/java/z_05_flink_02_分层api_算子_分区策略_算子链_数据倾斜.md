@@ -172,8 +172,10 @@ DataStream 转换操作后才能被调用，因为它们只对前一次数据转
 ##创建新链
 someStream.filter(...).map(...).startNewChain().map(...);
 算子优化，基于当前算子创建一个新的算子链。后面两个 map 将被链接起来，而 filter 和第一个 map 不会链接在一起,
-
-##
+##禁止链接
+someStream.map(...).disableChaining();
+##配置 Slot 共享组
+someStream.filter(...).slotSharingGroup("name");
 #RichFunction
 #ProcessFunction
 #数据流
