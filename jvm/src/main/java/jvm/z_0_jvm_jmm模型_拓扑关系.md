@@ -1,3 +1,4 @@
+#JVM定位
 ##JVM跨平台
 ![](.z_1_jvm_概念模型_images/a62fe07d.png)
 
