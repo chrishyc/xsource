@@ -32,3 +32,5 @@ es后端抖动,flink失败不重试,flink一直故障重启,导致消息积压
 后端opentsdb抖动的时候，是会报500这个code
 [](https://www.infoq.cn/article/hriwi6jdrsxombp4vgde)
 #flink积压太多
+
+#某个subtask积压问题
