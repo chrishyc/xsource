@@ -80,3 +80,5 @@ javac -processor
 
 #编译
 检测热点代码：-XX:CompileThreshold = 10000
+#加载
+-XX: +TraceClassLoading
