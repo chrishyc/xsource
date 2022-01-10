@@ -22,11 +22,13 @@ JIT编译器:
 ###加载
 [z_1_加载_类加载器_加载器类型_双亲委派.md]
 ```asp
-bootstrap,jre/lib/rt.jar
-ext,
+bootstrap,jre/lib/rt.jar,java.lang,nio,concurrent
+ext,jre/lib/ext.jar
 app
 自定义
 ```
+class加载,[z_1_加载_02_Class_加载_链接_初始化_初始化顺序.md]
+
 ###运行时
 ```asp
 私有区:
@@ -43,6 +45,17 @@ heap堆区:
 
 ```
 ###内存管理
+
+#对象的创建过程
+```asp
+1. class loading,classloader双亲委派加载
+2. class linking (verification,方法签名,属性签名, preparation,分配内存, resolution,符号引用到直接引用)
+3. class initializing,clinit初始化静态变量,静态代码块
+4. 申请对象内存,对象头markword赋值,
+5. 成员变量赋默认值,
+6. 调用构造方法<init>
+1. 成员变量顺序赋初始值 2. 执行构造方法语句
+```
 #项目中遇到的jvm问题
 ##
 ##对象过大导致oom

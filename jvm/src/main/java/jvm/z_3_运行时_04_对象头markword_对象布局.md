@@ -3,6 +3,7 @@
 GC标记
 
 ##对象头
+![](.z_3_运行时_04_对象头markword_images/80dfca10.png)
 ![](.z_3_对象布局_images/5e2a718a.png)
 ##对象布局
 ##对象分配
