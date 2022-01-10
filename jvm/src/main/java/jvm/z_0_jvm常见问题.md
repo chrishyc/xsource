@@ -24,25 +24,27 @@ JIT编译器:
 ```asp
 bootstrap,jre/lib/rt.jar,java.lang,nio,concurrent
 ext,jre/lib/ext.jar
-app
-自定义
+app,classpath
+自定义,tomcat,WebAppClassLoader,每个Context 对应一个 WebappClassloader, 主要用于加载 WEB-INF/lib 与 WEB-INF/classes 下面的资源
 ```
 class加载,[z_1_加载_02_Class_加载_链接_初始化_初始化顺序.md]
 ```asp
-加载
+加载,二进制字节流,磁盘,内存,网络,proxy动态代理生成class中加载
 连接:
-- 验证
-- 准备
-- 解析
-初始化:clinit
+- 验证:class版本,继承关系是否有final/private,
+- 准备:分配内存
+- 解析:符号引用转直接引用,内存地址
+初始化:clinit,准备了类的变量初始值后，虚拟机会把该类的虚方法表也一同初始化
 ```
 ###运行时
 ```asp
 私有区:
-虚拟机栈,每一个线程对应一个虚拟机栈,每个方法对应一个栈帧,每个栈帧上包含操作数栈,局部方法表,
-本地方法栈,jvm通过jni支持对其他语言的通信,调用c,c++时hotspot会开辟本地方法栈,用于native方法出栈入栈
+虚拟机栈,每一个线程对应一个虚拟机栈,每个方法对应一个栈帧,每个栈帧上包含操作数栈,局部方法表,方法引用用于动态连接(多态),方法返回地址
+本地方法栈,jvm通过jni支持对其他语言的通信,调用c,c++时hotspot会开辟本地方法栈,用于native方法出栈入栈,仍是同一个线程
 pc计数器,指向当前线程执行的字节码行号
 ```
+[](z_3_运行时_02_操作数栈_局部变量表_指令概述_方法重载_多态.md)
+[深入理解java虚拟机8.2.3]
 ```asp
 共享:
 heap堆区:
