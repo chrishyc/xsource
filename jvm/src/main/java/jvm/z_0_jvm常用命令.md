@@ -1,6 +1,6 @@
 ##MAT实战
 [](https://juejin.cn/post/6911624328472133646#heading-14)
-##命令
+##运维命令
 配置虚拟机参数的常用命令
 -XX:+PrintFlagsInitial
 -XX:+PrintFlagsFinal
@@ -77,3 +77,6 @@ System.getProperties().put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true")
 #注解处理器
 javac -processor
 [T02_compile_04_annotations.java]
+
+#编译
+检测热点代码：-XX:CompileThreshold = 10000

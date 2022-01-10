@@ -27,6 +27,7 @@ jvm将其转化为本地计算机机器码
 并将另一个线程的寄存器数据,pc数据读入寄存器和pc中
 ##10.cpu缓存机制，设置缓存为啥能优化时间?
 ![](/Users/chris/workspace/xsource/linux/src/main/resources/images/存储缓存级别.jpg)
+![](.cpu缓存一致性_images/b58bb815.png)
 1.程序局部性原理
 局部时间、空间原理
 2.数据都是按块读取，程序从磁盘读取一个字节,实际是cpu发送读指令给DMA，DMA执行指令，磁盘通过主存总线直接发给内存(磁盘读取的数据不经过cpu，直接给内存,所以磁盘也有控制单元?).
