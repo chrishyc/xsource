@@ -73,6 +73,13 @@ jmap - Prints shared object memory maps or heap memory details for a process
 System.getProperties().put("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");//java动态代理，保存字节码文件到磁盘
         System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, "/Users/chris/Downloads/test/spring/com/tutorialspoint/$Proxy123.class");//查看CGLib字节码
 ![]()
+#工具
+VisualVM
+MAT
+arthas
+JMAP
+JSTACK
+JPS
 
 #注解处理器
 javac -processor

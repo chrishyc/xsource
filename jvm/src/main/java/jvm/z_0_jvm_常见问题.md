@@ -59,14 +59,13 @@ heap堆区:
 ```asp
 1. class loading,classloader双亲委派加载
 2. class linking (verification,方法签名,属性签名, preparation,分配内存, resolution,符号引用到直接引用)
-3. class initializing,clinit初始化静态变量,静态代码块
+3. class initializing,clinit初始化静态变量,静态代码块,映射虚函数表
 4. 申请对象内存,对象头markword赋值,
 5. 成员变量赋默认值,
 6. 调用构造方法<init>
 1. 成员变量顺序赋初始值 2. 执行构造方法语句
 ```
 #项目中遇到的jvm问题
-
 ##对象过大导致oom
 事件链路对象过大,全部晋升老年代
 前端无响应,业务人员一直点,dubbo
