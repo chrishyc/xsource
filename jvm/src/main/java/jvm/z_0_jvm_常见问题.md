@@ -101,6 +101,10 @@ G1,并行处理,并发,和线程交替执行
 #项目中遇到的jvm问题
 ##prometheus新生代频繁gc告警
 调整新生代内存后十几小时周期性新生代gc,老年代gc,cpu飙升300%
+查看prometheus监控,memory,cpu都是一起周期性
+dump jvm快照发现有很多指标对象,几百万个,top -Hp pid查看cpu使用高的线程,
+jstack堆栈,发现cpu很高时,有一个prometheus meter的排序方向
+然后本地复现,发现prometheus micromter库生成都会对指标排序去重,
 ##对象过大导致oom
 事件链路对象过大,全部晋升老年代
 前端无响应,业务人员一直点,dubbo
@@ -109,6 +113,8 @@ tostring时常量池解析异常
 指令行数,jclasslib找对应指令,发现是tostring中invokevirtual指令isSet报错
 isSet不会进行脱敏,也不能脱敏,否则调用时是脱敏的数据,破坏业务
 
+##项目由CMS升级到G1导致内存占用增大30%以上
+决策引擎对外部署,外部使用java 1.8默认G1垃圾回收器
 ##NoClassDefFoundError vs ClassNotFoundException
 NoClassDefFoundError:[类加载.解析]阶段,在运行时我们想调用某个类的方法或者访问这个类的静态成员的时候，发现这个类不可用，
 此时Java虚拟机就会抛出NoClassDefFoundError错误
