@@ -1,9 +1,17 @@
 package myjava.serialization.serializable;
 
-import java.io.*;
+import com.google.gson.Gson;
+import org.junit.Test;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
 
 public class SerialDemo {
-    public static final String PATH = "/Users/chris/xsource/java/src/main/java/serialization/serializable/";
+  public static final String PATH = "/Users/chris/xsource/java/src/main/java/serialization/serializable/";
 
     /**
      * {@link ObjectOutputStream#writeObject0}
