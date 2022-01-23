@@ -40,43 +40,43 @@ import spring.springboot.repository.RedisRepository;
 @SpringBootTest
 @Ignore
 class SpringbootApplicationTests {
-    
+
     @Autowired
     private DemoController demoController;
-    
+
     @Autowired
     private Person person;
-    
+
     @Autowired
     private Dog dog;
-    
+
     @Autowired
     private CustomConfig customConfig;
-    
+
     /**
      * {@link RandomValuePropertySource}
      */
     @Value("${custom.number.inrange}")
     private int range;
-    
+
     @Autowired
     private TestBean testBean;
-    
+
     @Autowired
     private CommentMapper commentMapper;
-    
+
     @Autowired
     private CommentRepository repository;
-    
+
     @Autowired
     private RedisRepository redisRepository;
-    
+
     @Test
     void contextLoads() {
         demoController.sayHello();
     }
-    
-    
+
+
     /**
      * spring.factories加载{@link ConfigFileApplicationListener}
      * 而{@link ConfigFileApplicationListener}会加载application.properties
@@ -87,9 +87,9 @@ class SpringbootApplicationTests {
      */
     @Test
     public void testPropertiesAndYML() {
-    
+
     }
-    
+
     /**
      * {@link EnableConfigurationProperties}
      * {@link ConfigurationProperties}
@@ -105,7 +105,7 @@ class SpringbootApplicationTests {
         System.out.println(person);
         System.out.println(person);
     }
-    
+
     /**
      * {@link Value}
      * <p>
@@ -121,7 +121,7 @@ class SpringbootApplicationTests {
         System.out.println(dog);
         System.out.println(dog);
     }
-    
+
     /**
      * {@link PropertySource}
      * <p>
@@ -138,19 +138,19 @@ class SpringbootApplicationTests {
         System.out.println(customConfig);
         System.out.println(customConfig);
     }
-    
+
     @Test
     public void testRef() {
         System.out.println(range);
         System.out.println(customConfig);
     }
-    
+
     @Test
     public void testMyStarter() {
         System.out.println(testBean);
         System.out.println(testBean);
     }
-    
+
     /**
      * springboot通过SPI完成对各jar包的自动注入
      * 具体是通过扫描每个jar包中META-INF/spring.factories申明的类
@@ -181,7 +181,7 @@ class SpringbootApplicationTests {
         MybatisComment comment = commentMapper.findById(1);
         System.out.println(comment);
     }
-    
+
     /**
      * 代码解析流程
      * 1.{@link ConfigurationClassPostProcessor#processConfigBeanDefinitions}处理所有{@link Configuration}配置类
@@ -202,7 +202,7 @@ class SpringbootApplicationTests {
         Optional<Comment> optional = repository.findById(1);
         optional.ifPresent(System.out::println);
     }
-    
+
     /**
      * redis autoConfiguration
      *
@@ -225,12 +225,12 @@ class SpringbootApplicationTests {
         RedisPojo pojo = new RedisPojo();
         pojo.setFirstName("张");
         pojo.setLastName("三");
-    
+
         RedisAddress address = new RedisAddress();
         address.setCity("北京");
         address.setCountry("中国");
         pojo.setAddress(address);
-    
+
         // 向redis数据库中添加了数据
         redisRepository.save(pojo);
     }

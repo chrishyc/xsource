@@ -10,3 +10,5 @@ cat /proc/irq,查看中断向量目录
 ##查看cpu型号
 uname -a
 lscpu,查看cpu信息
+##查看numa
+numactl --hardware
