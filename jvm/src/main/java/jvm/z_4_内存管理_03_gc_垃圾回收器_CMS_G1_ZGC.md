@@ -15,8 +15,8 @@ ParNew + CMS
 PS +  Serial Old/
 G1
 ```asp
-吞吐量:数据分析、科学计算,flink job,
-停顿时间:软实时服务,微服务
+吞吐量:数据分析、科学计算,flink job,使用PS +  Parallel Old
+停顿时间:软实时服务,微服务,ParNew + CMS
 客户端应用或者嵌入式应用:内存占用
 ```
 #Serial收集器(标记-复制,gc标记在对象头,写屏障)
