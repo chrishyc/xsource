@@ -57,3 +57,18 @@ javac -processor
 [T02_compile_04_annotations.java]
 #加载
 -XX: +TraceClassLoading
+#OOM
+
+#垃圾回收器
+##Serial / Serial Old
+##ParNew
+-XX:ParallelGCThreads,垃圾收集的线程数
+##Parallel Scavenge +(Parallel Old)
+-XX:+UseAdptiveSizePolicy
+XX:MaxGCPauseMillis
+XX:GCRatio
+##CMS
+Eden与Survivor区的比例(-XX:SurvivorRation
+新生代的大小(-Xmn)
+晋升老年代对象年龄(-XX:PretenureSizeThreshold)
+##G1
