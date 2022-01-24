@@ -7,6 +7,7 @@
 -XX:PretenureSizeThreshold,3MB
 -XX:PretenureSizeThreshold参数只对Serial和ParNew两款新生代收集器有效
 ##长期存活的对象将进入老年代
+![](.z_4_内存管理_00_内存对象分配策略_分配担保_大对象分配_空闲列表_TLAB_images/badabec9.png)
 虚拟机给每个对象定义了一个对 象年龄(Age)计数器，存储在对象头中
 ```asp
 对象通常在Eden区里诞生，如果经过第一次 Minor GC后仍然存活，并且能被Survivor容纳的话，该对象会被移动到Survivor空间中，并且将其对象 年龄设为1岁。

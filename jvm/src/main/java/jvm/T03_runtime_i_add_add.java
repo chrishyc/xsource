@@ -3,13 +3,8 @@ package jvm;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
 
-public class T04_instruction_i_add_add {
+public class T03_runtime_i_add_add {
 
   /**
    * 0 bipush -98
@@ -23,6 +18,7 @@ public class T04_instruction_i_add_add {
   public void testIAddAdd() {
     int i = -98;
     i = i++;
+    System.out.println(i);
   }
 
   /**

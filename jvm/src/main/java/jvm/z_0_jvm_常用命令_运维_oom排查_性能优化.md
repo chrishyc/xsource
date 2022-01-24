@@ -61,9 +61,21 @@ javac -processor
 
 #垃圾回收器
 ##Serial / Serial Old
+UseSerialGC = Serial + Serial Old
 ##ParNew
+UseParNewGC = ParNew + Serial Old
+UseConcurrentMarkSweepGC = ParNew + CMS + Serial Old
+
 -XX:ParallelGCThreads,垃圾收集的线程数
+
+–"CMS" is used most of the time to collect the tenured generation.
+"Serial Old"(full gc) is used when a concurrent mode failure occurs
+
 ##Parallel Scavenge +(Parallel Old)
+
+UseParallelGC = Parallel Scavenge + Serial Old
+UseParallelOldGC = Parallel Scavenge + Parallel Old
+
 -XX:+UseAdptiveSizePolicy
 XX:MaxGCPauseMillis
 XX:GCRatio
