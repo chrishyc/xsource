@@ -61,6 +61,7 @@ CM S等收集器的关注点是尽可能 地缩短垃圾收集时用户线程的
 ##浮动垃圾
 -XX:CMSInitiatingOccu-pancyFraction
 ##并发失败
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/81030945.png)
 要是CM S运行期间预留的内存无法满 足程序分配新对象的需要，就会出现一次“并发失败”(Concurrent M ode Failure)，这时候虚拟机将不 得不启动后备预案
 :冻结用户线程的执行，临时启用Serial Old收集器来重新进行老年代的垃圾收集， 但这样停顿时间就很长了。
 所以参数-XX:CMSInitiatingOccupancyFraction设置得太高将会很容易导致 大量的并发失败产生，性能反而降低
