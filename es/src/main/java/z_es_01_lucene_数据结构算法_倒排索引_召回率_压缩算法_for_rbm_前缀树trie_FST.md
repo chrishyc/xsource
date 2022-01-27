@@ -35,28 +35,7 @@ http://cs.usfca.edu
 固定8KB
 ####RunContainer
 8B
-##编码解码(词项)
 
-![](.z_es_00_lucence数据结构算法_倒排索引_召回率_压缩算法_for_rbm_前缀树trie_images/bde69ace.png)
-###前缀树trie
-![](.z_es_00_lucence数据结构算法_倒排索引_召回率_压缩算法_for_rbm_前缀树trie_images/400b0b36.png)
-无法共享后缀
-###FSA(有限状态接收机)
-有向无环图,有终点信息
-![](.z_es_00_lucence数据结构算法_倒排索引_召回率_压缩算法_for_rbm_前缀树trie_FST_images/514f6b3d.png)
-###FST
-```asp
-确定：意味着指定任何一个状态，只可能最多有一个转移可以遍历到。
-无环： 不可能重复遍历同一个状态
-transducer：接收特定的序列，终止于final状态，同时会输出一个值。
-```
-节点冷冻,节点信息不会发生改变
-[](https://www.cnblogs.com/cangqinglang/p/15606270.html)
-有向无环权重图,终点有权重,动态调整权重
-[](https://www.shenyanchao.cn/blog/2018/12/04/lucene-fst/)
-[](https://blog.csdn.net/yians/article/details/119353272)
-![](.z_es_00_lucence数据结构算法_倒排索引_召回率_压缩算法_for_rbm_前缀树trie_FST_images/cad7ab0d.png)
-![](.z_es_00_lucence数据结构算法_倒排索引_召回率_压缩算法_for_rbm_前缀树trie_FST_images/2f20955a.png)
 #结果准确
 #检索结果丰富
 召回率

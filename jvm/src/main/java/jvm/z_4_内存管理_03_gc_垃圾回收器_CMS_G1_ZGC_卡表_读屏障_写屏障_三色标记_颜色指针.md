@@ -9,6 +9,8 @@ cpu 64位,寻址范围46位, 4位颜色指针,42位地址4TB,mmap虚拟地址映
 G1伪共享问题
 内存保护trap
 ![](.z_4_内存管理_02_gc_垃圾回收理论_标记算法_回收算法_垃圾回收器_分代回收_局部回收_images/1c366750.png)
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/9c7f5578.png)
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/10b66310.png)
 #常用垃圾回收器组合&考虑因素
 Serial + Serial Old
 ParNew + CMS
@@ -93,6 +95,7 @@ void post_write_barrier(oop* field, oop new_value) {
 ```
 ##回收过程
 #Garbage First(标记-复制,mixed gc,软实时,gc标记在BitMap.写屏障)
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/69438c44.png)
 JDK 8
 [深入理解jvm]
 [](https://tech.meituan.com/2016/09/23/g1.html)
@@ -149,7 +152,7 @@ G1可以管理的最大内存为2048×32MB=64GB,可以配置heap region大小和
 ```
 ![](.z_4_内存管理_02_gc_垃圾回收理论_标记算法_回收算法_垃圾回收器_分代回收_局部回收_images/c6495866.png)
 ![](.z_4_内存管理_02_gc_垃圾回收理论_标记算法_回收算法_垃圾回收器_分代回收_局部回收_images/22d1cb7e.png)
-##卡表(point in,原始快照SATB,并发标记,原始快照,三色标记,写屏障)
+##卡表&记忆集(point in,原始快照SATB,并发标记,原始快照,三色标记,写屏障)
 ![](.z_4_内存管理_02_gc_垃圾回收理论_标记算法_回收算法_垃圾回收器_分代回收_局部回收_images/a4c52d4c.png)
 ![](.z_4_内存管理_03_gc_垃圾回收器_images/621b8065.png)
 ```asp
@@ -161,15 +164,22 @@ void pre_write_barrier(oop* field) {
   }
 }
 ```
+###G1为啥用原始快照
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/cf110f94.png)
 ##回收过程
 ![](.z_4_内存管理_02_gc_垃圾回收理论_标记算法_回收算法_垃圾回收器_分代回收_局部回收_images/7a85a391.png)
 ![](.z_4_内存管理_02_gc_垃圾回收理论_标记算法_回收算法_垃圾回收器_分代回收_局部回收_images/71533f41.png)
 ###初始标记(全局堆,STW)
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/56e68e50.png)
 ###并发标记(全局堆,多线程并行,三色标记,写屏障)
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/fd6e7162.png)
 写屏障
 ![](.z_4_内存管理_03_gc_垃圾回收器_images/30fbac8b.png)
 ###最终标记(全局堆,STW)
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/4eab0011.png)
 ###筛选回收(部分复制,STW)
+##G1 FULL GC
+java 10以前是串行FullGC，之后是并行FullGC
 ##G1 VS CMS
 ```asp
 cms标记清理,g1标记复制
@@ -180,6 +190,7 @@ cms标记清理,g1标记复制
 目前在小内存应用上CM S的表现大概率仍然要会优于G1，而在大内存应用上G1则大多能发挥其 优势，这个优劣势的Java堆容量平衡点通常在6GB至8GB之间
 ```
 #shenandoah(gc标记在BitMap,读写屏障)
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/f595f93e.png)
 ##并发标记(写屏障)
 ##并发整理(转发指针,内存保护trap,读屏障,执行频率,吞吐下降)
 ![](.z_4_内存管理_03_gc_垃圾回收器_images/c93bbc10.png)
@@ -213,6 +224,9 @@ mov r13,QWORD PTR [r12+r14*8-0x8]
 
 #ZGC(优化复制过程,使得复制过程可以并发,复制算法,gc标记在染色指针,读屏障)
 使用读屏障(Read Barrier)技术实现了整理过程与用户线程的并发 执行
+暂时不分代,没有G1占内存的RememeredSet
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/cef02346.png)
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/7b591a7f.png)
 [](https://www.bilibili.com/read/cv6083109?spm_id_from=333.999.0.0)
 ##gc标记
 [](https://www.zhihu.com/question/458099423/answer/1874465032)
@@ -250,7 +264,7 @@ Remapped->m0,将Remapped标记为m0,清理remapped对象
 ```
 [](https://weread.qq.com/web/reader/7e5327d071916d647e51559kd6432e00228d645920e3401)
 ##并发整理(读屏障)
-
+![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/6bd1dc5f.png)
 ![](.z_4_内存管理_03_gc_垃圾回收器_images/ff69595f.png)
 ```asp
 oop oop_field_load(oop* field) {
