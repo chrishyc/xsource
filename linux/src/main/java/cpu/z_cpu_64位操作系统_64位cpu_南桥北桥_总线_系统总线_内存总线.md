@@ -12,3 +12,4 @@
 [](https://blog.csdn.net/sores/article/details/88216185?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-0.queryctrv2&spm=1001.2101.3001.4242.1&utm_relevant_index=3)
 #南桥北桥总线
 ![](.z_cpu_64位操作系统_64位cpu_区别_images/eb0b959e.png)
+![](.z_cpu_64位操作系统_64位cpu_南桥北桥_总线_images/d8d52dab.png)

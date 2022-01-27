@@ -1,5 +1,13 @@
 #运维命令
 ##启动参数
+```asp
+▪-
+– 标准参数，所有JVM都应该支持 
+▪ -X
+– 非标，每个JVM实现不同 
+▪ -XX
+– 不稳定参数，下个版本可能取消
+```
 配置虚拟机参数的常用命令
 -XX:+PrintFlagsInitial
 -XX:+PrintFlagsFinal
@@ -84,3 +92,15 @@ Eden与Survivor区的比例(-XX:SurvivorRation
 新生代的大小(-Xmn)
 晋升老年代对象年龄(-XX:PretenureSizeThreshold)
 ##G1
+– XX:G1HeapRegionSize
+取值1 2 4 8 16 32
+##ZGC
+-XX:+UseZGC
+#调优
+计算型任务还是响应型任务
+
+▪ 系统上线前，
+– 预估预优化JVM的各种垃圾回收选择 
+
+▪ 系统上线后，
+– 优化运行JVM的运行环境，解决JVM运行中出现的问题
