@@ -1,11 +1,14 @@
 #临界知识
 [lucene原理与代码分析完整版]
 #拓扑
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/624d2033.png)
 ![](.z_es_01_lucene_01_索引文件格式_物理存储_数据结构_tip_tim_doc_fdt_fdx_images/89017407.png)
 ![](.z_es_01_lucene_01_索引文件格式_物理存储_数据结构_tip_tim_doc_fdt_fdx_images/6d242786.png)
 ![](.z_es_01_lucene_01_索引文件格式_物理存储_数据结构_tip_tim_doc_fdt_fdx_images/5eb7abf9.png)
 ![](.z_es_01_lucene_01_索引文件格式_物理存储_数据结构_tip_tim_doc_fdt_fdx_images/f3ad5f1d.png)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/443502d1.png)
 [](https://blog.csdn.net/qq_33067315/article/details/114668668)
+[](https://juejin.cn/post/6844903760607592456#heading-3)
 ##索引(Index)
 ```asp
 一个目录一个索引，在Lucene中一个索引是放在一个文件夹中的。
@@ -20,34 +23,73 @@
 域里。不同域的索引方式可以不同。
 ##词(Term)
 词是索引的最小单位，是经过词法分析和语言处理后的字符串。
-##正向索引(docvalues,docId->term,列存储)
-[](z_01_分布式_临界知识_行存储_列存储_OLAP_OLTP_数据模型_宽表_对比网站_数据关系_nosql_存储模型_时序数据库_文档数据库_列数据库_文件系统_键值系统_表格系统_数据库系统_ETL_HTAP.md)
-[](https://blog.csdn.net/zteny/article/details/84627990)
-[](https://cloud.tencent.com/developer/article/1463890)
 
-```asp
-按层次保存了从索引，一直到词的包含关系:
-索引(Index) –> 段(segment) –> 文档(Document) –> 域(Field) –> 词(Term)
-此索引包含了那些段，每个段包含了那些文档，每个文档包􏰇了那些域，每个域包含了那些词
-既然是层次结构，则每个层次都保存了本层次的信息以及下一层次的元信息，也即属性
-信息，比如一本介绍中国地理的书，应该首先介绍中国地理的概况，以及中国包􏰇多少 个省，每个省介绍本省的基本概况及包􏰇多少个市，
-每个市介绍本市的基本概况及包􏰇 多少个县，每个县具体介绍每个县的具体情况
-```
-![](.z_es_01_lucene_01_索引文件格式_物理存储_数据结构_tip_tim_doc_fdt_fdx_images/019e60c0.png)
-##倒排索引(term->docId)
-[物理文件结构](https://www.cnblogs.com/forfuture1978/archive/2010/02/02/1661436.html)
-![](.z_es_01_lucene_01_索引文件格式_物理存储_数据结构_tip_tim_doc_fdt_fdx_images/161f805f.png)
 
 #物理索引结构
 [](https://elasticsearch.cn/article/6178#tip10)
-
-
-##segments_xxx
-
-
-##域(Field)
-
-##待处理
+[](https://www.cnblogs.com/forfuture1978/archive/2009/12/14/1623599.html)
+##索引相关
+###segments_xxx
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/fffa15f9.png)
+![](.z_es_00_常用命令_images/cd1ae25e.png)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/3ec0a276.png)
+###write.lock	
+##Segment相关
+###.si(segment元信息)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/a2acd093.png)
+segmentInfo文件，就是一个独立的子索引，其中Files是一个列表，里面存储了本segment所有相关的索引文件
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/3c4a0837.png)
+###.cfs, .cfe(Compound File,复合文件,压缩多个文件到一个)		
+##field域相关
+###.fnm(域(Field)的元数据信息,每个Segment一个,不区分文档)
+一个段(Segment)包含多个域(段->文档->域)，每个域都有一些元数据信息，保存在.fnm文件中，.fnm文件的格式如下：
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/58ff2601.png)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/08ad9545.png)
+###.fdx(域索引文件,每个Segment一个,里面包含多个doc,每个doc对应自己的域)	.fdt(域数据文件)	
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/f6fe96a0.png)
+![域数据文件(fdt)](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/3f3ad022.png)
+![域索引文件(fdx)](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/7ec70851.png)
+##词向量(行存储)
+词向量信息是从索引(index)到文档(document)到域(field)到词(term)的正向信息，有了词向量信息，我们就可以得到一篇文档包含那些词的信息。
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/0ddd9217.png)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/b28058e7.png)
+###.tvx(文档索引offset)
+文档文件(tvd)中此文档的偏移量,此文档的第一个域的偏移量
+###.tvd(域索引offset)
+此文档包含的域的个数NumFields,域在tvf中的偏移量
+###.tvf(词offset,词频,词文本)
+词的文本TermText，词频TermFreq(也即此词在此文档中出现的次数)，词的位置信息，词的偏移量信息
+##term词相关(倒排索引)
+<lucene4
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/440fcb16.png)
+lucene4+
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/98b6466a.png)
+###.tim(词典,Delta)
+在词典中，所有的词是按照字典顺序排序的。
+SkipInterval：倒排表无论是文档号及词频，还是位置信息，都是以跳跃表的结构存在的，SkipInterval是跳跃的步数
+###.tip(词典索引,跳表lucene3,FST_lucene4+)
+第一部分是词本身(TermInfo)，第二部分是在词典文件中的偏移量
+###.doc(Delta,每个词的docId倒排表)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/e17a51f6.png)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/5fdab2b6.png)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/358ef001.png)
+###.pos(词位置信息,差值规则,Stores position information about where a term occurs in the index)	
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/4617f08e.png)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/a47950b9.png)
+词位置信息也是倒排表，也是以跳跃表形式存在的
+###.pay(payload附加信息)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/1e0a5c4b.png)	
+##Doc Values
+###.dvd
+###.dvm	
+##加权
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/6731062e.png)
+###.nvd(加权因子数据)
+###.nvm(加权因子索引文件)
+##删除相关
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/4dbeed61.png)
+###.liv	
+#待处理
 ```asp
 插入abd时，没有输出。
 2. 插入abe时，计算出前缀ab，但此时不知道后续还不会有其他以ab为前缀的词，所以此时无输出。
@@ -59,7 +101,7 @@
 ![](.z_es_00_物理存储_数据结构_images/4843a79b.png)
 ![](.z_es_00_物理存储_数据结构_images/6f8ba7d0.png)
 #文件存储优化算法与数据结构
-##前缀后缀规则(Prefix+Suffix)
+##前缀后缀规则(Prefix+Suffix,字典排序的词典)
 ```asp
 Lucene 在反向索引中，要保存词典(Term Dictionary)的信息，所有的词(Term)在词典中是按照
 字典顺序进行排列的，然而词典中包􏰇了文档中的几乎所有的词，并且有的词还是非常的长 的，这样索引文件会非常的大，所谓前缀后缀规则，
@@ -74,7 +116,7 @@ Lucene 在反向索引中，要保存词典(Term Dictionary)的信息，所有�
 [VInt = 4] [t][e][r][m]，[VInt = 4 (offset)][VInt = 6][a][g][a][n][c][y]，[VInt = 8 (offset)][VInt = 1][t]， [VInt = 4(offset)][VInt = 4][i][n][a][l]
 共需要 22 个 Byte。 大大缩小了存储空间，尤其是在按字典顺序排序的情况下，前缀的重合率大大提高
 ```
-##差值规则(Delta)
+##差值规则(Delta,文档ID,词位置)
 ```asp
 在 Lucene 的反向索引中，需要保存很多整型数字的信息，比如文档 ID 号，比如词(Term)在 文档中的位置等等。
 由上面介绍，我们知道，整型数字是以 VInt 的格式存储的。随着数值的增大，每个数字占 用的 Byte 的个数也逐渐的增多。
@@ -95,7 +137,7 @@ Lucene 在反向索引中，要保存词典(Term Dictionary)的信息，所有�
 ##或然跟随规则(A,B?)
 [](https://www.cnblogs.com/bonelee/p/6808409.html)
 ![](.z_es_01_lucene_01_索引文件格式_物理存储_数据结构_tip_tim_doc_fdt_fdx_images/15a41498.png)
-##跳表(Skiplist)
+##跳表(Skiplist,词典postingList docId,词典offset)
 ![](.z_es_01_lucene_01_索引文件格式_物理存储_数据结构_tip_tim_doc_fdt_fdx_images/21efdefd.png)
 按照描述，当SkipInterval为4，且有35篇文档的时候，Skip level = 0应该包括第3，第7，第11，第15，第19，第23，第27，第31篇文档，Skip level = 1应该包括第15，第31篇文档。
 ##FST(词项)

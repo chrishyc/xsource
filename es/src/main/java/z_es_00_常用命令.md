@@ -14,3 +14,5 @@
 [下载地址](https://github.com/DmitryKey/luke)
 /Users/chris/workspace/elk/lucene/luke脚本查看分析index索引文件
 ![](.z_es_00_常用命令_images/449b5840.png)
+segments
+![](.z_es_00_常用命令_images/cd1ae25e.png)
