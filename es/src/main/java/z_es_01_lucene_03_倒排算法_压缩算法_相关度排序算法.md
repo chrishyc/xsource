@@ -100,10 +100,11 @@ Lucene 在反向索引中，要保存词典(Term Dictionary)的信息，所有�
 ###前缀树trie
 ![](.z_es_00_lucence数据结构算法_倒排索引_召回率_压缩算法_for_rbm_前缀树trie_images/400b0b36.png)
 无法共享后缀
-###FSA(有限状态接收机)
+###FSA(有限状态接收机,共同前后缀)
 有向无环图,有终点信息
 ![](.z_es_00_lucence数据结构算法_倒排索引_召回率_压缩算法_for_rbm_前缀树trie_FST_images/514f6b3d.png)
-###FST(正则字符串匹配状态机)
+###FST(正则字符串匹配状态机,词有序,前缀内存,叶子节点block磁盘)
+[](https://www.cnblogs.com/cangqinglang/p/15606270.html)
 ####FST VS HashMap vs treeMap
 ```asp
 优点：内存占用率低，压缩率一般在3倍~20倍之间、模糊查询支持好、查询快
@@ -125,6 +126,14 @@ Lucene现在采用的数据结构为FST，它的特点就是：
 3、内存存放前缀索引、磁盘存放后缀词块
 这跟我们前面说到的词典结构三要素是一致的：1. 查询速度。2. 内存占用。3. 内存+磁盘结合。我们往索引库里插入四个单词abd、abe、acf、acg,看看它的索引文件内容
 ```
+####FST定义
+```asp
+出度:
+出度:
+final终点:
+尾部冻结(压缩算法):
+权重,为何加权?:暂时不管
+```
 ####原理
 ```asp
 确定：意味着指定任何一个状态，只可能最多有一个转移可以遍历到。
@@ -132,10 +141,11 @@ Lucene现在采用的数据结构为FST，它的特点就是：
 transducer：接收特定的序列，终止于final状态，同时会输出一个值。
 ```
 节点冷冻,节点信息不会发生改变
-[](https://www.cnblogs.com/cangqinglang/p/15606270.html)
 有向无环权重图,终点有权重,动态调整权重
 [](https://www.shenyanchao.cn/blog/2018/12/04/lucene-fst/)
-[](https://blog.csdn.net/yians/article/details/119353272)
 ![](.z_es_00_lucence数据结构算法_倒排索引_召回率_压缩算法_for_rbm_前缀树trie_FST_images/cad7ab0d.png)
 ![](.z_es_00_lucence数据结构算法_倒排索引_召回率_压缩算法_for_rbm_前缀树trie_FST_images/2f20955a.png)
 
+
+
+###如何确认FST使用什么前缀?

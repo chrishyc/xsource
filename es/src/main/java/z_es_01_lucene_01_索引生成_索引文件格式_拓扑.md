@@ -108,6 +108,7 @@ FST提供两个基本功能:
 快速定位Block的位置，通过FST是可以直接计算出Block的在文件中位置（offset,FP）。实现了HashMap的功能
 ```
 ###.tim(词典,Terms Dictionary,Delta)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/d82dfb4a.png)
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/a2e19baa.png)
 
 在词典中，所有的词是按照字典顺序排序的。
@@ -130,6 +131,16 @@ SkipInterval：倒排表无论是文档号及词频，还是位置信息，都�
 Lucene规定，每个Block的大小在25-48范围内。
 ```
 #####Entry(block树中的节点)
+```asp
+private static class PendingEntry {
+    public final boolean isTerm;
+
+    protected PendingEntry(boolean isTerm) {
+      this.isTerm = isTerm;
+    }
+  }
+```
+[BlockTreeTermsWriter]
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/71ba6db0.png)
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/b050eb32.png)
 ```asp
@@ -137,9 +148,29 @@ Lucene规定，每个Block的大小在25-48范围内。
 ```
 #####OuterNode,叶子节点
 #####InnerNode非叶子节点
-#####PendingTerm待写term
-#####PendingBlock待写子block
-
+#####PendingTerm待完成term
+小于minTermBlockSize时为PendingTerm
+```asp
+private static final class PendingTerm extends PendingEntry {
+    public final byte[] termBytes;
+    // stats + metadata
+    public final BlockTermState state;
+  }
+```
+#####PendingBlock待完成block
+```asp
+private static final class PendingBlock extends PendingEntry {
+    public final BytesRef prefix;
+    public final long fp;
+    public FST<BytesRef> index;
+    public List<FST<BytesRef>> subIndices;
+    public final boolean hasTerms;
+    public final boolean isFloor;
+    public final int floorLeadByte;
+}
+```
+#####floor block
+一个PendingBlock包含太多PendingTerm时会进行拆分,默认最大48,最小25，maxTermBlockSize
 ###.doc(Postings List,Delta,每个词的docId倒排列表和词频)
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/e17a51f6.png)
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/5fdab2b6.png)
