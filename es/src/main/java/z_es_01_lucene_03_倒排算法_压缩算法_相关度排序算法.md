@@ -4,56 +4,9 @@ delta-encoding增量编码frame of reference
 hashmap(快),skiplist(快),trieTree(小),fst
 http://cs.usfca.edu
 输入词项有序,处理完节点冻结刷盘
+海量数据的判重和基数统计,布隆过滤器
+位图不适应稀疏存储
 ![](.z_es_00_物理存储_数据结构_images/96ad1ab8.png)
-#倒排索引算法(FST,跳表)
-![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/910137c0.png)
-[z_es_01_lucene_01_索引生成_索引文件格式_拓扑.md]
-##term index(词索引)
-##term dictionary(词项字典)
-##posting list(倒排列表)
-
-
-#压缩算法(压缩doc ID)
-![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/2647e65e.png)
-###FOR(稠密压缩算法,frame of reference参考系,坐标)
-适合稠密数组
-差值列表deltas list
-[](https://www.elastic.co/cn/blog/frame-of-reference-and-roaring-bitmaps)
-![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/aedb0f01.png)
-![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/a0cf89ea.png)
-###RBM
-无符号short最大值65535
-![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/9212b214.png)
-####ArrayContainer
-![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/45da9492.png)
-[](https://www.elastic.co/cn/blog/frame-of-reference-and-roaring-bitmaps)
-####bitmapContainer
-固定8KB
-####RunContainer
-8B
-
-#相关度排序算法
-Lucene对查询关键字和索引文档的相关度进行打分，得分高的就排在前边。 
-Lucene是在用户进行检索时实时根据搜索的关键字计算出相关度得分。
-[](https://www.cnblogs.com/forfuture1978/archive/2010/03/07/1680007.html)
-##相关度排序公式
-![](.z_es_01_lucene_02_搜索过程_相关度排序_images/6bd60704.png)
-```asp
-score(q,d) : 文档d对查询q的相关性得分
-coord(q,d):协调因子 一次搜索可能包含多个搜索词，而一篇文档中也可能包含多个搜索词，此 项表示，当一篇文档中包含的搜索词越多，则此文档则打分越高。
-queryNorm(q):计算每个查询条目的方差和，使得不同的query之间的分数可以比较。其公式如 下:
-```
-![](.z_es_01_lucene_02_搜索过程_相关度排序_images/606b34f4.png)
-```asp
-term boost:查询语句中每个词的权重，可以在查询中设定某个词更加重要。 
-document boost:文档权重，在索引阶段写入文件，表明某些文档比其他文档更重要。 
-field boost:域的权重，在索引阶段写入文件，表明某些域比其他的域更重要
-```
-##向量空间模型 VSM(Vector Space Model)
-![](.z_es_01_lucene_02_搜索过程_相关度排序_images/d16f307c.png)
-![](.z_es_01_lucene_02_搜索过程_相关度排序_images/4d4e7509.png)
-![](.z_es_01_lucene_02_搜索过程_相关度排序_images/3cc43cb6.png)
-
 #文件存储优化算法与数据结构
 ##前缀后缀规则(Prefix+Suffix,字典排序的词典)
 ```asp
@@ -149,3 +102,62 @@ transducer：接收特定的序列，终止于final状态，同时会输出一�
 
 
 ###如何确认FST使用什么前缀?
+
+##LZ4
+##Deflate
+
+#倒排索引算法(FST,跳表)
+![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/910137c0.png)
+[z_es_01_lucene_01_索引生成_索引文件格式_拓扑.md]
+##term index(词索引)
+##term dictionary(词项字典)
+##posting list(倒排列表)
+
+
+#压缩算法(压缩doc ID)
+[z_00_海量数据_压缩算法.md]
+##term index压缩
+FST,要求Key必须按字典序从小到大加入到FST
+##posting list压缩
+###FOR(稠密压缩算法,frame of reference参考系,坐标)
+适合稠密数组,差值列表deltas list,增量编码压缩，将大数变小数，按字节存储
+[](https://www.elastic.co/cn/blog/frame-of-reference-and-roaring-bitmaps)
+![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/a0cf89ea.png)
+![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/aedb0f01.png)
+###RBM(Roaring bitmaps)
+[](https://www.cnblogs.com/suhaha/p/15363089.html)
+无符号short最大值65535
+![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/9212b214.png)
+####ArrayContainer
+![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/45da9492.png)
+[](https://www.elastic.co/cn/blog/frame-of-reference-and-roaring-bitmaps)
+####bitmapContainer
+固定8KB
+####RunContainer
+8B
+##文档数量的压缩
+[](https://www.jianshu.com/p/389551965d28)
+
+#相关度排序算法
+Lucene对查询关键字和索引文档的相关度进行打分，得分高的就排在前边。 
+Lucene是在用户进行检索时实时根据搜索的关键字计算出相关度得分。
+[](https://www.cnblogs.com/forfuture1978/archive/2010/03/07/1680007.html)
+##相关度排序公式
+![](.z_es_01_lucene_02_搜索过程_相关度排序_images/6bd60704.png)
+```asp
+score(q,d) : 文档d对查询q的相关性得分
+coord(q,d):协调因子 一次搜索可能包含多个搜索词，而一篇文档中也可能包含多个搜索词，此 项表示，当一篇文档中包含的搜索词越多，则此文档则打分越高。
+queryNorm(q):计算每个查询条目的方差和，使得不同的query之间的分数可以比较。其公式如 下:
+```
+![](.z_es_01_lucene_02_搜索过程_相关度排序_images/606b34f4.png)
+```asp
+term boost:查询语句中每个词的权重，可以在查询中设定某个词更加重要。 
+document boost:文档权重，在索引阶段写入文件，表明某些文档比其他文档更重要。 
+field boost:域的权重，在索引阶段写入文件，表明某些域比其他的域更重要
+```
+##向量空间模型 VSM(Vector Space Model)
+![](.z_es_01_lucene_02_搜索过程_相关度排序_images/d16f307c.png)
+![](.z_es_01_lucene_02_搜索过程_相关度排序_images/4d4e7509.png)
+![](.z_es_01_lucene_02_搜索过程_相关度排序_images/3cc43cb6.png)
+
+

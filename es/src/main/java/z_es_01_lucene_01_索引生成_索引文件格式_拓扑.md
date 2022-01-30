@@ -108,6 +108,7 @@ FST提供两个基本功能:
 快速定位Block的位置，通过FST是可以直接计算出Block的在文件中位置（offset,FP）。实现了HashMap的功能
 ```
 ###.tim(词典,Terms Dictionary,Delta)
+[](https://www.cnblogs.com/forfuture1978/p/3945755.html)
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/d82dfb4a.png)
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/a2e19baa.png)
 
@@ -130,6 +131,7 @@ SkipInterval：倒排表无论是文档号及词频，还是位置信息，都�
 
 Lucene规定，每个Block的大小在25-48范围内。
 ```
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/cb1c6f74.png)
 #####Entry(block树中的节点)
 ```asp
 private static class PendingEntry {
@@ -149,6 +151,7 @@ private static class PendingEntry {
 #####OuterNode,叶子节点
 #####InnerNode非叶子节点
 #####PendingTerm待完成term
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/1efabc47.png)
 小于minTermBlockSize时为PendingTerm
 ```asp
 private static final class PendingTerm extends PendingEntry {
@@ -158,6 +161,7 @@ private static final class PendingTerm extends PendingEntry {
   }
 ```
 #####PendingBlock待完成block
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/15d12e1c.png)
 ```asp
 private static final class PendingBlock extends PendingEntry {
     public final BytesRef prefix;
@@ -170,7 +174,22 @@ private static final class PendingBlock extends PendingEntry {
 }
 ```
 #####floor block
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/42e7dc7f.png)
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/38c11827.png)
 一个PendingBlock包含太多PendingTerm时会进行拆分,默认最大48,最小25，maxTermBlockSize
+#####leading label
+#####termstats
+```asp
+public class TermStats {
+  /** How many documents have at least one occurrence of
+   *  this term. */
+  public final int docFreq;
+  
+  /** Total number of times this term occurs across all
+   *  documents in the field. */
+  public final long totalTermFreq;
+}
+```
 ###.doc(Postings List,Delta,每个词的docId倒排列表和词频)
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/e17a51f6.png)
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/5fdab2b6.png)
