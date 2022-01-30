@@ -55,6 +55,7 @@ ElasticSearch，hbase
 ![](.z_01_分布式_临界知识_数据模型_对比网站_数据关系_nosql_行存储_列存储_存储模型_时序数据库_文档数据库_列数据库_文件系统_键值系统_表格系统_数据库系统_OLAP_OLTP_ETL_HTAP_images/880291ad.png)
 
 ##列存储(WAL+MemTable+SSTable)
+[](https://zhuanlan.zhihu.com/p/35622907)
 [](https://time.geekbang.org/column/article/432093)
 ![](.z_01_分布式_临界知识_行存储_列存储_OLAP_OLTP_数据模型_宽表_对比网站_数据关系_nosql_存储模型_时序数据库_文档数据库_列数据库_文件系统_键值系统_表格系统_数据库系统_ETL_HTAP_images/c243d431.png)
 ![](.z_01_分布式_临界知识_数据模型_对比网站_数据关系_nosql_行存储_列存储_存储模型_时序数据库_文档数据库_列数据库_文件系统_键值系统_表格系统_数据库系统_OLAP_OLTP_ETL_HTAP_images/4852ba64.png)

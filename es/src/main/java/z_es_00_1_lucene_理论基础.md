@@ -1,5 +1,19 @@
-#lucene拓扑
+#lucene全流程
 ![](.z_es_00_1_lucene_理论基础_images/b202a42d.png)
+```asp
+IndexWriter iw=new IndexWriter();//创建IndexWriter
+Document doc=new Document( new StringField("name", "Donald Trump", Field.Store.YES)); //构建索引文档
+iw.addDocument(doc);            //做索引库
+IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(index)));
+IndexSearcher searcher = new IndexSearcher(reader); //打开索引
+Query query = parser.parse("name:trump");//解析查询
+
+TopDocs results =searcher.search(query, 100);//检索并取回前100个文档号
+for(ScoreDoc hit:results.hits)
+{
+    Document doc=searcher .doc(hit.doc)//真正取文档
+}
+```
 Lucene 是有索引和搜索的两个过程，包􏰇索引创建，索引，搜索三个要点
 ![](.z_es_01_lucene_01_理论基础_images/001532c9.png)
 ![](.z_es_01_lucene_01_理论基础_images/a6e1bfad.png)
@@ -11,11 +25,6 @@ Lucene 是有索引和搜索的两个过程，包􏰇索引创建，索引，搜
 􏰁 IndexSearcher计算termweight和score并且将结果返回给用户。
 􏰁 返回给用户的文档集合用TopDocsCollector表示
 ```
-##segment
-##doc
-##field
-##term
-##docvalues
 #索引过程
 ![](.z_es_01_lucene_01_理论基础_images/cdcffc92.png)
 ```asp

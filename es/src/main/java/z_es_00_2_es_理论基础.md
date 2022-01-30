@@ -6,3 +6,6 @@ index的存储容量为所有shard的存储容量之和
 一个shard就对应了一个lucene的library
 ##translog
 类似HBase WAL
+##分词
+##段合并
+##评分
