@@ -1,3 +1,4 @@
+![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/fce2eb16.png)
 #倒排(term->docId,词搜索)
 ```asp
 在lucene中将一个文档编入索引时,字段的原始值会丢失. 字段被分析(analyze),转换(transform)以至编入索引. 在没有其他额外添加的数据结构的情况下,
@@ -8,9 +9,10 @@ stored fields 和 doc values
 ![](.z_es_01_lucene_01_索引文件格式_物理存储_数据结构_tip_tim_doc_fdt_fdx_images/161f805f.png)
 ##关闭倒排
 ![](.z_es_01_lucene_03_lucene三种存储方式_倒排_列式_行_字段检索性能对比_images/bdd21f63.png)
-##Term index(FST)
+##Term index(词项索引,FST)
 为了增加倒排索引的Term查找速度，ES还专门做了Term index，它的本质是一棵Trie（前缀）树(使用FST技术压缩)。
-##词文档列表(跳表)
+##词文档列表(倒排表,posting list,跳表)
+##词项字典
 #doc values(列式存储,docvalues,docId->term,排序,聚合,分组,正向索引)
 ```asp
 doc values用于加速一些诸如聚合(aggregation),排序(sorting),分组(grouping)的操作. doc values 也可以被用来在查询时返回字段值. 
@@ -35,11 +37,12 @@ doc values用于加速一些诸如聚合(aggregation),排序(sorting),分组(gro
 ##关闭doc values
 ![](.z_es_01_lucene_03_lucene三种存储方式_倒排_列式_行_字段检索性能对比_images/67fb18e0.png)
 #Stored fields(行式存储)
+##关闭行存
+##关闭_source
 ```asp
 stored fields用于存储没有经过任何分析(without any analysis)的字段值,以实现在查询时能得到这些原始值.
 ```
-
-##_source(需要更新你的文档,就必须要在配置中启用source)
+##_source(需要更新文档时,就必须要在配置中启用source)
 ![](.z_es_01_lucene_03_lucene三种存储方式_倒排_列式_行_字段检索性能对比_images/568c1c9c.png)
 source 用于存储在索引期间(index time)传给es的原始json. 可通过以下配置决定是否启用
 默认会存储所有字段,可以通过以下方式指定原始json中要排除的字段,这可以减少存到source中的数据大小,从而减少磁盘空间占用.但是在查询时,
@@ -68,7 +71,7 @@ source 用于存储在索引期间(index time)传给es的原始json. 可通过�
 我们需要获得旧文档的该字段值,然后讲新值写入.在没有source的情况下,旧文档的某个字段值可以通过doc values或stored fields来获得.
 (solr中的原子更新就是通过这种方式来取旧值的) 然而,由于设计上的原因,es中这不被允许.如果你需要更新你的文档,就必须要在配置中启用source.
 ```
-#检索字段
+#检索字段性能比较
 [](https://zhuanlan.zhihu.com/p/383999276)
 ![](.z_es_01_lucene_03_lucene三种存储方式_倒排_列式_行_字段检索性能对比_images/ce919287.png)
 ```asp
