@@ -148,7 +148,7 @@ private static class PendingEntry {
 ```asp
 每个Entry含有后缀、统计信息（对应为前面据说的权重，它含有ttf和df）、Postings的位置信息（这就是反复提及postings相关的文件指针，postings是拆分多文件存储的）
 ```
-#####OuterNode,叶子节点
+#####OuterNode,叶子节点,(output)
 #####InnerNode非叶子节点
 #####PendingTerm待完成term
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/1efabc47.png)
@@ -204,8 +204,13 @@ public class TermStats {
 [](https://www.cnblogs.com/sessionbest/articles/8689030.html)
 [](https://zhuanlan.zhihu.com/p/384487150)
 ```asp
-们知道倒排索引能够解决从词到文档的快速映射，但当我们需要对检索结果进行分类、排序、数学计算等聚合操作时需要文档号到值的快速映射，
+我们知道倒排索引能够解决从词到文档的快速映射，但当我们需要对检索结果进行分类、排序、数学计算等聚合操作时需要文档号到值的快速映射，
 而原先不管是倒排索引还是行式存储的文档都无法满足要求
+```
+```asp
+Doc Values 是在索引时与 倒排索引 同时生成。也就是说 Doc Values 和 倒排索引 一样，基于 Segement 生成并且是不可变的。
+同时 Doc Values 和 倒排索引 一样序列化到磁盘，这样对性能和扩展性有很大帮助。
+
 ```
 Lucene目前有五种类型的DocValues：NUMERIC、BINARY、SORTED、SORTED_SET、SORTED_NUMERIC，针对每种类型Lucene都有特定的压缩方法
 ###.dvd

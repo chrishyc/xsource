@@ -103,8 +103,6 @@ transducer：接收特定的序列，终止于final状态，同时会输出一�
 
 ###如何确认FST使用什么前缀?
 
-##LZ4
-##Deflate
 
 #倒排索引算法(FST,跳表)
 ![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/910137c0.png)
@@ -116,6 +114,7 @@ transducer：接收特定的序列，终止于final状态，同时会输出一�
 
 #压缩算法(压缩doc ID)
 [z_00_海量数据_压缩算法.md]
+##通用最小化算法
 ##term index压缩
 FST,要求Key必须按字典序从小到大加入到FST
 ##posting list压缩
@@ -124,20 +123,51 @@ FST,要求Key必须按字典序从小到大加入到FST
 [](https://www.elastic.co/cn/blog/frame-of-reference-and-roaring-bitmaps)
 ![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/a0cf89ea.png)
 ![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/aedb0f01.png)
-###RBM(Roaring bitmaps)
-[](https://www.cnblogs.com/suhaha/p/15363089.html)
+###RBM(Roaring bitmaps,稀疏压缩算法)
+[](https://cloud.tencent.com/developer/article/1136054)
 无符号short最大值65535
 ![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/9212b214.png)
 ####ArrayContainer
+![](.z_es_01_lucene_03_倒排算法_压缩算法_相关度排序算法_images/986de000.png)
 ![](.z_es_00_搜索引擎原理_倒排索引_召回率_压缩算法_images/45da9492.png)
 [](https://www.elastic.co/cn/blog/frame-of-reference-and-roaring-bitmaps)
 ####bitmapContainer
 固定8KB
+[](https://www.cnblogs.com/suhaha/p/15363089.html)
 ####RunContainer
 8B
+```asp
+BitmapContainer是恒定为8192B的。ArrayContainer的空间占用与基数（c）有关，为(2 + 2c)B；RunContainer的则与它存储的连续序列数（r）有关，
+为(2 + 4r)B
+```
 ##文档数量的压缩
 [](https://www.jianshu.com/p/389551965d28)
+##doc values列存压缩
+![](.z_es_01_lucene_03_倒排算法_压缩算法_相关度排序算法_images/20e3839e.png)
+```asp
+Doc Values 在压缩过程中使用如下技巧。它会按依次检测以下压缩模式:
 
+如果所有的数值各不相同（或缺失），设置一个标记并记录这些值
+如果这些值小于 256，将使用一个简单的编码表
+如果这些值大于 256，检测是否存在一个最大公约数
+如果没有存在最大公约数，从最小的数值开始，统一计算偏移量进行编码
+当然如果存储 String类型，其一样可以通过顺序表对 String类型进行数字编码，然后再把数字类型构建 DocValues。
+```
+因为列式存储的结构是严格且良好定义的，我们可以通过使用专门的模式来达到比通用压缩算法（如 LZ4 ）更高的压缩效果
+###顺序表
+```asp
+
+你也许会想 "好吧，貌似对数字很好，不知道字符串怎么样？" 通过借助顺序表（ordinal table），String 类型也是类似进行编码的。
+String 类型是去重之后存放到顺序表的，通过分配一个 ID，然后通过数字类型的 ID 构建 Doc Values。这样 String 类型和数值类型可以达到同样的压缩效果。
+顺序表本身也有很多压缩技巧，比如固定长度、变长或是前缀字符编码等等
+```
+##行存压缩
+##LZ4
+[](https://www.elastic.co/cn/blog/save-space-and-money-with-improved-storage-efficiency-in-elasticsearch-7-10)
+每当在流中找到先前出现过的字符串时，便会将该字符串替换为对先前出现的那个字符串的引用。实际上，这是 LZ4 唯一做的事情
+##Deflate
+字符串去重+哈夫曼编码
+[](https://blog.csdn.net/FX677588/article/details/70767446)
 #相关度排序算法
 Lucene对查询关键字和索引文档的相关度进行打分，得分高的就排在前边。 
 Lucene是在用户进行检索时实时根据搜索的关键字计算出相关度得分。
