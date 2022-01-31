@@ -16,3 +16,6 @@
 ![](.z_es_00_常用命令_images/449b5840.png)
 segments
 ![](.z_es_00_常用命令_images/cd1ae25e.png)
+#jvm优化
+[](https://www.elastic.co/guide/cn/elasticsearch/guide/current/heap-sizing.html#_swapping_%E6%98%AF%E6%80%A7%E8%83%BD%E7%9A%84%E5%9D%9F%E5%A2%93)
+#禁用Swapping
