@@ -112,6 +112,8 @@ flush操作将文件系统缓存中的segment进行fsync刷盘，并更新commit
 ##replica shard
 ![](.z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制_images/bddaf25a.png)
 ##分片副本同步Replica
+#读取流程
+
 #段合并merge(小段消耗文件句柄、内存和 CPU)
 [merge操作](https://www.elastic.co/guide/cn/elasticsearch/guide/current/merge-process.html)
 ![](.z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制_images/d51fab38.png)
@@ -126,4 +128,5 @@ flush操作将文件系统缓存中的segment进行fsync刷盘，并更新commit
 ![](.z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制_images/ddc40868.png)
 ![](.z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制_images/38b0dea8.png)
 #并发控制乐观锁
-
+版本控制
+[拉钩es]
