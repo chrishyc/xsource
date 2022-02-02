@@ -1,7 +1,0 @@
-![](.z_es_04_集群_索引分片_images/52ebd98c.png)
-![](.z_es_04_集群_索引分片_images/88d17bb6.png)
-![](.z_es_04_集群_索引分片_images/94647a45.png)
-![](.z_es_04_集群_索引分片_images/dd912f4e.png)
-![](.z_es_04_集群_索引分片_images/5242dfd6.png)
-![](.z_es_04_集群_索引分片_images/57760596.png)
-![](.z_es_04_集群_索引分片_images/9b2bd552.png)

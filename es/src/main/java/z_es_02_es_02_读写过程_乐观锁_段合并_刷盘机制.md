@@ -5,6 +5,7 @@ refresh,flush,merge
 写入流程:路由,mapping,refresh,flush,replicas
 小段合并大段
 最小通用化算法,int->byte
+大数据三角:大量数据,实时性,准确性
 #写入的核心问题
 ```asp
 可靠性：或者是持久性，数据写入系统成功后，数据不会被回滚或丢失。
