@@ -15,6 +15,7 @@ ES会自动再nodes上做分片均衡
 ```
 ##master：候选节点
 ##data：数据节点
+##voting_only：仅投票节点
 ##data_content：数据内容节点
 ###data_hot：热节点
 ###data_warm：索引不再定期更新，但仍可查询
@@ -23,5 +24,3 @@ ES会自动再nodes上做分片均衡
 ##ml：机器学习节点
 ##remote_cluster_client：候选客户端节点
 ##transform：转换节点
-##voting_only：仅投票节点
-
