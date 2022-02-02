@@ -172,7 +172,8 @@ String 类型是去重之后存放到顺序表的，通过分配一个 ID，然�
 Lucene对查询关键字和索引文档的相关度进行打分，得分高的就排在前边。 
 Lucene是在用户进行检索时实时根据搜索的关键字计算出相关度得分。
 [](https://www.cnblogs.com/forfuture1978/archive/2010/03/07/1680007.html)
-##相关度排序公式
+##相关度排序公式(TF-IDF,)
+词频 TF(Term Frequency),逆文本频率指数 IDF(Inverse Dcument Frequency)
 ![](.z_es_01_lucene_02_搜索过程_相关度排序_images/6bd60704.png)
 ```asp
 score(q,d) : 文档d对查询q的相关性得分
@@ -191,3 +192,6 @@ field boost:域的权重，在索引阶段写入文件，表明某些域比其�
 ![](.z_es_01_lucene_02_搜索过程_相关度排序_images/3cc43cb6.png)
 
 
+##BM25
+![](.z_es_01_lucene_03_倒排算法_压缩算法_相关度排序算法_images/f8fb670b.png)
+[](https://www.jianshu.com/p/83d22040ad5a)

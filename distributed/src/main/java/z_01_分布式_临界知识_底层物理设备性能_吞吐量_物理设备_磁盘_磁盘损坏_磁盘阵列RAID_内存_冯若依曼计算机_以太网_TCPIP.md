@@ -11,3 +11,6 @@
 ##吞吐量
 mysql:1k tps/s
 redis:100k tps/s
+##存储异构
+热,温,冷
+SSD(固态硬盘),hhd(传统硬盘)
