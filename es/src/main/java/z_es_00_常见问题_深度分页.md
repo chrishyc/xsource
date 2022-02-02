@@ -15,8 +15,17 @@ elk技术栈,es,kibana,file beat
 可扩展:
 安全:
 ```
+#elasticsearch用途
+```asp
+全文搜索引擎,google,百度
+github
+日志系统
+olap在线分析系统
+```
 #项目中的es问题
 10000*1000B*24*30/1024/1024=6G
+##深度分页(面试难点讲解)
+![](.z_es_00_常见问题_深度分页_images/1cf9465a.png)
 #为什么mysql不适合搜索引擎?
 ```asp
 1.定位不适合

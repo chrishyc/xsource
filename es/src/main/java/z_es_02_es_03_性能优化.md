@@ -24,7 +24,33 @@
 7.close 索引
 ```
 [](https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-close.html)
+#分片优化 & 索引优化
 #存储异构
 热温冷节点,ssd hhd,数据迁移
 [](https://www.elastic.co/cn/blog/implementing-hot-warm-cold-in-elasticsearch-with-index-lifecycle-management)
 [](https://www.cnblogs.com/iiiiher/p/9268832.html)
+
+#通用调优思路
+##通用法则
+通用最小化算法：对于搜索引擎级的大数据检索，每个bit尤为珍贵
+业务分离：聚合和搜索分离
+##数据结构Mapping优化
+优化字段的类型，关闭对业务无用的字段
+##硬件优化
+###jvm heap分配
+```asp
+Jvm heap大小不要超过物理内存的50%，最大也不要超过32GB（compressed oop），它可用于其内部缓存的内存就越多，但可供操作系统用于文件系统缓存
+的内存就越少，heap过大会导致GC时间过长
+```
+###磁盘
+```asp
+ES应用可能要面临不间断的大量的数据读取和写入。生产环境可以考虑把节点冷热分离，“热节点”使用SSD做存储，可以大幅提高系统性能；冷数据存储在机械硬盘中，
+降低成本。
+```
+###CPU
+```asp
+绑定cpu,后台进程绑定一个cpu,不去消耗读写线程
+```
+###网络
+
+###集群
