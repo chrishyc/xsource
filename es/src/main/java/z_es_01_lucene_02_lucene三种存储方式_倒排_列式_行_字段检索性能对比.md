@@ -14,6 +14,8 @@ stored fields 和 doc values
 ##词文档列表(倒排表,posting list,跳表)
 ##词项字典
 #doc values(列式存储,docvalues,docId->term,排序,聚合,分组,正向索引)
+[](https://www.elastic.co/guide/en/elasticsearch/reference/7.1/doc-values.html)
+[](https://www.elastic.co/guide/en/elasticsearch/reference/7.1/fielddata.html8)
 ```asp
 doc values用于加速一些诸如聚合(aggregation),排序(sorting),分组(grouping)的操作. doc values 也可以被用来在查询时返回字段值. 
 例外是doc values不能用来存储text类型的字段.
@@ -37,6 +39,8 @@ doc values用于加速一些诸如聚合(aggregation),排序(sorting),分组(gro
 ##关闭doc values
 ![](.z_es_01_lucene_03_lucene三种存储方式_倒排_列式_行_字段检索性能对比_images/67fb18e0.png)
 #Stored fields(行式存储)
+[](https://www.elastic.co/guide/en/elasticsearch/reference/7.1/mapping-store.html)
+[](https://www.elastic.co/guide/en/elasticsearch/reference/7.1/term-vector.html#term-vector)
 ##关闭行存
 ##关闭_source
 ```asp
