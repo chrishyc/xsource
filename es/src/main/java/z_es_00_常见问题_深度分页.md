@@ -25,7 +25,19 @@ olap在线分析系统
 #项目中的es问题
 10000*1000B*24*30/1024/1024=6G
 ##深度分页(面试难点讲解)
+[业界难题-“跨库分页”的四种方案](https://cloud.tencent.com/developer/article/1048654)
 ![](.z_es_00_常见问题_深度分页_images/1cf9465a.png)
+[search after](https://juejin.cn/post/7015792924457697316#heading-6)
+[](https://developer.aliyun.com/article/771575#slide-8)
+[查询阶段](https://www.elastic.co/guide/cn/elasticsearch/guide/2.x/_query_phase.html)
+[取回阶段](https://www.elastic.co/guide/cn/elasticsearch/guide/2.x/_fetch_phase.html#_fetch_phase)
+[原理](http://www.readingnotes.site/posts/%E4%BD%BF%E7%94%A8scroll%E5%AE%9E%E7%8E%B0Elasticsearch%E6%95%B0%E6%8D%AE%E9%81%8D%E5%8E%86%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%88%86%E9%A1%B5.html)
+##scroll原理
+[](https://elasticsearch.cn/question/2935)
+[](https://www.jianshu.com/p/91d03b16af77)
+##search after原理
+[doc values](https://www.jianshu.com/p/91d03b16af77)
+[](https://elasticsearch.cn/question/2935)
 #为什么mysql不适合搜索引擎?
 ```asp
 1.定位不适合
