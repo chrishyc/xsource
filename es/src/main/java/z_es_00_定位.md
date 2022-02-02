@@ -10,3 +10,7 @@ based on the Lucene library. It provides a distributed, multitenant-capable full
 Elasticsearch is the distributed, RESTful search and analytics engine at the heart of the Elastic Stack. 
 You can use Elasticsearch to store, search, and manage data
 
+#写入性能 es vs hbase
+![](.z_es_00_定位_images/1bf53028.png)
+[](http://blog.monkeyfx.cn/2021/08/02/nosql%E5%9B%9B%E5%85%84%E5%BC%9F%E4%BA%89%E9%A3%8E%E5%90%83%E9%86%8B/)
+[](https://www.51cto.com/article/665240.html)
