@@ -1,3 +1,5 @@
+#检索语法
+[](https://www.elastic.co/guide/cn/elasticsearch/guide/current/query-dsl-intro.html)
 #post_filter
 #过滤返回结果
 filter_path

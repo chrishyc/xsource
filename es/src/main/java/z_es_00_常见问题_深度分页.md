@@ -8,11 +8,11 @@
 
 分:
 elk技术栈,es,kibana,file beat
-高性能:倒排fst,roaring bitmap,for
-高可用:分布式分片集群,bully选举
-高并发:
+高性能:倒排fst,roaring bitmap,for,ack
+高可用:分布式分片集群,bully选举,持久化translog
+高并发:多分片
 成本:开源,
-可扩展:
+可扩展:选举,脑裂
 安全:
 ```
 #elasticsearch用途
@@ -22,8 +22,89 @@ github
 日志系统
 olap在线分析系统
 ```
+#elasticsearch优化
+[z_es_02_es_03_性能优化.md]
+##设计阶段调优
+1.采取基于日期模板创建索引，通过 roll over API 滚动索引
+2.使用别名进行索引管理
+3.每天凌晨定时对索引做 force_merge 操作
+4.采取冷热分离机制，热数据存储到 SSD，提高检索效率；冷数据定期进行 shrink操作，以缩减存储
+5.Mapping 阶段充分结合各个字段的属性，是否需要检索、是否需要存储,最小通用原则
+##写入调优
+1.写入前副本数设置为 0
+2.写入前关闭 refresh_interval 设置为-1，禁用刷新机制
+3.写入过程中：采取 bulk 批量写入；
+##查询调优
+1.充分利用倒排索引机制，能 keyword 类型尽量 keyword
+##运维优化
+1关闭缓存 swap;
+2堆内存设置为：Min（节点内存/2, 32GB）;
+3设置最大文件句柄数；
+4线程池+队列大小根据业务需要做调整；
+5磁盘存储 raid 方式——存储有条件使用 RAID10，增加单节点性能以及避免单节点存储故障
+#说说倒排索引原理?
+[z_es_01_lucene_01_索引生成_索引文件格式_拓扑.md]
+[z_es_01_lucene_03_倒排算法_压缩算法_相关度排序算法.md]
+#避免索引数据过多,如何管理索引？
+##滚动索引
+```asp
+基于模板+时间+rollover api 滚动创建索引，举例：设计阶段定义：blog 索引的模板格式为： blog_index_时间戳的形式，每天递增数据。这样做的好处：不至于数据量激增导致单个索引数据量非 常大，接近于上线 2 的32 次幂-1，索引存储达到了 TB+甚至更大。
+一旦单个索引很大，存储等各种风险也随之而来，所以要提前考虑+及早避免
+```
+##冷热分离
+```asp
+冷热数据分离存储，热数据（比如最近 3 天或者一周的数据），其余为冷数据。
+
+对于冷数据不会再写入新数据，可以考虑定期 force_merge 加 shrink 压缩操作，节省存储空间和检索效率。
+```
+##部署层面
+扩容节点
+#elasticsearch 是如何实现 master 选举的?
+1.心跳监听
+2.宕机投票
+3.候选节点投票选举,id小的优先级高
+4.同步选举结果
+5.数据同步
+#写流程
+[z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制.md]
+![](.z_es_00_常见问题_深度分页_images/ac6ed4d9.png)
+协调节点默认使用文档 ID 参与计算（也支持通过 routing），以便为路由提供合适的分片
+```asp
+shard = hash(document_id) % (num_of_primary_shards)
+```
+![](.z_es_00_常见问题_深度分页_images/044e3abe.png)
+#删流程
+#更新流程
+```asp
+1.删除和更新也都是写操作，但是 Elasticsearch 中的文档是不可变的，因此不能被删除或者改动以展示其变更；
+2.磁盘上的每个段都有一个相应的.del 文件。当删除请求发送后，文档并没有真的被删除，而是在.del 文件中被标记为删除。该文档依然能匹配查询，
+但是会在结果中被过滤掉。当段合并时，在.del 文件中被标记为删除的文档将不会被写入新段。
+3.在新的文档被创建时，Elasticsearch 会为该文档指定一个版本号，当执行更新时，旧版本的文档在.del 文件中被标记为删除，新版本的文档被索引到一个新段。旧版本的文档依然能匹配查询，但是会在结果中被过滤掉
+```
+#检索流程
+query,fetch,局部优先队列,协调节点优先队列
+```asp
+1假设一个索引数据有 5 主+1 副本 共 10 分片，一次请求会命中（主或者副本分片中）的一个。
+2每个分片在本地进行查询，结果返回到本地有序的优先队列中。
+3第 2）步骤的结果发送到协调节点，协调节点产生一个全局的排序列表
+```
+![](.z_es_00_常见问题_深度分页_images/ebd2b4b7.png)
+![](.z_es_00_常见问题_深度分页_images/aa0fa354.png)
+[](https://pdai.tech/md/db/nosql-es/elasticsearch-y-th-4.html)
+[深度分页]
+#在并发情况下，Elasticsearch 如果保证读写一致？
+```asp
+1可以通过版本号使用乐观并发控制，以确保新版本不会被旧版本覆盖，由应用层来处理具体的冲突；
+2另外对于写操作，一致性级别支持 quorum/one/all，默认为 quorum，即只有当大多数分片可用时才允许写操作。但即使大多数可用，也可能存在因为网络等原因导致写入副本失败，这样该副本被认为故障，分片将会在一个不同的节点上重建。
+3对于读操作，可以设置 replication 为 sync(默认)，这使得操作在主分片和副本分片都完成后才会返回；如果设置 replication 为 async 时，也可以通过设置搜索请求参数_preference 为 primary 来查
+```
 #项目中的es问题
-10000*1000B*24*30/1024/1024=6G
+##说说你们公司 es 的集群架构和吞吐规模
+11个节点,3个master,8个数据节点,1个分片1个副本
+![](.z_es_00_常见问题_深度分页_images/2dea7dc1.png)
+读写速度,grafana查看
+[](https://www.elastic.co/cn/blog/benchmarking-and-sizing-your-elasticsearch-cluster-for-logs-and-metrics)
+计算和存储合一
 ##深度分页(面试难点讲解)
 [业界难题-“跨库分页”的四种方案](https://cloud.tencent.com/developer/article/1048654)
 ![](.z_es_00_常见问题_深度分页_images/1cf9465a.png)
@@ -32,10 +113,10 @@ olap在线分析系统
 [查询阶段](https://www.elastic.co/guide/cn/elasticsearch/guide/2.x/_query_phase.html)
 [取回阶段](https://www.elastic.co/guide/cn/elasticsearch/guide/2.x/_fetch_phase.html#_fetch_phase)
 [原理](http://www.readingnotes.site/posts/%E4%BD%BF%E7%94%A8scroll%E5%AE%9E%E7%8E%B0Elasticsearch%E6%95%B0%E6%8D%AE%E9%81%8D%E5%8E%86%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%88%86%E9%A1%B5.html)
-##scroll原理
+###scroll原理
 [](https://elasticsearch.cn/question/2935)
 [](https://www.jianshu.com/p/91d03b16af77)
-##search after原理
+###search after原理
 [doc values](https://www.jianshu.com/p/91d03b16af77)
 [](https://elasticsearch.cn/question/2935)
 #为什么mysql不适合搜索引擎?
@@ -54,6 +135,6 @@ mysql为了支持在线交易,需要强一致性,使用了binlog,redolog两阶�
 mysql扩展性很差,主从结构,写主要在主库,对于海量日志收集,监控,mysql扛不住,es使用分片
 ```
 ![](.z_es_00_常见问题_深度分页_字段列查询_images/a8a8092a.png)
-#面试题
 [](https://cloud.tencent.com/developer/article/1808309)
 [](https://juejin.cn/post/6958408979235995655/#heading-26)
+[](https://juejin.cn/post/6958408979235995655/#heading-22)
