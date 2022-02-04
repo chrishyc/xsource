@@ -106,6 +106,7 @@ innodb,一个聚簇索引，多个非聚簇索引
 ```
 ##mysql一条数据的delete写流程
 [](https://time.geekbang.org/column/article/68633)
+##两阶段提交redolog + binlog
 ##项目中的问题
 
 ##为啥mysql没有使用nio,而是bio

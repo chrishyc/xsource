@@ -7,6 +7,7 @@ mysql插入一条记录的时候，需要悲观插入时，buffer pool中进行�
 redo日志刷盘时机
 redo崩溃恢复机制
 #redo日志的作用,提高持久化速度
+![](.z_9_mysql_01_redo日志_事务持久化日志_顺序写_刷盘时机&策略_redo-buffer_mtr_lsn_checkpoint_images/8eff1d26.png)
 ##why need?
 ```asp
 1.有时候我们仅仅修改了某个页面中的一个字节，但是我们知道在 InnoDB 中是以页为单位来进行磁盘IO的， 也就是说我们在该事务提交时不得不将一个
