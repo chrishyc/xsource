@@ -77,6 +77,7 @@ c）记录时机不同。redo/undo日志在事务执行过程中会不断的写�
 
 ```
 ##redo log 和 binlog 是怎么关联起来的?
+![](.z_9_mysql_00_binlog_两阶段提交_逻辑日志_images/23b3ec96.png)
 ```asp
 它们有一个共同的数据字段，叫 XID。崩溃恢复的时候，会按顺序扫描 redo log：
 如果碰到既有 prepare、又有 commit 的 redo log，
