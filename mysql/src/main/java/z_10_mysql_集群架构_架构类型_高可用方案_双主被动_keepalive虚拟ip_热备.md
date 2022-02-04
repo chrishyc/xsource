@@ -64,11 +64,4 @@ mysql> set global read_only=0;
 ![](.z_10_mysql_集群架构_中间件_架构类型_高可用方案_双主被动_keepalive虚拟ip_热备_images/256edc7f.png)
 [](https://zhuanlan.zhihu.com/p/149991963)
 [](https://blog.csdn.net/William0318/article/details/106855431)
-#中间件
-##shardingsphere
-开源的分布式数据库中间件解决方案组成的生态圈
-[](https://shardingsphere.apache.org/document/legacy/4.x/document/cn/features/sharding/)
-![](.z_10_mysql_集群架构_中间件_架构类型_高可用方案_双主被动_keepalive虚拟ip_热备_images/dfeb8fba.png)
-![](.z_10_mysql_集群架构_中间件_架构类型_高可用方案_双主被动_keepalive虚拟ip_热备_images/ab0226a9.png)
-![](.z_10_mysql_集群架构_中间件_架构类型_高可用方案_双主被动_keepalive虚拟ip_热备_images/dc59a162.png)
-Sharding-JDBC采用无中心化架构，适用于Java开发的高性能的轻量级OLTP应用；Sharding-Proxy提供静态入口以及异构语言的支持，适用于OLAP应用以及对分片数据库进行管理和运维的场景
+
