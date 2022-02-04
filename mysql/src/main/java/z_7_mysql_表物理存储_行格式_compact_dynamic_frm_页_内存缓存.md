@@ -158,3 +158,4 @@ next_record 属性组成一个链表，只不过这个链表中的记录占用�
 ###zip clean链表
 用于管理没有被解压的压缩页表
 ##frm表结构
+[](https://zhuanlan.zhihu.com/p/103582178)
