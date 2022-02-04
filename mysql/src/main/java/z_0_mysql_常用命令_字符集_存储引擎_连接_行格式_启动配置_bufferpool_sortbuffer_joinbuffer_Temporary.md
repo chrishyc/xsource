@@ -243,6 +243,11 @@ mysql> show variables like 'join_buffer_size';
 | join_buffer_size | 262144 |
 +------------------+--------+
 ```
+###insert buffer/change buffer
+show variables like '%_change_buffer%';
+配置写缓冲的大小，占整个缓冲池的比例，默认值是25%
+![](.z_0_mysql_常用命令_字符集_存储引擎_连接_行格式_启动配置_bufferpool_sortbuffer_joinbuffer_Temporary_images/fdf54350.png)
+###Double Write Buffer
 ##临时表
 show variables like "max_heap_table_size";
 show variables like 'tmpdir';
