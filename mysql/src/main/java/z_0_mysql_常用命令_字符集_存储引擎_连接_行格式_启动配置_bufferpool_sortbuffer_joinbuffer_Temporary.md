@@ -381,6 +381,7 @@ SHOW STATUS LIKE 'thread%';
 ##事务相关
 SHOW VARIABLES LIKE 'transaction_isolation';//公司使用REPEATABLE-READ
 SELECT @@transaction_isolation;
+show variables like '%tx_isolation%';
 
 SET GLOBAL TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;

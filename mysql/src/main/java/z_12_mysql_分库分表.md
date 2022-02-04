@@ -19,3 +19,4 @@ mysql分表方案
 ###解决分布不均
 类似redis分槽slot,
 ![](.z_12_mysql_分库分表_images/e4306052.png)
+[](https://tech.meituan.com/2016/11/18/dianping-order-db-sharding.html)

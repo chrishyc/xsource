@@ -14,6 +14,7 @@ binlog主从复制日志和redolog事务恢复日志需要保持一致
 N：每N个事务，才会将 binlog 写入磁盘。
 ```
 #binlog日志格式
+![](.z_9_mysql_00_binlog_两阶段提交_逻辑日志_images/7b2ea27c.png)
 ##statement
 ##row
 #MySQL 怎么知道 binlog 是完整的?
