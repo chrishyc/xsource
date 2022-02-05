@@ -59,12 +59,16 @@ B+树
 
 ##什么时候索引会失效?如何避免?
 [z_3_mysql_查询优化_00_聚集索引_二级索引_覆盖索引_全表扫描_回表_范围区间_多个单索引_索引合并.md]
-##mysql如何做分库分表的？集群方案
+##mysql如何做分库分表的？集群方案，如何做数据迁移?
 [z_10_mysql_集群架构_架构类型_高可用方案_双主被动_keepalive虚拟ip_热备.md]
 0.主从复制,读写分离
 1.集群架构:MMM,MHA,MGR
 2.中间件:shardingsphere(催收账务表)
 3.水平分库，水平分表，垂直分库，垂直分表
+
+1.分片算法
+2.一致性算法减少数据迁移
+3.HAProxy
 ##哪些存储引擎？myisam vs innodb
 show engines;
 MEMORY:临时表
@@ -95,6 +99,10 @@ innodb,一个聚簇索引，多个非聚簇索引
 ##描述一下mysql主从复制的机制的原理？mysql主从复制主要有几种模式？
 [z_10_mysql_集群架构_架构类型_高可用方案_双主被动_keepalive虚拟ip_热备.md]
 [z_10_mysql_集群架构_binlog_relaylog_主从复制_异步复制_半同步复制_复制优化.md]
+##如何解决主从复制延时问题?
+从库sql多线程,组提交,GTID
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/f4d537c2.png)
+
 ##如何优化sql，查询计划的结果中看哪些些关键数据？
 [z_3_mysql_查询优化_00_explain_优化过程查看_profile_查询优化_查询成本.md]
 [z_3_mysql_查询优化_00_成本估算.md]
@@ -133,7 +141,10 @@ innodb,一个聚簇索引，多个非聚簇索引
 [](https://time.geekbang.org/column/article/68633)
 ##两阶段提交redolog + binlog
 ##项目中的问题
-
+##聊聊WAL
+1.write ahead log,主要是为了加快持久化进度,落盘是随机写需要寻址,为了加快持久化先顺序写日志,不需要寻址
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/48de4302.png)
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/33a03407.png)
 ##为啥mysql没有使用nio,而是bio
 [](https://www.zhihu.com/question/23084473)
 ```asp
