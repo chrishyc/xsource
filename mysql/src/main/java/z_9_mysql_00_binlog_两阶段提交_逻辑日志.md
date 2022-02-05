@@ -72,7 +72,7 @@ b）记录内容不同。redo/undo日志记录的是每个页的修改情况，�
 目的是保证数据的一致性。binlog记录的都是事务操作内容，比如一条语句DELETE FROM TABLE WHERE i > 1之类的，不管采用的是什么引擎，当然格式是二进制的，
 要解析日志内容可以用这个命令mysqlbinlog -vv BINLOG。
 
-c）记录时机不同。redo/undo日志在事务执行过程中会不断的写入;而binlog仅仅在事务提交后才写入到日志，之前描述有误，binlog是在事务最终commit前写入的，
+c）记录时机不同。redo/undo日志在事务执行过程中会不断的写入，binlog是在事务最终commit前写入的，
 多谢anti-semicolon 指出。当然，binlog什么时候刷新到磁盘跟参数sync_binlog相关
 
 ```
