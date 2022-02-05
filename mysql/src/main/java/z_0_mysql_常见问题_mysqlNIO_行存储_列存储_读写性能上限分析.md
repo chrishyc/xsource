@@ -4,6 +4,7 @@ mysql 常用于OLTP（on-line transaction processing),需要BIO访问
 mysql bio成本与性能的权衡
 mysql行存储原因:方便随机对数据增删改查
 回答问题结合操作系统机制io,page cache,生产环境使用,运维经验
+说说mysql的索引:需求,选型对比,结论;数据结构依托于操作系统页缓存,磁盘读写特点
 ##描述一下数据库事务隔离级别？
 画图,原理
 [z_9_mysql_02_undo_事务id_事务原子性_回滚段.md]
@@ -21,7 +22,7 @@ D:redo log,二阶段提交(binlog + redo log
 ##说说mysql的join原理?
 [z_3_mysql_查询优化_03_join优化_连接优化_joinbuffer_Index-Nested_block-Nested_semi-join.md]
 ##索引的数据结构/原理?
-画图
+画图+体系
 ![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/0ee78bc6.png)
 io(磁盘读取次数少)+数据结构(io读取量少)
 1.io,程序满足局部性原理,磁盘预读,操作系统以4k为单位读到page cache缓存,mysql读取16k
@@ -33,6 +34,29 @@ b+叶子节点包含所有数据,叶子节点是双向链表
 b树,叶子节点不是链表,不包含所有数据
 ```
 [z_8_mysql_数据结构_B+树.md]
+##谈谈mysql索引?
+mysql使用b+树,加快数据访问,提高查询效率
+mysql使用行存解决OLTP问题,需要解决key-value形式的查询,范围查询,排序
+我们的查询数据结构有hashmap,二叉树,B树,B+树
+选型对比
+B树和B+树的对比(局部性原型,空间局部性,时间局部性->磁盘预读,page cache 4K, mysql每次读取16k,每次预读16k,尽可能少产生io)
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/0542e2cb.png)
+hash
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/be4a54b5.png)
+二叉树,BST,AVL,红黑树
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/7d17bbad.png)
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/409061d2.png)
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/23289d95.png)
+B树
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/94d0a232.png)
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/54ef590b.png)
+B+树
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/980dc4ca.png)
+一般情况b+树多少层:3层,4层可以支持千万级别
+索引选择使用int/long(21亿),insert buffer,2、3层索引尽可能少占用空间支持数据量大
+索引的执行计划,优化
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/db2ce8b0.png)
+
 ##什么时候索引会失效?如何避免?
 [z_3_mysql_查询优化_00_聚集索引_二级索引_覆盖索引_全表扫描_回表_范围区间_多个单索引_索引合并.md]
 ##mysql如何做分库分表的？集群方案
@@ -67,6 +91,7 @@ InnoDB:事务,
 跟数据绑定在一起的索引我们称之为聚簇索引，没有跟数据绑定在一起的索引我们称之为非聚簇索引
 myisam都是非聚簇索引
 innodb,一个聚簇索引，多个非聚簇索引
+
 ##描述一下mysql主从复制的机制的原理？mysql主从复制主要有几种模式？
 [z_10_mysql_集群架构_架构类型_高可用方案_双主被动_keepalive虚拟ip_热备.md]
 [z_10_mysql_集群架构_binlog_relaylog_主从复制_异步复制_半同步复制_复制优化.md]
