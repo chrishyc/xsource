@@ -5,6 +5,7 @@ redis缓存一致性更新cache还是淘汰cache:读多还是写多
 redis缓存一致性速度:redis查询更新<1ms,mysql查询更新<100ms
 每台主机线程数5W,32核,128GB,1T
 #redis缓存一致性(Cache Aside 模式 vs Read/Write Through 模式)
+[](https://juejin.cn/post/6964531365643550751)
 [](https://time.geekbang.org/column/article/213230)
 性能,缓存利用率、并发、缓存 + 数据库
 ![](.z_04_分布式_redis_01_缓存问题_缓存一致性_缓存穿透_缓存击穿_缓存雪崩_预热_布隆过滤器&优化_热key处理_images/67c719d7.png)
