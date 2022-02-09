@@ -25,6 +25,8 @@ CDN域名:CNAME到的CDN域名
 ##拓扑
 [](https://time.geekbang.org/column/article/154490)
 [](https://time.geekbang.org/column/article/120664)
+[](https://time.geekbang.org/column/article/10085)
+[](https://time.geekbang.org/column/article/3716)
 ![](.z_09_CDN__images/4fa19777.png)
 边缘节点
 ![](.z_09_CDN__images/1f975350.png)
