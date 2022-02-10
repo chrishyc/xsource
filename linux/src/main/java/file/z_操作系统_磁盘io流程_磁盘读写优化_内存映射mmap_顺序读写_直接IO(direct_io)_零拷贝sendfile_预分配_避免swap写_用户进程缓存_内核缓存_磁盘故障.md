@@ -63,12 +63,14 @@ DMA将数据从磁盘拷贝到内核内存
 2次上下文切换
 ```
 #零拷贝技术
-##用户态直接 I/O
+##用户态直接IO(mysql)
 ```asp
 应用程序可以直接访问硬件存储，操作系统内核只是辅助数据传输。这种方式依旧存在用户空间和内核空间的上下文切换，硬件上的数据直接拷贝至了用户空间，
 不经过内核空间。因此，直接 I/O 不存在内核空间缓冲区和用户空间缓冲区之间的数据拷贝
 ```
 ![](.z_操作系统_磁盘io流程_磁盘读写优化_内存映射_顺序读写_直接IO_零拷贝_预分配_避免swap写_用户进程缓存_内核缓存_images/17e383f6.png)
+如果你是觉得自己有用户空间的cahce，那么你一定是对于操作特殊的文件拥有自己的策略，于是在open系统调用中提供了O_DIRECT标志，
+这标志表明这个文件打开后不再使用内核的cache，而是使用自己的cache
 ##减少数据拷贝次数
 ```asp
 在数据传输过程中，避免数据在用户空间缓冲区和系统内核空间缓冲区之间的CPU拷贝，以及数据在系统内核空间内的CPU拷贝，这也是当前主流零拷贝技术的实现思路
@@ -76,11 +78,21 @@ DMA将数据从磁盘拷贝到内核内存
 ###mmap + write
 减少了 CPU 拷贝的次数
 ![](.z_操作系统_磁盘io流程_磁盘读写优化_内存映射_顺序读写_直接IO_零拷贝_预分配_避免swap写_用户进程缓存_内核缓存_images/2d1c7c69.png)
-###sendfile
+###sendfile(使用page cache)
 不仅减少了 CPU 拷贝的次数，还减少了上下文切换的次数
 ![](.z_操作系统_磁盘io流程_磁盘读写优化_内存映射_顺序读写_直接IO_零拷贝_预分配_避免swap写_用户进程缓存_内核缓存_images/437fc2e9.png)
 ```asp
 整个拷贝过程会发生 2 次上下文切换，1 次 CPU 拷贝和 2 次 DMA 拷贝
+```
+![](.z_操作系统_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/1a8172da.png)
+[](https://spongecaptain.cool/SimpleClearFileIO/2.%20DMA%20%E4%B8%8E%E9%9B%B6%E6%8B%B7%E8%B4%9D%E6%8A%80%E6%9C%AF.html)
+[](https://github.com/Spongecaptain/SimpleClearFileIO)
+数据在内核的pagecache，通过sendfile直接放入socket的sendqueue发出，没有拷贝到程序空间
+sendfile是内核方法，pagecache是内核内存，sendqueue也是内核内存
+```asp
+1.从磁盘文件系统读到的文件，都是以page cache缓存到内存吗？是
+2.除了socket  buffer，磁盘读到的资源也会有buffer吗？都是page cache
+3.java文件写buffer，也是先写到page cache吧，然后操作系统flush?是
 ```
 ###sendfile + DMA gather copy
 ```asp
@@ -91,6 +103,12 @@ DMA将数据从磁盘拷贝到内核内存
 ![](.z_操作系统_磁盘io流程_磁盘读写优化_内存映射_顺序读写_直接IO_零拷贝_预分配_避免swap写_用户进程缓存_内核缓存_images/f2dea5c0.png)
 基于 sendfile + DMA gather copy 系统调用的零拷贝方式，整个拷贝过程会发生 2 次上下文切换、0 次 CPU 拷贝以及 2 次 DMA 拷贝
 sendfile + DMA gather copy 拷贝方式同样存在用户程序不能对数据进行修改的问题，而且本身需要硬件的支持，它只适用于将数据从文件拷贝到 socket 套接字上的传输过程
+```asp
+相较传统read/write方式，2.1版本内核引进的sendfile已经减少了内核缓冲区到user缓冲区，再由user缓冲区到socket相关缓冲区的文件copy，
+而在内核版本2.4之后，文件描述符结果被改变，sendfile实现了更简单的方式，系统调用方式仍然一样，细节与2.1版本的不同之处在于，
+当文件数据被复制到内核缓冲区时，不再将所有数据copy到socket相关的缓冲区，而是仅仅将记录数据位置和长度相关的数据保存到socket相关的缓存，
+而实际数据将由DMA模块直接发送到协议引擎，再次减少了一次copy操作
+```
 ###splice
 ![](.z_操作系统_磁盘io流程_磁盘读写优化_内存映射_顺序读写_直接IO_零拷贝_预分配_避免swap写_用户进程缓存_内核缓存_images/dc63caf7.png)
 ##写时复制技术
