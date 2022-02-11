@@ -72,8 +72,10 @@ rsa_2048/aes ratio = 868.13
 ![](.z_02_https_images/fc92044c.png)
 服务器返回的是证书链（不包括根证书，根证书预置在浏览器中），然后浏览器就可以使用信任的根证书（根公钥）解析证书链的根证书得到一级证书的公钥+摘要验签，
 然后拿一级证书的公钥解密一级证书拿到二级证书的公钥和摘要验签，再然后拿二级证书的公钥解密二级证书得到服务器的公钥和摘要验签，验证过程就结束了
-#https 连接流程
+#https 连接流程(2RTT)
 [](https://time.geekbang.org/column/article/110354)
+
+![](.z_02_https_images/661d3bea.png)
 ECDHE
 ![](.z_02_https_images/57c20fbb.png)
 RSA
@@ -101,18 +103,111 @@ Handshake Protocol: Server Hello
 ##交换随机数
 客户端随机数+服务端随机数+pre-master-> 主密钥,会话密钥
 三个不可靠的随机数混合起来，那么“随机”的程度就非常高了
+
+##DH算法生成Pre Master Secret
+[](https://halfrost.com/cipherkey/)
+##随机数+pre master生成主密钥&会话密钥
 ###主密钥
 ![](.z_02_https_images/7a2b6d5a.png)
 用于加密密钥的密钥被称为KEK(Key Encrypting Key)
 ###会话密钥
 每次会话都会产生新的会话密钥，即使密钥被窃听了，也只会影响本次会话
 加密的对象是用户直接使用的信息(内容)，这个时候密钥被称为CEK(Contents Encrypting Key)
-##DH算法生成Pre Master Secret
-[](https://halfrost.com/cipherkey/)
-##随机数+pre master生成主密钥&会话密钥
 ##FINISHED
 把之前所有发送的数据做个摘要，再加密(公钥)一下，让服务器做个验证
 后面都改用对称算法加密通信了啊，用的就是打招呼时说的 AES，加密对不对还得你测一下
+
+#TLS 1.3
+```asp
+
+Handshake Protocol: Client Hello
+    Version: TLS 1.2 (0x0303)
+    Extension: supported_versions (len=11)
+        Supported Version: TLS 1.3 (0x0304)
+        Supported Version: TLS 1.2 (0x0303)
+```
+![](.z_02_https_images/b1e621a2.png)
+##最大兼容
+##强化安全
+如果加密系统使用服务器证书里的 RSA 做密钥交换，一旦私钥泄露或被破解（使用社会工程学或者巨型计算机），
+那么黑客就能够使用私钥解密出之前所有报文的“Pre-Master”，再算出会话密钥，破解所有密文
+```asp
+RSA 握手中，Server Hello 后，客户端拿到服务器的证书，从中提取出服务器的公钥，然后用这个公钥去加密客户端生成的一个随机数（会话密钥）得到密文，
+然后将其返回给服务器。虽然每次 TLS 握手中的会话密钥都是不一样的，但服务器的私钥却始终不会变。一旦黑客拿到了服务器私钥，并且截获了之前的所有密文，
+就能拿到每次会话中的对称密钥，从而得到客户端和服务器的所有“历史会话记录”。
+
+说到底，RSA 握手下，服务器私钥是不变的，从而导致不具有“前向安全”。而 ECDHE 的私钥却是动态的，黑客拿到了一个，也只能解密一个密文
+```
+##提升性能(1RTT)
+1RTT
+###PSK(0-RTT,pre_shared_key)
+PSK是从以前建立的安全信道中获得的
+TLS1.3 还引入了“0-RTT”握手，用“pre_shared_key”和“early_data”扩展，在 TCP 连接后立即就建立安全连接发送加密消息
+##流程
+```asp
+
+Handshake Protocol: Client Hello
+    Version: TLS 1.2 (0x0303)
+    Random: cebeb6c05403654d66c2329…
+    Cipher Suites (18 suites)
+        Cipher Suite: TLS_AES_128_GCM_SHA256 (0x1301)
+        Cipher Suite: TLS_CHACHA20_POLY1305_SHA256 (0x1303)
+        Cipher Suite: TLS_AES_256_GCM_SHA384 (0x1302)
+    Extension: supported_versions (len=9)
+        Supported Version: TLS 1.3 (0x0304)
+        Supported Version: TLS 1.2 (0x0303)
+    Extension: supported_groups (len=14)
+        Supported Groups (6 groups)
+            Supported Group: x25519 (0x001d)
+            Supported Group: secp256r1 (0x0017)
+    Extension: key_share (len=107)
+        Key Share extension
+            Client Key Share Length: 105
+            Key Share Entry: Group: x25519
+            Key Share Entry: Group: secp256r1
+```
+![](.z_02_https_images/a018edba.png)
+![](.z_02_https_images/bd25e35a.png)
+#HTTPS 优化
+做任何的优化措施，HTTPS 建立连接可能会比 HTTP 慢上几百毫秒甚至几秒，这其中既有网络耗时，也有计算耗时
+##HTTPS比HTTP多出的过程
+1.HTTPS 比 HTTP 增加了一个 TLS 握手的步骤，这个步骤最长可以花费两个消息往返，也就是 2-RTT
+2.产生用于密钥交换的临时公私钥对（ECDHE）
+3.验证证书时访问 CA
+4.非对称加密解密处理“Pre-Master”
+![](.z_02_https_images/16dcface.png)
+##HTTPS优化(计算密集型)
+###硬件
+更快的 CPU
+SSL 加速卡
+###软件
+###协议
+协议优化,TLS1.2 -> TLS1.3
+RSA -> 椭圆曲线 ECDHE,224 位的 ECC 相当于 2048 位的 RSA
+###证书
+证书优化,选择椭圆曲线（ECDSA）证书而不是 RSA 证书
+##master key复用
+###会话复用(session,1-RTT)
+```asp
+
+Handshake Protocol: Client Hello
+    Version: TLS 1.2 (0x0303)
+    Session ID: 13564734eeec0a658830cd…
+    Cipher Suites Length: 34
+
+
+Handshake Protocol: Server Hello
+    Version: TLS 1.2 (0x0303)
+    Session ID: 13564734eeec0a658830cd…
+    Cipher Suite: TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)
+```
+![](.z_02_https_images/64394c30.png)
+###会话票证(Ticket,1-RTT)
+重连的时候，客户端使用扩展“session_ticket”发送“Ticket”而不是“Session ID”
+不过“Session Ticket”方案需要使用一个固定的密钥文件（ticket_key）来加密 Ticket，为了防止密钥被破解，保证“前向安全”，密钥文件需要定期轮换，
+比如设置为一小时或者一天。
+###预共享密钥(Pre-shared Key)
+解决的办法是只允许安全的 GET/HEAD 方法（参见第 10 讲），在消息里加入时间戳、“nonce”验证，或者“一次性票证”限制重放。
 #OpenSSL
 是一个著名的开源密码学程序库和工具包，几乎支持所有公开的加密算法和协议，已经成为了事实上的标准，许多应用软件都会使用它作为底层库来实现 TLS 功能，
 包括常用的 Web 服务器 Apache、Nginx 等
