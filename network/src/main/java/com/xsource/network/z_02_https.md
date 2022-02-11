@@ -187,6 +187,7 @@ RSA -> 椭圆曲线 ECDHE,224 位的 ECC 相当于 2048 位的 RSA
 ###证书
 证书优化,选择椭圆曲线（ECDSA）证书而不是 RSA 证书
 ##master key复用
+[](https://time.geekbang.org/column/article/111287)
 ###会话复用(session,1-RTT)
 ```asp
 
@@ -211,3 +212,5 @@ Handshake Protocol: Server Hello
 #OpenSSL
 是一个著名的开源密码学程序库和工具包，几乎支持所有公开的加密算法和协议，已经成为了事实上的标准，许多应用软件都会使用它作为底层库来实现 TLS 功能，
 包括常用的 Web 服务器 Apache、Nginx 等
+#https应用
+[](https://time.geekbang.org/column/article/111940)
