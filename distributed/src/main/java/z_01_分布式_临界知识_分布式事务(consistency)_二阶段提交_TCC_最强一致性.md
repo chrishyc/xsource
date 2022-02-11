@@ -137,7 +137,90 @@ public class OrderTccActionImpl implements OrderTccAction{
 ###悬挂
 
 ##最大努力通知
+##saga
+#seata
+Seata 虽然是保证数据一致性的组件，但对于 ORM 框架并没有特殊的要求，像主流的Mybatis，Mybatis-Plus，Spring Data JPA, Hibernate等都支持。
+这是因为ORM框架位于JDBC结构的上层，而 Seata 的 AT,XA 事务模式是对 JDBC 标准接口操作的拦截和增强
+[](https://seata.io/zh-cn/docs/overview/what-is-seata.html)
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/ce3fbb5f.png)
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/8dabf03b.png)
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/2ad09d69.png)
+##拓扑&原理
+###RM
+###TC
+###TM
+###全局事务XID(参与的RM服务中传递)
+[](https://seata.io/zh-cn/docs/user/microservice.html)
+```asp
+String xid = RootContext.getXID();
 
-##公司支付使用的分布式事务方案
+1. 服务内部的事务传播
+默认的，RootContext 的实现是基于 ThreadLocal 的，即 XID 绑定在当前线程上下文中
+// 挂起（暂停）
+String xid = RootContext.unbind();
+
+// TODO: 运行在全局事务外的业务逻辑
+
+// 恢复全局事务上下文
+RootContext.bind(xid);
+
+2.跨服务调用的事务传播
+跨服务调用场景下的事务传播，本质上就是要把 XID 通过服务调用传递到服务提供方，并绑定到 RootContext 中去
+```
+###全局事务表(TC服务中)
+###分支事务状态表(TC服务中)
+
+##AT(automic transaction,优化版2PC/XA)
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/dd3491d5.png)
+阶段一,在本地事务中，一并提交业务数据更新和相应回滚日志记录
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/5867a1ff.png)
+阶段二提交,马上成功结束，自动 异步批量清理回滚日志
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/67e777f3.png)
+阶段三回滚,通过回滚日志，自动 生成补偿操作，完成数据回滚
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/1bbf8199.png)
+```asp
+限制:
+基于支持本地 ACID 事务的关系型数据库。
+Java 应用，通过 JDBC 访问数据库
+```
+```asp
+全局锁:位于TC
+查询前镜像:根据解析得到的条件信息，生成查询语句，定位数据
+查询后镜像:主键定位
+undo log table: seata在本地数据库创建的undo log 表，把前后镜像数据以及业务 SQL 相关的信息组成一条回滚日志记录，插入到 UNDO_LOG 表中
+```
+```asp
+CREATE TABLE `undo_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `branch_id` bigint(20) NOT NULL,
+  `xid` varchar(100) NOT NULL,
+  `context` varchar(128) NOT NULL,
+  `rollback_info` longblob NOT NULL,
+  `log_status` int(11) NOT NULL,
+  `log_created` datetime NOT NULL,
+  `log_modified` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+```
+##TCC
+[]
+TCC 模式，不依赖于底层数据资源的事务支持
+一阶段 prepare 行为：调用 自定义 的 prepare 逻辑。
+二阶段 commit 行为：调用 自定义 的 commit 逻辑。
+二阶段 rollback 行为：调用 自定义 的 rollback 逻辑
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/670960d8.png)
+##SAGA
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/979185db.png)
+```asp
+适用场景：
+业务流程长、业务流程多
+参与者包含其它公司或遗留系统服务，无法提供 TCC 模式要求的三个接口
+不保证隔离性
+```
+##XA
+##混合模式AT&TCC
+##高可用
+#公司支付使用的分布式事务方案
 团队使用本地消息表,emq,适合跨行转账
 [](https://xiaomi-info.github.io/2020/01/02/distributed-transaction/)
