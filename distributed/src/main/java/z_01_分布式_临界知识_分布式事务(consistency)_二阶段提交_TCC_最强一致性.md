@@ -169,8 +169,15 @@ RootContext.bind(xid);
 ```
 ###全局事务表(TC服务中)
 ###分支事务状态表(TC服务中)
-
-##AT(automic transaction,优化版2PC/XA)
+###数据库本地锁
+###全局锁(TC中)
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/225a7557.png)
+###DataSourceProxy(数据源代理)
+[](https://seata.io/zh-cn/docs/user/appendix/isolation.html)
+[](https://seata.io/zh-cn/blog/seata-datasource-proxy.html)
+##AT(补偿型,automic transaction,优化版2PC/XA)
+[](https://seata.io/zh-cn/blog/seata-at-mode-design.html)
+[]([](https://seata.io/zh-cn/docs/overview/what-is-seata.html))
 ![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/dd3491d5.png)
 阶段一,在本地事务中，一并提交业务数据更新和相应回滚日志记录
 ![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/5867a1ff.png)
@@ -188,6 +195,8 @@ Java 应用，通过 JDBC 访问数据库
 查询前镜像:根据解析得到的条件信息，生成查询语句，定位数据
 查询后镜像:主键定位
 undo log table: seata在本地数据库创建的undo log 表，把前后镜像数据以及业务 SQL 相关的信息组成一条回滚日志记录，插入到 UNDO_LOG 表中
+
+集中管理全局数据锁，锁的释放不需要 RM 参与，释放锁非常快；另外，全局提交的事务，完成阶段 异步化
 ```
 ```asp
 CREATE TABLE `undo_log` (
@@ -203,14 +212,19 @@ CREATE TABLE `undo_log` (
   UNIQUE KEY `ux_undo_log` (`xid`,`branch_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 ```
-##TCC
-[]
+##TCC(补偿型)
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/3902dfc8.png)
+[](https://seata.io/zh-cn/blog/seata-tcc.html)
+###如何处理空回滚
+###如何处理幂等
+###如何处理悬挂
 TCC 模式，不依赖于底层数据资源的事务支持
 一阶段 prepare 行为：调用 自定义 的 prepare 逻辑。
 二阶段 commit 行为：调用 自定义 的 commit 逻辑。
 二阶段 rollback 行为：调用 自定义 的 rollback 逻辑
 ![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/670960d8.png)
-##SAGA
+##SAGA(补偿型，基于状态机)
+[](https://seata.io/zh-cn/blog/seata-at-tcc-saga.html)
 ![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/979185db.png)
 ```asp
 适用场景：
@@ -218,7 +232,18 @@ TCC 模式，不依赖于底层数据资源的事务支持
 参与者包含其它公司或遗留系统服务，无法提供 TCC 模式要求的三个接口
 不保证隔离性
 ```
-##XA
+##XA(全局一致性)
+[](https://seata.io/zh-cn/blog/seata-xa-introduce.html)
+###优点
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/1cb5a403.png)
+补偿性的缺点:事务资源 对分布式事务的无感知存在一个根本性的问题：无法做到真正的 全局一致性
+XA可以做到
+![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/d96bae2b.png)
+###缺点
+数据锁定,数据在整个事务处理过程结束前，都被锁定，读写都按隔离级别的定义约束起来
+协议阻塞：XA prepare 后，分支事务进入阻塞阶段，收到 XA commit 或 XA rollback 前必须阻塞等待
+性能差：性能的损耗主要来自两个方面：一方面，事务协调过程，增加单个事务的 RT；另一方面，并发事务数据的锁冲突，降低吞吐
+
 ##混合模式AT&TCC
 ##高可用
 #公司支付使用的分布式事务方案
