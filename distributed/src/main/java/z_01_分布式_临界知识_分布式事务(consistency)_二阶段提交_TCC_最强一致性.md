@@ -51,6 +51,7 @@ Paxos、Raft 等强一致性算法，也采用了二阶段提交操作，在“�
 降低锁定资源的时长,2pc的问题都没有解决
 ![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/24476356.png)
 ##基于消息的最终一致性方法(最终一致)
+[](https://time.geekbang.org/column/article/111269)
 2PC 和 3PC 核心思想均是以集中式的方式实现分布式事务，这两种方法都存在两个共同的缺点，
 一是，同步执行，性能差；
 二是，数据不一致问题
@@ -224,6 +225,7 @@ TCC 模式，不依赖于底层数据资源的事务支持
 二阶段 rollback 行为：调用 自定义 的 rollback 逻辑
 ![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/670960d8.png)
 ##SAGA(补偿型，基于状态机)
+[](https://time.geekbang.org/column/article/322301)
 [](https://seata.io/zh-cn/blog/seata-at-tcc-saga.html)
 ![](.z_01_分布式_临界知识_分布式事务(consistency)_二阶段提交_TCC_最强一致性_images/979185db.png)
 ```asp
