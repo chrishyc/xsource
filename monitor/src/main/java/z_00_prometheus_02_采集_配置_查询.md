@@ -107,6 +107,8 @@ scrape_configs:
 ```
 #预聚合
 #查询
+##查询过程
+![](.z_00_prometheus_02_采集_配置_查询_images/6c2e3d27.png)
 ##即时向量 `Instant vector`
 ![](.z_00_prometheus_02_配置_查询_images/521fb350.png)
 一个时刻的结果
@@ -137,6 +139,8 @@ scrape_configs:
 rate(promhttp_metric_handler_requests_total[3s])
 1.时间范围不能脱离rate等函数，不然会报错,时间范围 
 2.不能低于采集间隔,采集8秒 ，查询3秒则无数据
+##label_values
+##labels查询
 ## topK
 倒排索引 + 最大堆
 ![](.z_00_prometheus_02_采集_配置_查询_images/f6a5aec2.png)

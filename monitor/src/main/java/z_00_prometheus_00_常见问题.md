@@ -12,6 +12,8 @@
 1.延时histogram,成功率rate,同环比 - ,更改label,sum by
 2.
 ###优化
-降低采样率,预查询
+降低采样率,预查询,高基降,缩小范围
+###公司的高可用
+prometheus分片采集数据，然后remote write到远端存储，victoriametrics
 ###项目监控项目的数据量
 
