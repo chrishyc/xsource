@@ -1,3 +1,7 @@
+#临界知识
+倒排表
+词项字典
+压缩算法dod,xor
 #LSM存储
 [z_01_分布式_临界知识_LSM.md]
 #压缩
@@ -62,6 +66,23 @@
 ![](.z_00_prometheus_03_物理存储_images/9523aceb.png)
 ![](.z_00_prometheus_03_物理存储_images/d90c3642.png)
 [文件结构](https://github.com/prometheus/prometheus/blob/release-2.26/tsdb/docs/format/index.md)
+![](.z_00_prometheus_03_物理存储_images/408703db.png)
+![](.z_00_prometheus_03_物理存储_images/7aceded8.png)
+[](https://www.cnblogs.com/YaoDD/p/11391335.html)
+[](https://liujiacai.net/blog/2021/04/11/prometheus-storage-engine/)
+###Postings Offset Table
+![](.z_00_prometheus_03_物理存储_images/e2abb722.png)
+这部分直接对每个label的key和value以及相关索引在Postings中的位置进行存储。同样，它会首先被加载到内存中，如果需要知道包含某个label的所有series，
+再通过相关索引的偏移位置从Postings中依次获取
+###Postings N
+这部分存储的显然是倒排索引的信息，每一个条目存储的都是包含某个label pair的所有series的ID。但是与Label Index相似，条目中并没有指定具体的key和value
+###Series
+![](.z_00_prometheus_03_物理存储_images/d239c4fe.png)
+```asp
+存储的自然是series的相关信息，首先存储series的各个label，正如上文所述，存储的是对应key和value在Symbol Table中的编号。
+紧接着存储series相关的chunks信息，包含每个chunk的时间窗口，以及该chunk在chunks子目录下具体的位置信息。
+```
+###Label Offset Table
 ##Chunks
 该文件在chunks/块目录中创建。每个段文件的最大大小为512MiB
 [chunks](https://github.com/prometheus/prometheus/blob/release-2.26/tsdb/docs/format/chunks.md)

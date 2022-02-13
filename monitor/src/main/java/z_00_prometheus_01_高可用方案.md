@@ -70,6 +70,8 @@ scrape_configs:
 - 也可以是k8s中的prometheus statefulset
 - prometheus query remote_read 填写多个`prometheus/api/v1/read/`地址
 ```
+##公司高可用方案
+分片集群+remote时序数据库
 ###数据重复怎么办(自动去重)
 ```asp
 - 不用管，上面提到了query会做merge，多个数据只会保留一份
