@@ -58,7 +58,12 @@
 ##sendfile
 ##sendfile+DMA Scatter/Gather
 
-#磁盘数据结构
+#磁盘数据结构(2小时,chunk512M)
+[](https://prometheus.fuckcloudnative.io/di-san-zhang-prometheus/storage)
+```asp
+Prometheus 按照两个小时为一个时间窗口，将两小时内产生的数据存储在一个块（Block）中。每个块都是一个单独的目录，里面含该时间窗口内的所有样本数据（chunks），
+元数据文件（meta.json）以及索引文件（index）。其中索引文件会将指标名称和标签索引到样板数据的时间序列中。此期间如果通过 API 删除时间序列，删除记录会保存在单独的逻辑文件 tombstone 当中
+```
 ![](.z_00_prometheus_03_物理存储_images/6d3937df.png)
 ##WAL
 ![](.z_00_prometheus_03_物理存储_images/ec5363ee.png)
