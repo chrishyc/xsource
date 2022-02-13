@@ -7,7 +7,7 @@ Power your metrics and alerting with the leading open-source monitoring solution
 ```
 #opentsdb vs influxdb vs prometheus vs es
 HBase vs Cassandra
-
+![](.z_00_prometheus_00_定位_选型_演化_时序数据库核心问题_images/f7f3facb.png)
 #时序数据库特点
 时序数据库就是存放时序数据的数据库，并且需要支持时序数据的快速写入、持久化、多纬度的聚合查询等基本功能
 ##写入平稳、持续、高并发高吞吐
@@ -52,3 +52,5 @@ HBase vs Cassandra
 - 时序数据的读取：又如何支持在秒级对上亿数据的分组聚合运算。
 - 成本敏感：由海量数据存储带来的是成本问题。如何更低成本的存储这些数据，将成为时序数据库需要解决的重中之重
 ```
+#演化
+[](https://zhuanlan.zhihu.com/p/32900004)

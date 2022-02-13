@@ -71,7 +71,16 @@ scrape_configs:
 - prometheus query remote_read 填写多个`prometheus/api/v1/read/`地址
 ```
 ##公司高可用方案
-分片集群+remote时序数据库
+![](.z_00_prometheus_01_高可用方案_images/1fd436f4.png)
+###hash分片(relabel)
+consul+动态配置+一致性hash算法,需要drop掉不属于自己的分片
+每个prometheus采集段都去拉?
+![](.z_00_prometheus_01_高可用方案_images/55110f52.png)
+###远程时序数据库
+分片集群+remote时序数据库VictoriaMetrics,需要查询所有分片
+[](https://mojo-zd.github.io/2019/06/26/promtheus-VictoriaMetrics%E7%BB%84%E5%90%88%E6%8A%80/)
+![](.z_00_prometheus_01_高可用方案_images/6d72bf96.png)
+[](https://blog.cong.moe/post/2021-08-23-use-victoria-metrics-replace-prometheus/)
 ###数据重复怎么办(自动去重)
 ```asp
 - 不用管，上面提到了query会做merge，多个数据只会保留一份
@@ -124,7 +133,11 @@ alertmanager
 ![](.z_00_prometheus_01_高可用方案_images/19249a09.png)
 [](z_01_分布式_临界知识_共识(consensus)算法_paxos_选举(强leader算法)_raft(共识算法_强领导算法_强一致性)_zab(顺序一致性_强领导算法)_gossip(共识算法_最终一致性_无领导算法)_bully.md)
 ![](.z_00_prometheus_01_高可用方案_images/268e7590.png)
+
 ###通信方式
+![](.z_00_prometheus_01_高可用方案_images/8f8ae323.png)
+![](.z_00_prometheus_01_高可用方案_images/f11036df.png)
+[](https://yunlzheng.gitbook.io/prometheus-book/part-ii-prometheus-jin-jie/readmd/alertmanager-high-availability)
 ```asp
 - 在 Gossip 协议下，网络中两个节点之间有三种通信方式:
 - Push: 节点 A 将数据 (key,value,version) 及对应的版本号推送给 B 节点，B 节点更新 A 中比自己新的数据
@@ -173,3 +186,5 @@ alertmanager
 - 达到我们用gossip 去掉重复告警的目的
 - 其实是第一个节点发送告警后  gossip通知了第二个节点
 ```
+##公司
+alertmanager2台->nginx+ grafana 2台
