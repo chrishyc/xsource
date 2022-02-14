@@ -71,6 +71,7 @@ scrape_configs:
 - prometheus query remote_read 填写多个`prometheus/api/v1/read/`地址
 ```
 ##公司高可用方案
+[](https://zhuanlan.zhihu.com/p/311257416)
 ![](.z_00_prometheus_01_高可用方案_images/1fd436f4.png)
 ###hash分片(relabel)
 consul+动态配置+一致性hash算法,需要drop掉不属于自己的分片

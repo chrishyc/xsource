@@ -17,3 +17,6 @@
 prometheus分片采集数据，然后remote write到远端存储，victoriametrics
 ###项目监控项目的数据量
 
+###我们的prometheus是使用动态分片+一致性hash算法+victoriametrics远程存储吗?
+###prometheus从exporter pull数据,即使是分片方式,每个prometheus也是拉取的全量exporter?会占用太多网络带宽?
+###victoriametrics每次拉取数据需要合并，也是从所有分片拉取数据吗？
