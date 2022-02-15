@@ -82,8 +82,17 @@ HLog构建
 HLog滚动
 HLog失效
 HLog删除
-###BlockCache(64K)
+###BlockCache(64K,读缓存,RegionServer:BlockCache=1:1)
 HBase系统中的读缓存。客户端从磁盘读取数据之后通常会将数据缓存到系统内存中，后续访问同一行数据可以直接从内存中获取而不需要访问磁盘
+BlockCache是RegionServer级别的，一个RegionServer只有一个BlockCache，在RegionServer启动时完成BlockCache的初始化工作
+####LRUBlockCache(缓存分层策略,full gc)
+但随着数据从single-access区晋升到multi-access区或长时间停留在single-access区，对应的内存对象会从young区晋升到old区，
+晋升到old区的Block被淘汰后会变为内存垃圾，最终由CMS回收（Conccurent Mark Sweep，一种标记清除算法），
+显然这种算法会带来大量的内存碎片，碎片空间一直累计就会产生臭名昭著的Full GC
+####BucketCache
+BucketCache会在初始化的时候申请14种不同大小的Bucket，而且如果某一种Bucket空间不足，系统会从其他Bucket空间借用内存使用，因此不会出现内存使用率低的情况。
+系统在LRUBlockCache中主要存储Index Block和BloomBlock，而将Data Block存储在BucketCache中
+[](https://weread.qq.com/web/reader/632326807192b335632d09ck02e32f0021b02e74f10ece8)
 ###Region
 数据表的一个分片，当数据表大小超过一定阈值就会“水平切分”，分裂为两个Region。Region是集群负载均衡的基本单位。通常一张表的Region会分布在整个集群的多台RegionServer上，
 一个RegionServer上会管理多个Region，当然，这些Region一般来自不同的数据表
@@ -91,7 +100,7 @@ HBase系统中的读缓存。客户端从磁盘读取数据之后通常会将数
 ###Store(store:列簇=1:1)
 Store的个数取决于表中列簇（column family）的个数，多少个列簇就有多少个Store。HBase中，每个列簇的数据都集中存放在一起形成一个存储单元Store，
 因此建议将具有相同IO特性的数据设置在同一个列簇中。
-###MemStore
+###MemStore(写缓存)
 每个Store由一个MemStore和一个或多个HFile组成。MemStore称为写缓存，用户写入数据时首先会写到MemStore，当MemStore写满之后（缓存数据超过阈值，默认128M）
 系统会异步地将数据f lush成一个HFile文件
 
@@ -110,7 +119,18 @@ HBase将不同列簇的数据存储在不同的Store中，每个Store由一个Me
 ###HFile
 HFile存放在HDFS上，是一种定制化格式的数据存储文件，方便用户进行数据读取
 显然，随着数据不断写入，HFile文件会越来越多，当HFile文件数超过一定阈值之后系统将会执行Compact操作，将这些小文件通过一定策略合并成一个或多个大文件。
-
+![](.z_02_hbase_01_拓扑_物理存储_images/daeb72f6.png)
+[](https://weread.qq.com/web/reader/632326807192b335632d09ck4e73277021a4e732ced3b55)
+![](.z_02_hbase_01_拓扑_物理存储_images/ebfd472e.png)
+####data block(64K)
+![](.z_02_hbase_01_拓扑_物理存储_images/e497828c.png)
+####index block
+RootIndex Block表示索引数根节点,Root Index Block位于“ load-on-open”部分
+Intermediate Index Block表示中间节点
+Leaf Index Block表示叶子节点,Leaf Index Block位于“scanned block”部分
+![](.z_02_hbase_01_拓扑_物理存储_images/dc06f515.png)
+####bloom filter index block & bloom block
+![](.z_02_hbase_01_拓扑_物理存储_images/32e4af81.png)
 ##HDFS(hbase hdfs计算存储分离)
 HBase底层依赖HDFS组件存储实际数据，包括用户数据文件、HLog日志文件等最终都会写入HDFS落盘。
 HBase本身并不存储文件，它只规定文件格式以及文件内容，实际文件存储由HDFS实现。
