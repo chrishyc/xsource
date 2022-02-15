@@ -1,5 +1,6 @@
 [hbase原理与实践,微信读书]
 #临界知识
+LSM=WAL+内存顺序key-value+磁盘顺序key-value+异步压缩
 LSM树的索引结构本质是将写入操作全部转化成磁盘的顺序写入,但造成了读放大,设计了异步的compaction来降低文件个数
 #什么是LSM(Log-Structured Merge-Tree,有序集合,内存数据结构+磁盘结构)
 1.LSM树分为内存部分和磁盘部分。内存部分是一个维护有序数据集合的数据结构。
@@ -35,9 +36,28 @@ Value部分直接存储这个KeyValue中Value的二进制内容。所以，字�
 ##LSM索引文件的索引
 二分搜索,文件索引块
 [](https://weread.qq.com/web/reader/632326807192b335632d09ckc51323901dc51ce410c121b)
+##优势
+```asp
+1.将一次随机IO写入转换成一个顺序IO写入（HLog顺序写入）加上一次内存写入（MemStore写入），使得写入性能得到极大提升
+
+2.HFile中KeyValue数据需要按照Key排序，排序之后可以在文件级别根据有序的Key建立索引树，极大提升数据读取效率。然而HDFS本身只允许顺序读写，
+不能更新，因此需要数据在落盘生成HFile之前就完成排序工作，MemStore就是KeyValue数据排序的实际执行者
+
+3.MemStore作为一个缓存级的存储组件，总是缓存着最近写入的数据。对于很多业务来说，最新写入的数据被读取的概率会更大，最典型的比如时序数据，80%的请求都会落到最近一天的数据上。
+
+4.在数据写入HFile之前，可以在内存中对KeyValue数据进行很多更高级的优化。比如，如果业务数据保留版本仅设置为1，在业务更新比较频繁的场景下，
+MemStore中可能会存储某些数据的多个版本。这样，MemStore在将数据写入HFile之前实际上可以丢弃老版本数据，仅保留最新版本数据。
+```
 #跳表(更高并发)
+##hbase跳表ConcurrentSkipListMap
+ConcurrentSkipListMap有个非常重要的特点是线程安全，它在底层采用了CAS原子性操作，
+避免了多线程访问条件下昂贵的锁开销，极大地提升了多线程访问场景下的读写性能
+
 与红黑树以及其他的二分查找树相比，跳跃表的优势在于实现简单，而且在并发场景下加锁粒度更小，从而可以实现更高的并发性
 
+MemStore由两个ConcurrentSkipListMap（称为A和B）实现，写入操作（包括更新删除操作）会将数据写入ConcurrentSkipListMap A，
+当ConcurrentSkipListMap A中数据量超过一定阈值之后会创建一个新的ConcurrentSkipListMap B来接收用户新的请求，
+之前已经写满的ConcurrentSkipListMap A会执行异步f lush操作落盘形成HFile。
 ##查询:O(logN)
 ![](.z_01_hbase_01_数据结构_LSM_images/9f05e5c1.png)
 查找5的过程,蓝色部分
