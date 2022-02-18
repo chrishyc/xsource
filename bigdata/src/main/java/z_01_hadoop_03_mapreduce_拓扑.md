@@ -3,6 +3,7 @@
 默写两张图
 ![](.z_01_hadoop_02_mapreduce_拓扑_images/134b420c.png)
 ![](.z_01_hadoop_02_mapreduce_拓扑_images/7ca1c269.png)
+[](https://blog.csdn.net/ASN_forever/article/details/81233547)
 map,reduce解决的问题:一条记录为单位,分区为单位的问题
 map中局部分区排序,reduce中归并排序,降低时间复杂度,减少io成本
 计算向数据移动:hdfs提供数据坐标,yarn分配资源
@@ -16,7 +17,7 @@ map和reduce是串行关系,是阻塞关系
 ![](.z_01_hadoop_02_mapreduce_拓扑_images/305dd90a.png)
 #拓扑
 ![](.z_01_hadoop_02_mapreduce_拓扑_images/72a03440.png)
-
+![](.z_01_hadoop_03_mapreduce_拓扑_images/6a81b402.png)
 ##map(一条记录为单位,并行度由split大小确定)
 过滤,map,flatmap,每条数据单独处理不考虑和其他数据的关系
 ![](.z_01_hadoop_02_mapreduce_拓扑_images/98a4efe4.png)
