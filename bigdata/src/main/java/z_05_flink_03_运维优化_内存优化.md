@@ -71,3 +71,5 @@ jobmanager.heap.size：设定JobManager堆内存大小，默认为1024MB。
 - taskmanager.network.memory.max: 最大的Network Buffers内存大小，默认1GB。
 
 - taskmanager.memory.segment-size: 内存管理器和Network栈使用的Buffer大小，默认为32KB。
+[](https://developer.aliyun.com/article/57815)
+[](https://www.modb.pro/db/124111)
