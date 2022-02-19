@@ -81,6 +81,8 @@ Savepoints 是检查点的一种特殊实现，底层实现其实也是使用Che
 [](https://zhuanlan.zhihu.com/p/266620519)
 ##至少一次
 ##端到端精确一次
+##两阶段提交
+[](https://developer.51cto.com/article/643945.html)
 
 #失败恢复
 ##失败
