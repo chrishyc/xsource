@@ -1,7 +1,14 @@
 #算子
 [源码分析](https://github.com/mickey0524/flink-streaming-source-analysis/tree/master/docs)
+##任务调度
+![](.z_05_flink_02_分层api_算子_分区策略_算子链_数据倾斜_images/653dde84.png)
+![](.z_05_flink_02_分层api_算子_分区策略_算子链_数据倾斜_images/1e633bd9.png)
+##并行度配置
+![](.z_05_flink_02_分层api_算子_分区策略_算子链_数据倾斜_images/dacdb509.png)
 #核心转换
 [](https://nightlies.apache.org/flink/flink-docs-master/zh/docs/dev/datastream/operators/overview/)
+![](.z_05_flink_02_分层api_算子_分区策略_算子链_数据倾斜_images/c16b84ae.png)
+![](.z_05_flink_02_分层api_算子_分区策略_算子链_数据倾斜_images/7d0fbae0.png)
 ##Map,DataStream → DataStream
 ```asp
 DataStream<Integer> dataStream = //...
@@ -105,13 +112,17 @@ ataStream.join(otherStream)
 ##Iterate
 #物理分区策略
 [](http://smartsi.club/physical-partitioning-in-apache-flink.html)
+##shuffle(数据倾斜)
+增大分区、提高并行度，解决数据倾斜,分区元素随机均匀分发到下游分区，网络开销比较大,上游数据比较随意的分发到下游
+[z_00_常见问题_数据倾斜.md]
 ##keyby
 使用 keyBy 函数指定分组 key，将具有相同 key 的元素发送到相同的下游算子实例上：
 ![](.z_05_flink_02_分层api_算子_datastream_api_source_transform_sink_images/f4d41d94.png)
 ##自定义分区
 Flink 也提供以下方法让用户根据需要在数据转换完成后对数据分区进行更细粒度的配置。
 
-##RebalancePartitioner(全局均摊,可能通过网络均摊,数据倾斜)
+##Rebalance Partitioner(全局均摊,可能通过网络均摊,数据倾斜)
+轮询分区元素，均匀的将元素分发到下游分区，下游每个分区的数据比较均匀，在发生数据倾斜时非常有用，网络开销比较大
 ![](.z_05_flink_02_分层api_算子_datastream_api_source_transform_sink_images/ea724a72.png)
 ```asp
 @Internal
@@ -153,6 +164,11 @@ public class RebalancePartitioner<T> extends StreamPartitioner<T> {
 将元素以 Round-robin 轮询的方式分发到下游算子,当算子的并行度不是彼此的倍数时，一个或多个下游算子将从上游算子获取到不同数量的输入。                            
 ![](.z_05_flink_02_分层api_算子_datastream_api_source_transform_sink_images/84a74e95.png)
 ```asp
+场景:减少分区 防止发生大量的网络传输 不会发生全量的重分区
+DataStream → DataStream 通过轮询分区元素，将一个元素集合从上游分区发送给下游分区，发送单位是集合，而不是一个个元素
+注意:rescale发生的是本地数据传输，而不需要通过网络传输数据，比如taskmanager的槽数。简单 来说，上游的数据只会发送给本TaskManager中的下游
+```
+```asp
 dataStream.rescale();
 ```
 ```asp
@@ -163,6 +179,15 @@ dataStream.rescale();
 ##广播
 ```asp
 dataStream.broadcast();
+上游中每一个元素内容广播到下游每一个分区中
+```
+##global
+```asp
+上游分区的数据只分发给下游的第一个分区
+```
+##forward
+```asp
+场景:一对一的数据分发，map、flatMap、filter 等都是这种分区策略
 ```
 #算子链(operator chain)和资源组(slots,每个slot一个线程)
 map()是一个算子,filter是一个算子,reduce是一个算子,算子链就是算子集合,用于将多个算子绑定在一起在同一个线程一起执行,避免不必要的线程切换

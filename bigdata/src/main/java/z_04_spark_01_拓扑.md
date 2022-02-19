@@ -110,6 +110,7 @@ df.writeStream
 由于每个 Micro-batch 都会触发一个 Spark 作业，我们知道，作业与任务的频繁调度会引入计算开销，因此也会带来不同程度的延迟。在运行模式与容错机制的双重加持下，
 Batch mode 的延迟水平往往维持在秒这个量级，在最好的情况下能达到几百毫秒左右。
 ##continuous(吞吐小,延迟低)
+[](https://github.com/lw-lin/CoolplaySpark/blob/master/Structured%20Streaming%20%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E7%B3%BB%E5%88%97/1.1%20Structured%20Streaming%20%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF%E4%B8%8E%E5%AE%9E%E7%8E%B0%E6%A6%82%E8%BF%B0.md#%E4%B8%89structured-streaming%E6%97%A0%E9%99%90%E5%A2%9E%E9%95%BF%E7%9A%84%E8%A1%A8%E6%A0%BC)
 ![](.z_04_spark_01_拓扑_images/08c07e34.png)
 流处理,在 Continuous mode 下，Structured Streaming 使用一个常驻作业（Long running job）来处理数据流（或者说服务）中的每一条消息
 Batch mode 吞吐量大、延迟高（秒级），而 Continuous mode 吞吐量低、延迟也更低（毫秒级）。吞吐量指的是单位时间引擎处理的消息数量，

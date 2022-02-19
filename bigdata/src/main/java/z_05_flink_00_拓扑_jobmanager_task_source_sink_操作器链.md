@@ -5,10 +5,25 @@
 协调分布式执行，它们用来调度task，协调检查点(CheckPoint)，协调失败时恢复等
 JobManager：JobManager 接受到用户的请求之后，会对任务进行调度，并且申请资源启动 TaskManager。
 ![](.z_05_flink_00_拓扑_jobmanager_task_source_sink_操作器链_images/3c525747.png)
+###资源调度
+```asp
+集群启动，TaskManager会将当前节点的资源信息注册给JobManager，所有TaskManager全部注 册完毕，集群启动成功，此时JobManager就掌握整个集群的资源情况 
+client提交Application给JobManager，JobManager会根据集群中的资源情况，为当前的 Application分配TaskSlot资源
+```
+###任务调度
+```asp
+根据各个TaskManager节点上的资源分发task到TaskSlot中运行
+Job执行过程中，JobManager会根据设置的触发策略触发checkpoint，通知TaskManager开始 checkpoint
+任务执行完毕，JobManager会将Job执行的信息反馈给client，并且释放TaskManager资源
+```
 ##TaskManager处理器
 主要职责是从JobManager处接收任务, 并部署和启动任务, 接收上游的数据并处理
 它负责一个具体 Task 的执行。TaskManager 向 JobManager 进行注册，当 TaskManager 接收到 JobManager 分配的任务之后，开始执行具体的任务
 ![](.z_05_flink_00_拓扑_jobmanager_task_source_sink_操作器链_images/76fdc08a.png)
+负责当前节点上的任务运行及当前节点上的资源管理，TaskManager资源通过TaskSlot进行了划 分，每个TaskSlot代表的是一份固定资源。
+例如，具有三个 slots 的 TaskManager 会将其管理的 内存资源分成三等份给每个 slot。 划分资源意味着 subtask 之间不会竞争内存资源，
+但是也意味 着它们只拥有固定的资源。注意这里并没有 CPU 隔离，当前 slots 之间只是划分任务的内存资源
+负责TaskManager之间的数据交换
 ##task & subtask
 Task 是一个阶段多个功能相同 SubTask 的集合，类似于 Spark 中的 TaskSet。 SubTask(子任务)
 SubTask 是 Flink 中任务最小执行单元，是一个 Java 类的实例，这个 Java 类中有属性和 方法，完成具体的计算逻辑
@@ -69,15 +84,21 @@ Savepoints are similar to these periodic checkpoints except that they are trigge
 expire when newer checkpoints are completed. Savepoints can be created from the command line or when cancelling a job via the REST API
 ```
 [](https://nightlies.apache.org/flink/flink-docs-release-1.4/concepts/runtime.html)
+
 #yarn集群
+![](.z_05_flink_00_拓扑_jobmanager_task_source_sink_操作器链_images/b721c5ad.png)
+```asp
+1. 每当创建一个新flink的yarn session的时候，客户端会首先检查要请求的资源(containers和 memory)是否可用。然后，将包含flink相关的jar包盒配置上传到HDFS
+2. 客户端会向ResourceManager申请一个yarn container 用以启动ApplicationMaster。由于客户端 已经将配置和jar文件上传到HDFS，ApplicationMaster将会下载这些jar和配置，然后启动成功
+3. JobManager和AM运行于同一个container
+4. AM开始申请启动Flink TaskManager的containers，这些container会从HDFS上下载jar文件和已
+修改的配置文件。一旦这些步骤完成，flink就可以接受任务了
+```
 ##container & application
 container,yarn集群最小资源,application应用任务一个main函数所在class
 [](https://cloud.tencent.com/developer/news/451821)
 ![](.z_05_flink_00_拓扑_jobmanager_task_source_sink_操作器链_images/015130de.png)
 ![](.z_05_flink_00_拓扑_jobmanager_task_source_sink_操作器链_images/c0cbf6cc.png)
 
-##single & session
-```asp
-一直启动，不停地接收客户端提交的作业
-- 如果有大量的小作业/任务比较小，或者工作时间短，适合使用这种方式，减少资源创建的时 间.
-```
+##集群高可用
+zookeeper
