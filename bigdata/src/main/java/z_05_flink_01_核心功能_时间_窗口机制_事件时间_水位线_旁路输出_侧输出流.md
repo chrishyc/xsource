@@ -16,6 +16,9 @@ size,slide,offset
 [](https://nightlies.apache.org/flink/flink-docs-release-1.14/zh/docs/dev/datastream/operators/windows/#tumbling-windows)
 ##窗口类型
 ![](.z_05_flink_01_核心功能_时间_窗口机制_事件时间_水位线_images/188e2114.png)
+![](.z_05_flink_01_核心功能_时间_窗口机制_事件时间_水位线_旁路输出_侧输出流_images/5f0e067c.png)
+###增量聚合函数
+###全量聚合函数
 ##空的时间窗口不会输出结果 
 
 #watermark水位线(避免延时)
