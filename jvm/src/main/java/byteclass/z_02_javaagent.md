@@ -1,3 +1,4 @@
+#原理
 #Java Instrument的Agent实现
 ##Instrument agent对象模型
 [agent源码分析](https://juejin.cn/post/6844903612985032711#heading-9)
