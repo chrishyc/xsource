@@ -1,11 +1,11 @@
 ##0.例子maven-shade-plugins
 调试端:业务项目
-[](/Users/chris/workspace/xsource/maven/src/main/resources/images/debug_1.png)
-[](/Users/chris/workspace/xsource/maven/src/main/resources/images/debug_2.png)
+![](.maven_images/ac23dbbb.png)
+![](.maven_images/cc82b4de.png)
 -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000
 
 被调试端:maven插件
-[](/Users/chris/workspace/xsource/maven/src/main/resources/images/bedebug_1.png)
+![](.maven_images/fbc8c596.png)
 ##1.如何debug maven
 [](https://shengulong.github.io/blog/2019/07/23/maven%E6%8F%92%E4%BB%B6%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/)
 ##2.debug如何运作?
