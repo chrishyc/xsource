@@ -37,7 +37,13 @@ COMPUTE_MAXS: Flag to automatically compute the maximum stack size and the maxim
 方法来设置 maxLocal 和 maxStack 数。不过，ASM 为了方便用户使用，已经提供了自动计算的方法，在实例化 ClassWriter 操作类的时候传入 
 COMPUTE_MAXS 后，ASM 就会自动计算本地变量表和操作数栈
 ```
-
+###有什么难点?字节码脱敏常量池错误
+![](.z_02_字节码插桩_asm_images/4d561234.png)
+1.arthas 反编译字节码class文件,发现tostring中 throw new OutOf异常,看不到tostring的字节码
+2.对比正常和异常的class文件,发现一个tostring只有属性变量,一个有实例方法,猜测是实例方法的问题
+3.本地复现,发现实例方法果然报错,拿到日志脱敏源码,只对属性变量脱敏,并没有处理方法,即使没脱敏也不应该报错
+4.控制变量,缩小范围,最后发现复写MethodVisitor时,visitVarInsn方法过滤了ALOAD_0,导致实例方法获取不到this,invoke出错,而访问visitFieldInsn时主动ALOAD_0,所以没出错
+5.之前考虑为了避免tostring调用实例方法,除去了this指针,恢复this指针,避免脱敏导致的业务报错,使用lombok的@exclude(tostring方法)
 ###tostring只支持field,不支持get,is方法
 不能对get,is方法也脱敏,否则调用时只能获取脱敏的字段
 ###classloader双亲委派问题
