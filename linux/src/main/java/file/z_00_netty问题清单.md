@@ -78,8 +78,7 @@ dubbo,RocketMQ,Spring Cloud Gateway
 
 ##netty线程模型
 
-##tcp粘包拆包
-[](https://juejin.cn/post/6844904197712789518#heading-0)
+
 
 ##netty长连接
 
@@ -93,3 +92,16 @@ dubbo,RocketMQ,Spring Cloud Gateway
 [](https://www.zhihu.com/question/60892134)
 
 ##netty+tomcat有状态通信
+#tcp粘包拆包
+[](https://juejin.cn/post/6844904197712789518#heading-0)
+##拓扑
+MSS(Maximum Segment Size,TCP最大报文长度,1460B+40B首部)
+拆包,数据太大
+粘包,数据太小
+##方案
+```asp
+传输的消息是定长的。只有长度都知道了，接收方就可以每次获取指定长度就完事了
+在数据包的尾部加上回车符作为分割条件(结束条件)
+将消息分为消息头和消息体。消息头中包含了消息的总长度。(一般来说消息头的第一个字段可以被设计表示为消息总长度)
+更加复杂的应用层协议
+```
