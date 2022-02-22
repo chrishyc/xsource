@@ -70,7 +70,10 @@ Redis 在执行 Lua 脚本时，是可以保证原子性的，lua可以原子的
 DECR id
 Lua 脚本
 ![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_images/b0834a19.png)
-###lua持久化
+##原理
+[](https://developer.aliyun.com/article/32)
+客户端通过eval 将文本脚本传输到服务端,服务端通过lua来执行脚本
+##lua持久化
 ```$xslt
 把这段Lua脚本持久化到AOF文件中，保证Redis重启时可以回放执行过的Lua脚本。
 
@@ -79,7 +82,7 @@ Lua 脚本
 Redis要求Lua脚本必须是纯函数的形式了，想象一下给定一段Lua脚本和输入参数却得到了不同的结果，这就会造成重启前后和主备库之间的数据不一致
 ```
 [](http://mysql.taobao.org/monthly/2019/01/06/)
-###lua复用
+##lua复用
 ```
 eval
 evalsha
