@@ -1,16 +1,22 @@
 #临界知识
 网络传输RTT时间(往返时间)
+redis 请求响应同步等待模式
 pipeline,批量发送,流水线,redis处理第一个时同时在发送第二个
 pipeline让多个指令传输时不需要等待每条指令的RTT结束
 事务会将指令放在一个事务队列,原子执行,但是指令发送过程可能被其他客户端先发送
 lua会将指令放在一个事务队列,原子执行
-redis使用RESP通信协议,同步等待,通信方式这块不是Redis使用上的性能瓶颈，这一点很重要
 [](http://www.redis.cn/documentation.html)
+#redis RESP(REdis Serialization Protocol)
+[](https://redis.io/topics/protocol)
+redis使用RESP通信协议,同步等待,通信方式这块不是Redis使用上的性能瓶颈，这一点很重要
+the protocol outlined here is only used for client-server communication. Redis Cluster uses a different binary protocol 
+in order to exchange messages between nodes.
 #批量操作
 ![](.z_04_分布式_redis_01_常见操作_string_list_set_sortedset_hash_pipeline_原子操作lua_事务_images/f564f428.png)
 ![](.z_04_分布式_redis_01_批量操作_pipeline_lua_images/b81e12dc.png)
 mset,mget,getset
-#pipeline
+#pipeline(黏包现象)
+[z_00_netty问题清单.md]
 pipeline可能穿插执行,不具有原子性
 ![](.z_04_分布式_redis_01_批量操作_pipeline_lua_吞吐量优化_images/01a9c2b6.png)
 ```$xslt
@@ -28,11 +34,29 @@ Redis 服务器端支持处理一个客户端通过同一个 TCP 连接发来的
 echo 'set hh 111\r\nsadd nn 1 2 3 4 5\r\nsmembers nn\r\n' | nc 127.0.0.1 6379//非管道
 echo -en '*3\r\n$3\r\nSET\r\n$5\r\nhello\r\n$5\r\nworld\r\n*2\r\n$4\r\nincr\r\ n$7\r\ncounter\r\n' | redis-cli --pipe//管道
 ```
+##原理
+不仅减少了RTT，同时也减少了IO调用次数（IO调用涉及到用户态到内核态之间的切换）
+![](.z_04_分布式_redis_01_RESP_批量操作_pipeline_lua_事务_吞吐量优化_images/231abd26.png)
+```asp
+要支持Pipeline，其实既要服务端的支持，也要客户端支持。对于服务端来说，所需要的是能够处理一个客户端通过同一个TCP连接发来的多个命令，
+可以理解为，这里将多个命令切分，和处理单个命令一样（之前老生常谈的黏包现象），Redis就是这样处理的。而客户端，则是要将多个命令缓存起来，
+缓冲区满了就发送，然后再写缓冲，最后才处理Redis的应答，如Jedi
+```
+jedis默认8012
+[](https://www.cnblogs.com/jabnih/p/7157921.html)
+##pipeline vs 事务
+Redis的Pipeline和Transaction不同，Transaction会存储客户端的命令，最后一次性执行，而Pipeline则是处理一条，响应一条
+##性能
+RTT次数
+用户态/内核态切换次数
 #原子操作lua
 脚本和Redis事务一样保证了原子性，执行脚本时不会执行其他脚本或Redis命令（所以不要让脚本运行时间过长），
 同样脚本也没有回滚机制，当脚本中出现lua的异常，或者Redis命令错误，也无法保证全部执行成功
 [](https://www.jianshu.com/p/88e433ca845b)
-
+```asp
+eval 脚本内容 key个数 key列表 参数列表
+```
+![](.z_04_分布式_redis_01_RESP_批量操作_pipeline_lua_事务_吞吐量优化_images/86783260.png)
 ```$xslt
 Redis 是使用单线程来串行处理客户端的请求操作命令的，所以，当 Redis 执行某个命令操作时，其他命令是无法执行的，这相当于命令操作是互斥执行的。
 当然，Redis 的快照生成、AOF 重写这些操作，可以使用后台线程或者是子进程执行，也就是和主线程的操作并行执行。不过，这些操作只是读取数据，
@@ -90,10 +114,18 @@ Redis 的事务根本不能算「原子性」，而仅仅是满足了事务的�
 Redis并不支持回滚功能
 [redis深度历险原理5]
 ![](.z_04_分布式_redis_01_原子操作_串行_事务_lua_images/feb400b5.png)
-##redis与pipeline
-当一个事 务内部的指令较多时，需要的网络 IO 时间也会线性增长。所以通常 Redis 的客户端在执行 
+##事务与pipeline
+[](https://juejin.cn/post/6844903635252412430)
+![](.z_04_分布式_redis_01_RESP_批量操作_pipeline_lua_事务_吞吐量优化_images/71e1a4c7.png)
+当一个事 务内部的指令较多时，需要的网络 IO 时间也会线性增长(发出去一个指令回复一次queued)。所以通常 Redis 的客户端在执行 
 事务时都会结合 pipeline 一起使用，这样可以将多次 IO 操作压缩为单次 IO 操作
 ##watch
+[](https://juejin.cn/post/6844903648183451662)
+```asp
+key->客户端watch链表
+客户端->key链表
+```
+
 确保事务中的key没有被其他客户端修 改过，才执行事务，否则不执行(类似乐观锁)
 
 WATCH 机制的作用是，在事务执行前，监控一个或多个键的值变化情况，当事务调用 EXEC 命令执行时，WATCH 机制会先检查监控的键是否被其它客户端修改了。
@@ -106,3 +138,5 @@ A:原子性,不能,运行时异常会继续
 C:一致性,不能
 I:能,pipeline 
 D:不能,异步写入
+
+##事务 vs lua
