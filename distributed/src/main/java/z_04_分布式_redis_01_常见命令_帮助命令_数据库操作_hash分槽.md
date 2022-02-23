@@ -25,15 +25,14 @@ exec
 #数据类型操作
 ##string操作
 [redis开发与运维][2.2.1]
-set key value
-setnx key value//不存在则创建
-setex key  time value//过期时间
+set key value,
+set(key, value, nxxx, expx, time),//nx+ex
 MSET
 MGET
-GETRANGE
-APPEND
-strlen
+strlen,
 incr key//计数
+
+
 setbit key offset 1,//offset位设置为1
 bitcount key,//key中bit=1的个数
 bitpos key bit start end,//start到end的字节范围中中,第一个bit的位置

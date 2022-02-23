@@ -49,13 +49,6 @@ insert ignore into `Test` select 'aa' , 'cao' from dual where not exists(select 
 ###rocketMq异步请求一次
 ###定时任务扫描事件表
 更新状态机
-##redis分布式锁实现分布式定时任务
-[z_01_分布式_临界知识_分布式锁.md]
-redission, redlock
-##使用Redis缓存推荐码、短链接等热数据
-HSET KEY field value
-field = mifi id_url,
-value = mifi id_code,
 ##使用短网址方案精简推荐活动URL分享
 #实现activiti风控审批流的自由跳转
 #通过Hbase统计授信支用的每日报表

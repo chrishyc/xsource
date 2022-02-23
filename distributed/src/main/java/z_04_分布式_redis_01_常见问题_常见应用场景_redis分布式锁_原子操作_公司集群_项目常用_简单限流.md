@@ -24,23 +24,22 @@ MySQL 这类的数据库的 QPS 大概都在 1w 左右（4 核 8g） ，但是�
 5大value类型
 基本上就是缓存
 为的是服务无状态，延申思考
-###例子
-string:redis缓存,活动推广短连接:setExpire
-string:redis分布式锁,多个客户端去服务端拿token并缓存token,token拿到会使老的token过期,需要避免同时拿token
-```$xslt
-2个客户端
-判断token是否过期
-过期则去拿锁
-拿到锁判断是否过期
-过期则请求刷新token
-请求token失败,释放锁重试三次(避免网络延时)，三次仍失败打点
+###string
+string:redis缓存,推荐活动的起始时间,从zookeeper读取,缓存到redis中
+```asp
+redisClient.setex(BEGIN_TIME, EXPIRE_TIME, Long.toString(startByTime));//设置活动开始时间
 ```
-set:缓存常用的用户规则,saddExpire服务冷启动时,从redis中获取所有已加载的规则(smembers)
-
+###set
+set:缓存常用的用户规则,saddExpire服务冷启动时,从redis中获取所有已加载的规则(smembers),无需从文件读取,加快速度,
+```asp
+saddExpire(RULE_PREFIX + monthDate, ruleSet, 24*60*60);
+ruleset<groupId,artifactId>,版本更新缓存拿不到,redis缓存
+```
+###sorted_set
 sorted_set:延时队列,批量插入某个用户在流程中用到的所有变量(统计数据,可丢失)
-
+###list
 list:消息队列:执行6s超时告警太多,为了优化执行,将用户链路追踪的sql异步化处理(规则流程节点太多时,插入sql次数很多,耗时太多),使用redis消息队列(统计数据,可丢失,用户历史记录不需要保证可靠性)
-
+###hash
 hash:按小时建立hash表(方便按时间删除),每个key是processId+nodeId,val是计数,定时异步刷新流程节点数据到数据库,优化流程执行速度(统计数据,可丢失,)
 ##string应用场景
 ###数值
