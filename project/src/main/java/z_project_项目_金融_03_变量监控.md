@@ -3,6 +3,7 @@
 #redis lua,事务
 #redis mysql双写
 #二级缓存
+理清楚二者过期时间,二者执行顺序,guava原理,缓存一致性
 [](https://juejin.cn/post/6844903747160637447#heading-5)
 从内存guava,redis,数据库中获取
 [z_java_03_guava_cache.md],2h,groupid,processid
