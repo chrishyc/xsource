@@ -30,15 +30,54 @@ string:redis缓存,推荐活动的起始时间,从zookeeper读取,缓存到redis
 redisClient.setex(BEGIN_TIME, EXPIRE_TIME, Long.toString(startByTime));//设置活动开始时间
 ```
 ###set
-set:缓存常用的用户规则,saddExpire服务冷启动时,从redis中获取所有已加载的规则(smembers),无需从文件读取,加快速度,
+set:saddExpire缓存常用的用户规则表,服务冷启动时,从redis中获取当天所有已使用的规则(smembers),进行规则表和流程表预热,无需在执行时从文件读取,加快速度,
 ```asp
 saddExpire(RULE_PREFIX + monthDate, ruleSet, 24*60*60);
-ruleset<groupId,artifactId>,版本更新缓存拿不到,redis缓存
+ruleset<groupId,artifactId,version>,缓存版本信息
+服务重启后预加载smembers RULE_PREFIX
 ```
 ###sorted_set
-sorted_set:延时队列,批量插入某个用户在流程中用到的所有变量(统计数据,可丢失)
+sorted_set:延时队列,插入某个用户在流程中用到的流程节点信息(统计数据,可丢失)
+zadd,延时一秒
+```asp
+long timeToConsume = System.currentTimeMillis() + (long)delaySeconds * 1000L;
+this.jedis.zadd(this.queueName, (double)timeToConsume, member);
+```
+zremByScore
+```asp
+Thread consumer = new Thread(() -> {
+      while(!this.stop) {
+        try {
+          if (this.needWaitConsume()) {
+            Thread.sleep(1000L);
+          } else {
+            Set<String> msgs = this.jedis.zremByScore(this.queueName, 0.0D, (double)System.currentTimeMillis(), 16);
+            if (msgs.isEmpty()) {
+              Thread.sleep(1000L);
+            } else {
+              Iterator var2 = msgs.iterator();
+
+              while(var2.hasNext()) {
+                String msg = (String)var2.next();
+                this.threadPoolExecutor.submit(() -> {
+                  log.debug("trying to process msg {}", msg);
+                  Object o = this.gson.fromJson(msg, this.processor.messageType());
+                  this.processor.process(o, Maps.newHashMap());
+                });
+              }
+            }
+          }
+        } catch (Exception var4) {
+        }
+      }
+```
+zrangebyscore 和 zrem 一同挪到服务器端进行原子化操作，这样多个进程之间争抢任务时就不 会出现这种浪费了
+####为啥延时
+延时避免mysql连接数飙升,击穿mysql
 ###list
 list:消息队列:执行6s超时告警太多,为了优化执行,将用户链路追踪的sql异步化处理(规则流程节点太多时,插入sql次数很多,耗时太多),使用redis消息队列(统计数据,可丢失,用户历史记录不需要保证可靠性)
+lpush,rpop,
+BRPOP mylist 0
 ###hash
 hash:按小时建立hash表(方便按时间删除),每个key是processId+nodeId,val是计数,定时异步刷新流程节点数据到数据库,优化流程执行速度(统计数据,可丢失,)
 ##string应用场景

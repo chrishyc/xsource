@@ -28,20 +28,21 @@ public class GuavaTest {
           //重点，自动写缓存数据的方法，必须要实现
           @Override
           public String load(String key) throws Exception {
-            System.out.println("过期时间:" + System.currentTimeMillis() / 1000);
-            return "2";
+//            System.out.println("过期时间:" + System.currentTimeMillis() / 1000);
+            return null;
           }
 
           //异步刷新缓存-下文会讲述
           @Override
           public ListenableFuture<String> reload(String key, String oldValue) throws Exception {
-            System.out.println("过期时间:" + System.currentTimeMillis() / 1000);
+//            System.out.println("过期时间:" + System.currentTimeMillis() / 1000);
             return null;
           }
         });
     try {
       for (; ; ) {
-        System.out.println(loadingCache.get("1"));
+        String s = loadingCache.get("1");
+        System.out.println(s);
       }
     } catch (Exception e) {
       e.printStackTrace();

@@ -91,3 +91,6 @@ ID 有序递增
 ##双号段模式
 ##snowflake(时钟问题)
 [](https://tech.meituan.com/2017/04/21/mt-leaf.html)
+#最佳实践
+id-generator
+##冲突
