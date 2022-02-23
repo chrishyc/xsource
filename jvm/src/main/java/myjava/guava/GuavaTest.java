@@ -15,8 +15,8 @@ public class GuavaTest {
         //最大容量为100（基于容量进行回收）
         .maximumSize(100)
         //配置写入后多久使缓存过期-下文会讲述
-        .expireAfterWrite(150, TimeUnit.SECONDS)
-        //配置写入后多久刷新缓存-下文会讲述
+        .expireAfterWrite(2, TimeUnit.SECONDS)
+        //配置写入后多久刷新缓存-下文会讲述,刷新后过期时间不变
         .refreshAfterWrite(1, TimeUnit.SECONDS)
         //key使用弱引用-WeakReference
         .weakKeys()
@@ -28,15 +28,24 @@ public class GuavaTest {
           //重点，自动写缓存数据的方法，必须要实现
           @Override
           public String load(String key) throws Exception {
-            return "value_" + key;
+            System.out.println("过期时间:" + System.currentTimeMillis() / 1000);
+            return "2";
           }
 
           //异步刷新缓存-下文会讲述
           @Override
           public ListenableFuture<String> reload(String key, String oldValue) throws Exception {
-            return super.reload(key, oldValue);
+            System.out.println("过期时间:" + System.currentTimeMillis() / 1000);
+            return null;
           }
         });
+    try {
+      for (; ; ) {
+        System.out.println(loadingCache.get("1"));
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
   }
 }

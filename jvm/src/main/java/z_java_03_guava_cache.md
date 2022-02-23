@@ -31,7 +31,11 @@ Guava Cache是没有定时器或额外的线程去做清理或加载操作的，
 
 writeQueue和accessQueue
 ##refreshAfterWrite(异步刷新队列)
+
 允许一个线程进去load方法，其他线程返回旧的值
 在上一点基础上做成异步，即回源线程不是请求线程。异步刷新是用线程异步加载数据，期间所有请求返回旧的缓存值
+###刷新问题
+refreshAfterWrite刷新后expireAfterWrite过期时间不变
 #最佳实践
-推荐的设置是 refresh < expire
+推荐的设置是 refresh < expire,1:3
+[](https://community.jiguang.cn/article/464216)
