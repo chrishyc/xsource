@@ -53,6 +53,7 @@ BLPOP mylist 30//阻塞30s
 BLPOP mylist 0//一直阻塞直到有数据
 ![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/ab3d20cf.png)
 ![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/2da2620e.png)
+![](.z_04_分布式_redis_01_常见命令_帮助命令_数据库操作_hash分槽_images/9acd2cb3.png)
 ##hash
 HSET key field value [field value ...]
 hget key field

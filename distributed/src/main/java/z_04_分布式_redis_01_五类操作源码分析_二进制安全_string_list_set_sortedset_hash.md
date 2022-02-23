@@ -88,6 +88,8 @@ int->append->raw
 ###局限
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/676405fc.png)
 #List
+##阻塞队列原理
+[](https://www.jianshu.com/p/xsMzfn)
 ##数据结构
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/c97b3731.png)
 ##时间复杂度

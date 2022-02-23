@@ -2,6 +2,8 @@
 缓存击穿,缓存雪崩
 guava缓存过期/异步机制
 guava数据结构
+[](https://juejin.cn/post/6844903747160637447#heading-5)
+[](https://albenw.github.io/posts/df42dc84/)
 #LRU ConcurrentHashMap
 ![](.z_java_03_guava_cache_images/f18f7c94.png)
 ![](.z_java_03_guava_cache_images/ad753da3.png)
@@ -36,6 +38,7 @@ writeQueue和accessQueue
 在上一点基础上做成异步，即回源线程不是请求线程。异步刷新是用线程异步加载数据，期间所有请求返回旧的缓存值
 ###刷新问题
 refreshAfterWrite刷新后expireAfterWrite过期时间不变
+[参考GuavaTest]
 #最佳实践
 推荐的设置是 refresh < expire,1:3
 [](https://community.jiguang.cn/article/464216)
