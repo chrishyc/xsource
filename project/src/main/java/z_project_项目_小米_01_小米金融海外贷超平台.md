@@ -52,3 +52,5 @@ insert ignore into `Test` select 'aa' , 'cao' from dual where not exists(select 
 ##使用短网址方案精简推荐活动URL分享
 #实现activiti风控审批流的自由跳转
 #通过Hbase统计授信支用的每日报表
+#二保一，监控系统全写到政策平台
+#难点怎么讲比较合适

@@ -8,6 +8,9 @@ redis组合操作减少网络传输,计算向数据移动(sinter vs sinterstore)
 非重点知识非重点了解
 二进制编码解码
 每个数据结构都有两种切换模式:数据少时使用结构紧凑型减少空间占用,数据多时使用数据结构加快增删改查效率
+
+String三种类型,int,embstr,raw,
+
 ##参考
 [](https://time.geekbang.org/column/article/299806)
 ##二进制安全问题
@@ -32,7 +35,13 @@ type对应group,group和操作配套，比如string配套的操作为set
 
 ![](.z_04_分布式_redis_01_核心功能_源码分析_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/c522db7c.png)
 相同的type使用的encoding也不一定相同
+![](.z_04_分布式_redis_01_五类操作源码分析_二进制安全_string_list_set_sortedset_hash_images/0952c5d0.png)
+![](.z_04_分布式_redis_01_五类操作源码分析_二进制安全_string_list_set_sortedset_hash_images/e4b6b96e.png)
+![](.z_04_分布式_redis_01_五类操作源码分析_二进制安全_string_list_set_sortedset_hash_images/cc1a90a9.png)
+![](.z_04_分布式_redis_01_五类操作源码分析_二进制安全_string_list_set_sortedset_hash_images/03502db4.png)
+![](.z_04_分布式_redis_01_五类操作源码分析_二进制安全_string_list_set_sortedset_hash_images/96d9ab15.png)
 #string
+![](.z_04_分布式_redis_01_常见问题_常见应用场景_redis分布式锁_原子操作_公司集群_项目常用_简单限流_images/6612d876.png)
 ##String 数据结构
 [redis深度历险][源码1]
 [redis开发与运维]
@@ -176,6 +185,7 @@ hash冲突,开放再定址
 ```
 
 [](https://blog.csdn.net/zhoucheng05_13/article/details/79864568)
+
 ##hashtable
 ```asp
 整个 Redis 数据库的所有 key 和 value 也组成了一个全局字典，还有带过期时间
@@ -204,7 +214,8 @@ struct dictEntry { void* key;
 }
 struct dictht {
     dictEntry** table; // 二维
-    long size; // 第一维数组的长度 long used; // hash 表中的元素个数 ...
+    long size; // 第一维数组的长度 
+    long used; // hash 表中的元素个数 ...
 }
 ```
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/56026354.png)
@@ -263,6 +274,7 @@ Redis会用ziplist来作为有序集合的内部实现，ziplist 可以有效减
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/5803b743.png)
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/461e716c.png)
 ![](.z_04_分布式_redis_01_核心功能_源码分析_二进制安全_string_数据结构转换_list_set_sortedset_hash_pipeline_原子操作lua_事务_数据库_images/fb58bd71.png)
+
 ```asp
 一方面它需要一个 hash 结构来存储 value 和 score 的 对应关系，
 另一方面需要提供按照 score 来排序的功能，还需要能够指定 score 的范围来获 取 value 列表的功能，这就需要另外一个结构「跳跃列表」
