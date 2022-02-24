@@ -30,14 +30,14 @@ string:redis缓存,推荐活动的起始时间,从zookeeper读取,缓存到redis
 redisClient.setex(BEGIN_TIME, EXPIRE_TIME, Long.toString(startByTime));//设置活动开始时间
 ```
 ###set
-set:saddExpire缓存常用的用户规则表,服务冷启动时,从redis中获取当天所有已使用的规则(smembers),进行规则表和流程表预热,无需在执行时从文件读取,加快速度,
+set:服务启动预热sadd,saddExpire缓存常用的用户规则表,服务冷启动时,从redis中获取当天所有已使用的规则(smembers),进行规则表和流程表预热,无需在执行时从文件读取,加快速度,
 ```asp
 saddExpire(RULE_PREFIX + monthDate, ruleSet, 24*60*60);
 ruleset<groupId,artifactId,version>,缓存版本信息
 服务重启后预加载smembers RULE_PREFIX
 ```
 ###sorted_set
-sorted_set:延时队列,插入某个用户在流程中用到的流程节点信息(统计数据,可丢失)
+sorted_set:记录用户执行的链路节点信息,延时队列,插入某个用户在流程中用到的流程节点信息(统计数据,可丢失)
 zadd,延时一秒
 ```asp
 long timeToConsume = System.currentTimeMillis() + (long)delaySeconds * 1000L;
@@ -70,6 +70,12 @@ Thread consumer = new Thread(() -> {
         } catch (Exception var4) {
         }
       }
+      
+      
+public Set<String> zremByScore(String key, double rangeMin, double rangeMax, int count) {
+    List result = (List)this.jc.eval("local expiredValues = redis.call('zrangebyscore', KEYS[1], ARGV[1], ARGV[2], 'limit', 0, ARGV[3]);  if #expiredValues > 0 then     redis.call('zrem', KEYS[1], unpack(expiredValues));  end;return expiredValues;", Collections.singletonList(key), Lists.newArrayList(new String[]{"" + rangeMin, "" + rangeMax, "" + count}));
+    return Sets.newHashSet(result);
+  }
 ```
 zrangebyscore 和 zrem 一同挪到服务器端进行原子化操作，这样多个进程之间争抢任务时就不 会出现这种浪费了
 ####为啥延时
@@ -79,7 +85,43 @@ list:消息队列:执行6s超时告警太多,为了优化执行,将用户链路�
 lpush,rpop,
 BRPOP mylist 0
 ###hash
-hash:按小时建立hash表(方便按时间删除),每个key是processId+nodeId,val是计数,定时异步刷新流程节点数据到数据库,优化流程执行速度(统计数据,可丢失,)
+hash:统计流程节点链路执行次数,按小时建立hash表(方便按时间删除),每个key是processId+nodeId,val是计数,定时异步刷新流程节点数据到数据库,优化流程执行速度(统计数据,可丢失,)
+hincr key field value
+hgetAll key 
+hdel key field
+####为啥用hash?直接用string也可以?
+string:每个字符串额外占用16B+3B+1B=20B
+```asp
+struct RedisObject {
+    int4 type; // 4bits
+    int4 encoding; // 4bits
+    int24 lru; // 24bits
+    int32 refcount; // 4bytes,4字节
+    void *ptr; // 8bytes,8字节,64-bit system
+} robj;
+
+struct SDS<T> {
+    T capacity; // 数组容量
+    T len; // 数组长度
+    byte flags; // 特殊标识位，不理睬它 byte[] content; // 数组内容
+}
+```
+hash < 64B * 512时,头部占用16B+4B+4B+2B+1B=27B,每个占用4B,远小于单独用string
+```asp
+struct ziplist<T> {
+    int32 zlbytes; // 整个压缩列表占用字节数
+    int32 zltail_offset; // 最后一个元素距离压缩列表起始位置的偏移量，用于快速定位到最后一个
+    节点
+    int16 zllength; // 元素个数
+    T[] entries; // 元素内容列表，挨个挨个紧凑存储 
+    int8 zlend; // 标志压缩列表的结束，值恒为 0xFF
+}
+
+struct entry {
+    int<var> prevlen; // 前一个 entry 的字节长度 int<var> encoding; // 元素类型编码
+    optional byte[] content; // 元素内容
+}
+```
 ##string应用场景
 ###数值
 数值:播放量,点赞数,评论数
