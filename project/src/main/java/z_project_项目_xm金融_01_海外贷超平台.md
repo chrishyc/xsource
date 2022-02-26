@@ -64,6 +64,7 @@ insert ignore into mifi
 普通索引:用户id,查用户所有的奖励
 普通索引:关系id,一个关系id可能获得多次奖励
 ##使用短网址方案精简推荐活动URL分享
+[z_00_分布式_重要案例_02_短URL生成器.md]
 ##实现Activiti风控审批流的自由跳转
 ##Zookeeper更新活动元数据配置
 ##使用Redis缓存热数据如推荐码、短URL

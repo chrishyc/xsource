@@ -119,3 +119,5 @@ SELECT * FROM single_table WHERE key1 = 'a' OR key_part1 = 'a';
 
 9、如果mysql中使用全表扫描比使用索引快，也会导致索引失效
 ```
+#最佳实践
+
