@@ -1,3 +1,6 @@
+#临界知识
+![](.z_05_flink_00_拓扑_高可用_jobmanager_task_source_sink_操作器链_images/45b232c5.png)
+![](.z_05_flink_00_拓扑_高可用_jobmanager_task_source_sink_操作器链_images/ebf1cdd7.png)
 #角色
 ![](.z_05_flink_00_拓扑_images/dab6b6f0.png)
 ![](.z_05_flink_00_拓扑_jobmanager_task_source_sink_操作器链_images/d0d53891.png)
@@ -68,7 +71,6 @@ JobGraph——优化的逻辑执行计划（Web UI中看到的就是这个）
 ExecutionGraph——物理执行计划
 [z_05_flink_02_分层api_算子_分区策略_算子链_数据倾斜.md]
 算子链接在一起,在相同的线程(slot)中执行,减少线程状态切换,
-![](.z_05_flink_00_拓扑_jobmanager_task_source_sink_操作器链_images/c7e95286.png)
 #State Backends(checkpoint)
 ![](.z_05_flink_00_拓扑_jobmanager_task_source_sink_操作器链_images/8e8b3165.png)
 ```asp
@@ -101,4 +103,11 @@ container,yarn集群最小资源,application应用任务一个main函数所在cl
 ![](.z_05_flink_00_拓扑_jobmanager_task_source_sink_操作器链_images/c0cbf6cc.png)
 
 ##集群高可用
-zookeeper
+###zookeeper
+3台jobmanager组成高可用
+###公司项目
+```asp
+由于HA依赖较高版本Zookeeper，目前公司内部Flink暂未开启HA，但是开启了Yarn Application 自动重试；当JobManager发生异常后，
+Yarn会自动重新拉起，Flink作业依然可以从之前的状态快速恢复。
+```
+
