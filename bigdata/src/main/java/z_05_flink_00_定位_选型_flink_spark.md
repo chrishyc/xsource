@@ -5,6 +5,8 @@ Apache Flink is a framework and distributed processing engine for stateful compu
  
  对 Flink 而言，其所要处理的主要场景就是流数据，批数据只是流数据的一个极限特例而已，所以 Flink 也是一款真正的流批统一的计算引擎
 ```
+![](.z_05_flink_00_定位_选型_flink_spark_images/1a84d594.png)
+![](.z_05_flink_00_定位_选型_flink_spark_images/dc6a5563.png)
 #选型
 1、同时支持高吞吐、低延迟、高性能
 2、支持事件时间(Event Time)概念，结合Watermark处理乱序数据 
