@@ -1,3 +1,6 @@
+#临界知识
+![](.z_es_01_lucene_02_lucene三种存储方式_倒排_列式_行_字段检索性能对比_images/f3c26bd5.png)
+![](.z_es_01_lucene_02_lucene三种存储方式_倒排_列式_行_字段检索性能对比_images/3e8b313a.png)
 ![](.z_es_01_lucene_01_索引生成_索引文件格式_拓扑_images/fce2eb16.png)
 #倒排(term->docId,词搜索)
 ```asp

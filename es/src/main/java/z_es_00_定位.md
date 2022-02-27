@@ -1,3 +1,5 @@
+#临界知识
+![](.z_es_00_定位_images/c3f51a41.png)
 #选型
 [](https://db-engines.com/en/ranking/search+engine)
 es vs Solr
