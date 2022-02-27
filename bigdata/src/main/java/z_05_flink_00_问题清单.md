@@ -56,6 +56,7 @@ cpu,48核
 内存,126 GB
 job,2G,放单点用了zookeeper
 并发度,64,16个tm,每个8G,每个4个slot
+吞吐:1500条/s,每条2k,3M/S
 ###JVM 垃圾回收器
 PS_Scavenge	
 PS_MarkSweep	
