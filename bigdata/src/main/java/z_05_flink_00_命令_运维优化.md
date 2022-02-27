@@ -39,3 +39,13 @@ Flink内置了为解决单点故障问题的高可用性服务模块，此模块
 [](https://nightlies.apache.org/flink/flink-docs-release-1.14/zh/docs/ops/monitoring/back_pressure/#monitoring-back-pressure)
 ![](.z_05_flink_03_运维优化_稳定性_恢复_images/432a9b9f.png)
 #flink yarn队列内存cpu爆满
+#grafana指标
+![](.z_05_flink_00_问题清单_images/a6333079.png)
+![](.z_05_flink_00_命令_运维优化_images/a886406a.png)
+![](.z_05_flink_00_命令_运维优化_images/7845d34b.png)
+![](.z_05_flink_00_命令_运维优化_images/514c5297.png)
+![](.z_05_flink_00_命令_运维优化_images/07be0a4a.png)
+![](.z_05_flink_00_命令_运维优化_images/9a2da874.png)
+![](.z_05_flink_00_命令_运维优化_images/b443cbe5.png)
+![](.z_05_flink_00_命令_运维优化_images/363261da.png)
+![](.z_05_flink_00_命令_运维优化_images/e0a219d7.png)
