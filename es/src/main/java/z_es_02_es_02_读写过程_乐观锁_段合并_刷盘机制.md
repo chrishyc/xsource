@@ -7,6 +7,13 @@ refresh,flush,merge
 最小通用化算法,int->byte
 大数据三角:大量数据,实时性,准确性
 LSM树
+refresh+flush
+![](.z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制_images/340492ea.png)
+merge
+![](.z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制_images/a0bd4b05.png)
+写入流程
+![](.z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制_images/0a6642a3.png)
+routing+version+translog+quorum
 #写入的核心问题
 ```asp
 可靠性：或者是持久性，数据写入系统成功后，数据不会被回滚或丢失。
@@ -30,6 +37,7 @@ LSM树
 ![](.z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制_images/84a3a068.png)
 ##页缓存(flush,page cache->disk)
 ##translog(事务日志,可靠性;文档缓存buffer后,写入translog;translog周期性通过fsync进行刷盘，默认5s;commit point)
+![](.z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制_images/5fddcdb5.png)
 [translog刷盘策略](https://www.elastic.co/guide/cn/elasticsearch/guide/current/translog.html)
 ![](.z_es_02_es_02_读写过程_乐观锁_段合并_刷盘机制_images/b875b31c.png)
 新文档被索引意味着文档会被首先写入内存 buffer 和 translog 文件。每个 shard 都对应一个 translog
@@ -131,3 +139,5 @@ flush操作将文件系统缓存中的segment进行fsync刷盘，并更新commit
 #并发控制乐观锁
 版本控制
 [拉钩es]
+Elasticsearch的多线程异步并发修改是基于自己的_version版本号进行乐观锁并发控制的。 在后修改的先到时，比较版本号,版本号相同修改可以成功，而当先修改的后到时，也会比较一下
+_version版本号，如果不相等就再次读取新的数据修改。这样结果会就会保存为一个正确状态
