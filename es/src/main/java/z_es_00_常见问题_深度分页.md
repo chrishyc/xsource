@@ -8,7 +8,7 @@
 
 分:
 elk技术栈,es,kibana,file beat
-高性能:倒排fst,roaring bitmap,for,ack
+高性能:倒排fst,roaring bitmap,for,ack策略
 高可用:分布式分片集群,bully选举,持久化translog
 高并发:多分片
 成本:开源,
@@ -42,6 +42,9 @@ olap在线分析系统
 3设置最大文件句柄数；
 4线程池+队列大小根据业务需要做调整；
 5磁盘存储 raid 方式——存储有条件使用 RAID10，增加单节点性能以及避免单节点存储故障
+#es运维排查问题?
+flink yarn ui查看吞吐，反压，异常日志
+grafana查看吞吐,jvm gc,merge
 #说说倒排索引原理?
 [z_es_01_lucene_01_索引生成_索引文件格式_拓扑.md]
 [z_es_01_lucene_03_倒排算法_压缩算法_相关度排序算法.md]
@@ -99,12 +102,93 @@ query,fetch,局部优先队列,协调节点优先队列
 3对于读操作，可以设置 replication 为 sync(默认)，这使得操作在主分片和副本分片都完成后才会返回；如果设置 replication 为 async 时，也可以通过设置搜索请求参数_preference 为 primary 来查
 ```
 #项目中的es问题
+##项目中用到的查询与聚合
+1.指标聚合,桶聚合,pipeline都用到了
+term,Date histogram,Nested
+top_metrics,max,cardinality,Stats
+bucket_sort,bucket_selector(Sibling),bucket_script,Sum bucket
+###统计当天告警变量只展示最新一条
+![](.z_es_00_常见问题_深度分页_images/7ef5074e.png)
+![](.z_es_00_常见问题_深度分页_images/dbbd2953.png)
+should+filter时,需要配置should_match=1时should才生效
+![](.z_es_00_常见问题_深度分页_images/ff24a1b6.png)
+![](.z_es_00_常见问题_深度分页_images/25381211.png)
+###获取变量今天的所有流程
+![](.z_es_00_常见问题_深度分页_images/d8b6db4a.png)
+filter,terms=groupId,terms=varName
+range=time,gte=***,lte=**
+field=process_ids.id
+sort
+###统计30天所有流程的总数
+![](.z_es_00_常见问题_深度分页_images/aaf24d6b.png)
+
+##项目索引配置策略&数据建模
+alias+滚动
+![](.z_es_00_常见问题_深度分页_images/e3f87753.png)
+ILM
+>30d || >5G 滚动
+##项目中的优化策略
+###集群性能调优
+1.禁用Swapping
+2.jvm不超过30G,避免指针压缩的问题，垃圾回收器使用的是？
+3.分片1,副本0
+4.绑定cpu,后台进程绑定一个cpu,不去消耗读写线程
+5.2主1投票,8数据节点
+6.使用DEFLATE不使用LZ4压缩算法
+###数据
+1.多多使用range限定范围
+2.使用_source=false,field include和exclude过滤避免过多数据
+3.mapping,使用keyword避免分词,模糊匹配keyword必须前缀,使用byte代替int,使用date代替string
+4.bulk进行批量请求,避免translog频繁flush,避免生成过多小segment,后期merge太频繁
+5.避免深度分页，避免单页数据过大，可以参考百度的做法(每次滚动10页缓存下来),search after
+6.>30d||>5G滚动到冷数据层，热SSD,冷机械硬盘
+7.日志监控close >7d的索引
+8.对于冷数据不会再写入新数据，可以考虑定期 force_merge 加 shrink 压缩操作，节省存储空间和检索效率
+9.index.merge.scheduler.max_thread_count，团队的是4
+10.sort.order预排序
+```asp
+PUT my-index-000001
+{
+  "settings": {
+    "index": {
+      "sort.field": "date", 
+      "sort.order": "desc"  
+    }
+  },
+  "mappings": {
+    "properties": {
+      "date": {
+        "type": "date"
+      }
+    }
+  }
+}
+```
+###刷segment&刷盘
+1.增加refresh_interval的参数值，目的是减少segment文件的创建，减少segment的merge次数，merge是发生在jvm中的，有可能导致full GC，增加refresh会降低搜索的实时性
+2.增加flush时间间隔，目的是减小数据写入磁盘的频率，减小磁盘IO
+3.增加Buffer大小，本质也是减小refresh的时间间隔，因为导致segment文件创建的原因不仅有时间阈值，还有buffer空间大小，写满了也会创建。默认最小值 48MB< 默认值 堆空间的10% < 默认最大无限制
+###评分
+1.使用filter避免评分,query使用评分
+2.关闭Norms字段
 ##说说你们公司 es 的集群架构和吞吐规模
 11个节点,3个master,8个数据节点,1个分片1个副本
 ![](.z_es_00_常见问题_深度分页_images/2dea7dc1.png)
 读写速度,grafana查看
 [](https://www.elastic.co/cn/blog/benchmarking-and-sizing-your-elasticsearch-cluster-for-logs-and-metrics)
-计算和存储合一
+计算和存储合一，重点关注TPS,吞吐,merge效率,每个节点segment数量
+![](.z_es_00_常见问题_深度分页_images/f8d6180c.png)
+![](.z_es_00_常见问题_深度分页_images/4d83a8ac.png)
+![](.z_es_00_常见问题_深度分页_images/5040c6fa.png)
+![](.z_es_00_常见问题_深度分页_images/3370eafb.png)
+![](.z_es_00_常见问题_深度分页_images/a0df6dec.png)
+![](.z_es_00_常见问题_深度分页_images/f411903b.png)
+![](.z_es_00_常见问题_深度分页_images/6230ec5d.png)
+![](.z_es_00_常见问题_深度分页_images/a7db6989.png)
+##遇到的问题
+1.分页<10000
+2.单个文档的内嵌文档<10000,
+3.并发,version
 ##深度分页(面试难点讲解)
 [业界难题-“跨库分页”的四种方案](https://cloud.tencent.com/developer/article/1048654)
 ![](.z_es_00_常见问题_深度分页_images/1cf9465a.png)
@@ -119,6 +203,29 @@ query,fetch,局部优先队列,协调节点优先队列
 ###search after原理
 [doc values](https://www.jianshu.com/p/91d03b16af77)
 [](https://elasticsearch.cn/question/2935)
+```asp
+GET /_search
+{
+  "size": 10000,
+  "query": {
+    "match" : {
+      "user.id" : "elkbee"
+    }
+  },
+  "pit": {
+    "id":  "46ToAwMDaWR5BXV1aWQyKwZub2RlXzMAAAAAAAAAACoBYwADaWR4BXV1aWQxAgZub2RlXzEAAAAAAAAAAAEBYQADaWR5BXV1aWQyKgZub2RlXzIAAAAAAAAAAAwBYgACBXV1aWQyAAAFdXVpZDEAAQltYXRjaF9hbGw_gAAAAA==", 
+    "keep_alive": "1m"
+  },
+  "sort": [
+    {"@timestamp": {"order": "asc", "format": "strict_date_optional_time_nanos"}}
+  ],
+  "search_after": [                                
+    "2021-05-20T05:30:04.832Z",
+    4294967298
+  ],
+  "track_total_hits": false                        
+}
+```
 #为什么mysql不适合搜索引擎?
 ```asp
 1.定位不适合
