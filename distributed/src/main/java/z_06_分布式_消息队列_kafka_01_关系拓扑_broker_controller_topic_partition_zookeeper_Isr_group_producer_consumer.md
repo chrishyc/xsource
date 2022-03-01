@@ -17,7 +17,24 @@
 HW是High Watermak的缩写， 俗称高水位，它表示了一个特定消息的偏移量(offset)，消费之只能拉取到这 个offset之前的消息。
 ##LEO
 LEO是Log End Offset的缩写，它表示了当前日志文件中下一条待写入消息的offset。
-#Zookeeper
+#Zookeeper VS KRaft
+![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/c2d343ba.png)
+[](https://blog.csdn.net/HuoqilinHeiqiji/article/details/103072042)
+![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/d634d035.png)
+选举controller
+![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/9039e649.png)
+[](https://cloud.tencent.com/developer/article/1840424)
+[](https://cloud.tencent.com/developer/article/1840424)
+[](https://blog.csdn.net/nazeniwaresakini/article/details/116085573)
+控制器的选举
+纪元信息
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/4c49398d.png)
+broker,topic,partition
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/d11fd954.png)
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/c50ed20e.png)
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/c094f1d3.png)
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/adbbdfbc.png)
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/8042bb00.png)
 #broker(controller)
 ```asp
 broker 为消费者提供服务，对读取分区的请求作出响应，返回已经提交到磁盘上的消息。
@@ -30,6 +47,8 @@ partition。在实际生产环境中，尽量避免这种情况的发生，这�
 ##controller
 每个集群都有一个broker是集群控制器(自动从集群的活跃成员中选举出来)
 控制器负责管理工作，包括将分区分配给broker 和监控broker。
+##controller vs zookeeper
+[](https://cloud.tencent.com/developer/article/1688442)
 #topic 、partition(分区)、replication(副本因子)
 [深入理解kafka]
 ![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/4d108b7c.png)
