@@ -1,4 +1,4 @@
-#kafka集群搭建
+#kafka集群搭建(zookeeper集群,创建topic)
 [](https://zhuanlan.zhihu.com/p/278252465)
 [深入理解kafka 核心设计与实践原理1.2]
 [/Users/chris/workspace/kafka-cluster]
