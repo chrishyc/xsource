@@ -14,3 +14,10 @@ Kafka 系统的写性能很强
 #Kafka的优势在哪里？
 #kafka为什么是主读主写?
 [](https://time.geekbang.org/column/article/246934)
+#kafka中如何实现端到端的Exactly Once
+#kafka的事务
+#项目中的问题
+##公司kafka吞吐
+单机百万消息/s
+单个broker可以轻松处 理数千个分区以及每秒百万级的消息量
+##公司的生产者消费者比例

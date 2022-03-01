@@ -54,3 +54,13 @@ Topic:topic-demo2	PartitionCount:3	ReplicationFactor:3	Configs:
 
 #分区性能
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_副本选举_分区重分配_分区调优_paxos_images/bb4df5ae.png)
+#zookeeper作用
+控制器的选举
+纪元信息
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/4c49398d.png)
+broker,topic,partition
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/d11fd954.png)
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/c50ed20e.png)
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/c094f1d3.png)
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/adbbdfbc.png)
+![](.z_06_分布式_消息队列_kafka_06_zookeeper_images/8042bb00.png)
