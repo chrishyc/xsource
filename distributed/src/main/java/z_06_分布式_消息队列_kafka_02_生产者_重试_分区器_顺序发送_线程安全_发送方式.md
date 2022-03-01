@@ -83,4 +83,9 @@ leader确认即可
 ISR配置的所有副本需要确认
 ![](.z_06_分布式_消息队列_kafka_02_生产者_重试_分区器_顺序发送_线程安全_发送方式_images/d9049c1c.png)
 
-#连接管理
+#线程:生产者=1:n&生产者:分区=n:1
+##多线程
+生产者KafkaProducer是线程安全对象，所以我们建议KafkaProducer采用单例模式,多个线程共享一个实例
+[](https://blog.csdn.net/charry_a/article/details/79621324)
+##多生产者
+![](.z_06_分布式_消息队列_kafka_03_消费者_消费组_消息拉取_消费位移_rebalance_多线程方案_images/86b9cd28.png)
