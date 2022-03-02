@@ -14,6 +14,7 @@ commitlog与Consumerqueue数据同步
 ##文件存储对象
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘策略_同步_异步_images/8803dcc9.png)
 ###commitLog
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/b29436a7.png)
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘策略_同步_异步_images/30b80e05.png)
 顺序写速度可以达到600MB/s
 磁盘随机写的速度只有大概100KB/s
@@ -26,6 +27,9 @@ commitlog与Consumerqueue数据同步
 ####读
 取数据的时候，也是和数组一样，我们可以通过文件的大小去精准的定位到哪一个文件，然后再精准的定位到文件的位置
 ###Consumerqueue(逻辑队列)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/50e7a17e.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/495ace20.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/fec0a6c5.png)
 消费者通过broker保存的offset（offsetTable.offset json文件中保存的ConsumerQueue的下标）可以在ConsumeQueue中获取消息，
 从而快速的定位到commitLog的消息位置，由于每个消息的大小是不一样的，也可以通过size获取到消息的大小，从而读取完整的消息
 ####queue offerset
@@ -55,6 +59,7 @@ RocketMQ还支持通过MessageID或者MessageKey来查询消息，使用ID查询
 对于用MessageKey来查询消息，MessageStore通过构建一个index来提高读取速度
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘策略_同步_异步_images/053c3470.png)
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘策略_同步_异步_images/76657eca.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/e30398a1.png)
 ####写
 在indexfile中的slot中放的是最新的index的指针，因为一般查询的时候大概率是优先查询最近的消息  
 每个slot中放的指针值是索引在indexfile中的偏移量，也就是后面index的位置，而index中存放的就是该消息在commitlog文件中的offset，每个index的大小是20字节
@@ -90,3 +95,9 @@ RocketMQ的存储是基于JDK NIO的内存映射机制(MappedByteBuffer)的，�
 - 检查这个文件最后访问时间
 - 判断是否大于过期时间
 - 指定时间删除，默认凌晨4点
+##零拷贝原理
+###PageCache
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/6c4a4072.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/4555839a.png)
+Page cache的另一个重要工作是释放page, 从而释放内存空间。 cache回收的任务是选择合适的page释放
+如果page是dirty的, 需要将page写回到磁盘中再释放。
