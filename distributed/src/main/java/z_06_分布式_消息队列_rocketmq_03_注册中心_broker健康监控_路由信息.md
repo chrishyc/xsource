@@ -6,7 +6,7 @@ topic&queue路由
 #nameserver与broker
 ![](.z_06_分布式_消息队列_rocketmq_03_核心功能_02_注册中心_broker健康监控_路由信息_images/83f29411.png)
 ![](.z_06_分布式_消息队列_rocketmq_03_核心功能_02_注册中心_broker健康监控_路由信息_images/85fa0ec7.png)
-定时任务 I: NameServer每隔 IOs扫描一次 Broker， 移除处于不激活状态的 Brokerc
+定时任务 I: NameServer每隔 30s扫描一次 Broker， 移除处于不激活状态的 Brokerc
 ```asp
 this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
