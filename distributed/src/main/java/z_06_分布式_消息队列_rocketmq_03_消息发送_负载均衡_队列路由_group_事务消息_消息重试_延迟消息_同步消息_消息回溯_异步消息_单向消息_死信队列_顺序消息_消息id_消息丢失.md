@@ -10,6 +10,7 @@ producer集群无状态
 ![](.z_06_分布式_消息队列_rocketmq_03_消息发送_负载均衡_队列路由_group_事务消息_消息重试_延迟消息_同步消息_消息回溯_异步消息_单向消息_死信队列_顺序消息_消息id_消息丢失_images/c06ef44d.png)
 ![](.z_06_分布式_消息队列_rocketmq_03_消息发送_负载均衡_队列路由_group_事务消息_消息重试_延迟消息_同步消息_消息回溯_异步消息_单向消息_死信队列_顺序消息_消息id_消息丢失_images/0e719438.png)
 ![](.z_06_分布式_消息队列_rocketmq_03_消息发送_负载均衡_队列路由_group_事务消息_消息重试_延迟消息_同步消息_消息回溯_异步消息_单向消息_死信队列_顺序消息_消息id_消息丢失_images/f62d6b40.png)
+![](.z_06_分布式_消息队列_rocketmq_03_消息发送_负载均衡_队列路由_group_事务消息_消息重试_延迟消息_同步消息_消息回溯_异步消息_单向消息_死信队列_顺序消息_消息id_消息丢失_images/481161c9.png)
 #生产者定义
 MQClientinstance:客户端,jvm全局唯一,负责所有生产者消息的发送,即网络通信,clientId=ip+pid
 
@@ -204,10 +205,12 @@ public MessageQueue selectOneMessageQueue(final TopicPublishInfo tpInfo, final S
         return tpInfo.selectOneMessageQueue(lastBrokerName);
     }
 ```
-#group的作用
-group producer:可以通过运维工具查询这个发送消息应用下有多个Producer实例
-发送分布式事务消息时，如果Producer中途意外宕机，Broker会主动回调Producer Group内的任意一台机器来确认事务状态
-#消息丢失
+
+#如何保障消息不丢失?
 [](https://www.cnblogs.com/goodAndyxublog/p/12563813.html)
 #消息查询
 ![](.z_06_分布式_消息队列_rocketmq_03_消息发送_负载均衡_队列路由_group_事务消息_消息重试_延迟消息_同步消息_消息回溯_异步消息_单向消息_死信队列_顺序消息_消息id_消息丢失_images/806f1b12.png)
+#如何保障消息幂等?
+#全局唯一message id的生成
+ ip + 进程pid + MessageClientIDSetter.class.getClassLoader().hashCode() + time + counter(AtomicInteger自增变量）
+[](https://www.cnblogs.com/linlinismine/p/9184917.html)
