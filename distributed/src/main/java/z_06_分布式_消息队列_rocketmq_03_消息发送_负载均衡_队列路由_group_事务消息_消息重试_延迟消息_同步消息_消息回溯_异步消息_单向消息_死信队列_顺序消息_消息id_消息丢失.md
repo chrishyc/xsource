@@ -50,7 +50,6 @@ topic指消息类型,可以被多个生产者消费,可以被多个group消费
 #消息结构体
 ![](.z_06_分布式_消息队列_rocketmq_03_核心功能_01_消息发送_负载均衡_队列路由_事务消息_消息重试_延迟消息_同步消息_异步消息_单向消息_死信队列_顺序消息_images/436dd8c7.png)
 ![](.z_06_分布式_消息队列_rocketmq_03_核心功能_01_消息发送_负载均衡_队列路由_group_事务消息_消息重试_延迟消息_同步消息_异步消息_单向消息_死信队列_顺序消息_消息id_images/bcb42bb6.png)
-#messageid
 #同步发送vs异步发送vs单向消息
 #事务消息
 ![](.z_06_分布式_消息队列_rocketmq_03_核心功能_01_消息发送_事务消息_消息重试_延迟消息_同步消息_异步消息_单向消息_死信队列_顺序消息_images/a4b855e5.png)
@@ -86,6 +85,7 @@ RocketMQ采用了一种补偿机制， 称为“回查”。Broker端对未确�
 CheckPoint(记录那些事务消息的 状态是确定的)。
 值得注意的是，rocketmq并不会无休止的的信息事务状态回查，默认回查15次，如果15次回查还 是无法得知事务状态，rocketmq默认回滚该消息。
 ```
+系统默认每隔30秒发起一次定时任务，对未提交的半事务消息进行回查，共持续12小时
 #消息重试
 ![](.z_06_分布式_消息队列_rocketmq_03_消息发送_负载均衡_队列路由_group_事务消息_消息重试_延迟消息_同步消息_消息回溯_异步消息_单向消息_死信队列_顺序消息_消息id_消息丢失_images/36916dba.png)
 ##顺序消息的重试
@@ -208,9 +208,15 @@ public MessageQueue selectOneMessageQueue(final TopicPublishInfo tpInfo, final S
 
 #如何保障消息不丢失?
 [](https://www.cnblogs.com/goodAndyxublog/p/12563813.html)
-#消息查询
-![](.z_06_分布式_消息队列_rocketmq_03_消息发送_负载均衡_队列路由_group_事务消息_消息重试_延迟消息_同步消息_消息回溯_异步消息_单向消息_死信队列_顺序消息_消息id_消息丢失_images/806f1b12.png)
+
 #如何保障消息幂等?
-#全局唯一message id的生成
+#全局唯一message id的生成(生产者)&broker id(broker端)
  ip + 进程pid + MessageClientIDSetter.class.getClassLoader().hashCode() + time + counter(AtomicInteger自增变量）
 [](https://www.cnblogs.com/linlinismine/p/9184917.html)
+[](http://blog.soliloquize.org/2018/08/12/RocketMQ-Message%E7%BB%93%E6%9E%84%E7%9A%84%E5%AE%9A%E4%B9%89/)
+#同步策略&刷盘策略
+![](.z_06_分布式_消息队列_rocketmq_03_消息发送_负载均衡_队列路由_group_事务消息_消息重试_延迟消息_同步消息_消息回溯_异步消息_单向消息_死信队列_顺序消息_消息id_消息丢失_images/c44e2697.png)
+官方建议采用SYNC_MASTER + ASYNC_FLUSH的方式，这样只有master和slave在刷盘前同时挂掉，且都没有刷到磁盘，消息才会丢失。这样是一个兼顾性能和可靠性的较好平衡。
+而如果对消息丢失容忍度较高的，则建议采用ASYNC_MASTER+ASYNC_FLUSH的方式。
+提交给用户的目标主题消息可能会失败，目前这依日志的记录而定。它的高可用性通过 RocketMQ 本身的高可用性机制来保证，如果希望确保事务消息不丢失、
+并且事务完整性得到保证，建议使用同步的双重写入机制。

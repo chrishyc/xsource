@@ -9,10 +9,11 @@ linux磁盘随机读
 commitlog与Consumerqueue数据同步
 零拷贝
 速度可以达到 300M 每秒左右，而线上的网卡 一般都为千兆 网卡，写磁盘速度明显快于数据网络入口速度，
-![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/460e8d32.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/40a02b76.png)
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘策略_同步_异步_images/03bbe137.png)
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘策略_同步_异步_images/46c813af.png)
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/ec50065b.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/b0b20a3d.png)\
 ##落盘策略
 ##文件存储对象
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘策略_同步_异步_images/8803dcc9.png)
@@ -129,3 +130,34 @@ FileChannel.map()等;
 ###缓冲IO和直接IO
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/3c320b62.png)
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/a14a613c.png)
+##rocketMQ 读写优化
+#过滤消息
+在消息消费端拉取到消息后，还需要对消息的原始tag字符串进行比对，如果不同，则丢弃该消息，不进行消 息消费。
+其ConsumeQueue的存储结构如下，可以看到其中有8个字节存储的Message Tag的哈希值，基 于Tag的消息过滤正式基于这个字段值的。
+![](.z_06_分布式_消息队列_rocketmq_03_消息消费_积压消息消费_负载均衡_队列路由_队列与消费者关系_并行消费_顺序消费_局部并行顺序消费_集群消息_广播消息_tag_pull_push_消费进度_重复消费_images/00a6e5c3.png)
+![](.z_06_分布式_消息队列_rocketmq_03_消息消费_积压消息消费_负载均衡_队列路由_队列与消费者关系_并行消费_顺序消费_局部并行顺序消费_集群消息_广播消息_tag_pull_push_消费进度_重复消费_images/c99913d5.png)
+```asp
+  //创建消息实例，设置 Topic 和Tag
+  Message msg = new Message("TopicTest", "Tag" + (i % 5),  ("Hello RocketMQ " + i).getBytes(RemotingHelper.DEFAULT_CHARSET));
+
+  //用户自定义属性
+  msg.putUserProperty("msgCode", String.valueOf(i));
+
+  //获取发送结果
+  SendResult sendResult = producer.send(msg);
+```
+```asp
+//创建consumer并注册回调，以便在从代理获取的消息到达时执行。
+NormalConsumer consumer = ClientFactory.createNormalConsumer(properties, new MessageListenerConcurrently() {
+    @Override
+    public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
+        System.out.printf("%s Receive New Messages: %s %n", Thread.currentThread().getName(), list);
+        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+    }
+});
+
+//订阅 Topic，通过 tag 过滤消息（保留 Tag0、Tag2、Tag4）
+consumer.subscribe("TopicTest", "Tag0 || Tag2 || Tag4");
+```
+#消息查询
+![](.z_06_分布式_消息队列_rocketmq_03_消息发送_负载均衡_队列路由_group_事务消息_消息重试_延迟消息_同步消息_消息回溯_异步消息_单向消息_死信队列_顺序消息_消息id_消息丢失_images/806f1b12.png)

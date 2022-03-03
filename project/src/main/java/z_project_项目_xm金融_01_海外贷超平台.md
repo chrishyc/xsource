@@ -34,6 +34,9 @@ insert ignore into `Test` select 'aa' , 'cao' from dual where not exists(select 
 ##通过事件表以及定时任务补偿机制保证了奖励更新的柔性一致性
 ###定时任务扫描事件表
 更新状态机
+###为啥不用rocketmq 事务
+rocketmq事务依赖于同步策略和刷盘机制,金融属性涉及到钱,所以使用了保守的方式
+![](.z_project_项目_xm金融_01_海外贷超平台_images/0f690a64.png)
 ##推荐码生成器(幂等)
 insert ignore into mifi
 ###推荐码需求
