@@ -8,8 +8,10 @@ linux磁盘随机读
 内存映射文件机制
 commitlog与Consumerqueue数据同步
 零拷贝
+速度可以达到 300M 每秒左右，而线上的网卡 一般都为千兆 网卡，写磁盘速度明显快于数据网络入口速度，
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘策略_同步_异步_images/03bbe137.png)
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘策略_同步_异步_images/46c813af.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/ec50065b.png)
 ##落盘策略
 ##文件存储对象
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘策略_同步_异步_images/8803dcc9.png)
@@ -63,14 +65,18 @@ RocketMQ还支持通过MessageID或者MessageKey来查询消息，使用ID查询
 ####写
 在indexfile中的slot中放的是最新的index的指针，因为一般查询的时候大概率是优先查询最近的消息  
 每个slot中放的指针值是索引在indexfile中的偏移量，也就是后面index的位置，而index中存放的就是该消息在commitlog文件中的offset，每个index的大小是20字节
-####读
+###查询
 ```asp
 由于indexHeader，slot，index都是固定大小，所以：
 公式1：第n个slot在indexFile中的起始位置是这样:40+(n-1)*4
 公式2：第s个index在indexFile中的起始位置是这样:40+5000000*4+(s-1)*20
 查询的传入值除了key外，还包含一个时间起始值以及截止值
 ```
-
+####按照MessageId查询消息
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/885e2974.png)
+####按照Message Key查询消息
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/6f62a00d.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/e202edeb.png)
 ###abort文件
 导致CommitLog、ConsumerQueue、IndexFile文件数据不一 致导致CommitLog、ConsumerQueue、IndexFile文件数据不一 致
 判断上一次是否异常退出。实现机制是Broker在启动时创建abort文件，在退出时通过JVM钩子函 数删除abort文件。如果下次启动时存在abort文件。
@@ -80,13 +86,14 @@ RocketMQ还支持通过MessageID或者MessageKey来查询消息，使用ID查询
 RocketMQ的存储是基于JDK NIO的内存映射机制(MappedByteBuffer)的，消息存储首先将消
 息追加到内存，再根据配置的刷盘策略在不同时间进行刷写磁盘
 ###同步机制
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/d93eed6e.png)
 消息追加到内存后，立即将数据刷写到磁盘文件
+同步刷盘与异步刷盘的唯一区别是异步刷盘写完 PageCache直接返回，而同步刷盘需要等待刷盘 完成才返回
 ###异步机制
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/ee7fc015.png)
 在消息追加到内存后，立即返回给消息发送端。如果开启transientStorePoolEnable，RocketMQ 会单独申请一个与目标物理文件(commitLog)同样大小的堆外内存，
 该堆外内存将使用内存锁定，确 保不会被置换到虚拟内存中去，消息首先追加到堆外内存，然后提交到物理文件的内存映射中，然后刷 写到磁盘。
 如果未开启transientStorePoolEnable，消息直接追加到物理文件直接映射文件中，然后刷 写到磁盘中。
-####transientStorePoolEnable
-###内存映射MappedByteBuffer
 
 ##消息删除时机
 每条消息都会持久化到CommitLog中，每个consumer连接到broker后会维持消费进度信息，当有消息消费后只是当前consumer的消费进度（CommitLog的offset）更新了
@@ -101,3 +108,23 @@ RocketMQ的存储是基于JDK NIO的内存映射机制(MappedByteBuffer)的，�
 ![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/4555839a.png)
 Page cache的另一个重要工作是释放page, 从而释放内存空间。 cache回收的任务是选择合适的page释放
 如果page是dirty的, 需要将page写回到磁盘中再释放。
+###cache和buffer的区别
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/e624d1e0.png)
+###HeapByteBuffer
+###DirectByteBuffer(java零拷贝)
+###MappedByteBuffer
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/281db9b3.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/1e0a4e3f.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/d924e983.png)
+### Sendfile零拷贝
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/a1df44bd.png)
+
+1. 虽然叫零拷贝，实际上sendfile有2次数据拷贝的。第1次是从磁盘拷贝到内核缓冲区，第二次 是从内核缓冲区拷贝到网卡(协议引擎)。如果网卡支持 SG-DMA(The Scatter-Gather Direct Memory Access)技术，就无需从PageCache拷贝至 Socket 缓冲区;
+2. 之所以叫零拷贝，是从内存角度来看的，数据在内存中没有发生过拷贝，只是在内存和I/O设 备之间传输。很多时候我们认为sendfile才是零拷贝，mmap严格来说不算;
+3. Linux中的API为sendfile、mmap，Java中的API为FileChanel.transferTo()、
+FileChannel.map()等;
+4. Netty、Kafka(sendfile)、Rocketmq(mmap)、Nginx等高性能中间件中，都有大量利用操
+作系统零拷贝特性。
+###缓冲IO和直接IO
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/3c320b62.png)
+![](.z_06_分布式_消息队列_rocketmq_04_持久化存储_存储结构_刷盘机制_同步_异步_pagecache_内存映射_消息删除_消息堆积_images/a14a613c.png)
