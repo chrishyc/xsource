@@ -1,5 +1,6 @@
 #临界知识
 热变更
+![](.z_06_分布式_消息队列_rocketmq_02_集群模型_集群拓扑_nameserver_broker_topic_QUEUE_producer_consumer_images/eeebc05f.png)
 #集群模式Dledger(raft,CAP)
 ![](.z_06_分布式_消息队列_rocketmq_02_集群模型_集群拓扑_nameserver_broker_topic_QUEUE_producer_consumer_images/eaa65583.png)
 ```asp
