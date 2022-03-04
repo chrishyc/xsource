@@ -61,3 +61,9 @@ RocketMQ	<10ms	3w+,1s 300W+
 ![](.z_06_分布式_消息队列_rocketmq_01_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_images/d161a905.png)
 ![](.z_06_分布式_消息队列_rocketmq_01_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_images/01af1226.png)
 ![](http://www.mstacks.com/133/1402.html#content1402)
+#常用配置
+![](.z_06_分布式_消息队列_rocketmq_00_命令_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_IO压测_CPU压测_网卡压测_images/b26c29b5.png)
+![](.z_06_分布式_消息队列_rocketmq_00_命令_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_IO压测_CPU压测_网卡压测_images/1a3fae49.png)
+![](.z_06_分布式_消息队列_rocketmq_00_命令_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_IO压测_CPU压测_网卡压测_images/3231a6d3.png)
+![](.z_06_分布式_消息队列_rocketmq_00_命令_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_IO压测_CPU压测_网卡压测_images/9c0c029a.png)
+![](.z_06_分布式_消息队列_rocketmq_00_命令_dleger集群搭建_常用监控命令_监控指标_TPS_读写性能_IO压测_CPU压测_网卡压测_images/9f61cef0.png)
