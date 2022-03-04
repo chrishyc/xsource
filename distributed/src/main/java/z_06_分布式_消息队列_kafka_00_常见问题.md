@@ -22,3 +22,9 @@ Kafka 系统的写性能很强
 单个broker可以轻松处 理数千个分区以及每秒百万级的消息量
 ##公司的生产者消费者比例
 ##公司生产者配置
+#kafka为啥快?
+Kafka速度快是因为:
+1. partition顺序读写，充分利用磁盘特性，这是基础;
+2. Producer生产的数据持久化到broker，采用mmap文件映射，实现顺序的快速写入;
+3. Customer从broker读取数据，采用sendfile，将磁盘文件读到OS内核缓冲区后，直接转到socket buffer进
+行网络发送。
