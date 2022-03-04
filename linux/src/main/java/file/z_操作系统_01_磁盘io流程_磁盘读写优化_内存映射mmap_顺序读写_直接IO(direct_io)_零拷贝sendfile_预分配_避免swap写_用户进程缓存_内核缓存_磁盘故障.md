@@ -145,3 +145,6 @@ Kafka 的索引文件使用的是 mmap + write 方式，数据文件使用的是
 节约磁盘寻址时间
 [](https://time.geekbang.org/column/article/79368)
 [](https://blog.csdn.net/weixin_30537231/article/details/114507875)
+#read write vs mmap
+mmap建立映射关系开销大,适合大文件io
+read write适合小文件
