@@ -11,6 +11,9 @@ Kafka 系统的写性能很强
 降低网络传输和磁盘存储开销；
 实现高伸缩性架构
 ```
+#什么是消费者组？
+官网上的介绍言简意赅，即消费者组是 Kafka 提供的可扩展且具有容错性的消费者机制。
+![](.z_06_分布式_消息队列_kafka_00_常见问题_images/671d9981.png)
 #Kafka的优势在哪里？
 #kafka为什么是主读主写?
 [](https://time.geekbang.org/column/article/246934)
@@ -42,3 +45,5 @@ TPS/消费者TPS=消费者个数
 #使用kfaka实现延时队列&重试队列?
 新增延时队列topic
 新增重试队列topic
+#Kafka 为什么不像 Redis 和 MySQL 那样支持读写分离？
+[](https://time.geekbang.org/column/article/222085)
