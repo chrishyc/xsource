@@ -23,3 +23,5 @@ sendfile,消息消费时
 KAFKA的索引文件使用mmap+write 方式，data文件使用sendfile 。
 ##顺序读写
 寻址1ms,读写1G/S
+#_consumer_offset
+#
