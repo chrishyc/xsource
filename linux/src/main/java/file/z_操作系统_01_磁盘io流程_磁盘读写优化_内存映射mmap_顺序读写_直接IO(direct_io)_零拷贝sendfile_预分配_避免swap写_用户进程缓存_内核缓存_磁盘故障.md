@@ -1,20 +1,57 @@
 #临界知识
 [](https://zhuanlan.zhihu.com/p/83398714)
+[](https://time.geekbang.org/column/article/232676)
+![](.z_操作系统_01_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/f07a5823.png)
 ```asp
 磁盘寻址速度:ms,磁盘读写速度:1G/s
 内存寻址速度:ns,内存读写速度:20GB/s
 页大小4K,扇区512,避免页索引太大
 磁盘是消耗品会有损坏
+降低上下文切换的频率和内存拷贝次数
+read,write应用程序通过pagecache磁盘预读64K,基于局部性原理,预读的内容会多次读写
+mmap,文件传输,业务逻辑处理,明确不需要经常读,可能就是一次性读
+sendfile,静态文件传输,明确就是用于传输,不会进行业务逻辑处理,nginx sendfile 前端静态文件
 ```
 ![](.z_操作系统_磁盘io流程_磁盘读写优化_内存映射_顺序读写_直接IO_零拷贝_预分配_避免swap写_用户进程缓存_内核缓存_images/5e899279.png)
 #拓扑
-##mmap
+##user buffer
+为了传输 320MB 的文件，在用户缓冲区分配了 32KB 的内存，把文件分成 1 万份传送，然而，这 32KB 是怎么来的？为什么不是 32MB 或者 32 字节呢？
+这是因为，在没有零拷贝的情况下，我们希望内存的利用率最高。如果用户缓冲区过大，它就无法一次性把消息全拷贝给 socket 缓冲区；
+如果用户缓冲区过小，则会导致过多的 read/write 系统调用。
+##read/write vs mmap vs sendfile
+###read/write(多次读写)
+![](.z_操作系统_01_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/1f389e6b.png)
+
+###mmap(基本一次)
+![](.z_操作系统_01_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/cf5d4017.png)
 将磁盘文件映射到内存, 用户通过修改内存就能修改磁盘文件
 直接利用操作系统的Page来实现磁盘文件到物理内存的直接映射。完成映射之后你对物理内存的 操作会被同步到硬盘上(操作系统在适当的时候
 通过mmap，进程像读写硬盘一样读写内存(当然是虚拟机内存)。使用这种方式可以获取很大的I/O提升，省去 了用户空间到内核空间复制的开销
-##⻚缓存
+
+###sendfile(仅仅传输,网卡,直接内存访问技术)
+![](.z_操作系统_01_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/949b48f3.png)
+如果网卡支持 SG-DMA（The Scatter-Gather Direct Memory Access）技术，还可以再去除 Socket 缓冲区的拷贝，这样一共只有 2 次内存拷贝
+##⻚缓存Page cache
 就是把磁盘中的数据缓存到内存中，把对磁盘的访问变为对内存的访问
+磁盘高速缓存
+![](.z_操作系统_01_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/270e01c1.png)
+![](.z_操作系统_01_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/31cf81b7.png)
+![](.z_操作系统_01_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/37ee04a3.png)
+###IO 合并与预读
 ##socket buffer
+那用户缓冲区为什么不与 socket 缓冲区大小一致呢？这是因为，socket 缓冲区的可用空间是动态变化的，它既用于 TCP 滑动窗口，也用于应用缓冲区，还受到整个系统内存的影响
+##protocol engine
+##上下文切换(内核->用户态,用户态->内核,ns*10000)
+![](.z_操作系统_01_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/1f389e6b.png)
+read/write情况下,上下文切换的成本并不小，虽然一次切换仅消耗几十纳秒到几微秒，但高并发服务会放大这类时间的消耗。
+##CPU拷贝(消耗cpu资源)
+这个方案做了 4 万次内存拷贝，对 320MB 文件拷贝的字节数也翻了 4 倍，到了 1280MB。很显然，过多的内存拷贝无谓地消耗了 CPU 资源，降低了系统的并发处理能力。
+##DMA拷贝
+##零拷贝
+##直接IO & 异步 IO
+高并发场景处理大文件时，应当使用异步 IO 和直接 IO 来替换零拷贝技术
+![](.z_操作系统_01_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/b5016102.png)
+![](.z_操作系统_01_磁盘io流程_磁盘读写优化_内存映射mmap_顺序读写_直接IO(direct_io)_零拷贝sendfile_预分配_避免swap写_用户进程缓存_内核缓存_磁盘故障_images/e4eab2dd.png)
 
 #磁盘io关联概念
 ##物理内存和虚拟内存
@@ -157,3 +194,10 @@ Kafka 的索引文件使用的是 mmap + write 方式，数据文件使用的是
 #read write vs mmap
 mmap建立映射关系开销大,适合大文件io
 read write适合小文件
+#mmap vs sendfile
+[](https://segmentfault.com/q/1010000041019461)
+mmap擅长小文件,例如kafka 索引文件10m
+sendfile擅长大文件,例如kafka日志文件1G,nginx静态文件
+
+对于RocketMQ来说，因为RocketMQ将所有队列的数据都写入了CommitLog，消费者批量消费时需要读出来进行应用层过滤，
+所以就不能利用到sendfile+DMA的零拷贝方式，而只能用mmap
