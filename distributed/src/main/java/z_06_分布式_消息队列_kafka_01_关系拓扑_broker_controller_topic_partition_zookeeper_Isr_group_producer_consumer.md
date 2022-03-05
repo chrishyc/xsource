@@ -1,5 +1,6 @@
 #拓扑
 ![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/8a77e2fe.png)
+![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/fc7b7740.png)
 #领域术语
 ##AR=ISR+OSR
 分区中的所有副本统称为AR(Assigned Repllicas)。
@@ -12,10 +13,16 @@
 ###OSR
 与leader副本同步滞后过多的副本(不包括leader)副本，组成OSR(Out-Sync Relipcas)。在正常情况下，所有 的follower副本都应该与leader副本保持一定程度的同步，
 即AR=ISR,OSR集合为空。
-##HW
+##HW(一致性,lead 副本同步策略决定)
+![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/1e1e9835.png)
 ![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/037cbf0c.png)
+![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/5f2b1eb0.png)
 HW是High Watermak的缩写， 俗称高水位，它表示了一个特定消息的偏移量(offset)，消费之只能拉取到这 个offset之前的消息。
-##LEO
+![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/21ed9386.png)
+Leader如何更新自己的HW值?Leader broker上保存了一套Follower副本的LEO以及自己的LEO。当尝试确定分
+区HW时，它会选出所有满足条件的副本，比较它们的LEO(包括Leader的LEO)，并选择最小的LEO值作为HW值。
+[z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos.md]
+##LEO(写入日志就更新)
 LEO是Log End Offset的缩写，它表示了当前日志文件中下一条待写入消息的offset。
 #Zookeeper VS KRaft
 ![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/c2d343ba.png)
@@ -45,8 +52,10 @@ broker 为消费者提供服务，对读取分区的请求作出响应，返回�
 partition。在实际生产环境中，尽量避免这种情况的发生，这种情况容易导致Kafka集群数据不均衡。
 ```
 ##controller
-每个集群都有一个broker是集群控制器(自动从集群的活跃成员中选举出来)
-控制器负责管理工作，包括将分区分配给broker 和监控broker。
+每个集群都有一个broker是集群控制器(自动从集群的活跃成员中选举出来,zookeeper选举)
+控制器负责管理工作，包括将分区分配给broker 和监控broker。负责分区的选举
+控制器除了一般broker的功能，还负责Leader分区的选举。zookeeper压力太大,分出大部分工作给controller,分区选举
+保留少部分topic-分区路由元信息
 ##controller vs zookeeper
 [](https://cloud.tencent.com/developer/article/1688442)
 #topic 、partition(分区)、replication(副本因子)
@@ -71,7 +80,7 @@ Kafka集群中按照主题分类管理，一个主题可以有多个分区，一
 ###leader 分区
 leader 处理 partition 的所有读写请求
 ###follower
-期地去复制leader上的数据
+定期地去复制leader上的数据
 ###offset
 ![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/c5bf6830.png)
 ![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/c3853f42.png)
