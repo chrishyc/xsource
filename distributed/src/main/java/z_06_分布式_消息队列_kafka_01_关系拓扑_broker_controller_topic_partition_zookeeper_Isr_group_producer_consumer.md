@@ -25,8 +25,13 @@ Leader如何更新自己的HW值?Leader broker上保存了一套Follower副本�
 ![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/70d92938.png)
 ##LEO(写入日志就更新)
 LEO是Log End Offset的缩写，它表示了当前日志文件中下一条待写入消息的offset。
+##LSO：Log Stable Offset
+![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/98be5105.png)
+Log Stable Offset。这是 Kafka 事务的概念。如果你没有使用到事务，那么这个值不存在（其实也不是不存在，只是设置成一个无意义的值）。该值控制了事务型消费者
+能够看到的消息范围。它经常与 Log Start Offset，即日志起始位移值相混淆，因为有些人将后者缩写成 LSO，这是不对的。在 Kafka 中，LSO 就是指代 Log Stable Offset。
 #Zookeeper VS KRaft
 ![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/c2d343ba.png)
+[](https://blog.51cto.com/u_15352876/3797318)
 [](https://blog.csdn.net/HuoqilinHeiqiji/article/details/103072042)
 ![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/d634d035.png)
 选举controller
