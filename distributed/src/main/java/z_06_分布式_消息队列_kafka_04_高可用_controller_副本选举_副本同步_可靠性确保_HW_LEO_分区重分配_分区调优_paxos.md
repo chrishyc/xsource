@@ -1,7 +1,22 @@
 #临界知识
 controller选举leader副本
 分区同步
-#控制器controller
+#zookeeper作用&弊端(controller选举,同步,元数据量大,分区太多)
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/a6971c35.png)
+##弊端
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/f04df613.png)
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/61dcf812.png)
+1.如果 ZooKeeper 集群的某个节点的数据发生变更，则会通知其它 ZooKeeper 节点同时执行更新，就得等着大家（超过半数）都写完了才行，这写入的性能就比较差了
+2.如果写入的数据量过大，ZooKeeper 的性能和稳定性就会下降，可能导致 Watch 的延时或丢失。所以在 Kafka 集群比较大，分区数很多的时候，ZooKeeper 存储的元数据就会很多，性能就差了
+3.ZooKeeper 也是分布式的，也需要选举，它的选举也不快，而且发生选举的那段时候是不提供服务的！
+4.以前 Consumer 的位移数据是保存在 ZooKeeper 上的，所以当提交位移或者获取位移的时候都需要访问 ZooKeeper ，这量一大 ZooKeeper 就顶不住
+5.在之前基于 Zookeeper 实现的单个 Controller 在分区数太大的时候还有个问题，故障转移太慢了。当 Controller 变更的时候，
+需要重新加载所有的元数据到新的 Controller 身上，并且需要把这些元数据同步给集群内的所有 Broker
+#zookeeper vs Kraft
+[](https://juejin.cn/post/6960485225998598158)
+#控制器controller(分区选举)
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/2b2aa33c.png)
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/acf33fd6.png)
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_controller_副本选举_分区重分配_分区调优_paxos_images/39b9989b.png)
 ```asp
 [zk: localhost:2181(CONNECTED) 2] get /kafka/controller
@@ -62,7 +77,7 @@ Topic:topic-demo2	PartitionCount:3	ReplicationFactor:3	Configs:
 ![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/4e1fc155.png)
 RangeAssignor策略的原理是按照消费者总数和分区总数进行整除运算来获得一个跨度，然后将分区按照跨度进 行平均分配，以保证分区尽可能均匀地分配给所有的消费者。
 对于每一个Topic，RangeAssignor策略会将消费组内所 有订阅这个Topic的消费者按照名称的字典序排序，然后为每个消费者划分固定的分区范围，如果不够平均分配，那么 字典序靠前的消费者会被多分配一个分区。
-#zookeeper vs Kraft
+
 #可靠性保证
 #一致性保证
 #_consumer_offset
