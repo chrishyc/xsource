@@ -22,6 +22,9 @@ Kafka 系统的写性能很强
 单个broker可以轻松处 理数千个分区以及每秒百万级的消息量
 ##公司的生产者消费者比例
 ##公司生产者配置
+##项目中怎么配置的kafka消费者提交方式?
+##flink中kafka ack配置?
+##flink消费者拉取时间间隔?
 #kafka为啥快?
 Kafka速度快是因为:
 1. partition顺序读写，充分利用磁盘特性，这是基础;
@@ -29,3 +32,10 @@ Kafka速度快是因为:
 3. Customer从broker读取数据，采用sendfile，将磁盘文件读到OS内核缓冲区后，直接转到socket buffer进
 行网络发送。
 4. 生产者批量写,使用压缩算法gzip,消费端批量读,解压
+#kafka默认分区策略
+生产者消息:轮询
+消费者rebalance:范围除法
+#如何确定需要多少分区?
+计算TPS,峰值,压测生产者消费者TPS,
+TPS/生产者TPS=生产者个数
+TPS/消费者TPS=消费者个数
