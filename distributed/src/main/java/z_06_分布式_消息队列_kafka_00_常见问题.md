@@ -40,12 +40,14 @@ Java Consumer 是双线程的设计。一个线程是用户主线程，负责获
 ##公司的生产者消费者比例
 ##公司生产者配置
 ##项目中怎么配置的kafka消费者提交方式?
+
 ##flink中kafka ack配置?
-##flink消费者拉取时间间隔?
+all/-1,isr=2
 ##Kafka 能接收的最大消息的大小？
 ##kafka jvm配置?
 ##估算 Kafka 集群的机器数量？
 ##pull的时间间隔配置?
+500ms
 #kafka为啥快?
 Kafka速度快是因为:
 1. partition顺序读写，充分利用磁盘特性，这是基础;
