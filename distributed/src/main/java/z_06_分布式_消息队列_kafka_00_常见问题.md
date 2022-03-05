@@ -39,3 +39,6 @@ Kafka速度快是因为:
 计算TPS,峰值,压测生产者消费者TPS,
 TPS/生产者TPS=生产者个数
 TPS/消费者TPS=消费者个数
+#使用kfaka实现延时队列&重试队列?
+新增延时队列topic
+新增重试队列topic

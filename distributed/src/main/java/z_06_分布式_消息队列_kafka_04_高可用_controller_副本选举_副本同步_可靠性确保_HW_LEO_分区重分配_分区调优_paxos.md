@@ -35,7 +35,7 @@ numChildren = 0
 ```
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_controller_副本选举_分区重分配_分区调优_paxos_images/fec72baf.png)
 
-#Leader选举
+#Leader分区选举
 [深入理解kafka4.3]
 leader对外读写,follow内部消息同步
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_副本选举_分区重分配_分区调优_paxos_images/9736093d.png)
@@ -60,17 +60,18 @@ Topic:topic-demo2	PartitionCount:3	ReplicationFactor:3	Configs:
 ![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/8a4a84e2.png)
 ![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/0a97e8c3.png)
 ![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/f732b301.png)
+##如何发现leader宕机?
+##如何选举?
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/36e4fb37.png)
 #分区同步
 ##OSR失效副本
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_controller_副本选举_副本同步_HW_LEO_分区重分配_分区调优_paxos_images/354db8fd.png)
-
+#分区同步截断(数据丢失,截断问题)
+##leader epoch
 #分区重分配
 ##分区不平衡率
 不平衡率=非优先副本的leader个数/分区总数
 手动重分配
-
-#分区性能
-![](.z_06_分布式_消息队列_kafka_04_分区管理_副本选举_分区重分配_分区调优_paxos_images/bb4df5ae.png)
 
 #分区分配策略
 ##RangeAssignor
@@ -78,6 +79,3 @@ Topic:topic-demo2	PartitionCount:3	ReplicationFactor:3	Configs:
 RangeAssignor策略的原理是按照消费者总数和分区总数进行整除运算来获得一个跨度，然后将分区按照跨度进 行平均分配，以保证分区尽可能均匀地分配给所有的消费者。
 对于每一个Topic，RangeAssignor策略会将消费组内所 有订阅这个Topic的消费者按照名称的字典序排序，然后为每个消费者划分固定的分区范围，如果不够平均分配，那么 字典序靠前的消费者会被多分配一个分区。
 
-#可靠性保证
-#一致性保证
-#_consumer_offset
