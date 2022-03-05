@@ -22,6 +22,7 @@ HW是High Watermak的缩写， 俗称高水位，它表示了一个特定消息�
 Leader如何更新自己的HW值?Leader broker上保存了一套Follower副本的LEO以及自己的LEO。当尝试确定分
 区HW时，它会选出所有满足条件的副本，比较它们的LEO(包括Leader的LEO)，并选择最小的LEO值作为HW值。
 [z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos.md]
+![](.z_06_分布式_消息队列_kafka_01_关系拓扑_broker_controller_topic_partition_zookeeper_Isr_group_producer_consumer_images/70d92938.png)
 ##LEO(写入日志就更新)
 LEO是Log End Offset的缩写，它表示了当前日志文件中下一条待写入消息的offset。
 #Zookeeper VS KRaft
