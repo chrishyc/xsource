@@ -47,3 +47,9 @@ TPS/消费者TPS=消费者个数
 新增重试队列topic
 #Kafka 为什么不像 Redis 和 MySQL 那样支持读写分离？
 [](https://time.geekbang.org/column/article/222085)
+#一致性保证(hw->epoch)
+#kafka怎么选举的?
+##controller选举
+##分区选举
+#kafka如何分区的?
+[](https://blog.csdn.net/lizhitao/article/details/41778193)
