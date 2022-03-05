@@ -36,6 +36,8 @@ numChildren = 0
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_controller_副本选举_分区重分配_分区调优_paxos_images/fec72baf.png)
 
 #Leader分区选举
+[](https://blog.51cto.com/u_15127573/2899602)
+从 AR 中挑选首个在 ISR 中的副本，作为新 Leader。当然，个别策略有些微小差异。不过，回答到这种程度，应该足以应付面试官了。毕竟，微小差别对选举 Leader 这件事的影响很小。
 [深入理解kafka4.3]
 leader对外读写,follow内部消息同步
 ![](.z_06_分布式_消息队列_kafka_04_分区管理_副本选举_分区重分配_分区调优_paxos_images/9736093d.png)
@@ -79,3 +81,30 @@ Topic:topic-demo2	PartitionCount:3	ReplicationFactor:3	Configs:
 RangeAssignor策略的原理是按照消费者总数和分区总数进行整除运算来获得一个跨度，然后将分区按照跨度进 行平均分配，以保证分区尽可能均匀地分配给所有的消费者。
 对于每一个Topic，RangeAssignor策略会将消费组内所 有订阅这个Topic的消费者按照名称的字典序排序，然后为每个消费者划分固定的分区范围，如果不够平均分配，那么 字典序靠前的消费者会被多分配一个分区。
 
+#可靠性保障
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/b1228387.png)
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/99a1afed.png)
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/ce1c830c.png)
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/7365ea5e.png)
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/cec8885c.png)
+![](.z_06_分布式_消息队列_kafka_04_高可用_controller_副本选举_副本同步_可靠性确保_HW_LEO_分区重分配_分区调优_paxos_images/dbdfd696.png)
+当Kafka broker都正常工作时，分区HW值的更新时机有两个: 
+1. Leader处理PRODUCE请求时
+2. Leader处理FETCH请求时。
+
+Kafka使用HW值来决定副本备份的进度，而HW值的更新通常需要额外一轮FETCH RPC才能完成。但这种设计是
+有问题的，可能引起的问题包括: 
+1. 备份数据丢失
+2. 备份数据不一致
+
+
+
+造成上述两个问题的根本原因在于
+1. HW值被用于衡量副本备份的成功与否。
+2. 在出现失败重启时作为日志截断的依据。
+
+
+但HW值的更新是异步延迟的，特别是需要额外的FETCH请求处理流程才能更新，故这中间发生的任何崩溃都可能导致HW值的过期。
+
+
+leader epoch 
