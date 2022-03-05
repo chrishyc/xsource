@@ -63,3 +63,6 @@ Topic:topic-demo2	PartitionCount:3	ReplicationFactor:3	Configs:
 RangeAssignor策略的原理是按照消费者总数和分区总数进行整除运算来获得一个跨度，然后将分区按照跨度进 行平均分配，以保证分区尽可能均匀地分配给所有的消费者。
 对于每一个Topic，RangeAssignor策略会将消费组内所 有订阅这个Topic的消费者按照名称的字典序排序，然后为每个消费者划分固定的分区范围，如果不够平均分配，那么 字典序靠前的消费者会被多分配一个分区。
 #zookeeper vs Kraft
+#可靠性保证
+#一致性保证
+#_consumer_offset

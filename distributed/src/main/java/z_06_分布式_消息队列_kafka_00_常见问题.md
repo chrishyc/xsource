@@ -28,3 +28,4 @@ Kafka速度快是因为:
 2. Producer生产的数据持久化到broker，采用mmap文件映射，实现顺序的快速写入;
 3. Customer从broker读取数据，采用sendfile，将磁盘文件读到OS内核缓冲区后，直接转到socket buffer进
 行网络发送。
+4. 生产者批量写,使用压缩算法gzip,消费端批量读,解压
