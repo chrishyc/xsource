@@ -27,11 +27,21 @@ public class T01_load_01_override {
     System.out.println("hello,lady!");
   }
 
+  private void privateMethod() {
+
+  }
+
+  public final void finalMethod() {
+
+  }
+
   public static void main(String[] args) {
     Human man = new Man();
     Human woman = new Woman();
     T01_load_01_override sr = new T01_load_01_override();
     sr.sayHello(man);
     sr.sayHello(woman);
+    sr.privateMethod();
+    sr.finalMethod();
   }
 }
