@@ -1,4 +1,6 @@
 #JVM定位
+![](.z_0_jvm_jmm模型_拓扑关系_images/0874f389.png)
+![](.z_0_jvm_jmm模型_拓扑关系_images/7db52d5a.png)
 ##JVM跨平台
 ![](.z_1_jvm_概念模型_images/a62fe07d.png)
 
