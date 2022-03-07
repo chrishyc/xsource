@@ -1,6 +1,7 @@
 #运维命令
 ![](.z_0_jvm_常用命令_运维_oom排查_性能调优_images/0ef2708c.png)
 ##启动参数
+###规范
 ```asp
 ▪-
 – 标准参数，所有JVM都应该支持 
@@ -9,17 +10,25 @@
 ▪ -XX
 – 不稳定参数，下个版本可能取消
 ```
-配置虚拟机参数的常用命令
+###本地内存&元数据区
+-XX:MaxMetaspaceSize=size
+-XX:MaxDirectMemorySize=size
+###垃圾回收器
+-XX:+UseConcMarkSweepGC
+
+###对象布局&指针压缩
+-XX:ObjectAlignmentInBytes(内存对齐)
+-XX:+UseCompressedOops(普通对象指针压缩)
+-XX:+UseCompressedClassPointers：允许类指针压缩
+当Java堆小于32G时，这两个参数默认开启
+当Java堆大于等于32G时，这两个参数都会被关闭：
+###堆区大小
+java  -Xmx20m     -Xms20m        -Xmn10m
+-XX:SurvivorRatio=ratio
+###日志调优
 -XX:+PrintFlagsInitial
 -XX:+PrintFlagsFinal
 -XX:+PrintGCDetails
--XX:MaxMetaspaceSize=size
--XX:MaxDirectMemorySize=size
--XX:+UseConcMarkSweepGC
-
-java  -Xmx20m     -Xms20m        -Xmn10m
--XX:SurvivorRatio=ratio
-
 java -XX:+PrintCommandLineFlags -version//查看默认垃圾回收器
 java -XX:+PrintFlagsFinal -version | grep -A 20 MaxMetaspaceSize//查看元数据区大小
 man java | grep -A 30 Xss//查看栈大小

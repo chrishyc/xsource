@@ -30,6 +30,7 @@ signalAll()方法，相当于对等待队列中的每个节点均执行一次sig
 
 
 ##synchronized锁升级模型
+[](https://cloud.tencent.com/developer/article/1480590)
 ![](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/synchronized锁升级.jpg)
 ![](.z_Synchronized问题清单_images/f4e5e6e5.png)
 1.第二个线程仍是偏向锁,是在第一个线程释放偏向锁之后,第二个线程CAS无锁->偏向锁
