@@ -1,8 +1,11 @@
 #临界知识
 锁状态
 GC标记
+![](.z_3_运行时_04_对象头markword_对象布局_images/aaf4eba5.png)
+![](.z_3_运行时_04_对象头markword_对象布局_images/54028ab9.png)
 #内存
 #对象创建过程(new指令)
+[z_Synchronized问题清单.md]
 ```asp
 1.首先将去检查这个指令的参数是否能在常量池中定位到 一个类的符号引用
 2.检查这个符号引用代表的类是否已被加载、解析和初始化过,执行相应的类加载过程
@@ -17,6 +20,24 @@ GC标记
 8.执行<init>()方法,执行invokespecial指令
 ```
 ![](.z_3_运行时_04_对象头markword_对象布局_images/d9dc83df.png)
+##栈上分配
+![](.z_3_运行时_04_对象头markword_对象布局_images/d4c0e3f8.png)
+[](https://segmentfault.com/a/1190000016960388)
+##TLAB
+![](.z_3_运行时_04_对象头markword_对象布局_images/ba6dcb3a.png)
+[](https://www.cnblogs.com/wuqinglong/p/14583108.html#:~:text=%E6%B3%A8%E6%84%8F%EF%BC%9A%E8%BF%99%E9%87%8CTLAB%20%E7%9A%84%E7%BA%BF%E7%A8%8B,%E5%8C%BA%E5%9F%9F%E4%B8%AD%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E8%80%8C%E5%B7%B2%E3%80%82)
+[](https://blog.csdn.net/u011069294/article/details/107326055)
+XX:TLABWasteTargetPercent
+###TLAB和栈上分配区别?
+这是多线程Allocator的一个优化，试想，多个线程如果同时操控一个堆，如果要在堆上分配对象，那么是不是要加锁（或者原子操作）保证分配的原子性？
+每分配一个对象都来个原子操作，那还怎么玩？所以TLAB就是这样一种神奇的存在，每个线程单独持有一个Allocation Buffer，自己玩自己的，当自己的buffer不够的时候，再重新搞一块buffer过来自己用（这时候需要原子操作），通过减少大量的原子操作来提高Allocator的性能
+###在TLAB中创建的对象，如何被其他线程共享？
+被其他线程共享
+[](https://www.cnblogs.com/dyg0826/p/11039964.html)
+[](https://www.zhihu.com/question/56538259/answer/149400767)
+##内存管理
+指针碰撞
+空闲链表
 #对象分配过程
 ![](.z_5_对象布局_对象分配__images/969a4b8a.png)
 [z_4_内存管理_00_内存对象分配策略_分配担保_大对象分配_空闲列表_TLAB.md]

@@ -69,6 +69,8 @@ CG ROOTS, oop map
 垃圾回收器组合: cms+parnew,s+s,ps+p o,g1,zgc
 ```
 #对象的创建过程
+[z_3_运行时_04_对象头markword_对象布局.md]
+类指针
 ```asp
 1. class loading,classloader双亲委派加载
 2. class linking (verification,方法签名,属性签名, preparation,分配内存, resolution,符号引用到直接引用)
@@ -76,7 +78,8 @@ CG ROOTS, oop map
 4. 申请对象内存,对象头markword赋值,
 5. 成员变量赋默认值,
 6. 调用构造方法<init>
-1. 成员变量顺序赋初始值 2. 执行构造方法语句
+1. 成员变量顺序赋初始值 
+2. 执行构造方法语句
 ```
 #GC相关
 ##为啥区分新生代&老年代?为啥新生代分三块?为啥方法区从堆区到了直接内存?
