@@ -1,5 +1,7 @@
 package jvm;
 
+import java.util.ArrayList;
+
 /**
  * -XX:+TraceClassLoading
  */
