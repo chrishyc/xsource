@@ -29,6 +29,13 @@ GC标记
 [](https://www.cnblogs.com/wuqinglong/p/14583108.html#:~:text=%E6%B3%A8%E6%84%8F%EF%BC%9A%E8%BF%99%E9%87%8CTLAB%20%E7%9A%84%E7%BA%BF%E7%A8%8B,%E5%8C%BA%E5%9F%9F%E4%B8%AD%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E8%80%8C%E5%B7%B2%E3%80%82)
 [](https://blog.csdn.net/u011069294/article/details/107326055)
 XX:TLABWasteTargetPercent
+###并发处理(CAS重试,TLAB)
+![](.z_4_内存管理_00_内存对象分配策略_分配担保_大对象分配_images/05cff6d4.png)
+Thread Local Allocation Buffer
+```asp
+内存分配完成之后，虚拟机必须将分配到的内存空间(但不包括对象头)都初始化为零值，如果 使用了TLAB的话，这一项工作也可以提前至TLAB分配时顺便进行。
+这步操作保证了对象的实例字段 在Java代码中可以不赋初始值就直接使用，使程序能访问到这些字段的数据类型所对应的零值
+```
 ###TLAB和栈上分配区别?
 这是多线程Allocator的一个优化，试想，多个线程如果同时操控一个堆，如果要在堆上分配对象，那么是不是要加锁（或者原子操作）保证分配的原子性？
 每分配一个对象都来个原子操作，那还怎么玩？所以TLAB就是这样一种神奇的存在，每个线程单独持有一个Allocation Buffer，自己玩自己的，当自己的buffer不够的时候，再重新搞一块buffer过来自己用（这时候需要原子操作），通过减少大量的原子操作来提高Allocator的性能
