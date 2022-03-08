@@ -141,6 +141,24 @@ innodb,一个聚簇索引，多个非聚簇索引
 [](https://time.geekbang.org/column/article/68633)
 ##两阶段提交redolog + binlog
 ##项目中的问题
+###公司mysql架构&吞吐指标
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/756e03b3.png)
+MHA两主互备,多从库，主库信息
+qps 20000+,峰值:26000+, IO_read:15M/S
+tps  300+,峰值:1000+,IO_write:10M/s
+current_connected 1387
+流量:10M,流量峰值:48.54 MB/s
+双机房,mysql,innodb缓存池72G
+swap禁用
+数据库磁盘使用量750GB
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/05ee4c11.png)
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/94982c08.png)
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/a2b6ee6d.png)
+
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/e54c4424.png)
+![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/fff86bbc.png)
+###慢查询
+1.
 ##聊聊WAL
 1.write ahead log,主要是为了加快持久化进度,落盘是随机写需要寻址,为了加快持久化先顺序写日志,不需要寻址
 ![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/48de4302.png)

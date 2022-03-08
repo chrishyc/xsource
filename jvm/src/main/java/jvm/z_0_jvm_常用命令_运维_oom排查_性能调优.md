@@ -22,9 +22,11 @@
 -XX:+UseCompressedClassPointers：允许类指针压缩
 当Java堆小于32G时，这两个参数默认开启
 当Java堆大于等于32G时，这两个参数都会被关闭：
-###堆区大小
+###堆区大小&内存分配
 java  -Xmx20m     -Xms20m        -Xmn10m
 -XX:SurvivorRatio=ratio
+-XX:MaxTenuringThreshold(minor gc多少次到old区<=15)
+-XX:PretenureSizeThreshold,=3m,(默认0,对象>3m直接到old区,只对Serial和ParNew生效)
 ###日志调优
 -XX:+PrintFlagsInitial
 -XX:+PrintFlagsFinal
