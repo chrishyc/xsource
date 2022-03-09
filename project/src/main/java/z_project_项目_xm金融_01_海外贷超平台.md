@@ -1,3 +1,9 @@
+##项目介绍
+0.背景介绍
+1.模块介绍
+2.架构定位
+springboot
+3.职责介绍
 ##推荐活动架构
 ![](.z_project_项目_小米_01_小米金融海外贷超平台_images/638cab9e.png)
 ![](.z_project_项目_xm金融_01_海外贷超平台_images/f5886e1a.png)
