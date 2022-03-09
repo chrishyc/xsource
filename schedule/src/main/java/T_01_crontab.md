@@ -9,6 +9,43 @@ Cron  examines  all  stored crontabs and checks each job to see if it needs to b
  it forks and execs that job, so a running job will not block the creation of a new job.
  [](https://stackoverflow.com/questions/9629447/will-cron-job-start-a-new-thread-or-wait-for-existing-one-to-complete)
  ![](.T_01_crontab_images/7edce0d6.png)
+##sleep(就绪队列,等待队列,定时器)
+挂起进程（或线程）并修改其运行状态
+用sleep()提供的参数来设置一个定时器。
+当时间结束，定时器会触发，内核收到中断后修改进程（或线程）的运行状态。
+例如线程会被标志为就绪而进入就绪队列等待调度
+##os层面(硬件时钟周期,计数器,中断)
+[T_01_crontab.md]
+硬件层面是通过一个固定的时钟和计数器,每经过一个时钟周期将计数器递减，当计数器的值为0时产生中断
+[](https://blog.csdn.net/xp178171640/article/details/118326453)
+[](https://zhuanlan.zhihu.com/p/115923388)
+```asp
+fastcall signed long __sched schedule_timeout(signed long timeout)
+{
+	struct timer_list timer;
+	unsigned long expire;
+	// 算出超时时间
+	expire = timeout + jiffies;
+
+	init_timer(&timer);
+	// 超时时间
+	timer.expires = expire;
+	timer.data = (unsigned long) current;
+	// 超时回调
+	timer.function = process_timeout;
+	// 添加定时器
+	add_timer(&timer);
+	// 进程调度
+	schedule();
+	// 删除定时器
+	del_singleshot_timer_sync(&timer);
+    // 超时或者被信号唤醒，被信号唤醒的话，可能还没有超时
+	timeout = expire - jiffies;
+
+ out:
+	return timeout < 0 ? 0 : timeout;
+}
+```
 #crontab文件
 ##/etc/crontab
 ##/etc/cron.d/

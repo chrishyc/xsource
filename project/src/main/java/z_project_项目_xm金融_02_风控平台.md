@@ -1,5 +1,13 @@
-#业务拓扑
+#项目介绍
+0.背景介绍
+1.模块介绍
+
+2.架构定位
+springboot
+3.职责介绍
+#风控平台业务
 ![](.z_project_项目_xm金融_02_风控平台_images/df11ce7e.png)
+
 ##征信数据源
 ###数据源
 290+数据源
@@ -29,6 +37,21 @@ PMML管理,输入,输出
 流程任务节点->变量执行execution->kafka->rpc data项目->hbase
 ##变量监控
 kafka->flink->elasticsearch
+#监控平台业务
+##定时任务quartz
+1.使用的默认的内存存储+自定义表
+2.quartz默认的数据库实现,悲观锁for update
+###拓扑
+1.Scheduler:调度器
+2.Trigger:触发规则
+3.JobDetail:job配置
+4.job:job实例
+
+###如何实现分布式?
+zookeeper+quartz,
+1.默认zookeeper最后一个/server/ip,ip是master节点
+2.数据库更新,zookeeper写文件/job_reload,timestamp
+3.刷新数据库中的表记录,quartz重新调度
 #项目redis相关
 ##redis 消息队列
 ##redis双写
