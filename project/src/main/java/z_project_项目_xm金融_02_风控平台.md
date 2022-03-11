@@ -37,21 +37,46 @@ PMML管理,输入,输出
 流程任务节点->变量执行execution->kafka->rpc data项目->hbase
 ##变量监控
 kafka->flink->elasticsearch
+#变量质量分析
+
 #监控平台业务
+![](.z_project_项目_xm金融_02_风控平台_images/308cf59f.png)
+![](.z_project_项目_xm金融_02_风控平台_images/aed99cb4.png)
+170个任务
 ##定时任务quartz
 1.使用的默认的内存存储+自定义表
 2.quartz默认的数据库实现,悲观锁for update
+###为啥选择quartz
 ###拓扑
 1.Scheduler:调度器
 2.Trigger:触发规则
 3.JobDetail:job配置
 4.job:job实例
-
 ###如何实现分布式?
 zookeeper+quartz,
-1.默认zookeeper最后一个/server/ip,ip是master节点
+1.默认zookeeper第一个/server/ip,ip是master节点
 2.数据库更新,zookeeper写文件/job_reload,timestamp
 3.刷新数据库中的表记录,quartz重新调度
+##各个指标定时任务的实现
+10min,1h
+##数据量级的问题
+10000/s
+##数据0值问题
+目前按0处理
+并可以选择0是否告警
+##评估逻辑,评估原理
+Aviator,飞行员
+###为啥用Aviator?
+1.高性能、轻量级
+2.Aviator将表达式编译成 Java 字节码，交给 JVM 去执行
+##监控告警升级实现
+告警升级,
+id缓存,过期,redis,(增删改查,分布式,redis hash)
+##如何静默?
+前置回调函数
+##为啥要自定义
+1.用户去重
+2.灵活的业务打点,同环比差值计算
 #项目redis相关
 ##redis 消息队列
 ##redis双写
