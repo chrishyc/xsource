@@ -179,6 +179,7 @@ void pre_write_barrier(oop* field) {
   }
 }
 ```
+
 ###G1为啥用原始快照
 ![](.z_4_内存管理_03_gc_垃圾回收器_CMS_G1_ZGC_卡表_读屏障_写屏障_三色标记_颜色指针_images/cf110f94.png)
 ##回收过程
