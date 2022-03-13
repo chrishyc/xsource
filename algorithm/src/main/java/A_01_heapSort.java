@@ -1,9 +1,9 @@
-public class A_10_Heap {
+public class A_01_heapSort {
   private int[] arr;
   private int n;
   private int count;
 
-  public A_10_Heap(int capacity) {
+  public A_01_heapSort(int capacity) {
     arr = new int[capacity + 1];
     n = capacity;
     count = 0;
