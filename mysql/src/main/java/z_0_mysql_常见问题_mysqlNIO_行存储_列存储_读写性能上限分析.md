@@ -158,7 +158,8 @@ swap禁用
 ![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/e54c4424.png)
 ![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/fff86bbc.png)
 ###慢查询
-1.
+1.group by 分案类型,日志,300多万行的数据,extra using temporary,using filesort,耗时53秒,使用组合索引,对日期和类型建立组合索引,最终使用using,3秒
+2.普通索引走全表扫描;1百多万行,普通索引=,耗时32秒,执行计划发现TYPE=ALL走了全表扫描,最后分析代码,使用同等逻辑的唯一索引进行查询,优化到1s
 ##聊聊WAL
 1.write ahead log,主要是为了加快持久化进度,落盘是随机写需要寻址,为了加快持久化先顺序写日志,不需要寻址
 ![](.z_0_mysql_常见问题_mysqlNIO_行存储_列存储_读写性能上限分析_images/48de4302.png)
