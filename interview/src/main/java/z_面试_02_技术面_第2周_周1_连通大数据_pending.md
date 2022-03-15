@@ -4,7 +4,7 @@
 1.自我介绍
 2.项目项目遇到的难点
 3.synchronized可重入,reentrylock
-4.redis,Mysql双写
+4.redis,Mysql双写 ,d
 5.几种垃圾回收器
 6.几种垃圾回收算法
 7.线程池原理
