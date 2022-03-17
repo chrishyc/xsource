@@ -7,6 +7,6 @@
 2.一致性
 3.推荐关系
 4.redis雪崩,d
-5.redis穿透
+5.redis穿透,d
 6.推荐码
 7.redis缓存

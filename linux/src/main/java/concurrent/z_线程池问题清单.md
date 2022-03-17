@@ -59,3 +59,10 @@ shutdownNow
 ![](.z_线程池问题清单_images/shutdown8shutdownNow.png)
 ![](https://time.geekbang.org/column/article/95847)
 
+#项目中的线程池
+```asp
+1.kie jar资源:数据库加载kie jar二进制资源
+2.项目流程资源预热,项目重启后从redis获取规则groupId，artifactId，version
+3.ExecutorService executorService = new ThreadPoolExecutor(20, 40, 0L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1024), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
+```
+
