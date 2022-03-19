@@ -1,2 +1,12 @@
 #时间
 星期五上午9:30
+#1面面试
+1.synchronized,done
+2.单例模式为啥还要volatile保证指令有序性,指令重排 ,done
+3.http2.0的优化
+4.concurrentLinkQueue的实现原理
+5.数组连续访问的缓存优化cacheline,done
+6.后序遍历数组
+7.2个栈实现一个队列
+8.单例模式,done
+9.tcp,https
