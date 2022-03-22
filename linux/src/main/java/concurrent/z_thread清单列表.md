@@ -113,10 +113,13 @@ Parker是Unsafe类的park和unpark方法的核心，ParkEvent是Thread的sleep/w
 ![](.z_thread清单列表_images/park interrupt.png)
 底层都使用parker.park,parker.unpark
 [概念架构](https://blog.csdn.net/anlian523/article/details/106752414)
-###sleep&&join&&wait
+###sleep&&join&&wait&park
 底层都是ParkEvent.park, ParkEvent.unpark
-
-
+都可以响应中断,InterruptedException,响应中断后会清除中断标志位
+```asp
+Thread.sleep、Thread.join、Object.wait、LockSupport.park等在检查到线程的中断状态时，会抛出InterruptedException，同时会清除线程的中断状态 
+```
+[](https://blog.csdn.net/agoodcoolman/article/details/44081919)
 ##reference回收线程
 ```
 "Reference Handler" #2 daemon prio=10 os_prio=31 tid=0x00007fc65b029800 nid=0x5103 in Object.wait() [0x0000700006bb9000]

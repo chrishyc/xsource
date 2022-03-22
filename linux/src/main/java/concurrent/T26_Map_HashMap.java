@@ -7,14 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class T26_Map_HashMap {
-    
+
     private Map<String, String> map;
-    
+
     @Before
     public void init() {
-        map = new HashMap<>();
+        // 最小容量是1,3->4
+        map = new HashMap<>(0);
     }
-    
+
     /**
      * 为了加快取模运算,使用二进制运算,例如h&1111
      * 也是因为使用了二进制运算,因此需要以2为倍数扩容
@@ -33,5 +34,5 @@ public class T26_Map_HashMap {
         h ^= h ^ (h >>> 7) ^ (h >>> 4);
         int ret = h & (16 - 1);
     }
-    
+
 }
