@@ -4,9 +4,11 @@
 1.synchronized,done
 2.单例模式为啥还要volatile保证指令有序性,指令重排 ,done
 3.http2.0的优化
-4.concurrentLinkQueue的实现原理
+4.concurrentLinkQueue的实现原理,done
 5.数组连续访问的缓存优化cacheline,done
 6.后序遍历数组
 7.2个栈实现一个队列
 8.单例模式,done
 9.tcp,https
+#2面面试
+2点

@@ -1,5 +1,12 @@
-##
+
 [参考cpu缓存_cacheline_一致性_volatile_synchronized_final内存屏障模型.md]
+#拓扑
+##MESI
+##读屏障
+##写屏障
+##lock指令
+##1主存2缓存3寄存器
+##store buffer ,invalid queue
 #可见性
 不保证原子性
 #指令重排
@@ -8,13 +15,7 @@ synchronized是无法禁止指令重排和处理器优化的,
 ![](.z_volatile问题清单_images/248fe718.png)
 [](https://www.zhihu.com/question/337265532/answer/1608630710)
 volatile可以避免指令重排
-#MESI
-#读屏障
-#写屏障
-#lock指令
-#1主存2缓存3寄存器
-#store buffer ,invalid queue
-#i++问题
+#原子性,i++问题
 ![](.z_volatile问题清单_images/68cd9d99.png)
 [](https://www.zhihu.com/question/329746124/answer/718600236)
 什么是原子操作？比如i++，本质上是cpu取出主内存的i值到寄存器，然后加1，再把结果写入主内存……volatile是在最后一步结束后才起作用的！
@@ -32,3 +33,10 @@ volatile可以避免指令重排
 比如在硬件层次或者对总线进行加锁，使得某一时刻只能有一个线程能执行i++操作，这样才能是不被中断的，才是原子性的。现在现在这种情况，
 相当于就是两个线程同时进行了 i++操作，线程A的 i++操作还没结束；线程B的 i++操作就也同时进行着，这种情况不是原子的。
 
+#应用常见
+##可见性
+##指令重排
+double-checked-locking
+##读操作远远超过写操作
+如果读操作远远超过写操作，您可以结合使用**内部锁**和 **volatile 变量**来减少公共代码路径的开销
+![](.z_volatile问题清单_images/836fd967.png)

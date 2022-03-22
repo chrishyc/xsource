@@ -15,6 +15,8 @@ postProcessPropertyValues
 
 #循环依赖问题
 [](https://zhuanlan.zhihu.com/p/84267654)
+[](https://segmentfault.com/a/1190000023647227)
+![](.z_spring_01_ioc_06_依赖注入_注入方式_注入对应beanprocessor_循环依赖_三级缓存_images/353a167c.png)
 循环依赖是指A依赖B，B依赖A。或者多个对象的依赖关系形成闭环  
 这种情况下容器会无限执行，一直创建Bean，最终导致OOM.
 ![](.z_spring_01_ioc_06_依赖注入_注入方式_注入对应beanprocessor_循环依赖_三级缓存_images/fd46ddc7.png)

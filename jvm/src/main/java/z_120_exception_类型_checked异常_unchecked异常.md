@@ -41,3 +41,12 @@ public class FileUtil {
 比如使用tuple（File, IOError）当作函数返回值。tuple的含义就是这个函数可以同时给你一个File和IOError，也可以既不给你File也不给你IOError。或者更严重地，使用null表示失败，从而导致各种NPE。
 
 runtime exception才是真正的exception
+#使用场景
+##checked Exception
+IOException
+SQLException,数据库连接使用到
+ClassNotFoundException
+##unchecked Exception(RuntimeException)
+空指针,
+非法参数,IllegalArgumentException
+properties使用了IOException+IllegalArgumentException
