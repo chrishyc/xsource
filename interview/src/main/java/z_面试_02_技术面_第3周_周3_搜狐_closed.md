@@ -11,4 +11,9 @@
 8.单例模式,done
 9.tcp,https
 #2面面试
-2点
+1.kafka,一致性，生产者，消费端,ack
+2.redis,双删
+3.堆内参数
+4.表单:hbase
+5.雪花算法,done
+6.zk
