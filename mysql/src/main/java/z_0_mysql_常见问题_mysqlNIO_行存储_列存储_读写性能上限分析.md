@@ -70,6 +70,7 @@ B+树
 2.一致性算法减少数据迁移
 3.HAProxy
 ##哪些存储引擎？myisam vs innodb
+[](https://segmentfault.com/a/1190000022206424)
 show engines;
 MEMORY:临时表
 PERFORMANCE_SCHEMA:监控性能
