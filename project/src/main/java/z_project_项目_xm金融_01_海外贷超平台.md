@@ -44,6 +44,7 @@ insert ignore into `Test` select 'aa' , 'cao' from dual where not exists(select 
 rocketmq事务依赖于同步策略和刷盘机制,金融属性涉及到钱,所以使用了保守的方式
 ![](.z_project_项目_xm金融_01_海外贷超平台_images/0f690a64.png)
 ##推荐码生成器(幂等)
+[](https://time.geekbang.org/column/article/488496)
 insert ignore into mifi
 ###推荐码需求
 1.位数固定,尽量小
