@@ -28,3 +28,12 @@
 ###1.8扩容
 ![](.z_集合__copyonwrite__阻塞队列__hashmap__ConcurrentHashMap_images/多线程步长处理.png)
 ![](.z_集合__copyonwrite__阻塞队列__hashmap__ConcurrentHashMap_images/concurrenthashmap1.8.png)
+##hashmap
+[](https://github.com/Snailclimb/JavaGuide/blob/main/docs/java/collection/hashmap-source-code.md)
+1.HashMap 可以存储 null 的 key 和 value，但 null 作为键只能有一个，null 作为值可以有多个
+  
+2.当链表长度大于阈值（默认为 8）（将链表转换成红黑树前会判断，如果当前数组的长度小于 64，那么会选择先进行数组扩容，而不是转换为红黑树）时，将链表转化为红黑树，以减少搜索时间
+
+3. 默认的初始化大小为 16。之后每次扩充，容量变为原来的 2 倍
+
+4.

@@ -26,6 +26,7 @@ d持久性:执行结果持久化
 就是说MVCC对于幻读的解决时不彻底的
 ```
 [](https://juejin.cn/post/6844903799534911496#heading-9)
+
 #事务隔离级别
 ![](.z_9_mysql_03_事务_隔离级别_MVCC_脏写_脏读_不可重复读_幻读_images/a4583e4b.png)
 ##READ UNCOMMITTED 
