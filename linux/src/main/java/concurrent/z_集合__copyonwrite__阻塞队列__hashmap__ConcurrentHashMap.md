@@ -36,4 +36,18 @@
 
 3. 默认的初始化大小为 16。之后每次扩充，容量变为原来的 2 倍
 
-4.
+![](.z_集合__copyonwrite__阻塞队列__hashmap__ConcurrentHashMap_images/01fdebe6.png)
+![](.z_集合__copyonwrite__阻塞队列__hashmap__ConcurrentHashMap_images/e336eca8.png)
+###key为空时hashcode=0
+static final int hash(Object key) {
+    int h;
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+}
+###会扩容两次吗?
+不会,当链表长度大于阈值（默认为 8）第一次扩容后,第2次判断时就不用再扩容
+##容器
+list,set,queue,map
+list:arraylist,linkedlist,copyonwritearraylist
+set:hashset,treeset,linkedhashset
+queue:优先队列,双端队列
+map:hashmap,treemap,linkedhashmap,concurrenthashmap
