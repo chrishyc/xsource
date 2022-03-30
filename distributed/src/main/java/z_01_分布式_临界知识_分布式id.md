@@ -1,6 +1,7 @@
 [](https://mp.weixin.qq.com/s/yIE5NOj7nqCu2AnWCte1Rg)
 [](https://github.com/Snailclimb/JavaGuide/blob/main/docs/distributed-system/distributed-id.md)
 #分布式ID的需求
+分布式id的四个指标
 ```asp
 1.全局唯一 ：ID 的全局唯一性肯定是首先要满足的
 2.高性能 ： 分布式 ID 的生成速度要快，对本地资源消耗要小
@@ -101,9 +102,15 @@ id = 0 |----32bit(时间戳以秒为单位)------|-----5bit(机器标志位)----
 ###机器id的分配和回收问题
 静态文件配置
 动态分配,zookeeper
+##总结
+1.workid回收利用,workid预分配使用持久化路径生成固定workId 1,2,3,workid客户端分配路径时使用zookeeper临时路径加锁
+2.时钟同步问题,why有时钟同步问题?1.机器宕机,其他机器重启复用workId; 2.时钟拨回
+3.机器宕机，恢复重用,使用历史时间,历史时间缓存在redis,每次更新历史时间
+5.项目配置的时间戳,步长,workid
 #leaf
 [](https://tech.meituan.com/2017/04/21/mt-leaf.html)
 ##双号段模式
+双号段加速优化,客户端使用两个buffer缓存号段
 ##snowflake(时钟问题)
 [](https://tech.meituan.com/2017/04/21/mt-leaf.html)
 #最佳实践
