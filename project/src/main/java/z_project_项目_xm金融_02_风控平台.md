@@ -23,6 +23,7 @@ async:异步
 inputVars:
 inputData:
 ###异步请求
+线程池:核心线程数1,最大线程数MAX,队列容量0,shutdown
 
 ###同步请求
 ###请求幂等性
@@ -42,7 +43,7 @@ redis中存在时key,获取结果并删除key
 [](https://developer.aliyun.com/article/312752)
 ###drools方案
 全局变量:((MapGlobalResolver) globals).setGlobal(Constants.PROCESS_VAR, processContext);
-[](https://einverne.github.io/post/2019/03/drools-syntax.html#fact-%E5%AF%B9%E8%B1%A1)
+[全局变量区别](https://einverne.github.io/post/2019/03/drools-syntax.html#fact-%E5%AF%B9%E8%B1%A1)
 无状态session:StatelessKieSession无状态纯内存
 
 纯内存操作:任务节点都是内存操作
@@ -53,6 +54,9 @@ redis中存在时key,获取结果并删除key
 线程安全性:threadLocal,流程全局变量
 
 资源文件:流程文件bpmn、规则文件DRL、决策表xls
+
+KieContainer StatelessKieSession
+
 ###实验&流程配比
 1.流程上线全量异步实验,在哪看实验?
 2.上线后,配置流量占比,新老流量占比
@@ -215,3 +219,4 @@ step不一样
 ##Flink数据倾斜问题,通过预聚合
 ##业务监控系统每隔几天服务宕机
 #Flink&Elasticsearch项目
+#并发相关
