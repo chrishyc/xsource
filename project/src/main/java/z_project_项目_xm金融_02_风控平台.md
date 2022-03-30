@@ -40,6 +40,19 @@ redis中存在时key,获取结果并删除key
 5.drools提供了完整的构建（Build）、测试（Test）、部署（Deploy）方案
 [](https://stackoverflow.com/questions/9736143/drools-vs-jbpm-differences-pros-and-cons)
 [](https://developer.aliyun.com/article/312752)
+###drools方案
+全局变量:((MapGlobalResolver) globals).setGlobal(Constants.PROCESS_VAR, processContext);
+[](https://einverne.github.io/post/2019/03/drools-syntax.html#fact-%E5%AF%B9%E8%B1%A1)
+无状态session:StatelessKieSession无状态纯内存
+
+纯内存操作:任务节点都是内存操作
+如何确保一致性:内存操作,失败后返回false,不存在一致性问题
+异常:checked受检异常
+
+任务节点异步化请求:使用线程池future异步请求变量数据,按数据源维度获取
+线程安全性:threadLocal,流程全局变量
+
+资源文件:流程文件bpmn、规则文件DRL、决策表xls
 ###实验&流程配比
 1.流程上线全量异步实验,在哪看实验?
 2.上线后,配置流量占比,新老流量占比
