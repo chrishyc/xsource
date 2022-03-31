@@ -7,41 +7,68 @@ springboot
 3.职责介绍
 #风控平台业务
 ![](.z_project_项目_xm金融_02_风控平台_images/df11ce7e.png)
-##数据量级
+##规则引擎数据量级
 QPS:12W/1d, 20W/1d, 100/min
 延时:100ms
-##请求优化
-###请求结构体
+##规则引擎请求优化
+###请求拓扑
+####请求结构体
 pkgCode:包名
 mode:模式
 instruction:流水号
 userId:用户id
 idNum:身份证号
 mobile:手机号
-idempotent:
+idempotent:幂等,redis+pkgCode,instruction
 async:异步
 inputVars:
 inputData:
-###异步请求
-线程池:核心线程数1,最大线程数MAX,队列容量0,shutdown
-
-###同步请求
+####响应结构体
+processId:
+processName:
+processVersion:
+resultVars:流程结果
+ruleSetResultList:规则集结果
+####流程过程
+任务Handler,在BPMN中配置任务节点的handler名称
+####如何确定哪个流程用哪个变量?
+####取不到该用户的变量怎么办?
+####请求流量占比
+每个请求进来都会通过pkgCode进行rpc请求获得本次流程版本,可通过实验平台进行配置流程版本占比,请求过来后随机选择实验版本
+###异步
+####异步请求
+线程池:核心线程数1,最大线程数MAX,队列容量0使用SynchronousQueue,shutdown,awaitTerminationSeconds=60
+结果缓存redis,业务端定时取
+####异步事件上报
+线程池:核心线程数20,最大线程数200,队列容量500使用LinkedBlockingQueue,shutdown,awaitTerminationSeconds=60
+####异步请求变量数据
+线程池:
+####异步执行实验(cpu密集型)
+全量执行实验阶段的流程
+ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(DEFAULT_POOL_SIZE, DEFAULT_POOL_SIZE, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(DEFAULT_QUEUE_SIZE),
+    new ThreadFactoryBuilder().setNameFormat("policy-experiment-pool-%d").build())
 ###请求幂等性
 幂等key=pkgCode,instruction
 redis实现幂等,setnx,10min过期
 redis中存在时key,获取结果并删除key
-##流程链路
-##用户事件查询
-##决策引擎
-###决策引擎选型
-1.drools,java开源比较活跃
-2.Drools是一个基于Java的开源规则引擎
-3.可以将复杂多变的规则从硬编码中解放出来，以规则脚本的形式存放在文件中，
-4.kie整合了jbpm和drools可以在流程中使用决策引擎
-5.drools提供了完整的构建（Build）、测试（Test）、部署（Deploy）方案
-[](https://stackoverflow.com/questions/9736143/drools-vs-jbpm-differences-pros-and-cons)
-[](https://developer.aliyun.com/article/312752)
-###drools方案
+###缓存
+####流程信息缓存(guava,1d)
+ProcessInfo,流程id，流程版本
+####资源文件内存撑爆问题
+使用LRU缓存KieContainer,目前7天,最大1024,每个资源<1m,内存4G
+####缓存模型计算结果
+1小时
+map<String,BigDecimal>
+####guava缓存
+####threadLocal
+try{
+}finally{
+}
+###线程池
+[](z_线程池问题清单.md)
+###可用性,容灾
+###重试
+##drools规则引擎拓扑
 全局变量:((MapGlobalResolver) globals).setGlobal(Constants.PROCESS_VAR, processContext);
 [全局变量区别](https://einverne.github.io/post/2019/03/drools-syntax.html#fact-%E5%AF%B9%E8%B1%A1)
 无状态session:StatelessKieSession无状态纯内存
@@ -55,7 +82,31 @@ redis中存在时key,获取结果并删除key
 
 资源文件:流程文件bpmn、规则文件DRL、决策表xls
 
-KieContainer StatelessKieSession
+KieContainer(一个流程一个) StatelessKieSession(一个请求一个session)
+
+任务handler
+
+回调ProcessEventListener
+###CommonHandler
+bpmn中每个任务节点执行exec将命令添加到活跃命令集合,获取当前活跃的命令,
+根据输入的命令名,获取缓存的命令实例,执行结果缓存在全局变量中,
+try{}finally{}清空命令
+###ModelExecuteHandler
+模型分,Map<String, BigDecimal>
+###规则表RuleExecuteHandler
+
+##流程链路
+##用户事件查询
+##决策引擎功能模块
+###决策引擎选型
+1.drools,java开源比较活跃
+2.Drools是一个基于Java的开源规则引擎
+3.可以将复杂多变的规则从硬编码中解放出来，以规则脚本的形式存放在文件中，
+4.kie整合了jbpm和drools可以在流程中使用决策引擎
+5.drools提供了完整的构建（Build）、测试（Test）、部署（Deploy）方案
+[](https://stackoverflow.com/questions/9736143/drools-vs-jbpm-differences-pros-and-cons)
+[](https://developer.aliyun.com/article/312752)
+
 
 ###实验&流程配比
 1.流程上线全量异步实验,在哪看实验?

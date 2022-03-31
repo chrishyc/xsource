@@ -172,7 +172,31 @@ private final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10,
 private final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10, 10, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024),
       new ThreadFactoryBuilder().setNameFormat("experiment-pool-%d").build());
 ```
+##异步实时任务执行
+```asp
+this.executor = new ThreadPoolTaskExecutor();
+this.executor.setCorePoolSize(1);
+this.executor.setMaxPoolSize(Integer.MAX_VALUE);
+this.executor.setQueueCapacity(0);
+this.executor.setWaitForTasksToCompleteOnShutdown(true);
+this.executor.setAwaitTerminationSeconds(60);
+this.executor.setThreadNamePrefix();
+```
+##异步保存运行节点信息
+```asp
+executor = new ThreadPoolTaskExecutor();
+executor.setCorePoolSize(20);
+executor.setMaxPoolSize(200);
+executor.setQueueCapacity(500);//LinkedBlockingQueue
+executor.setWaitForTasksToCompleteOnShutdown(true);
+executor.setAwaitTerminationSeconds(60);
+```
+talos
+kafka
+mysql
+redis
 ##线程池配置大小?
+[线程数配置,队列数配置](https://www.modb.pro/db/65544)
 CPU密集型、IO密集型、混合型，任务类型不同，设置的方式也不一样
 ###CPU密集型
 尽量使用较小的线程池，一般Cpu核心数+1
