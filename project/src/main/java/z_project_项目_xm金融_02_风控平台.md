@@ -68,6 +68,7 @@ try{
 [](z_线程池问题清单.md)
 ###可用性,容灾
 ###重试
+###线程并发
 ##drools规则引擎拓扑
 全局变量:((MapGlobalResolver) globals).setGlobal(Constants.PROCESS_VAR, processContext);
 [全局变量区别](https://einverne.github.io/post/2019/03/drools-syntax.html#fact-%E5%AF%B9%E8%B1%A1)
