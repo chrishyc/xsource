@@ -2,13 +2,7 @@ package myjava.stream;
 
 public class Hello {
   public static void main(String[] args) {
-    try {
-      int a = 1;
-    } catch (Exception e) {
-      int b = 1;
-    } finally {
-      int c = 1;
-    }
+    System.out.println(count(4));
   }
 
 
@@ -50,6 +44,28 @@ public class Hello {
       cur = curr.next;
     }
     return dummpy.next;
+  }
+
+  public static int count(int n) {
+    int[] arr = new int[n + 1];
+    arr[0] = 1;
+    arr[1] = 2;
+    arr[2] = 4;
+    arr[3] = 7;
+    for (int i = 4; i <= n; i++) {
+      arr[i] = arr[i - 1] * 2 - arr[i - 4];
+    }
+    return arr[n];
+  }
+
+  public static void recur(int[] arr, int start, int n) {
+    if (start > n) return;
+    arr[0] = arr[1];
+    arr[1] = arr[2];
+    arr[2] = arr[3];
+    arr[3] = arr[2] * 2;
+    if (start >= 4) arr[3] -= arr[0];
+    recur(arr, start + 1, n);
   }
 
 
