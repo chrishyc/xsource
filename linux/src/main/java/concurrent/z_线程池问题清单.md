@@ -4,7 +4,7 @@
 线程池优缺点
 线程池拓扑对象,任务,有界队列(ArrayBlockingQueue,LinkedBlockingQueue,PriorityBlockingQueue)
 线程池如何配置大小,cpu密集,io密集
-如何等待子线程完成?join,futuretask,阻塞队列,CountDownLanch
+如何等待子线程完成?join,futuretask,阻塞队列,CountDownLanch,completablefuture
 #线程池对象模型&拓扑
 ![](.z_线程池问题清单_images/线程池.png)
 ##两级调度模型
@@ -151,6 +151,40 @@ public static ExecutorService newSingleThreadExecutor() {
 ```asp
 无界线程池意味着没有工作队列，任务进来就执行，线程数量不够就创建，与前面两个的区别是：空闲的线程会被回收掉，空闲的时间是60s。这个适用于执行很多短期异步的小程序或者负载较轻的服务器
 ```
+#线程池动态配置
+[](https://mp.weixin.qq.com/s?__biz=Mzg3NjU3NTkwMQ==&mid=2247505103&idx=1&sn=a041dbec689cec4f1bbc99220baa7219&source=41#wechat_redirect)
+自定义核心线程数
+![](.z_线程池问题清单_images/95510963.png)
+![](.z_线程池问题清单_images/53a06f13.png)
+```asp
+public void setCorePoolSize(int corePoolSize) {
+        if (corePoolSize < 0)
+            throw new IllegalArgumentException();
+        int delta = corePoolSize - this.corePoolSize;
+        this.corePoolSize = corePoolSize;
+        if (workerCountOf(ctl.get()) > corePoolSize)
+            interruptIdleWorkers();
+        else if (delta > 0) {
+            // We don't really know how many new threads are "needed".
+            // As a heuristic, prestart enough new workers (up to new
+            // core size) to handle the current number of tasks in
+            // queue, but stop if queue becomes empty while doing so.
+            int k = Math.min(delta, workQueue.size());
+            while (k-- > 0 && addWorker(null, true)) {
+                if (workQueue.isEmpty())
+                    break;
+            }
+        }
+    }
+```
+自定义队列长度,自定义队列
+ResizableCapacityLinkedBlockIngQueue
+#常见问题
+##你知道有什么方法对线程池进行预热吗？
+prestartAllCoreThreads
+![](.z_线程池问题清单_images/95ffa139.png)
+##核心线程数会被回收吗？需要什么设置？
+![](.z_线程池问题清单_images/024ff8a5.png)
 #项目中的线程池(使用场景,参数)
 ##bpmn预加载
 ```asp
