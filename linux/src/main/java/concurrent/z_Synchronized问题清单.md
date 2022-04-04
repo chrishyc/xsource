@@ -1,3 +1,8 @@
+#临界知识
+锁优化:偏向锁,轻量级锁,重量级锁
+锁的三个性质
+锁的重要对象:markword,threadid,锁记录,锁对象
+
 1.synchronized原理，mutex
 2.synchronized对象模型
 3.几种实现
@@ -13,6 +18,15 @@ https://www.cnblogs.com/aspirant/p/11470858.html
 https://cloud.tencent.com/developer/article/1082708
 
 ![](.z_Synchronized问题清单_images/7efe8ab7.png)
+##Synchronized的原子性、可见性、有序性
+```asp
+原子性：确保线程互斥的访问同步代码；
+
+可见性：保证共享变量的修改能够及时可见，其实是通过Java内存模型中的 “对一个变量unlock操作之前，必须要同步到主内存中；如果对一个变量进行lock操作，
+则将会清空工作内存中此变量的值，在执行引擎使用此变量前，需要重新从主内存中load操作或assign操作初始化变量值” 来保证的；
+
+有序性：有效解决重排序问题，即 “一个unlock操作先行发生(happen-before)于后面对同一个锁的lock操作”；
+```
 ##synchronized对象模型
 ![](https://juejin.cn/post/6844903735265771527)
 

@@ -42,7 +42,7 @@ ruleSetResultList:规则集结果
 ####异步事件上报
 线程池:核心线程数20,最大线程数200,队列容量500使用LinkedBlockingQueue,shutdown,awaitTerminationSeconds=60
 ####异步请求变量数据
-线程池:
+线程池:    ExecutorService executorService = new ThreadPoolExecutor(20, 40, 0L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1024), namedThreadFactory, new ThreadPoolExecutor.AbortPolicy());
 ####异步执行实验(cpu密集型)
 全量执行实验阶段的流程
 ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(DEFAULT_POOL_SIZE, DEFAULT_POOL_SIZE, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(DEFAULT_QUEUE_SIZE),
@@ -69,6 +69,8 @@ try{
 ###可用性,容灾
 ###重试
 ###线程并发
+CompletableFuture:获取流程的资源,一个流程可能有多个资源,决策表,子流程
+
 ##drools规则引擎拓扑
 全局变量:((MapGlobalResolver) globals).setGlobal(Constants.PROCESS_VAR, processContext);
 [全局变量区别](https://einverne.github.io/post/2019/03/drools-syntax.html#fact-%E5%AF%B9%E8%B1%A1)
