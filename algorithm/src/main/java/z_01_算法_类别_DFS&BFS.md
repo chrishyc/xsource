@@ -1,4 +1,6 @@
 #概述
+1.for循环外部process，还是for循环内部process处理，根据题目的条件来决定，两者无本质差异
+2.visited总是在process之前判断
 ![](.z_01_算法_类别_DFS_images/fdcbefbe.png)
 ![](.z_01_算法_类别_DFS_images/5ce07443.png)
 ![](.z_01_算法_类别_DFS_images/771db16e.png)
@@ -11,8 +13,12 @@
 ##打印节点s到节点t的路径
 ![](.z_01_算法_类别_DFS_images/2b32dfcb.png)
 #DFS(两种方式)
-DFS和回溯的关系:DFS深度优先遍历,回溯主要是在深度优先遍历过程中寻找结果
-一般回溯题目都是树的搜索,如果是图的搜索,也是需要记录访问过的节点
+DFS和回溯的关系:DFS深度优先遍历,回溯主要是在深度优先遍历过程中寻找结果,回溯涉及状态回退
+一般回溯题目都是树的搜索,如果是图的搜索,也是需要记录访问过的节点,
+
+DFS遍历一次没状态，回溯需要管理状态涉及回退,对比 [剑指 Offer 13. 机器人的运动范围] vs [79. 单词搜索]
+一般来说，一个节点可能被多次访问，就用回溯法；一个节点只需访问一次，就用普通的无回溯步骤的dfs
+DFS不关心状态,遍历完节点集合即可,回溯关心状态(访问顺序),需要对一个节点遍历多次
 ![](.z_01_算法_类别_DFS&BFS_images/f51f4e66.png)
 ![](.z_01_算法_类别_DFS&BFS_images/a4371452.png)
 ![](.z_01_算法_类别_DFS&BFS_images/5f2bb790.png)
@@ -25,17 +31,23 @@ DFS和回溯的关系:DFS深度优先遍历,回溯主要是在深度优先遍历
 ###面试题 08.10. 颜色填充
 [](https://leetcode-cn.com/problems/color-fill-lcci/)
 
-###剑指 Offer 13. 机器人的运动范围
+###剑指 Offer 13. 机器人的运动范围(DFS)
+
 [](https://leetcode-cn.com/problems/ji-qi-ren-de-yun-dong-fan-wei-lcof/)
 ![](.z_01_算法_类别_DFS&BFS_images/e76c9ea2.png)
 ![](.z_01_算法_类别_DFS&BFS_images/7115264e.png)
+###79. 单词搜索(回溯)
+
+
 ##题型2、最短路径(BFS) 
+752. 打开转盘锁
 ![](.z_01_算法_类别_DFS&BFS_images/ed80fa04.png)
 ![](.z_01_算法_类别_DFS&BFS_images/f09a1112.png)
 ![](.z_01_算法_类别_DFS&BFS_images/57d06482.png)
+[](https://leetcode-cn.com/problems/open-the-lock/)
 ##题型3、连通分量/连通性 
 ###面试题 04.01. 节点间通路
-[](https://leetcode-cn.com/problems/route-between-nodes-lcci/)
+[](https://leetcode-cn.cdfsom/problems/route-between-nodes-lcci/)
 ###200. 岛屿数量
 [](https://leetcode-cn.com/problems/number-of-islands/)
 ![](.z_01_算法_类别_DFS&BFS_images/1a377543.png)

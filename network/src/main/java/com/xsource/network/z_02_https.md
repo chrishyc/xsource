@@ -1,6 +1,7 @@
 #https
 http+TLS,目前是 1.2
 ![](.z_02_https_images/49ebac61.png)
+[](https://www.bilibili.com/video/BV18N411X7ty/)
 ##术语
 密钥,密文
 ##加密套件TLS
@@ -8,14 +9,17 @@ http+TLS,目前是 1.2
 ![](.z_02_https_images/dfa25814.png)
 密钥交换算法 + 签名算法 + 对称加密算法 + 摘要算法
 “握手时使用 ECDHE 算法进行密钥交换，用 RSA 签名和身份认证，握手后的通信使用 AES 对称算法，密钥长度 256 位，分组模式是 GCM，摘要算法 SHA384 用于消息认证和产生随机数。”
+
 #5大问题
 ##机密性(混合加密,RSA+对称加密AES)
 ##完整性(摘要算法,SHA384)
 ##身份认证(数字签名,摘要算法+私钥加密)
+[](https://www.bilibili.com/video/BV18N411X7ty/)
 使用私钥再加上摘要算法，就能够实现“数字签名”，同时实现“身份认证”和“不可否认”
 就是把公钥私钥的用法反过来，之前是公钥加密、私钥解密，现在是私钥加密、公钥解密。但又因为非对称加密效率太低，所以私钥只加密原文的摘要，
 这样运算量就小的多，而且得到的数字签名也很小，方便保管和传输
 ![](.z_02_https_images/6fd6ef04.png)
+
 ##不可否认(摘要算法+私钥加密)
 靠数字签名解决，内容摘要算法得到摘要，私钥加密摘要，对方使用对应公钥解密，得到摘要，再和自己得到的服务器提供的原文摘要对比，
 一致说明这个内容就是原服务器提供的，由证书说明了服务器的身份
@@ -35,6 +39,7 @@ RSA 2048
 网站秘密保管私钥，在网上任意分发公钥，你想要登录网站只要用公钥加密就行了，
 密文只能由私钥持有者才能解密。而黑客因为没有私钥，所以就无法破解密文。
 ![](.z_02_https_images/d320f5e2.png)
+
 ##私钥
 ##密钥交换
 ##数字签名(身份认证)
@@ -42,6 +47,7 @@ RSA 2048
 就是把公钥私钥的用法反过来，之前是公钥加密、私钥解密，现在是私钥加密、公钥解密。但又因为非对称加密效率太低，所以私钥只加密原文的摘要，
 这样运算量就小的多，而且得到的数字签名也很小，方便保管和传输
 ![](.z_02_https_images/6fd6ef04.png)
+
 #混合加密(RSA+AES)
 可以看到，RSA 的运算速度是非常慢的，2048 位的加解密大约是 15KB/S（微秒或毫秒级），而 AES128 则是 13MB/S（纳秒级），差了几百倍
 ```asp
@@ -63,6 +69,7 @@ rsa_2048/aes ratio = 868.13
 ![](.z_02_https_images/45295872.png)
 真正的完整性必须要建立在机密性之上，在混合加密系统里用会话密钥加密消息和摘要，这样黑客无法得知明文
 ![](.z_02_https_images/ccfdde93.png)
+
 ##伪随机数
 输入的微小不同会导致输出的剧烈变化，所以也被 TLS 用来生成伪随机数
 #证书认证机构(CA,权威机构通过签名对个人公钥进行担保)
@@ -72,6 +79,7 @@ rsa_2048/aes ratio = 868.13
 ![](.z_02_https_images/fc92044c.png)
 服务器返回的是证书链（不包括根证书，根证书预置在浏览器中），然后浏览器就可以使用信任的根证书（根公钥）解析证书链的根证书得到一级证书的公钥+摘要验签，
 然后拿一级证书的公钥解密一级证书拿到二级证书的公钥和摘要验签，再然后拿二级证书的公钥解密二级证书得到服务器的公钥和摘要验签，验证过程就结束了
+
 #https 连接流程(2RTT)
 [](https://time.geekbang.org/column/article/110354)
 
@@ -107,12 +115,27 @@ Handshake Protocol: Server Hello
 ##DH算法生成Pre Master Secret
 [](https://halfrost.com/cipherkey/)
 ##随机数+pre master生成主密钥&会话密钥
+###C / S随机数
+协作得到的随机数
+###pre master
+客户端生成的随机数
 ###主密钥
 ![](.z_02_https_images/7a2b6d5a.png)
 用于加密密钥的密钥被称为KEK(Key Encrypting Key)
-###会话密钥
+[主密钥复用](https://time.geekbang.org/column/article/111287)
+###会话密钥(前向安全)
 每次会话都会产生新的会话密钥，即使密钥被窃听了，也只会影响本次会话
 加密的对象是用户直接使用的信息(内容)，这个时候密钥被称为CEK(Contents Encrypting Key)
+[](https://time.geekbang.org/column/article/110718)
+会话密钥，也就是master secret加密
+```asp
+会话密钥(密钥块)是由主密钥、SecurityParameters.server_random 和 SecurityParameters.client_random 数通过 PRF 函数来生成，
+会话密钥里面包含对称加密密钥、消息认证和 CBC 模式的初始化向量，对于非 CBC 模式的加密算法来说，就没有用到这个初始化向量。
+
+Session ID 缓存和 Session Ticket 里面保存的也是主密钥，而不是会话密钥，这样每次会话复用的时候再用双方的随机数和主密钥导出会话密钥，
+从而实现每次加密通信的会话密钥不一样，即使一个会话的主密钥泄露了或者被破解了也不会影响到另一个会话。
+```
+[](https://halfrost.com/https-key-cipher/)
 ##FINISHED
 把之前所有发送的数据做个摘要，再加密(公钥)一下，让服务器做个验证
 后面都改用对称算法加密通信了啊，用的就是打招呼时说的 AES，加密对不对还得你测一下
@@ -176,6 +199,7 @@ Handshake Protocol: Client Hello
 3.验证证书时访问 CA
 4.非对称加密解密处理“Pre-Master”
 ![](.z_02_https_images/16dcface.png)
+
 ##HTTPS优化(计算密集型)
 ###硬件
 更快的 CPU
@@ -214,3 +238,4 @@ Handshake Protocol: Server Hello
 包括常用的 Web 服务器 Apache、Nginx 等
 #https应用
 [](https://time.geekbang.org/column/article/111940)
+
