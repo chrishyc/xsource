@@ -47,7 +47,8 @@ static final int hash(Object key) {
 不会,当链表长度大于阈值（默认为 8）第一次扩容后,第2次判断时就不用再扩容
 ##容器
 list,set,queue,map
-list:arraylist,linkedlist,copyonwritearraylist
+list:arraylist,linkedlist,copyonwritearraylist,ConcurrentLinkedQueue
 set:hashset,treeset,linkedhashset
-queue:优先队列,双端队列
-map:hashmap,treemap,linkedhashmap,concurrenthashmap
+queue:优先队列,双端队列,BlockingQueue
+map:hashmap,treemap,linkedhashmap,concurrenthashmap,ConcurrentSkipListMap
+[](https://javaguide.cn/java/concurrent/java-concurrent-collections.html#concurrentskiplistmap)
