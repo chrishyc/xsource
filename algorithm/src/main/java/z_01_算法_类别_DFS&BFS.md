@@ -45,6 +45,10 @@ DFS不关心状态,遍历完节点集合即可,回溯关心状态(访问顺序),
 ![](.z_01_算法_类别_DFS&BFS_images/f09a1112.png)
 ![](.z_01_算法_类别_DFS&BFS_images/57d06482.png)
 [](https://leetcode-cn.com/problems/open-the-lock/)
+网格最短路径,回溯
+![](.z_01_算法_类别_DFS&BFS_images/d9d24bde.png)
+网格是否能到,dfs
+![](.z_01_算法_类别_DFS&BFS_images/bd0e91de.png)
 ##题型3、连通分量/连通性 
 ###面试题 04.01. 节点间通路
 [](https://leetcode-cn.cdfsom/problems/route-between-nodes-lcci/)
