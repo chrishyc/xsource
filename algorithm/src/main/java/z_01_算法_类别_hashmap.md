@@ -31,3 +31,7 @@ hashset
 ##349. 两个数组的交集
 ##1122. 数组的相对排序
 ##面试题 16.21. 交换和
+##原地hash
+[41. 缺失的第一个正数](https://leetcode-cn.com/problems/first-missing-positive/)
+[442. 数组中重复的数据]
+[448. 找到所有数组中消失的数字]
