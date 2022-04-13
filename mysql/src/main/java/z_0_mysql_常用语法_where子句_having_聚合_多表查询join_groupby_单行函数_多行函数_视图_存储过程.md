@@ -35,6 +35,40 @@ order by max总成绩
 
  (7). 执行 ORDER BY 子句, 把最后的结果按 "Max 成绩" 进行排序. 
 ```
+###group by别名问题
+[](https://blog.csdn.net/littlecarton/article/details/86530664)
+```asp
+(1)    FROM <left_table>
+
+(2)    ON <join_condition>
+
+(3)    <join_type> JOIN <right_table>
+
+(4)    WHERE <where_condition>
+
+(5)    GROUP BY <group_by_list>
+
+(6)    HAVING <having_condition>
+
+(7)    SELECT
+
+(8)    DISTINCT <select_list>
+
+(9)    ORDER BY <order_by_condition>
+
+(10)   LIMIT <limit_number> 
+
+Group by不能用别名的原因，是因为执行到groupby（5）时，还没执行到select中的别名，所以别名还没生效。所以别名只能放到（7）之后，比如order中，distinct中。
+
+ 
+
+注意：
+
+在mysql中，group by中可以使用别名；where中不能使用别名；order by中可以使用别名。
+
+其余像oracle，hive中别名的使用都是严格遵循sql执行顺序的，groupby后面不能用别名。mysql特殊是因为mysql中对查询做了加强。
+ 
+```
 ###查询语句结构
 ![](.z_0_mysql_常用语法_子句_聚合_单行函数_多行函数_images/787500b6.png)
 ```asp
