@@ -7,6 +7,34 @@ where子句的类型,单值/范围/复合操作逻辑运算
 视图,查询语句变量化(类似grafana变量)
 存储过程,执行逻辑模板化(类似grafana模板)
 ##检索&聚合DQL
+###执行顺序
+[](https://blog.csdn.net/u014044812/article/details/51004754)
+![](.z_0_mysql_常用语法_where子句_having_聚合_多表查询join_groupby_单行函数_多行函数_视图_存储过程_images/7857bd2a.png)
+```asp
+select 考生姓名, max(总成绩) as max总成绩 
+ 
+from tb_Grade 
+ 
+where 考生姓名 is not null 
+ 
+group by 考生姓名 
+ 
+having max(总成绩) > 600 
+ 
+order by max总成绩 
+```
+```asp
+ (1). 首先执行 FROM 子句, 从 tb_Grade 表组装数据源的数据 
+
+ (2). 执行 WHERE 子句, 筛选 tb_Grade 表中所有数据不为 NULL 的数据 
+
+ (3). 执行 GROUP BY 子句, 把 tb_Grade 表按 "学生姓名" 列进行分组(注：这一步开始才可以使用select中的别名，他返回的是一个游标，而不是一个表，所以在where中不可以使用select中的别名，而having却可以使用，感谢网友  zyt1369  提出这个问题)
+ (4). 计算 max() 聚集函数, 按 "总成绩" 求出总成绩中最大的一些数值 
+
+ (5). 执行 HAVING 子句, 筛选课程的总成绩大于 600 分的. 
+
+ (7). 执行 ORDER BY 子句, 把最后的结果按 "Max 成绩" 进行排序. 
+```
 ###查询语句结构
 ![](.z_0_mysql_常用语法_子句_聚合_单行函数_多行函数_images/787500b6.png)
 ```asp
