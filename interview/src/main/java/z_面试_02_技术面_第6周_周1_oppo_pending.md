@@ -6,3 +6,6 @@
 2.redis数据结构
 3.最长严格自增序列
 #2面面试
+1.项目难点
+2.广告 搜索 推荐[](https://time.geekbang.org/column/article/6499)
+3.问题
