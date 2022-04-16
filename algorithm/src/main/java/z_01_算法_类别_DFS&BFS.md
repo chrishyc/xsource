@@ -13,22 +13,7 @@
 ##打印节点s到节点t的路径
 ![](.z_01_算法_类别_DFS_images/2b32dfcb.png)
 #DFS VS 回溯(两种方式)
-##DFS
-DFS:DFS一般都在图里面,本身就需要访问图的节点,涉及到图的分支的访问,DFS往往只需要求一个解，且解为boolean类型
-DFS的一个解和图的分支路径没关系,一个解对应整个图的遍历而不是对应一个分支,因此visited[i]=true不需要恢复成visited[i]=false
-##回溯
-回溯:回溯的解一般有多个,每个解对应决策树的一个分支,多个解形成决策树,常常需要visited[i]=true恢复成visited[i]=false,
-[212. 单词搜索 II](https://leetcode-cn.com/problems/word-search-ii/):虽然是网格图,但实际是求多个解,多个解就需要回溯,需要visited[i]=true恢复成visited[i]=false,
-##回溯+记忆集
-回溯有重复子问题时可以用记忆集,如何确认是否有重复子问题?如何确认是否可以用记忆集?确定问题是否需要状态,回溯是否需要使用visited[i][j]避免在一个解中重复访问
-[](https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/512498)
 
-DFS和回溯的关系:DFS深度优先遍历,回溯主要是在深度优先遍历过程中寻找结果,回溯涉及状态回退
-一般回溯题目都是树的搜索,如果是图的搜索,也是需要记录访问过的节点,
-
-DFS遍历一次没状态，回溯需要管理状态涉及回退,对比 [剑指 Offer 13. 机器人的运动范围] vs [79. 单词搜索]
-一般来说，一个节点可能被多次访问，就用回溯法；一个节点只需访问一次，就用普通的无回溯步骤的dfs
-DFS不关心状态,遍历完节点集合即可,回溯关心状态,需要维护解状态,涉及到状态回退(访问顺序),需要对一个节点遍历多次
 [](https://sexywp.com/whats-the-difference-between-backtracking-n-dfs.htm)
 ![](.z_01_算法_类别_DFS&BFS_images/f51f4e66.png)
 ![](.z_01_算法_类别_DFS&BFS_images/a4371452.png)
