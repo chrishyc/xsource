@@ -26,8 +26,28 @@ Max Trx ID 的属性处，这个属性占用 8 个字节的存储空间。
 undo日志 是被记录到类型为 FIL_PAGE_UNDO_LOG 的页面中。这些页面可以从系统表空间中分配，也可以从一种专门存放 undo 日志 的表空间，也就是所谓的 undo tablespace 中分配
 一般每对一条记录做一次改动，就对应着一条 undo日志 ，但在某些更新记录的操作中，也可能会对应着2 条 undo日志 
 ```
+回滚指针头部为最新的事务,尾部为最老的事务
 ##INSERT操作对应的undo日志
 ![](.z_9_mysql_02_undo_事务id_事务原子性_回滚段_images/1fc3860b.png)
+​当进行insert操作的时候，产生的undolog只在事务回滚的时候需要，并且在事务提交之后可以被立刻丢弃
+只有一个,清理掉也不会让其他更长的事务产生可见性问题
+##delete对应的undo日志
+当进行update和delete操作的时候，产生的undolog不仅仅在事务回滚的时候需要，在快照读的时候也需要，所以不能随便删除，只有在快照读或事务回滚不涉及该日志时，
+对应的日志才会被purge线程统一清除（当数据发生更新和删除操作的时候都只是设置一下老记录的deleted_bit，并不是真正的将过时的记录删除，因为为了节省磁盘空间，innodb有专门的purge线程来清除deleted_bit为true的记录，如果某个记录的deleted_id为true，并且DB_TRX_ID相对于purge线程的read view 可见，那么这条记录一定时可以被清除的）
+```asp
+在对一条记录进行 delete mark 操作前，需要把该记录的旧的 trx_id 和 roll_pointer 隐藏列的值都给记 到对应的 undo日志 中来，就是我们图中显示的
+old trx_id 和 old roll_pointer 属性。这样有一个好处， 那就是可以通过 undo日志 的 old roll_pointer 找到记录在修改之前对应的 undo 日志。
+比方说在一个事务 中，我们先插入了一条记录，然后又执行对该记录的删除操作，这个过程的示意图就是这样:
+```
+![](.z_9_mysql_02_undo_事务id_事务原子性_回滚段_images/043cce0a.png)
+```asp
+大家有没有发现两件事儿:
+我们说 insert undo 在事务提交之后就可以被释放掉了，而 update undo 由于还需要支持 MVCC ，不能立即 删除掉。
+为了支持 MVCC ，对于 delete mark 操作来说，仅仅是在记录上打一个删除标记，并没有真正将它删除掉。
+随着系统的运行，在确定系统中包含最早产生的那个 ReadView 的事务不会再访问某些 update undo日志 以及被 打了删除标记的记录后，
+有一个后台运行的 purge线程 会把它们真正的删除掉
+```
+##update对应的undo日志
 #roll_pointer
 ![](.z_9_mysql_02_undo_事务id_事务原子性_回滚段_images/7dce8c2c.png)
 #版本链
