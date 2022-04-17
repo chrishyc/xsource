@@ -4,6 +4,21 @@ SHOW PROFILES
 SHOW PROFILE
 show profile for query 1;
 ![](.z_3_mysql_优化体系_性能分析_images/1eac9e9d.png)
+![](.z_3_mysql_查询优化_00_explain_images/72f4eb4d.png)
+#索引下推
+where条件中无法使用二级索引索引的列也会尽量使用二级索引索引结果去过滤
+```asp
+有些搜索条件中虽然出现了索引列，但却不能使用到索引，比如下边这个查询:
+SELECT * FROM s1 WHERE key1 > 'z' AND key1 LIKE '%a';
+其中的 key1 > 'z' 可以使用到索引，但是 key1 LIKE '%a' 却无法使用到索引
+```
+可以有效减少回表的次数，大大提升了查询的效率
+索引下推是在非主键索引，或者说二级索引/联合索引的情形下，索引的匹配规则遵循最左原则，最左原则会因为like或范围判断而后面的索引失效，
+这时在mysql5.6后引入了索引下推的概念，来优化查询效率
+![](.z_3_mysql_查询优化_00_explain_images/bd6f9f5e.png)
+[](https://blog.csdn.net/suifengyongyuan/article/details/117737730)
+#索引覆盖
+#索引合并
 #explain
 [](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html)
 ##id
@@ -227,16 +242,3 @@ EXPLAIN SELECT 1;//当查询语句的没有 FROM 子句时将会提示该额外�
 ###No matching min/max row
 EXPLAIN SELECT MIN(key1) FROM s1 WHERE key1 = 'abcdefg';
 当查询列表处有 MIN 或者 MAX 聚集函数，但是并没有符合 WHERE 子句中的搜索条件的记录时，将会提示该 额外信息，
-#成本
-在 EXPLAIN 单词和真正的查询语句中间加上 FORMAT=JSON 
-EXPLAIN FORMAT=JSON SELECT * FROM s1 INNER JOIN s2 ON s1.key1 = s2.key2 WHERE s1.co
-#优化过程
-优化过程大
-致分为了三个阶段:
-prepare 阶段 
-optimize 阶段 
-execute 阶段
-对于单表查询来说，我们主要关注 optimize 阶段的 "rows_estimation" 这个过程，这个过程深入分析了对单表查询的各种执行方案的成本;
-
-对于多表连接查询来 说，我们更多需要关注 "considered_execution_plans" 这个过程，这个过程里会写明各种不同的连接方式所对 应的成本。
-反正优化器最终会选择成本最低的那种方案来作为最终的执行计划，也就是我们使用 EXPLAIN 语句所 展现出的那种方案。

@@ -34,3 +34,16 @@ cpu成本: 14399 x 0.2 + 1.0 = 2880.8
 总成本: 98.1 + 2880.8
 
 ```
+#成本
+在 EXPLAIN 单词和真正的查询语句中间加上 FORMAT=JSON 
+EXPLAIN FORMAT=JSON SELECT * FROM s1 INNER JOIN s2 ON s1.key1 = s2.key2 WHERE s1.co
+#优化过程
+优化过程大
+致分为了三个阶段:
+prepare 阶段 
+optimize 阶段 
+execute 阶段
+对于单表查询来说，我们主要关注 optimize 阶段的 "rows_estimation" 这个过程，这个过程深入分析了对单表查询的各种执行方案的成本;
+
+对于多表连接查询来 说，我们更多需要关注 "considered_execution_plans" 这个过程，这个过程里会写明各种不同的连接方式所对 应的成本。
+反正优化器最终会选择成本最低的那种方案来作为最终的执行计划，也就是我们使用 EXPLAIN 语句所 展现出的那种方案。
