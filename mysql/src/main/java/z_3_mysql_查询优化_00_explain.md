@@ -145,7 +145,7 @@ EXPLAIN SELECT * FROM s1 WHERE key1 IN ('a', 'b', 'c');
 如果使用索引获取某些 范围区间 的记录，那么就可能使用到 range 访问方法
 ###index
 当我们可以使用索引覆盖，但需要扫描全部的索引记录时，该表的访问方法就是 index 
-EXPLAIN SELECT key_part2 FROM s1 WHERE key_part3 = 'a';
+EXPLAIN SELECT key_part2 FROM s1 WHERE key_part3 = 'a';//联合索引的第二列
 ###ALL
 ###NULL
 type = NULL，MYSQL不用访问表或者索引就直接能到结果
@@ -211,6 +211,8 @@ EXPLAIN SELECT * FROM s1 WHERE common_field = 'a';
 
 当使用索引访问来执行对某个表的查询，并且该语句的 WHERE 子句中有除了该索引包含的列之外的其他搜索 条件时，在 Extra 列中也会提示上述额外信息
 EXPLAIN SELECT * FROM s1 WHERE key1 = 'a' AND common_field = 'a';
+
+using where表示你的sql语句虽然用到了索引，但是想要查询最终结果还需要进行回表，相对于using index来说，效率较低
 ###Using join buffer (Block Nested Loop)
 join buffer 的内存块来加快查询速度，也就是我们所讲的 基于块的嵌套循环算法
 EXPLAIN SELECT * FROM s1 INNER JOIN s2 ON s1.common_field = s2.common_field;
