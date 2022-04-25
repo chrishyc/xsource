@@ -7,6 +7,7 @@
 链式哈希
 ![](.z_04_分布式_redis_数据结构_images/9fc9194f.png)
 ###渐进式rehash过程
+[渐进式hash](http://redisbook.com/preview/dict/incremental_rehashing.html)
 ```asp
 给哈希表 2 分配更大的空间，例如是当前哈希表 1 大小的两倍；
 把哈希表 1 中的数据重新映射并拷贝到哈希表 2 中；

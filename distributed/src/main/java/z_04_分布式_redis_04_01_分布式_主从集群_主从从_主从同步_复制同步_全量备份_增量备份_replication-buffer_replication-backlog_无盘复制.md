@@ -39,6 +39,7 @@ CONTINUE
 ![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/0bef303c.png)
 从节点会保存主节点的run id,用于下次增量同步验证主run id是否为同一个
 ![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/8759a612.png)
+
 ###主从增量同步过程
 ![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/64636f4b.png)
 ![](.z_04_分布式_redis_04_01_分布式_主从集群_主从从_复制同步_全量备份_增量备份_replication-buffer_replication-backlog_无盘复制_images/326ab7d2.png)
@@ -143,3 +144,4 @@ AOF需要重放执行,校验逻辑，并且有大量重复操作
 ###主从模式下,从节点和从节点会建立连接吗?
 
 不会建立连接,需要手动恢复
+
