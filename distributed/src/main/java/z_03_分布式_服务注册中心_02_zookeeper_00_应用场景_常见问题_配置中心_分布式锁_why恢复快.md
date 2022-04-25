@@ -16,7 +16,20 @@ zk注册中心
 使用session会话
 [](https://blog.csdn.net/crazymakercircle/article/details/85956246)
 [](http://git.mashibing.com/bjmashibing/InternetArchitect/blob/master/10%20Zookeeper/src/main/java/com/msb/zookeeper/locks/WatchCallBack.java)
+1.服务宕机,zookeeper宕机
+2.zookeeper宕机,会有多个线程持有的问题吗?
+3.
 ###惊群
-###重入锁
+##重入锁
+
+##zookeeper读写锁
+[](https://juejin.cn/post/6844903710510809096)
+1.服务如何判断文件是自己?
+2.读写共存问题
+```asp
+读锁：又称共享锁，如果前面没有写节点，可以直接上锁；当前面有写节点时，则等待距离自己最近的写节点释放（ 删除 ）。
+                     
+写锁：如果前面没有节点，可以直接上锁；如果前面有节点，则等待前一个节点释放（ 删除 ）如果两个写节点之间有读节点，必需等待读节点释放之后再进行写节点请求，否则会有不可重复读的问题。                                         
+```
 ##zookeeper为啥leader宕机恢复快?
 选举快,leader+follow节点少,observer节点抗读压力,且不参与选举减少参与选举的节点
