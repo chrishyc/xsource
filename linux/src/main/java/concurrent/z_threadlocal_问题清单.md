@@ -1,7 +1,7 @@
 ##threadlocal 模型
 ![](/Users/chris/workspace/xsource/linux/src/main/java/concurrent/images/threadlocal对象模型.jpg)
 [](https://www.cnblogs.com/Ccwwlx/p/13581004.html)
-![](.z_threadlocal_问题清单_images/f4991752.png)
+![](.z_tthreadlocal_问题清单_images/f4991752.png)
 ##threadlocal内存泄露问题?
 ##threadlocal为啥不把value搞成弱引用?
 [](https://cloud.tencent.com/developer/article/1769423#:~:text=%E3%80%8C%E4%B8%8D%E8%AE%BE%E7%BD%AE%E4%B8%BA%E5%BC%B1%E5%BC%95%E7%94%A8,%E5%85%B6%E8%AE%BE%E7%BD%AE%E4%B8%BA%E5%BC%BA%E5%BC%95%E7%94%A8%E3%80%82%E3%80%8D)
@@ -28,10 +28,12 @@ k = key 说明是替换操作，可以使用
 探测式清理是以当前Entry 往后清理，遇到值为null则结束清理，属于线性探测清理
 ##启发式清理
 
-##InheritableThreadLocal
+##InheritableThreadLocal实现原理
 子线程默认拷贝父线程的方式是浅拷贝，如果需要使用深拷贝，如果需要使用深拷贝，需要使用自定义ThreadLocal，继承InheritThreadLocal并重写childValue方法
 [](https://blog.csdn.net/w172087242/article/details/83375022)
-
+[线程threadlocal继承原理分析](https://www.cnblogs.com/54chensongxia/p/12015443.html)
+##threadlocal在线程池中的传递问题
+[传递问题的解决](https://blog.csdn.net/w172087242/article/details/83375022)
 ##应用场景
 ###日志链路
 traceId

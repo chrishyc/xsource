@@ -23,6 +23,7 @@
         <module>designpattern</module>
         <module>serialization</module>
         <module>thinking</module>
+      <module>abroad</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->

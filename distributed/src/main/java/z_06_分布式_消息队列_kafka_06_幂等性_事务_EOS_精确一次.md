@@ -1,4 +1,5 @@
 [](https://time.geekbang.org/column/article/138724)
+[深入理解kafka]
 #事务场景
 ![](.z_06_分布式_消息队列_kafka_06_幂等性_事务_EOS_精确一次_images/e5025d96.png)
 kafka的应用场景经常是应用先消费一个topic，然后做处理再发到另一个topic，这个consume-transform- produce过程需要放到一个事务里面，比如在消息处理或者发送的过程中如果失败了，消费偏移量也不能提 交

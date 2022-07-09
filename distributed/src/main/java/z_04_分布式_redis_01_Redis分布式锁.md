@@ -19,17 +19,17 @@ DO THINGS
 DEL lock_key
 ```
 ```asp
-
 SET key value [EX seconds | PX milliseconds]  [NX]
 ```
-###应用挂了过期时间
+###加锁等待时间
+###锁过期时间
 过期时间5s
 ###续期
 watchdog
 [](https://www.cnblogs.com/jelly12345/p/14699492.html)
 redis分布式锁，看门狗线程挂了怎么办
 看门狗异常回调机制,升级为mysql锁?
-###超时误删(随机数+lua)
+###只删除自己的id(随机数+lua)
 B删除了A的锁:
 A锁sleep,
 A,B被JVM GC
@@ -97,5 +97,27 @@ if(isEmpty())pull
 
 unlock
 ```
+##可重入锁
+[可重入锁](https://www.modb.pro/db/193568)
+我们想想，单机的可重入锁的核心是什么呢
+```asp
+1. state: 来记录加锁的次数
+2. owner: 来记录获取锁的线程
+3. queue: 来进行排队
+```
+```asp
+Config config = new Config();
+
+config.useClusterServers()
+.addNodeAddress("redis://192.168.1.15:6379");
+RedissonClient client = Redisson.create(config);
+
+RLock lock = client.getLock("anyLock");
+
+lock.lock();
+TimeUnit.SECONDS.sleep(1);
+lock.unlock();
+```
+##公平锁
 ##redis读写锁
 ##redis可重复锁

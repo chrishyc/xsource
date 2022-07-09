@@ -1,5 +1,6 @@
 package byteclass.jdk;
 
 public interface Fruit {
-    void show();
+  void show();
+
 }

@@ -1,3 +1,6 @@
+#问题
+##水印设置多少合理
+#临界知识
 #窗口
 [](https://flink.apache.org/zh/flink-applications.html)
 ##起始时间 & 窗口时间对齐
