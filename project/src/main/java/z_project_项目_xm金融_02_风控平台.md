@@ -8,8 +8,34 @@ springboot
 #风控平台业务
 ![](.z_project_项目_xm金融_02_风控平台_images/df11ce7e.png)
 ##规则引擎数据量级
-QPS:12W/1d, 20W/1d, 100/min
-延时:100ms
+QPS:12W/1d, 20W/1d, 100/s
+延时:P95:100ms, P99:800ms,AVG:80~100ms
+
+耗时统计:
+
+1.获取用户流程资源sql
+
+节点任务插入数据库,
+
+1.模型执行:34ms
+
+2.execute:80~100ms=sql(20ms)+data http获取数据源(40ms)+(规则执行10ms)+模型执行(35ms)+redis(10ms), rpc(获取版本)
+
+3.admin:15ms左右
+
+4.局域网通信:1ms,1ms
+
+5.代码执行:脚本,规则执行:10ms
+
+6.rpc:40ms
+
+7.gc:50ms+
+
+8.redis:
+
+9.实验配比:rpc
+
+
 ##规则引擎请求优化
 ###请求拓扑
 ####请求结构体
@@ -39,6 +65,7 @@ ruleSetResultList:规则集结果
 ####异步请求
 线程池:核心线程数1,最大线程数MAX,队列容量0使用SynchronousQueue,shutdown,awaitTerminationSeconds=60
 结果缓存redis,业务端定时取
+
 ####异步事件上报
 线程池:核心线程数20,最大线程数200,队列容量500使用LinkedBlockingQueue,shutdown,awaitTerminationSeconds=60
 ####异步请求变量数据
@@ -64,6 +91,7 @@ map<String,BigDecimal>
 try{
 }finally{
 }
+
 ###线程池
 [](z_线程池问题清单.md)
 ###可用性,容灾
@@ -152,7 +180,7 @@ kafka->flink->elasticsearch
 #风控平台执行流程&优化
 
 #监控平台业务
-![](.z_project_项目_xm金融_02_风控平台_images/308cf59f.png)
+xxxxx
 ![](.z_project_项目_xm金融_02_风控平台_images/aed99cb4.png)
 170个任务
 ##定时任务quartz

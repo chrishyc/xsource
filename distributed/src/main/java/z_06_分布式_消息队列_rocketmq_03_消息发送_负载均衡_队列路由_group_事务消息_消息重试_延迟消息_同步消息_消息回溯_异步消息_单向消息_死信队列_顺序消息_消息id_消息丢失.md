@@ -209,9 +209,29 @@ public MessageQueue selectOneMessageQueue(final TopicPublishInfo tpInfo, final S
 
 #如何保障消息不丢失?
 [](https://www.cnblogs.com/goodAndyxublog/p/12563813.html)
+```asp
+## master 节点配置
+flushDiskType = SYNC_FLUSH
+brokerRole=SYNC_MASTER
 
+## slave 节点配置
+brokerRole=slave
+flushDiskType = SYNC_FLUSH
+```
+1.发送端接受到send_ok
+2.broker端使用同步刷盘SYNC_FLUSH,同步复制
+3.一旦执行成功，将会返回 ConsumeConcurrentlyStatus.CONSUME_SUCCESS 状态给 Broker,如果 Broker 未收到消费确认响应或收到其他状态，消费者下次还会再次拉取到该条消息，进行重试
+4.虽然提高消息可靠性，但是可能导致消息重发，重复消费。所以对于消费客户端，需要注意保证幂等性
 #如何保障消息幂等?
-#全局唯一message id的生成(生产者)&broker id(broker端)
+```asp
+RocketMQ无法避免消息重复（Exactly-Once），所以如果业务对消费重复非常敏感，务必要在业务层面进行去重处理。可以借助关系数据库进行去重。
+首先需要确定消息的唯一键，可以是msgId，也可以是消息内容中的唯一标识字段，例如订单Id等。在消费之前判断唯一键是否在关系数据库中存在。
+如果不存在则插入，并消费，否则跳过。（实际过程要考虑原子性问题，判断是否存在可以尝试插入，如果报主键冲突，则插入失败，直接跳过）
+
+msgId一定是全局唯一标识符，但是实际使用中，可能会存在相同的消息有两个不同msgId的情况（消费者主动重发、因客户端重投机制导致的重复等），
+这种情况就需要使业务字段进行重复消费。
+```
+##全局唯一message id的生成(生产者)&broker id(broker端)
  ip + 进程pid + MessageClientIDSetter.class.getClassLoader().hashCode() + time + counter(AtomicInteger自增变量）
 [](https://www.cnblogs.com/linlinismine/p/9184917.html)
 [](http://blog.soliloquize.org/2018/08/12/RocketMQ-Message%E7%BB%93%E6%9E%84%E7%9A%84%E5%AE%9A%E4%B9%89/)

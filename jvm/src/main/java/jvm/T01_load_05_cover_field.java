@@ -1,7 +1,5 @@
 package jvm;
 
-import java.util.ArrayList;
-
 /**
  * -XX:+TraceClassLoading
  */
@@ -10,14 +8,16 @@ public class T01_load_05_cover_field {
 
   static class Father {
     public int money = 1;
+    protected int aa = 1;
+    public static int bb = 2;
 
     /**
-     *  0 aload_0(this为son)
-     *  1 invokespecial #1 <java/lang/Object.<init>>
-     *  4 aload_0
-     *  5 iconst_1
-     *  6 putfield #2 <jvm/T01_load_05_cover_field$Father.money>
-     *  9 aload_0
+     * 0 aload_0(this为son)
+     * 1 invokespecial #1 <java/lang/Object.<init>>
+     * 4 aload_0
+     * 5 iconst_1
+     * 6 putfield #2 <jvm/T01_load_05_cover_field$Father.money>
+     * 9 aload_0
      * 10 iconst_2
      * 11 putfield #2 <jvm/T01_load_05_cover_field$Father.money>
      * 14 aload_0
@@ -37,6 +37,8 @@ public class T01_load_05_cover_field {
   static class Son extends Father {
     public int money = 3;
 
+    public int aa = 11;
+    public static int bb = 22;
     public Son() {
       money = 4;
       showMeTheMoney();
@@ -51,10 +53,13 @@ public class T01_load_05_cover_field {
    * I am Son, i have $0
    * I am Son, i have $4
    * This gay has $2
+   *
    * @param args
    */
   public static void main(String[] args) {
     Father gay = new Son();
     System.out.println("This gay has $" + gay.money);
+    System.out.println("aa" + gay.aa);
+    System.out.println("aa" + gay.bb);
   }
 }

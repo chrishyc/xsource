@@ -20,10 +20,10 @@ import javax.sql.DataSource;
  * {@link org.springframework.context.annotation.ConfigurationClassPostProcessor#enhanceConfigurationClasses}中生成代理类
  */
 @Configuration(proxyBeanMethods = false)
-@ComponentScan(basePackages = "open.tx.propagation")
+@ComponentScan(basePackages = "open.tx")
 @EnableTransactionManagement
 public class TXConfig {
-    
+
     @Bean
     public DataSource dataSource() {
         // configure and return the necessary JDBC DataSource
@@ -33,7 +33,7 @@ public class TXConfig {
         source.setPassword("");
         return source;
     }
-    
+
     @Bean
     public PlatformTransactionManager txManager() {
         return new DataSourceTransactionManager(dataSource());

@@ -46,10 +46,13 @@ public class Sample {
      * }
      */
     @Test
-    public void testEnableTransactionManagement() {
+    public void testEnableTransactionManagement() throws InterruptedException {
         ApplicationContext beanFactory = new AnnotationConfigApplicationContext(TXConfig.class);
         AnnotationService annotationService = beanFactory.getBean(AnnotationService.class);
-        annotationService.query();
+        annotationService.transfer();
+//        annotationService.query();
+        System.out.println("testEnableTransactionManagement:" + annotationService.getClass());
+        Thread.sleep(1000000);
     }
 
     /**
