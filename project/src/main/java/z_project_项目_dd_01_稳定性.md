@@ -21,6 +21,8 @@
 查看输入500/s,输出情况200/s
 查看buffer pool,100%
 cpu使用情况,90%
+算子流入流出,2000/s
+kafka消费 1m/s
 
 查看配置,taskmananger 1,slot 1,cpu 1
 优化配置
