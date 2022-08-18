@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xsource</groupId>
-    <artifactId>bpmn</artifactId>
+    <artifactId>workflow</artifactId>
     <properties>
         <drools.version>7.5.0.Final</drools.version>
         <commons-lang3.version>3.7</commons-lang3.version>
