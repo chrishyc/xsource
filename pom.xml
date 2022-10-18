@@ -24,6 +24,7 @@
         <module>serialization</module>
         <module>thinking</module>
       <module>abroad</module>
+      <module>ecommerce</module>
     </modules>
     <!--    <modules>-->
 <!--        <module>cpu</module>-->
