@@ -39,6 +39,16 @@
 [天天基金网](https://fund.eastmoney.com/)
 成立时间，基金规模，收益，费用
 
+## 基金原理
+![img_4.png](img_4.png)
+![img_5.png](img_5.png)
+![img_6.png](img_6.png)
+![img_7.png](img_7.png)
+![img_8.png](img_8.png)
+![img_9.png](img_9.png)
+![img_10.png](img_10.png)
+![img_11.png](img_11.png)
+![img_12.png](img_12.png)
 # 低风险理财
 ## 社会养老保险
 ## 商业养老年金
