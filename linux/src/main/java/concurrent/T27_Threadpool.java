@@ -244,7 +244,10 @@ public class T27_Threadpool implements Executor {
   /**
    * 假设你能够提供一个服务
    * 这个服务查询各大电商网站同一类产品的价格并汇总展示
+   *
+   * 参考文档doc:[https://juejin.cn/post/6970558076642394142#heading-7]
    */
+
   @Test
   public void testCompletableFuture() {
     long start, end;
