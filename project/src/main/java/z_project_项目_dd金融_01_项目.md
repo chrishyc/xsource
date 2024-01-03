@@ -193,6 +193,7 @@ bizId+workflowName
 ## 7应该具备什么?
 ## 1.风控领域的重点事情有哪些
 [度小满](https://static001.geekbang.org/con/83/pdf/3478662862/file/%E6%9D%A8%E9%9D%92-20210530%20v3.0.pdf?utm_campaign=geektime_search&utm_content=geektime_search&utm_medium=geektime_search&utm_source=geektime_search&utm_term=geektime_search)
+[美地](https://static001.geekbang.org/con/130/pdf/2270361171/file/02.%E7%BE%8E%E7%9A%84%E9%87%91%E8%9E%8D%E6%99%BA%E8%83%BD%E9%A3%8E%E6%8E%A7%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%9E%84%E5%BB%BA%E4%B8%8E%E5%AE%9E%E8%B7%B5-%E6%9B%B9%E9%93%AD%E6%96%8C.pdf?utm_campaign=geektime_search&utm_content=geektime_search&utm_medium=geektime_search&utm_source=geektime_search&utm_term=geektime_search)
 1.数据孤岛,前端埋点每次需求都是新的数据源,数据未打通,信用卡和现金贷的特征数据未打通,交易支付信贷风控未打通  
 
 2.非结构化信息,串行化特征,衍生特征链路长,维护成本高,结构化信息,图信息,图像信息,时序信息,场景化, 
