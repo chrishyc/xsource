@@ -1,4 +1,6 @@
 # 业务逻辑
+## 了解业务沟通和业务需求
+
 ## OCR
 巴西驾驶证CNH,CNH正面+过脸图
 身份证RG,RG（身份证）,RG正面+过脸图
@@ -343,3 +345,10 @@ dump对比分析,部分上涨
 
 ## 三方重构分表分库
 服务端preparestatement缓存超过最大65535
+
+## feature-proxy dubbo线程池爆问题
+completefuture supplyAsync
+## 判断两个用户的通讯录号码相似度超过75%的用户个数
+图谱  uidA->didiphone-uidB
+找到uidB的用户个数
+## http chunk请求问题排查
