@@ -1,4 +1,20 @@
 # 业务逻辑
+
+## 业务流程
+1.首页,初始化sdk,无cfrnid
+2.实名验证,手填curp(INE),circulo(私企征信)->beru(央企征信)
+3.curp验证,判断活体ocr,人像对比(1v1  过脸图,INE,手持),1vn(sstg底图库对比)    newberun,incode
+4.授权通讯录
+5.活体人脸
+
+
+eva imss 征信(预授信,信用卡)
+
+优质用户(省略INE,活体人脸)，后置到优质用户
+
+注册用户行为数据，外卖出现（增长算法）
+
+优质用户识别逻辑，isvipflow=1
 ## 了解业务沟通和业务需求
 
 ## OCR
@@ -347,8 +363,17 @@ dump对比分析,部分上涨
 服务端preparestatement缓存超过最大65535
 
 ## feature-proxy dubbo线程池爆问题
-completefuture supplyAsync
+completefuture supplyAsync共享一个线程池
+拆分多个线程池
 ## 判断两个用户的通讯录号码相似度超过75%的用户个数
 图谱  uidA->didiphone-uidB
 找到uidB的用户个数
+
+fusion-> key set
 ## http chunk请求问题排查
+
+## 令牌锁
+
+## jackson gson解析问题
+
+## redis锁问题
