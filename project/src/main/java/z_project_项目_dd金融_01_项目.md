@@ -383,3 +383,6 @@ fusion-> key set
 ## jackson gson解析问题
 
 ## redis锁问题
+
+## redis大key
+s000000 geohash异常值过滤
