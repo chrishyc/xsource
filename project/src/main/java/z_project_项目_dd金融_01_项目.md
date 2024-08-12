@@ -35,6 +35,19 @@ verdor:caf
 ## 外投
 将优质用户投递给谷歌/facebook
 
+## 特征类别
+
+### kyc
+
+
+### 反欺诈
+
+地理位置
+设备指纹
+
+### 交易
+
+
 # 数据
 
 ## 时序行为特征
@@ -401,3 +414,6 @@ fusion-> key set
 
 ## redis大key
 s000000 geohash异常值过滤
+
+## flink数据倾斜
+生产者发送produce发送到固定分区了
