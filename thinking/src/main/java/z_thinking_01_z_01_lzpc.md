@@ -1,3 +1,4 @@
+
 # 劳动法解读
 [劳动法](https://www.mohrss.gov.cn/xxgk2020/fdzdgknr/zcfg/fl/202011/t20201102_394625.html)
 ## 第二十五条　劳动者有下列情形之一的，用人单位可以解除劳动合同
