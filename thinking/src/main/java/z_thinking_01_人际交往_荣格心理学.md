@@ -156,7 +156,11 @@
 内倾直觉，精神现象，
 
 ## 个体类型
-
+![img_135.png](img_135.png)
+![img_136.png](img_136.png)
+![img_137.png](img_137.png)
+![img_138.png](img_138.png)
+![img_139.png](img_139.png)
 ### Te
 ### Ti
 ### Fe
