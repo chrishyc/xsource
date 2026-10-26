@@ -1,3 +1,0 @@
-ipFilter=dubbo.filter.TransportIPFilter
-tpFilter=dubbo.filter.TPMonitorFilter
-timeFilter=dubbo.filter.DubboInvokeFilter

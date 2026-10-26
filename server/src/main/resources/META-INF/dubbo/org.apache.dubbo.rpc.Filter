@@ -1,2 +1,0 @@
-timeFilter=dubbo.filter.DubboInvokeFilter
-exception=dubbo.filter.MyExceptionFilter

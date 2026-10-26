@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<kmodule xmlns="http://www.drools.org/xsd/kmodule">
-    <kbase name="rules" packages="rules">
-        <ksession name="ksession-rule"/>
-    </kbase>
-    <kbase name="process" packages="process">
-        <ksession name="ksession-process"/>
-    </kbase>
-</kmodule>

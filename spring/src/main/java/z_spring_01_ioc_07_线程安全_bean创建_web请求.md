@@ -1,6 +1,0 @@
-#spring单例线程安全
-concurrenthashmap
-ThreadLocal
-#bean创建
-#web
-RequestContextHolder.requestAttributesHolder
